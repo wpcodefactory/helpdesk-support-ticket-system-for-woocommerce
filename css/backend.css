@@ -1,0 +1,271 @@
+/* ANIMATION RIGHT TO LEFT*/
+@-webkit-keyframes rightToLeft{ 
+	0% {
+	    opacity: 0;
+	    -webkit-transform: translateX(300px);
+	    -moz-transform: translateX(300px);
+	    transform: translateX(300px) ;
+	    
+	}
+	30% {
+	    opacity: 1;
+	    -webkit-transform: translateX(0px) ;
+	    -moz-transform: translateX(0px) ;
+	    transform: translateX(0px) ;
+
+	}
+	100% {
+	    opacity: 1;
+	    -webkit-transform: scale(1) ;
+	    -moz-transform:  scale(1) ;
+	    transform:  scale(1) ;
+	    
+	}
+}
+
+
+
+
+.rightToLeft{
+    -webkit-animation: rightToLeft 2s ease-in-out;
+    -moz-animation: rightToLeft 2s ease-in-out;
+    -o-animation: rightToLeft 2s ease-in-out;
+    -ms-animation: rightToLeft 2s ease-in-out;
+    animation: rightToLeft 2s ease-in-out;	
+	
+}
+
+.web_logo{
+		float:right;
+}
+.web_logo img{
+    max-width: 150px;
+	height:auto !important;
+}
+
+
+/* === ajaxify === */
+.STSWooCommerce.loading > * {
+    opacity:0.2;
+}
+
+.STSWooCommerce.loading:before {
+    position:fixed;
+    content: "Loading...";
+    font-size:2em;
+    padding: 22px;
+    background: #000;
+    background: url(../images/loading.gif) no-repeat center center;
+    color: #777;
+    width: 50%;
+    height:50%;
+    margin-left:15%;
+    box-sizing: border-box;
+    text-align:center;
+}
+/* =============== RESPONSES  ================== */
+
+.STSWooCommerce .msg,.STSWooCommerce .response{
+		background:#ccc;
+		padding:10px;
+		border:1px solid #777;
+		display:none;
+}
+.STSWooCommerce .success{
+		background:lightGreen;
+		padding:5px;
+		border:1px solid green;
+		color:#fff;
+}
+.STSWooCommerce .error{
+		background:#FFCCCB;
+		padding:5px;
+		border:1px solid red;
+}
+.STSWooCommerce .warning{
+		background:#d9534f;
+		padding:5px;
+		color:#fff;
+}
+
+.STSWooCommerce{
+		overflow:hidden;
+		margin:20px 0;
+}
+
+.STSWooCommerce .nav-tab-wrapper{
+	margin-bottom:30px;
+}
+
+.STSWooCommerce .report_widget{
+	color:#313131;
+   	background: #fff;
+
+		padding:5px;
+		transition:all .2s linear;
+		box-sizing:border-box;
+		overflow:hidden;
+		margin-bottom:10px;
+		display:flex;
+		align-items:center;
+		justify-content:center;
+		mih-height:100px;
+		height:100px;
+		font-size:16px;
+		box-shadow:0 2px 3px #777;
+}
+
+.STSWooCommerce .report_widget a{
+	color:#313131;	
+	display:block;
+	text-decoration:none;
+}
+
+.STSWooCommerce .report_widget:hover{
+		box-shadow:0 2px 3px #000;
+}
+
+
+.STSWooCommercecolumn1,
+.STSWooCommercecolumns2,
+.STSWooCommercecolumns3,
+.STSWooCommercecolumns4,
+.STSWooCommercecolumns5,
+.STSWooCommercecolumns6{
+	/*box-sizing:border-box;*/
+	float:left;
+	box-sizing:border-box;
+	padding:5px;
+	margin:0 0.5%;
+}
+
+
+.STSWooCommercecolumn1{
+	width:100%;
+	float:none;
+}
+.STSWooCommercecolumns2{
+	width:49% ;
+	
+}
+.STSWooCommercecolumns3{
+	width:32.3% ;
+}
+.STSWooCommercecolumns4{
+	width:24%;
+}
+.STSWooCommercecolumns5{
+	width:19%;
+}
+.STSWooCommercecolumns6{
+	width:15.6%;
+}
+
+.STSWooCommerceclearfix{
+	overflow:hidden;
+	clear:both;
+	width:100%;
+	box-sizing:border-box;
+}
+
+.STSWooCommerce .morePlugins{
+	display:flex;
+	background:#fff;
+	padding:10px;
+	box-sizing:border-box;
+	box-shadow:0 2px 3px #ccc;
+}
+.STSWooCommerce .morePlugins img{
+	max-width:100%;
+}
+
+.proSpan{
+	color:#42b72a;
+	font-style:italic;
+	font-weight:bold;
+	cursor:pointer;
+}
+.proVersion:hover{
+	cursor:pointer;
+}
+
+.proUrl{
+	color:#fff;
+	background:#42b72a;
+	padding:10px;
+	font-weight:bold;
+	text-decoration:none;
+}
+.proUrl:hover{
+	color:#fff;
+	box-shadow:0 2px 2px #777;
+}
+
+input.proVersion{
+	border:2px solid #fff;
+	background:#fefefe !important;
+	color:#fff !important
+}
+h2 a.proVersion{
+	background:#42b72a !important;
+	color:#fff !important
+}
+h2 a.disabled{
+	background:#fefefe !important;
+	color:#dddddd !important
+}
+span.proVersion{
+	color:#c9c9c9 !important
+}
+
+#toplevel_page_support-ticket-system-woocommerce .wp-submenu li.proVersion a{
+	color:#42b72a !important
+}
+
+/*  PRO VERSION MODAL */
+#STSWooCommerceModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+#STSWooCommerceModal .modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+#STSWooCommerceModal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#STSWooCommerceModal .close:hover,
+#STSWooCommerceModal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+@media (max-width:767px){
+	.STSWooCommercecolumns2,.STSWooCommercecolumns3,.STSWooCommercecolumns4,.STSWooCommercecolumns5,.STSWooCommercecolumns6{
+		float:none !important;
+		width:99% !important;
+	}
+	
+	
+}
