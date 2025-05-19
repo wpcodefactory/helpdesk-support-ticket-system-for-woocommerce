@@ -26,7 +26,6 @@ defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ 
 include_once( plugin_dir_path(__FILE__) ."/init.php");
 include_once( plugin_dir_path(__FILE__) ."/includes.php");
 
-
 class STSWooCommerce extends STSWooCommerceInit{
 
 		public $plugin = 'STSWooCommerce';
@@ -166,7 +165,6 @@ class STSWooCommerce extends STSWooCommerceInit{
 
 		public function translate() {
 
-
 	         load_plugin_textdomain( esc_html( $this->plugin ), false, dirname( plugin_basename(__FILE__) ) . '/langs/' );
 	    }
 
@@ -180,7 +178,6 @@ class STSWooCommerce extends STSWooCommerceInit{
 
 		    wp_enqueue_style( 'jquery-ui-style', plugins_url( "/css/jquery-ui.css", __FILE__ ), true);
 			wp_enqueue_script('jquery-ui-accordion');
-
 
 			wp_enqueue_script( esc_html( $this->plugin )."adminJs", plugins_url( "/js/backend.js" , __FILE__ ) , array('jquery','jquery-ui-tabs','jquery-ui-accordion',) , null, true);
 
@@ -216,7 +213,6 @@ class STSWooCommerce extends STSWooCommerceInit{
 				wp_enqueue_script( esc_html( $this->plugin )."jsfront");
 
 		}
-
 
 		public function SettingsPage(){
 			add_menu_page( esc_html( $this->shortName ), esc_html( $this->shortName ) , 'administrator', esc_html( $this->slug ), array($this, 'init') , esc_html( $this->dashicon ), esc_html( $this->menuPosition ) );

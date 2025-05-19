@@ -1,3 +1,9 @@
+/**
+ * Helpdesk Support Ticket System for WooCommerce - Frontend JS
+ *
+ * @author  WPFactory
+ */
+
 (function( $ ) {
 "use strict";
 

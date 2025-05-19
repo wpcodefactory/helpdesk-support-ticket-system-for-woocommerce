@@ -31,7 +31,6 @@ Provide Better and Faster Support to your Customers, Keep Track and increase you
 * Trouble Ticket
 * Customer Relations
 
-
 **[GET Support Ticket System for WooCommerce PRO to allow Ticket Per Order, Assign to different Users and Automate the Process](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")**
 
 = BACKEND DETAILED FEATURES  =
@@ -75,17 +74,13 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 * In the Backend Tickets table list is filled with various important information such as, assignee name, priority, subject, Order number (if ticket referes to order)
 * Take advantage of **various ticket specific placeholders** on your Email Template to customer or assignee for your notification system
 
-
-
 **[GET PRO VERSION HERE](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")**
-
 
 == Installation ==
 
 1. Upload the WordPress ticket system plugin files to the `/wp-content/plugins` directory and unzip, or install the plugin through the WordPress plugins screen directly.
 2. Activate the WordPress ticket system plugin through the 'Plugins' screen in WordPress
 3. Use the Tickets wp menu tab
-
 
 == Frequently Asked Questions ==
 
@@ -100,7 +95,6 @@ Yes of course, you just need to enable it in the plugin's settings page.
 
 = Will the customer receive Email notification when a ticket is submitted? =
 Yes of course, you just need to enable it in the plugin's settings page.
-
 
 = Can I assign the ticket to other User ? =
 This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")
@@ -117,7 +111,6 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 2. Backend Ticket Edit Screen
 3. Frontend use Support Ticket System for WooCommerce from My Account section - add a ticket
 4. Frontend use Support Ticket System for WooCommerce from My Account section - respond to ticket
-
 
 == Changelog ==
 

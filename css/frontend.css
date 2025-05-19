@@ -1,3 +1,9 @@
+/**
+ * Helpdesk Support Ticket System for WooCommerce - Frontend CSS
+ *
+ * @author  WPFactory
+ */
+
 /* === Ajaxify === */
 .stswproaccordion.loading > * {
     opacity:0.2;

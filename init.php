@@ -1,4 +1,9 @@
 <?php
+/**
+ * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInit Class
+ *
+ * @author  WPFactory
+ */
 
 defined( 'ABSPATH' ) || exit;
 
