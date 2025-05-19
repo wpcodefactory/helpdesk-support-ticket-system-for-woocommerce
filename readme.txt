@@ -115,6 +115,7 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 == Changelog ==
 
 = 2.0.0 - 19/05/2025 =
+* Dev - "Recommendations" added.
 * Dev - Code refactoring and cleanup.
 * WC tested up to: 9.8.
 * Tested up to: 6.8.

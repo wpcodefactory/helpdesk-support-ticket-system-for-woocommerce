@@ -123,6 +123,9 @@ final class WPFactory_WC_STS {
 			array( $this, 'action_links' )
 		);
 
+		// "Recommendations" page
+		add_action( 'init', array( $this, 'add_cross_selling_library' ) );
+
 	}
 
 	/**
@@ -147,6 +150,24 @@ final class WPFactory_WC_STS {
 		'</a>';
 
 		return array_merge( $custom_links, $links );
+	}
+
+	/**
+	 * add_cross_selling_library.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	function add_cross_selling_library() {
+
+		if ( ! class_exists( '\WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling' ) ) {
+			return;
+		}
+
+		$cross_selling = new \WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling();
+		$cross_selling->setup( array( 'plugin_file_path' => WPFACTORY_WC_STS_FILE ) );
+		$cross_selling->init();
+
 	}
 
 	/**
