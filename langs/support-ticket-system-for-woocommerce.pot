@@ -1,0 +1,510 @@
+# Copyright (C) 2025 extendWP
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.0.0-dev\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/support-ticket-system-for-woocommerce\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-05-19T09:52:46+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: support-ticket-system-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: support-ticket-system-for-woocommerce.php
+msgid "Helpdesk Support Ticket System for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: support-ticket-system-for-woocommerce.php
+msgid "https://extend-wp.com/support-ticket-system-for-woocommerce"
+msgstr ""
+
+#. Description of the plugin
+#: support-ticket-system-for-woocommerce.php
+msgid "WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system"
+msgstr ""
+
+#. Author of the plugin
+#: support-ticket-system-for-woocommerce.php
+msgid "extendWP"
+msgstr ""
+
+#. Author URI of the plugin
+#: support-ticket-system-for-woocommerce.php
+msgid "https://extend-wp.com"
+msgstr ""
+
+#: includes.php:168
+#: includes.php:180
+#: includes.php:525
+#: includes.php:628
+#: includes.php:1161
+msgid "Tickets"
+msgstr ""
+
+#: includes.php:169
+msgid "Ticket"
+msgstr ""
+
+#: includes.php:170
+msgid "Search Tickets"
+msgstr ""
+
+#: includes.php:171
+msgid "All Tickets"
+msgstr ""
+
+#: includes.php:172
+msgid "Parent Ticket"
+msgstr ""
+
+#: includes.php:173
+msgid "Parent Ticket:"
+msgstr ""
+
+#: includes.php:174
+msgid "Edit Ticket"
+msgstr ""
+
+#: includes.php:175
+msgid "Update Ticket"
+msgstr ""
+
+#: includes.php:176
+msgid "Add New Ticket"
+msgstr ""
+
+#: includes.php:177
+#: includes.php:179
+msgid "New Ticket"
+msgstr ""
+
+#: includes.php:178
+msgid "New Ticket Name"
+msgstr ""
+
+#: includes.php:181
+msgid "No Tickets found"
+msgstr ""
+
+#: includes.php:184
+msgid "Adding and editing my Tickets"
+msgstr ""
+
+#: includes.php:209
+msgid "All Status"
+msgstr ""
+
+#: includes.php:210
+msgid "Parent Status"
+msgstr ""
+
+#: includes.php:211
+msgid "Parent Status:"
+msgstr ""
+
+#: includes.php:212
+msgid "Edit Status"
+msgstr ""
+
+#: includes.php:213
+msgid "Update Status"
+msgstr ""
+
+#: includes.php:214
+msgid "Add New Status"
+msgstr ""
+
+#: includes.php:215
+msgid "New Status Name"
+msgstr ""
+
+#: includes.php:216
+msgid "No Status found."
+msgstr ""
+
+#: includes.php:253
+msgid "Ticket Content"
+msgstr ""
+
+#: includes.php:254
+#: includes.php:741
+msgid "Responses"
+msgstr ""
+
+#: includes.php:255
+msgid "Ticket Info"
+msgstr ""
+
+#: includes.php:256
+msgid "Assign to User"
+msgstr ""
+
+#: includes.php:257
+msgid "New Response"
+msgstr ""
+
+#: includes.php:264
+#: includes.php:273
+#: includes.php:298
+#: includes.php:332
+#: includes.php:351
+msgid "Pro Version"
+msgstr ""
+
+#: includes.php:290
+msgid "Issue"
+msgstr ""
+
+#: includes.php:291
+#: includes.php:320
+msgid "Attachments"
+msgstr ""
+
+#: includes.php:317
+#: includes.php:513
+#: includes.php:744
+msgid "Date"
+msgstr ""
+
+#: includes.php:318
+msgid "Who Sent It"
+msgstr ""
+
+#: includes.php:319
+#: includes.php:822
+msgid "Message"
+msgstr ""
+
+#: includes.php:321
+msgid "Action"
+msgstr ""
+
+#: includes.php:339
+msgid "No responses yet"
+msgstr ""
+
+#: includes.php:450
+#: includes.php:516
+msgid "Order"
+msgstr ""
+
+#: includes.php:451
+#: includes.php:511
+msgid "User"
+msgstr ""
+
+#: includes.php:452
+#: includes.php:517
+msgid "Assignee"
+msgstr ""
+
+#: includes.php:453
+#: includes.php:512
+msgid "Last Response"
+msgstr ""
+
+#: includes.php:454
+#: includes.php:515
+msgid "Priority"
+msgstr ""
+
+#: includes.php:466
+#: includes.php:478
+msgid "Pro "
+msgstr ""
+
+#: includes.php:509
+#: includes.php:723
+#: includes.php:814
+msgid "Title"
+msgstr ""
+
+#: includes.php:510
+msgid "Status"
+msgstr ""
+
+#: includes.php:514
+#: includes.php:527
+msgid "Subject"
+msgstr ""
+
+#: includes.php:526
+msgid "Priorities"
+msgstr ""
+
+#: includes.php:528
+#: support-ticket-system-for-woocommerce.php:222
+msgid "Settings"
+msgstr ""
+
+#: includes.php:538
+msgid "ALL"
+msgstr ""
+
+#: includes.php:547
+msgid "OPEN"
+msgstr ""
+
+#: includes.php:556
+msgid "IN PROGRESS"
+msgstr ""
+
+#: includes.php:610
+msgid "Get Help"
+msgstr ""
+
+#: includes.php:704
+msgid "TICKETS"
+msgstr ""
+
+#: includes.php:745
+msgid "Who Responded"
+msgstr ""
+
+#: includes.php:746
+msgid "Content"
+msgstr ""
+
+#: includes.php:781
+msgid "Add a response"
+msgstr ""
+
+#: includes.php:792
+#: includes.php:831
+msgid "Send"
+msgstr ""
+
+#: includes.php:804
+msgid " No Tickets found"
+msgstr ""
+
+#: includes.php:807
+msgid "ADD NEW TICKET"
+msgstr ""
+
+#: includes.php:855
+msgid "Did not save because your submission is invalid..."
+msgstr ""
+
+#: includes.php:917
+msgid "Did not save because your submission has issues"
+msgstr ""
+
+#: includes.php:923
+msgid "Please enter a proper title. Titles must be at least 3 characters long."
+msgstr ""
+
+#: includes.php:927
+msgid "Please enter content more than 1 characters in length"
+msgstr ""
+
+#: includes.php:984
+#: includes.php:998
+msgid "New Ticket to "
+msgstr ""
+
+#: includes.php:986
+#: includes.php:1004
+#: includes.php:1023
+#: includes.php:1039
+#: includes.php:1092
+#: includes.php:1100
+msgid "Check it Here"
+msgstr ""
+
+#: includes.php:1020
+#: includes.php:1086
+msgid "New Response to ticket #"
+msgstr ""
+
+#. Translators: %s: Taxonomy name.
+#: includes.php:1139
+msgid "Show All %s"
+msgstr ""
+
+#: init.php:87
+#: init.php:195
+msgid "Get more plugins by extendWP"
+msgstr ""
+
+#: init.php:98
+msgid "Use Ticket System in any page with the shortcode [stsw_user_tickets]"
+msgstr ""
+
+#: init.php:99
+msgid "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend"
+msgstr ""
+
+#: init.php:115
+msgid "General"
+msgstr ""
+
+#: init.php:116
+msgid "Notifications"
+msgstr ""
+
+#: init.php:130
+msgid "Available placeholders for your Emails:"
+msgstr ""
+
+#: init.php:132
+msgid "in PRO Version"
+msgstr ""
+
+#: init.php:206
+msgid "Rename Tab Link in My Account Page for Tickets"
+msgstr ""
+
+#: init.php:209
+msgid "Enable Attachments to Ticket"
+msgstr ""
+
+#: init.php:212
+msgid "Allowed Attachments File Types"
+msgstr ""
+
+#: init.php:215
+msgid "Max File Size "
+msgstr ""
+
+#: init.php:218
+msgid "Allowed Number of Attachments "
+msgstr ""
+
+#: init.php:221
+msgid "Enable Priority Field to Ticket Creation"
+msgstr ""
+
+#: init.php:225
+msgid "Rename Button on Orders Table in My Account Page for Tickets"
+msgstr ""
+
+#: init.php:228
+msgid "Show only Open in Frontend"
+msgstr ""
+
+#: init.php:231
+msgid "Default User Role for Ticket Assignment"
+msgstr ""
+
+#: init.php:234
+msgid "Default Assignee"
+msgstr ""
+
+#: init.php:237
+msgid "Text to display once Ticket is saved"
+msgstr ""
+
+#: init.php:240
+msgid "Text to display once Response is saved"
+msgstr ""
+
+#: init.php:244
+msgid "Notify Assignee by Email"
+msgstr ""
+
+#: init.php:248
+msgid "Notify Admin by Email"
+msgstr ""
+
+#: init.php:251
+msgid "Admin Address"
+msgstr ""
+
+#: init.php:254
+msgid "Notify Customer by Email"
+msgstr ""
+
+#: init.php:257
+msgid "Email Subject sent to Assignee"
+msgstr ""
+
+#: init.php:260
+msgid "Email Content sent to Assignee"
+msgstr ""
+
+#: init.php:263
+msgid "Email Subject sent to Customer"
+msgstr ""
+
+#: init.php:265
+msgid "Email Content sent to Customer"
+msgstr ""
+
+#: init.php:392
+msgid "Pro Vesion Only - html enabled"
+msgstr ""
+
+#: init.php:427
+msgid "Extensions allowed - Pro Version"
+msgstr ""
+
+#: init.php:432
+msgid "Files size - Pro Version"
+msgstr ""
+
+#: init.php:437
+msgid "Allowed N.Files  - Pro Version "
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:144
+msgid "Go PRO and get more important features!"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:145
+msgid "Enable Attachments on Ticket Submission"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:146
+msgid "Choose File Size, Number and Type for Upload"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:147
+msgid "Enable Ticket Priorities for Better Management"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:148
+msgid "Assign Ticket to Different Users"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:149
+msgid "Private Notes that customer cannot view "
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:150
+msgid "Add Ticket Subject and Automate Ticket Assignment"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:151
+msgid "Customize your Email Notifications "
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:152
+msgid "Useful Placeholders for your Notification Template"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:153
+msgid ".. and a lot more!"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:154
+msgid "GET IT HERE"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:218
+msgid "Dashboard"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:223
+msgid "Go PRO"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:231
+msgid "Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system."
+msgstr ""

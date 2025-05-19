@@ -1133,7 +1133,13 @@ class STSWooCommerceInc{
 
 			// Display filter HTML
 			echo "<select name='".esc_attr( $taxonomy_slug )."' id='".esc_attr( $taxonomy_slug )."' class='postform'>";
-			echo '<option value="">' . sprintf( esc_html__( 'Show All %s', 'support-ticket-system-for-woocommerce' ), esc_attr( $taxonomy_name ) ) . '</option>';
+			echo '<option value="">' .
+				sprintf(
+					/* Translators: %s: Taxonomy name. */
+					esc_html__( 'Show All %s', 'support-ticket-system-for-woocommerce' ),
+					esc_attr( $taxonomy_name )
+				) .
+			'</option>';
 			foreach ( $terms as $term ) {
 				printf(
 					'<option value="%1$s" %2$s>%3$s (%4$s)</option>',
