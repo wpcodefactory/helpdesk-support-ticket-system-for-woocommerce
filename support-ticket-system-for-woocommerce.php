@@ -107,27 +107,29 @@ class STSWooCommerce extends STSWooCommerceInit {
 		/**
 		 * notification.
 		 *
+		 * @version 2.0.0
+		 *
 		 * @todo    (v2.0.0) `toplevel_page_support-ticket-system-woocommerce`
 		 */
 		public function notification(){
 
 			$screen = get_current_screen();
-			//var_dump( $screen );
-			if ( 'toplevel_page_support-ticket-system-woocommerce'  !== $screen->base )
-			return;
+			if ( 'toplevel_page_support-ticket-system-woocommerce' !== $screen->base ) {
+				return;
+			}
 
 			/* Check transient, if available display notice */
 			if( get_transient( $this->plugin."_notification" ) ){
 				?>
 				<div class="updated notice  stsWooCommerce_notification">
 					<a href="#" class='dismiss' style='float:right;padding:4px' >close</a>
-					<h3><?php esc_html_e( "Add your Email below & get ", 'imue' ); ?><strong style='color:#00a32a'>10%</strong><?php esc_html_e( " in our PRO plugins! ", 'imue' ); ?></h3>
+					<h3><?php esc_html_e( "Add your Email below & get ", 'support-ticket-system-for-woocommerce' ); ?><strong style='color:#00a32a'>10%</strong><?php esc_html_e( " in our PRO plugins! ", 'support-ticket-system-for-woocommerce' ); ?></h3>
 					<form method='post' id='stsWooCommerce_signup'>
 						<p>
 						<input required type='email' name='woopei_email' />
 						<input required type='hidden' name='product' value='2829' />
-						<input type='submit' class='button button-primary' name='submit' value='<?php esc_html_e("Sign up", "imue" ); ?>' />
-						<i><?php esc_html_e( "By adding your email you will be able to use your email as coupon to a future purchase at ", 'imue' ); ?><a href='https://extend-wp.com' target='_blank' >extend-wp.com</a></i>
+						<input type='submit' class='button button-primary' name='submit' value='<?php esc_html_e("Sign up", "support-ticket-system-for-woocommerce" ); ?>' />
+						<i><?php esc_html_e( "By adding your email you will be able to use your email as coupon to a future purchase at ", 'support-ticket-system-for-woocommerce' ); ?><a href='https://extend-wp.com' target='_blank' >extend-wp.com</a></i>
 						</p>
 
 					</form>
