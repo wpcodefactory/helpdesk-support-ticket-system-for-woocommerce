@@ -538,38 +538,38 @@ class STSWooCommerceInc {
 
 			add_submenu_page(
 				'support-ticket-system-woocommerce',
-				esc_html__( "Tickets",'support-ticket-system-for-woocommerce' ),
-				esc_html__( "Tickets",'support-ticket-system-for-woocommerce' ),
-				'manage_options',
+				__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+				__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
 				'edit.php?post_type=stsw_tickets',
 				NULL
 			);
 
 			add_submenu_page(
 				'support-ticket-system-woocommerce',
-				esc_html__( "Priorities",'support-ticket-system-for-woocommerce' ),
-				esc_html__( "Priorities",'support-ticket-system-for-woocommerce' ),
-				'manage_options',
+				__( 'Priorities', 'support-ticket-system-for-woocommerce' ),
+				__( 'Priorities', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
 				'#',
 				NULL
 			);
 
 			add_submenu_page(
 				'support-ticket-system-woocommerce',
-				esc_html__( "Subject",'support-ticket-system-for-woocommerce' ),
-				esc_html__( "Subject",'support-ticket-system-for-woocommerce' ),
-				'manage_options',
+				__( 'Subject', 'support-ticket-system-for-woocommerce' ),
+				__( 'Subject', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
 				'#',
 				NULL
 			);
 
 			add_submenu_page(
 				'support-ticket-system-woocommerce',
-				esc_html__( "Settings",'support-ticket-system-for-woocommerce' ),
-				esc_html__( "Settings",'support-ticket-system-for-woocommerce' ),
-				'manage_options',
-				esc_url( admin_url( "admin.php?page=support-ticket-system-woocommerce" ) . '&tab=settings' ),
-				array($this, 'init')
+				__( 'Settings', 'support-ticket-system-for-woocommerce' ),
+				__( 'Settings', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
+				admin_url( 'admin.php?page=support-ticket-system-woocommerce&tab=settings' ),
+				array( $this, 'init' )
 			);
 
 		}
