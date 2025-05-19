@@ -173,39 +173,39 @@ class STSWooCommerceInc {
 		  register_post_type( 'stsw_tickets',
 			array(
 			  'labels' => array(
-				'name' => esc_html__( 'Tickets' ,'support-ticket-system-for-woocommerce' ),
-				'singular_name' => esc_html__( 'Ticket','support-ticket-system-for-woocommerce' ),
-				'search_items' =>  esc_html__( 'Search Tickets' ,'support-ticket-system-for-woocommerce' ),
-				'all_items' => esc_html__( 'All Tickets' ,'support-ticket-system-for-woocommerce' ),
-				'parent_item' => esc_html__( 'Parent Ticket','support-ticket-system-for-woocommerce' ),
-				'parent_item_colon' => esc_html__( 'Parent Ticket:','support-ticket-system-for-woocommerce' ),
-				'edit_item' => esc_html__( 'Edit Ticket','support-ticket-system-for-woocommerce' ),
-				'update_item' => esc_html__( 'Update Ticket' ,'support-ticket-system-for-woocommerce' ),
-				'add_new_item' => esc_html__( 'Add New Ticket' ,'support-ticket-system-for-woocommerce' ),
+				'name'               => esc_html__( 'Tickets' ,'support-ticket-system-for-woocommerce' ),
+				'singular_name'      => esc_html__( 'Ticket','support-ticket-system-for-woocommerce' ),
+				'search_items'       => esc_html__( 'Search Tickets' ,'support-ticket-system-for-woocommerce' ),
+				'all_items'          => esc_html__( 'All Tickets' ,'support-ticket-system-for-woocommerce' ),
+				'parent_item'        => esc_html__( 'Parent Ticket','support-ticket-system-for-woocommerce' ),
+				'parent_item_colon'  => esc_html__( 'Parent Ticket:','support-ticket-system-for-woocommerce' ),
+				'edit_item'          => esc_html__( 'Edit Ticket','support-ticket-system-for-woocommerce' ),
+				'update_item'        => esc_html__( 'Update Ticket' ,'support-ticket-system-for-woocommerce' ),
+				'add_new_item'       => esc_html__( 'Add New Ticket' ,'support-ticket-system-for-woocommerce' ),
 				'add_new'            => esc_html__( 'New Ticket','support-ticket-system-for-woocommerce' ),
-				'new_item_name' => esc_html__( 'New Ticket Name','support-ticket-system-for-woocommerce' ),
+				'new_item_name'      => esc_html__( 'New Ticket Name','support-ticket-system-for-woocommerce' ),
 				'new_item'           => esc_html__( 'New Ticket','support-ticket-system-for-woocommerce' ),
-				'menu_name' => esc_html__( 'Tickets','support-ticket-system-for-woocommerce' )	,
-				'not_found' => esc_html__('No Tickets found','support-ticket-system-for-woocommerce' ),
+				'menu_name'          => esc_html__( 'Tickets','support-ticket-system-for-woocommerce' )	,
+				'not_found'          => esc_html__( 'No Tickets found','support-ticket-system-for-woocommerce' ),
 
 			  ),
-			'description' => esc_html__('Adding and editing my Tickets','support-ticket-system-for-woocommerce' ),
-			'menu_icon'   => 'dashicons-calendar',
-			'supports' => array( 'title'),
-			'show_in_rest'       => true,
-			'rest_base'          => 'stsw_tickets',
+			'description'           => esc_html__('Adding and editing my Tickets','support-ticket-system-for-woocommerce' ),
+			'menu_icon'             => 'dashicons-calendar',
+			'supports'              => array( 'title'),
+			'show_in_rest'          => true,
+			'rest_base'             => 'stsw_tickets',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
-			'capability_type' => 'page',
-			'hierarchical' => false,
-			'menu_position'      => null,
-			'public' => false,  // it's not public, it shouldn't have it's own permalink, and so on
-			'publicly_queryable' => true,  // you should be able to query it
-			'show_ui' => true,  // you should be able to edit it in wp-admin
-			'show_in_menu'       => false,
-			'exclude_from_search' => true,  // you should exclude it from search results
-			'show_in_nav_menus' => false,  // you shouldn't be able to add it to menus
-			'has_archive' => false,  // it shouldn't have archive page
-			'rewrite' => false,  // it shouldn't have rewrite rules
+			'capability_type'       => 'page',
+			'hierarchical'          => false,
+			'menu_position'         => null,
+			'public'                => false,  // it's not public, it shouldn't have it's own permalink, and so on
+			'publicly_queryable'    => true,  // you should be able to query it
+			'show_ui'               => true,  // you should be able to edit it in wp-admin
+			'show_in_menu'          => false,
+			'exclude_from_search'   => true,  // you should exclude it from search results
+			'show_in_nav_menus'     => false,  // you shouldn't be able to add it to menus
+			'has_archive'           => false,  // it shouldn't have archive page
+			'rewrite'               => false,  // it shouldn't have rewrite rules
 			)
 		  );
 
@@ -501,7 +501,7 @@ class STSWooCommerceInc {
 		}
 
 		public function column_order($columns) {
-			// reorder colums
+			// reorder columns
 			unset($columns['title']);
 			unset($columns['date']);
 			unset($columns['Assignee']);

@@ -164,6 +164,11 @@ class STSWooCommerceInit {
 			}
 	}
 
+	/**
+	 * adminTabs.
+	 *
+	 * @version 2.0.0
+	 */
 	public function adminTabs(){ // the tabs in tickets screen
 			$this->tab = array( 'general'=>'Dashboard','all'=>'Tickets','settings'=>'Settings','priorities'=>'Priorities','subject'=>'Subject','more'=>"Go PRO");
 			if( isset( $_GET['tab'] ) ){
@@ -188,7 +193,7 @@ class STSWooCommerceInit {
 					echo "<a class='nav-tab".esc_attr( $class )." proVersion' href='#'>".esc_attr( $name )."</a>";
 				}
 				else{
-					echo "<a class='nav-tab".esc_attr( $class )." ' href='?page=".esc_attr( $this->slug )."&tab=".esc_attr( $tab )."'>". wp_kses($name, $this->mailIt_allowed_html ) ."</a>";
+					echo "<a class='nav-tab".esc_attr( $class )." ' href='?page=support-ticket-system-woocommerce&tab=".esc_attr( $tab )."'>". wp_kses($name, $this->mailIt_allowed_html ) ."</a>";
 				}
 
 			}
