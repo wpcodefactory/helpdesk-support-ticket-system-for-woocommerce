@@ -196,7 +196,7 @@ final class WPFactory_WC_STS {
 			__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
 			__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
 			'manage_woocommerce',
-			admin_url( 'admin.php?page=support-ticket-system-woocommerce' ),
+			'support-ticket-system-woocommerce',
 			array( $this, 'output_settings' ),
 		);
 
