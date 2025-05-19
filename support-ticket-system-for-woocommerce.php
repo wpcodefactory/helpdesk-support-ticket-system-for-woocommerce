@@ -75,7 +75,7 @@ class STSWooCommerce extends STSWooCommerceInit {
 
 		add_action('admin_enqueue_scripts', array($this, 'BackEndScripts') );
 		add_filter('widget_text', 'do_shortcode');
-		add_action('admin_menu', array($this, 'SettingsPage') );
+
 		add_action( 'wpfactory_wc_sts_output_settings', array( $this, 'init' ) );
 
 		add_action("admin_footer", array($this,"proModal" ) );
@@ -233,11 +233,6 @@ class STSWooCommerce extends STSWooCommerceInit {
 		wp_localize_script( esc_html( $this->plugin )."jsfront", esc_html( $this->plugin ) , $this->localizeFrontend );
 		wp_enqueue_script( esc_html( $this->plugin )."jsfront");
 
-	}
-
-	public function SettingsPage(){
-		add_menu_page( esc_html( $this->shortName ), esc_html( $this->shortName ) , 'administrator', esc_html( $this->slug ), array($this, 'init') , esc_html( $this->dashicon ), esc_html( $this->menuPosition ) );
-		add_submenu_page( esc_html( $this->slug ), esc_html__("Dashboard",'support-ticket-system-for-woocommerce' ), esc_html__("Dashboard",'support-ticket-system-for-woocommerce' ), 'manage_options', esc_url( admin_url( "admin.php?page=".esc_html( $this->slug ) ) ), array($this, 'init') );
 	}
 
 	public function init(){

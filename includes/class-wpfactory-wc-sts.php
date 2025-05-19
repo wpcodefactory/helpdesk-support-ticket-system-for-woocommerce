@@ -181,6 +181,25 @@ final class WPFactory_WC_STS {
 	 */
 	function add_settings() {
 
+		add_menu_page(
+			__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
+			__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
+			'manage_woocommerce',
+			'support-ticket-system-woocommerce',
+			array( $this, 'output_settings' ),
+			'dashicons-tag',
+			50
+		);
+
+		add_submenu_page(
+			'support-ticket-system-woocommerce',
+			__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
+			__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
+			'manage_woocommerce',
+			admin_url( 'admin.php?page=support-ticket-system-woocommerce' ),
+			array( $this, 'output_settings' ),
+		);
+
 		if ( ! class_exists( 'WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu' ) ) {
 			return;
 		}
