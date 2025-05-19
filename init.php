@@ -1,8 +1,8 @@
 <?php
 
- if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
- class STSWooCommerceInit{
+class STSWooCommerceInit {
 
 	public $tab;
 	public $activeTab;
@@ -506,4 +506,4 @@
 		}
 	}
 
- }
+}

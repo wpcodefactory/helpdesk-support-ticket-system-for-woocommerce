@@ -1,22 +1,27 @@
 <?php
 /*
  * Plugin Name: Helpdesk Support Ticket System for WooCommerce
- * Description: WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system
+ * Description: WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system.
  * Plugin URI: https://extend-wp.com/support-ticket-system-for-woocommerce
  * Version: 2.0.0-dev
- * Author: extendWP
+ * Author: WPFactory
+ * Author URI: https://wpfactory.com
  * Text Domain: support-ticket-system-for-woocommerce
  * Domain Path: /langs
- * Author URI: https://extend-wp.com
  * WC requires at least: 2.2
  * WC tested up to: 9.8
- *
- * License: GPL2
+ * Requires Plugins: woocommerce
+ * License: GPLv2 or later
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Created On: 09-10-2019
  * Updated On: 19-05-2025
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
+
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.0.0-dev-20250519-0957' );
+
+defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ );
 
 include_once( plugin_dir_path(__FILE__) ."/init.php");
 include_once( plugin_dir_path(__FILE__) ."/includes.php");

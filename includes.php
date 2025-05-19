@@ -1,7 +1,7 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
-class STSWooCommerceInc{
+class STSWooCommerceInc {
 
 	public $plugin = 'STSWooCommerce';
 	public $name = 'Support Ticket System for WooCommerce';
