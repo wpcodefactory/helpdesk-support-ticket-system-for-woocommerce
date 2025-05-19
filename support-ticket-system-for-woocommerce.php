@@ -90,9 +90,9 @@ class STSWooCommerce extends STSWooCommerceInit {
 		add_filter('codecabin_deactivate_feedback_form_plugins', function($plugins) {
 
 			$plugins[] = (object)array(
-					'slug'		=> 'support-ticket-system-woocommerce',
-					'version'	=> '1.5'
-				);
+				'slug'    => 'support-ticket-system-woocommerce',
+				'version' => '1.5',
+			);
 
 			return $plugins;
 
@@ -139,9 +139,7 @@ class STSWooCommerce extends STSWooCommerceInit {
 	}
 
 	public function push_not(){
-
 		delete_transient( $this->plugin."_notification" );
-
 	}
 
 	public function notification_hook() {
@@ -204,15 +202,15 @@ class STSWooCommerce extends STSWooCommerceInit {
 
 		wp_enqueue_script( esc_html( $this->plugin )."adminJs", plugins_url( "/js/backend.js" , __FILE__ ) , array('jquery','jquery-ui-tabs','jquery-ui-accordion',) , null, true);
 
-			$this->localizeBackend = array(
-					'plugin_url' => esc_url( plugins_url( '', __FILE__ ) ),
-					'ajaxurl' => esc_url( admin_url( 'admin-ajax.php' ) ),
-					'siteUrl'	=>	esc_url( site_url() ),
-					'plugin_wrapper'=> esc_html( $this->plugin ),
-			);
+		$this->localizeBackend = array(
+				'plugin_url'    => esc_url( plugins_url( '', __FILE__ ) ),
+				'ajaxurl'       => esc_url( admin_url( 'admin-ajax.php' ) ),
+				'siteUrl'       => esc_url( site_url() ),
+				'plugin_wrapper'=> esc_html( $this->plugin ),
+		);
 
-			wp_localize_script( esc_html( $this->plugin )."adminJs", esc_html( $this->plugin ) , $this->localizeBackend );
-			wp_enqueue_script( esc_html( $this->plugin )."adminJs");
+		wp_localize_script( esc_html( $this->plugin )."adminJs", esc_html( $this->plugin ) , $this->localizeBackend );
+		wp_enqueue_script( esc_html( $this->plugin )."adminJs");
 	}
 
 	public function FrontEndScripts(){
@@ -227,13 +225,13 @@ class STSWooCommerce extends STSWooCommerceInit {
 		wp_enqueue_script( esc_html( $this->plugin )."jsfront", esc_url( plugins_url( "/js/frontend.js", __FILE__ ) ) , array('jquery') , null, true);
 
 		$this->localizeFrontend = array(
-			'plugin_url' => esc_url( plugins_url( '', __FILE__ ) ),
-			'ajax_url' => esc_url( admin_url( 'admin-ajax.php' ) ),
-			'siteUrl'	=>	esc_url( site_url() ),
+			'plugin_url'    => esc_url( plugins_url( '', __FILE__ ) ),
+			'ajax_url'      => esc_url( admin_url( 'admin-ajax.php' ) ),
+			'siteUrl'       => esc_url( site_url() ),
 			'plugin_wrapper'=> esc_html( $this->plugin ),
 		);
-			wp_localize_script( esc_html( $this->plugin )."jsfront", esc_html( $this->plugin ) , $this->localizeFrontend );
-			wp_enqueue_script( esc_html( $this->plugin )."jsfront");
+		wp_localize_script( esc_html( $this->plugin )."jsfront", esc_html( $this->plugin ) , $this->localizeFrontend );
+		wp_enqueue_script( esc_html( $this->plugin )."jsfront");
 
 	}
 
@@ -243,7 +241,6 @@ class STSWooCommerce extends STSWooCommerceInit {
 	}
 
 	public function init(){
-
 		print "<div class='".esc_html( $this->plugin )."'>";
 				esc_html( $this->adminHeader() );
 				print esc_html__('Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system.','support-ticket-system-for-woocommerce' );
