@@ -13,17 +13,17 @@ class STSWooCommerceInit {
 
 	public $tab;
 	public $activeTab;
-	public $hideClosed = '';
-	public $textforTicketSave ='Saved your ticket successfully! We will come back to you soon';
-	public $textforResponseSave ='Saved your response successfully! We will come back to you soon';
-	public $renameAccountTabLink = '';
+	public $hideClosed            = '';
+	public $textforTicketSave     ='Saved your ticket successfully! We will come back to you soon';
+	public $textforResponseSave   ='Saved your response successfully! We will come back to you soon';
+	public $renameAccountTabLink  = '';
 	public $renameOrderButtonLink = '';
-	public $mailToADmin = 'mailToADmin';
-	public $AdminEmailAddress = 'AdminEmailAddress';
-	public $mailToUser = 'mailToUser';
-	public $mailToCustomer='';
-	public $mailIt_contentToCust ='';
-	public $mailIt_subjectToCust ='';
+	public $mailToADmin           = 'mailToADmin';
+	public $AdminEmailAddress     = 'AdminEmailAddress';
+	public $mailToUser            = 'mailToUser';
+	public $mailToCustomer        = '';
+	public $mailIt_contentToCust  = '';
+	public $mailIt_subjectToCust  = '';
 
 	public $mailIt_allowed_html = array(
             'a' => array(
@@ -211,7 +211,7 @@ class STSWooCommerceInit {
 	}
 
 	public function adminPanels(){
-		// add settings for tickewt system
+		// add settings for ticket system
 		add_settings_section( esc_html( $this->plugin )."general", "", null, esc_html( $this->plugin )."general-options");
 		add_settings_section( esc_html( $this->plugin )."notifications", "", null, esc_html( $this->plugin )."notifications-options");
 
