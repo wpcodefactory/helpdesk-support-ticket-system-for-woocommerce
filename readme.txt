@@ -4,13 +4,13 @@ Donate link: https://extend-wp.com/support-ticket-system-woocommerce
 Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
 Requires at least: 3.0.1
 Requires PHP: 5.2.4
-Tested up to: 6.7.1
-Stable tag: trunk
+Tested up to: 6.8
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 WordPress ticket system	- Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system
- 
+
 == Description ==
 
 = Support ticket system for WooCommerce is WordPress ticket system that integrates with your eshop adding a helpdesk trouble ticketing system in your WordPress website. Your support will be well organized, better, faster and will look way more professional. =
@@ -19,10 +19,10 @@ The WordPress ticket system Plugin extends WooCommerce and creates a Tab and a n
 
 = How I can benefit from it  =
 
-Provide Better and Faster Support to your Customers, Keep Track and increase your Revenue 
+Provide Better and Faster Support to your Customers, Keep Track and increase your Revenue
 
 * Gain **trust** and look more **professional** to your customers adding an easy to use support ticket system
-* Provide better and **faster Support by Automating** the process - auto assign tickets in different users 
+* Provide better and **faster Support by Automating** the process - auto assign tickets in different users
 * Never lose track as **notifications via email** are also included for customer, assignee(**[PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")**) and eshop admin
 * **Stay organized** in your support as you keep track in wordpress backend and front end  - Handle Tickets from the frontend for Better  Management
 
@@ -65,7 +65,7 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 * **Tickets can be assigned to other Users in various ways**
 * Tickets Subject: Pre Define  subjects for the tickets to categorize tickets and manage them better
 * **Auto Assign** tickets to specific User based on the selected Subject
-* **Manage Support directly from the frontend for the assignees **- Users that are assigned a specific ticket and are other than Administrators, do not access backend for Ticket Management but directly via My account section, or from a dedicated page that admin can build using the shortcode [stsw_user_tickets] 
+* **Manage Support directly from the frontend for the assignees **- Users that are assigned a specific ticket and are other than Administrators, do not access backend for Ticket Management but directly via My account section, or from a dedicated page that admin can build using the shortcode [stsw_user_tickets]
 * Administrator can define a **default Assignee** for all tickets
 * Choose whether to also notify Assignee via Email once a ticket opens  or a new response is added
 * Write different Text for Email Notification for assignee and customer. This can work as a template as various placeholders can be added
@@ -74,7 +74,7 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 * You can define Define **number of Attachments** Allowed to be submitted with a ticket or response
 * You can enable Priority to be chosen By User or not
 * In the Backend Tickets table list is filled with various important information such as, assignee name, priority, subject, Order number (if ticket referes to order)
-* Take advantage of **various ticket specific placeholders** on your Email Template to customer or assignee for your notification system 
+* Take advantage of **various ticket specific placeholders** on your Email Template to customer or assignee for your notification system
 
 
 
@@ -107,7 +107,7 @@ Yes of course, you just need to enable it in the plugin's settings page.
 This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")
 
 = Can the user send me attachments for the issue? =
-This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO") 
+This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")
 
 = Can I exchange PRIVATE notes? =
 This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")
@@ -121,6 +121,10 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 
 
 == Changelog ==
+
+= 2.0.0 - 19/05/2025 =
+* WC tested up to: 9.8.
+* Tested up to: 6.8.
 
 = 1.5 =
 fix query bug on Tickets section in my account page
