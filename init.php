@@ -2,6 +2,8 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInit Class
  *
+ * @version 2.0.0
+ *
  * @author  WPFactory
  */
 
@@ -363,6 +365,11 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * AdminEmailAddress.
+	 *
+	 * @version 2.0.0
+	 */
 	public function AdminEmailAddress(){
 		if( isset($_REQUEST[$this->plugin.'AdminEmailAddress'] ) ){
 			$this->AdminEmailAddress =  sanitize_email( $_REQUEST[ esc_html( $this->plugin ).'AdminEmailAddress']);
@@ -370,7 +377,7 @@ class STSWooCommerceInit {
 			$this->AdminEmailAddress = get_option( esc_html( $this->plugin ).'AdminEmailAddress' );
 		}else $this->AdminEmailAddress = sanitize_email( get_bloginfo('admin_email') );
 		?>
-			<input type="text"  name="<?php print esc_attr( esc_html( $this->plugin ).'AdminEmailAddress' ); ?>" id="<?php print esc_attr( $this->plugin.'AdminEmailAddress' ); ?>" placeholder='<?php print esc_html__('Admin Email Address',$this->slug); ?>' value="<?php echo  esc_attr($this->AdminEmailAddress); ?>"  />
+			<input type="text"  name="<?php print esc_attr( esc_html( $this->plugin ).'AdminEmailAddress' ); ?>" id="<?php print esc_attr( $this->plugin.'AdminEmailAddress' ); ?>" placeholder='<?php print esc_html__( 'Admin Email Address', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo  esc_attr($this->AdminEmailAddress); ?>"  />
 		<?php
 	}
 
@@ -417,15 +424,20 @@ class STSWooCommerceInit {
 		echo wp_editor( apply_filters($this->textforResponseSave,$this->textforResponseSave), esc_html( $this->plugin ).'textforResponseSave', array("wpautop" => true, 'textarea_name' => esc_html( $this->plugin ).'textforResponseSave', 'textarea_rows' => '5','editor_height' => 125)  );
 	}
 
-
+	/**
+	 * mailIt_subjectToCust.
+	 *
+	 * @version 2.0.0
+	 */
 	public function mailIt_subjectToCust(){
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'mailIt_subjectToCust'] ) ){
 			$this->mailIt_subjectToCust =  sanitize_text_field( $_REQUEST[$this->plugin.'mailIt_subjectToCust']);
 		}else $this->mailIt_subjectToCust = get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' );
 		?>
-			<input type="text"  name="<?php print esc_attr( $this->plugin.'mailIt_subjectToCust' ); ?>" id="<?php print esc_attr( $this->plugin.'mailIt_subjectToCust' ); ?>" placeholder='<?php print esc_html__('Mail Subject',$this->slug); ?>' value="<?php echo  esc_attr($this->mailIt_subjectToCust); ?>"  />
+			<input type="text"  name="<?php print esc_attr( $this->plugin.'mailIt_subjectToCust' ); ?>" id="<?php print esc_attr( $this->plugin.'mailIt_subjectToCust' ); ?>" placeholder='<?php print esc_html__( 'Mail Subject', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo  esc_attr($this->mailIt_subjectToCust); ?>"  />
 		<?php
 	}
+
 	public function allowedExtensions(){
 
 		?>
