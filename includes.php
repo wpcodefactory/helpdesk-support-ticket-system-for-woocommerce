@@ -2,6 +2,8 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
+ * @version 2.0.0
+ *
  * @author  WPFactory
  */
 
@@ -11,7 +13,7 @@ class STSWooCommerceInc {
 
 	public $plugin = 'STSWooCommerce';
 	public $name = 'Support Ticket System for WooCommerce';
-	public $slug = 'support-ticket-system-for-woocommerce';
+	public $slug = 'support-ticket-system-woocommerce';
 	public $tableName = 'stsw_responses';
 	public $stswpro_table_db_version = '1.4';
 	public $mailIt_allowed_html = array(
