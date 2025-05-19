@@ -211,27 +211,27 @@ class STSWooCommerceInc {
 
 	//STATUS TAXONOMY
 	  $labels = array(
-		'name' => _x( 'Status', 'support-ticket-system-for-woocommerce' ),
-		'singular_name' => _x( 'Status', 'support-ticket-system-for-woocommerce' ),
-		'search_items' =>  esc_html__( 'Search Status' ),
-		'all_items' => esc_html__( 'All Status','support-ticket-system-for-woocommerce' ),
-		'parent_item' => esc_html__( 'Parent Status','support-ticket-system-for-woocommerce' ),
+		'name'              => _x( 'Status', 'support-ticket-system-for-woocommerce' ),
+		'singular_name'     => _x( 'Status', 'support-ticket-system-for-woocommerce' ),
+		'search_items'      => esc_html__( 'Search Status' ),
+		'all_items'         => esc_html__( 'All Status','support-ticket-system-for-woocommerce' ),
+		'parent_item'       => esc_html__( 'Parent Status','support-ticket-system-for-woocommerce' ),
 		'parent_item_colon' => esc_html__( 'Parent Status:','support-ticket-system-for-woocommerce' ),
-		'edit_item' => esc_html__( 'Edit Status','support-ticket-system-for-woocommerce' ),
-		'update_item' => esc_html__( 'Update Status','support-ticket-system-for-woocommerce' ),
-		'add_new_item' => esc_html__( 'Add New Status' ,'support-ticket-system-for-woocommerce' ),
-		'new_item_name' => esc_html__( 'New Status Name' ,'support-ticket-system-for-woocommerce' ),
-		'not_found'     => esc_html__( 'No Status found.','support-ticket-system-for-woocommerce' ),
-		'menu_name' => esc_html__( 'Status' ),
+		'edit_item'         => esc_html__( 'Edit Status','support-ticket-system-for-woocommerce' ),
+		'update_item'       => esc_html__( 'Update Status','support-ticket-system-for-woocommerce' ),
+		'add_new_item'      => esc_html__( 'Add New Status' ,'support-ticket-system-for-woocommerce' ),
+		'new_item_name'     => esc_html__( 'New Status Name' ,'support-ticket-system-for-woocommerce' ),
+		'not_found'         => esc_html__( 'No Status found.','support-ticket-system-for-woocommerce' ),
+		'menu_name'         => esc_html__( 'Status' ),
 	  );
 
 	  register_taxonomy('stsw_tickets_status',array('stsw_tickets'), array(
-		'hierarchical' => true,
-		'labels' => $labels,
-		'show_ui' => true,
+		'hierarchical'      => true,
+		'labels'            => $labels,
+		'show_ui'           => true,
 		'show_admin_column' => true,
-		'query_var' => true,
-		'rewrite' => array( 'slug' => 'stsw_tickets_status' ),
+		'query_var'         => true,
+		'rewrite'           => array( 'slug' => 'stsw_tickets_status' ),
 	  ));
 
 	}
@@ -242,7 +242,7 @@ class STSWooCommerceInc {
 		$args = array(
 			'post_type'      => array('stsw_tickets' ),
 			'posts_per_page' => -1,
-			'post_status'		 => 'publish'
+			'post_status'    => 'publish',
 		);
 
 		$loop = new WP_Query( $args );
@@ -514,15 +514,15 @@ class STSWooCommerceInc {
 			unset($columns['priority']);
 
 		   return array_merge ( $columns, array (
-			 'title' => esc_html__('Title','support-ticket-system-for-woocommerce' ),
+			 'title'                        => esc_html__('Title','support-ticket-system-for-woocommerce' ),
 			 'taxonomy-stsw_tickets_status' => esc_html__('Status','support-ticket-system-for-woocommerce' ),
-			 'User' => esc_html__('User','support-ticket-system-for-woocommerce' ),
-			 'Last Response' => esc_html__('Last Response','support-ticket-system-for-woocommerce' ),
-			 'date' => esc_html__('Date','support-ticket-system-for-woocommerce' ),
-			 'subject' => esc_html__('Subject','support-ticket-system-for-woocommerce' ),
-			 'priority' => esc_html__('Priority','support-ticket-system-for-woocommerce' ),
-			 'Order' => esc_html__('Order','support-ticket-system-for-woocommerce' ),
-			 'Assignee' => esc_html__('Assignee','support-ticket-system-for-woocommerce' ),
+			 'User'                         => esc_html__('User','support-ticket-system-for-woocommerce' ),
+			 'Last Response'                => esc_html__('Last Response','support-ticket-system-for-woocommerce' ),
+			 'date'                         => esc_html__('Date','support-ticket-system-for-woocommerce' ),
+			 'subject'                      => esc_html__('Subject','support-ticket-system-for-woocommerce' ),
+			 'priority'                     => esc_html__('Priority','support-ticket-system-for-woocommerce' ),
+			 'Order'                        => esc_html__('Order','support-ticket-system-for-woocommerce' ),
+			 'Assignee'                     => esc_html__('Assignee','support-ticket-system-for-woocommerce' ),
 
 		   ) );
 
