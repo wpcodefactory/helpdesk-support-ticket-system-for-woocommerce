@@ -13,7 +13,6 @@ class STSWooCommerceInc {
 
 	public $plugin                   = 'STSWooCommerce';
 	public $name                     = 'Support Ticket System for WooCommerce';
-	public $slug                     = 'support-ticket-system-woocommerce';
 	public $tableName                = 'stsw_responses';
 	public $stswpro_table_db_version = '1.4';
 	public $mailIt_allowed_html      = array(
@@ -528,12 +527,17 @@ class STSWooCommerceInc {
 
 		}
 
+		/**
+		 * menu_page.
+		 *
+		 * @version 2.0.0
+		 */
 		public function menu_page() {
 			//add submenu pages to supports tickets link
-			add_submenu_page( esc_html( $this->slug ), esc_html__( "Tickets",'support-ticket-system-for-woocommerce' ), esc_html__( "Tickets",'support-ticket-system-for-woocommerce' ), 'manage_options', 'edit.php?post_type=stsw_tickets', NULL );
-			add_submenu_page( esc_html( $this->slug ), esc_html__( "Priorities",'support-ticket-system-for-woocommerce' ), esc_html__( "Priorities",'support-ticket-system-for-woocommerce' ), 'manage_options', '#', NULL  );
-			add_submenu_page( esc_html( $this->slug ), esc_html__( "Subject",'support-ticket-system-for-woocommerce' ), esc_html__( "Subject",'support-ticket-system-for-woocommerce' ), 'manage_options', '#', NULL  );
-			add_submenu_page( esc_html( $this->slug ), esc_html__( "Settings",'support-ticket-system-for-woocommerce' ), esc_html__( "Settings",'support-ticket-system-for-woocommerce' ), 'manage_options', esc_url( admin_url( "admin.php?page=".$this->slug ) . '&tab=settings' ), array($this, 'init') );
+			add_submenu_page( 'support-ticket-system-woocommerce', esc_html__( "Tickets",'support-ticket-system-for-woocommerce' ), esc_html__( "Tickets",'support-ticket-system-for-woocommerce' ), 'manage_options', 'edit.php?post_type=stsw_tickets', NULL );
+			add_submenu_page( 'support-ticket-system-woocommerce', esc_html__( "Priorities",'support-ticket-system-for-woocommerce' ), esc_html__( "Priorities",'support-ticket-system-for-woocommerce' ), 'manage_options', '#', NULL  );
+			add_submenu_page( 'support-ticket-system-woocommerce', esc_html__( "Subject",'support-ticket-system-for-woocommerce' ), esc_html__( "Subject",'support-ticket-system-for-woocommerce' ), 'manage_options', '#', NULL  );
+			add_submenu_page( 'support-ticket-system-woocommerce', esc_html__( "Settings",'support-ticket-system-for-woocommerce' ), esc_html__( "Settings",'support-ticket-system-for-woocommerce' ), 'manage_options', esc_url( admin_url( "admin.php?page=support-ticket-system-woocommerce" ) . '&tab=settings' ), array($this, 'init') );
 		}
 
 		public function ticketsDashboard() {

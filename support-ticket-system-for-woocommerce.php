@@ -54,12 +54,7 @@ class STSWooCommerce extends STSWooCommerceInit {
 
 	public $plugin       = 'STSWooCommerce';
 	public $name         = 'Helpdesk Support Ticket System for WooCommerce';
-	public $shortName    = 'Support Tickets';
-	public $slug         = 'support-ticket-system-woocommerce';
-	public $dashicon     = 'dashicons-tag';
 	public $proUrl       = 'https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce';
-	public $menuPosition = '50';
-	public $description  = 'Support your Customers seamlessly with troubleshooting ticketing for WooCommerce';
 
 	public $localizeBackend;
 	public $localizeFrontend;
@@ -158,6 +153,11 @@ class STSWooCommerce extends STSWooCommerceInit {
 		}
 	}
 
+	/**
+	 * proModal.
+	 *
+	 * @version 2.0.0
+	 */
 	public function proModal(){ ?>
 		<div id="<?php print esc_html( $this->plugin ).'Modal'; ?>">
 		  <!-- Modal content -->
@@ -166,7 +166,7 @@ class STSWooCommerce extends STSWooCommerceInit {
 			<div class='<?php print esc_html( $this->plugin ); ?>clearfix'>
 				<div class='<?php print esc_html( $this->plugin ); ?>columns2'>
 					<center>
-						<img style='width:90%' src='<?php echo esc_url( plugins_url( 'images/'.esc_html( $this->slug ).'-pro.png', __FILE__ ) ); ?>' style='width:100%' />
+						<img style='width:90%' src='<?php echo esc_url( plugins_url( 'images/'.'support-ticket-system-woocommerce'.'-pro.png', __FILE__ ) ); ?>' style='width:100%' />
 					</center>
 				</div>
 
