@@ -76,6 +76,7 @@ class STSWooCommerce extends STSWooCommerceInit {
 		add_action('admin_enqueue_scripts', array($this, 'BackEndScripts') );
 		add_filter('widget_text', 'do_shortcode');
 		add_action('admin_menu', array($this, 'SettingsPage') );
+		add_action( 'wpfactory_wc_sts_output_settings', array( $this, 'init' ) );
 
 		add_action("admin_footer", array($this,"proModal" ) );
 
@@ -109,8 +110,6 @@ class STSWooCommerce extends STSWooCommerceInit {
 	 * notification.
 	 *
 	 * @version 2.0.0
-	 *
-	 * @todo    (v2.0.0) `toplevel_page_support-ticket-system-woocommerce`
 	 */
 	public function notification(){
 

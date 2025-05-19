@@ -126,6 +126,9 @@ final class WPFactory_WC_STS {
 		// "Recommendations" page
 		add_action( 'init', array( $this, 'add_cross_selling_library' ) );
 
+		// Settings
+		add_action( 'admin_menu', array( $this, 'add_settings' ), 11 );
+
 	}
 
 	/**
@@ -168,6 +171,42 @@ final class WPFactory_WC_STS {
 		$cross_selling->setup( array( 'plugin_file_path' => WPFACTORY_WC_STS_FILE ) );
 		$cross_selling->init();
 
+	}
+
+	/**
+	 * add_settings.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	function add_settings() {
+
+		if ( ! class_exists( 'WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu' ) ) {
+			return;
+		}
+
+		$admin_menu = WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu::get_instance();
+
+		add_submenu_page(
+			$admin_menu->get_menu_slug(),
+			__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
+			__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
+			'manage_woocommerce',
+			'support-ticket-system-woocommerce',
+			array( $this, 'output_settings' ),
+			30
+		);
+
+	}
+
+	/**
+	 * output_settings.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	function output_settings() {
+		do_action( 'wpfactory_wc_sts_output_settings' );
 	}
 
 	/**

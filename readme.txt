@@ -57,7 +57,7 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 = PRO WordPress ticket system Plugin Features =
 
 * Allow Users to submit **tickets for Specific Orders**
-* **Files can be atached** during the ticket or response to ticket submission
+* **Files can be attached** during the ticket or response to ticket submission
 * Tickets Priorities:  Predefine **ticket priorities** according to your business needs and manage better the Troubleshooting Process. By default once you install the plugin you get Low, Normal and High with specified color  - visible on ticket list. You can add as many as you want and define a color as well to be noticeable.
 * **Private Notes** that site users can exchange - hidden by the customers.
 * **Tickets can be assigned to other Users in various ways**
@@ -71,7 +71,7 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 * You can define **Attachments Allowed Max size** and **File Extension**
 * You can define Define **number of Attachments** Allowed to be submitted with a ticket or response
 * You can enable Priority to be chosen By User or not
-* In the Backend Tickets table list is filled with various important information such as, assignee name, priority, subject, Order number (if ticket referes to order)
+* In the Backend Tickets table list is filled with various important information such as, assignee name, priority, subject, Order number (if ticket refers to order)
 * Take advantage of **various ticket specific placeholders** on your Email Template to customer or assignee for your notification system
 
 **[GET PRO VERSION HERE](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")**
@@ -85,7 +85,7 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 == Frequently Asked Questions ==
 
 = I don't see the tickets dashboard in My Account Page - what to do? =
-In this case just flush your permalinks, go to Settins/Permalinks and press Save Changes.
+In this case just flush your permalinks, go to Settings/Permalinks and press Save Changes.
 
 = How to use the WordPress ticket system? =
 Use the shortcode [stsw_user_tickets] in any page you built or guide the users to their account tab
@@ -115,45 +115,32 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 == Changelog ==
 
 = 2.0.0 - 19/05/2025 =
+* Dev - Plugin settings copied to the "WPFactory" menu.
 * Dev - "Recommendations" added.
 * Dev - Code refactoring and cleanup.
 * WC tested up to: 9.8.
 * Tested up to: 6.8.
 
 = 1.5 =
-fix query bug on Tickets section in my account page
+* Fix query bug on Tickets section in my account page.
 
 = 1.4 =
-fix query bug on Tickets section in my account page
-fix who sent the ticket response when from admin in tickets edit screen
+* Fix query bug on Tickets section in my account page.
+* Fix who sent the ticket response when from admin in tickets edit screen.
 
 = 1.3 =
-fix css issues
+* Fix CSS issues.
 
 = 1.2 =
-Check woo hpos compoatibility
+* Check woo HPOS compatibility.
 
 = 1.1 =
-Check compatibility and fix localization
+* Check compatibility and fix localization.
 
 = 1.0 =
+* Initial release.
 
 == Upgrade Notice ==
 
-= 1.0 =
-
-= 1.1 =
-Check compatibility and fix localization
-
-= 1.2 =
-Check woo hpos compoatibility
-
-= 1.3 =
-fix css issues
-
-= 1.4 =
-fix query bug on Tickets section in my account page
-fix who sent the ticket response when from admin in tickets edit screen
-
 = 1.5 =
-fix query bug on Tickets section in my account page
+Fix query bug on Tickets section in my account page.
