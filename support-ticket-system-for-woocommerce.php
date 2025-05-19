@@ -52,9 +52,9 @@ include_once( plugin_dir_path(__FILE__) ."/includes.php");
  */
 class STSWooCommerce extends STSWooCommerceInit {
 
-	public $plugin       = 'STSWooCommerce';
-	public $name         = 'Helpdesk Support Ticket System for WooCommerce';
-	public $proUrl       = 'https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce';
+	public $plugin = 'STSWooCommerce';
+	public $name   = 'Helpdesk Support Ticket System for WooCommerce';
+	public $proUrl = 'https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce';
 
 	public $localizeBackend;
 	public $localizeFrontend;
