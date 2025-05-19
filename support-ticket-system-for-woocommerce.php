@@ -19,14 +19,38 @@
 
 defined( 'ABSPATH' ) || exit;
 
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.0.0-dev-20250519-0957' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.0.0-dev-20250519-1017' );
 
 defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ );
 
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts.php';
+
+if ( ! function_exists( 'wpfactory_wc_sts' ) ) {
+	/**
+	 * Returns the main instance of WPFactory_WC_STS to prevent the need to use globals.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	function wpfactory_wc_sts() {
+		return WPFactory_WC_STS::instance();
+	}
+}
+
+add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
+
+/**
+ * includes.
+ */
 include_once( plugin_dir_path(__FILE__) ."/init.php");
 include_once( plugin_dir_path(__FILE__) ."/includes.php");
 
-class STSWooCommerce extends STSWooCommerceInit{
+/**
+ * STSWooCommerce.
+ *
+ * @version 2.0.0
+ */
+class STSWooCommerce extends STSWooCommerceInit {
 
 		public $plugin = 'STSWooCommerce';
 		public $name = 'Helpdesk Support Ticket System for WooCommerce';
@@ -39,29 +63,24 @@ class STSWooCommerce extends STSWooCommerceInit{
 		public $localizeFrontend;
 		public $description = 'Support your Customers seamlessly with troubleshooting ticketing for WooCommerce';
 
+		/**
+		 * Constructor.
+		 *
+		 * @version 2.0.0
+		 */
 		public function __construct() {
 
-			add_action('admin_init', array($this, 'translate') );
 			add_action('wp_enqueue_scripts', array($this, 'FrontEndScripts') );
 
 			add_action('admin_enqueue_scripts', array($this, 'BackEndScripts') );
 			add_filter('widget_text', 'do_shortcode');
 			add_action('admin_menu', array($this, 'SettingsPage') );
-			add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array($this, 'Links') );
 
 			add_action("admin_footer", array($this,"proModal" ) );
 
 			add_action("admin_init", array($this, 'adminPanels') );
 
 			add_action("all_admin_notices", array($this, 'addTabsToTIckets') );
-
-			// HPOS compatibility declaration
-
-			add_action( 'before_woocommerce_init', function() {
-				if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-					\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
-				}
-			} );
 
 			// deactivation survey
 
@@ -85,6 +104,11 @@ class STSWooCommerce extends STSWooCommerceInit{
 
 		}
 
+		/**
+		 * notification.
+		 *
+		 * @todo    (v2.0.0) `toplevel_page_support-ticket-system-woocommerce`
+		 */
 		public function notification(){
 
 			$screen = get_current_screen();
@@ -163,11 +187,6 @@ class STSWooCommerce extends STSWooCommerceInit{
 			<?php
 		}
 
-		public function translate() {
-
-	         load_plugin_textdomain( esc_html( $this->plugin ), false, dirname( plugin_basename(__FILE__) ) . '/langs/' );
-	    }
-
 		public function BackEndScripts(){
 			wp_enqueue_style( esc_html( $this->plugin )."adminCss", plugins_url( "/css/backend.css", __FILE__ ) );
 			wp_enqueue_style( esc_html( $this->plugin )."adminCss");
@@ -217,12 +236,6 @@ class STSWooCommerce extends STSWooCommerceInit{
 		public function SettingsPage(){
 			add_menu_page( esc_html( $this->shortName ), esc_html( $this->shortName ) , 'administrator', esc_html( $this->slug ), array($this, 'init') , esc_html( $this->dashicon ), esc_html( $this->menuPosition ) );
 			add_submenu_page( esc_html( $this->slug ), esc_html__("Dashboard",'support-ticket-system-for-woocommerce' ), esc_html__("Dashboard",'support-ticket-system-for-woocommerce' ), 'manage_options', esc_url( admin_url( "admin.php?page=".esc_html( $this->slug ) ) ), array($this, 'init') );
-		}
-
-		public function Links($links){
-			$mylinks[] =  "<a href='" . esc_url( admin_url( "admin.php?page=".esc_html( $this->slug ) . '&tab=settings' ) ) . "'>".esc_html__("Settings",'support-ticket-system-for-woocommerce' )."</a>";
-			$mylinks[] = "<a href='".esc_url( $this->proUrl )."' target='_blank'>".esc_html__("Go PRO",'support-ticket-system-for-woocommerce' )."</a>";
-			return array_merge( $links, $mylinks );
 		}
 
 		public function init(){
