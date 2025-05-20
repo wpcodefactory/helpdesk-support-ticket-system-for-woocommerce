@@ -198,10 +198,15 @@ class STSWooCommerceInit {
 			echo '</h2>';
 	}
 
+	/**
+	 * adminFooter.
+	 *
+	 * @version 2.0.0
+	 */
 	public function adminFooter(){ ?>
 		<hr>
 		<a target='_blank' class='web_logo' href='https://extend-wp.com/wordpress-premium-plugins/'>
-			<img  src='<?php echo esc_url( plugins_url( 'images/extendwp.png', __FILE__ ) ); ?>' alt='<?php esc_html_e("Get more plugins by extendWP",$this->plugin);?>' title='<?php esc_html_e("Get more plugins by extendWP",'support-ticket-system-for-woocommerce' );?>' />
+			<img  src='<?php echo esc_url( plugins_url( 'images/extendwp.png', __FILE__ ) ); ?>' alt='<?php esc_html_e( "Get more plugins by extendWP", 'support-ticket-system-for-woocommerce' );?>' title='<?php esc_html_e( "Get more plugins by extendWP", 'support-ticket-system-for-woocommerce' );?>' />
 		</a>
 		<?php
 
