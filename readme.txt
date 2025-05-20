@@ -114,7 +114,7 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 
 == Changelog ==
 
-= 2.0.0 - 19/05/2025 =
+= 2.0.0 - 20/05/2025 =
 * Dev - Plugin settings copied to the "WPFactory" menu.
 * Dev - "Recommendations" added.
 * Dev - Code refactoring and cleanup.

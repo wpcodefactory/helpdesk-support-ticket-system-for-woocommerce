@@ -149,8 +149,6 @@ class STSWooCommerceInit {
 					?>
 					<p id='save_changes' ><?php esc_html( submit_button() ); ?></p>
 
-
-
 				</form>
 				<?php
 			}elseif( $this->activeTab == 'general' ){
@@ -200,7 +198,6 @@ class STSWooCommerceInit {
 			echo '</h2>';
 	}
 
-
 	public function adminFooter(){ ?>
 		<hr>
 		<a target='_blank' class='web_logo' href='https://extend-wp.com/wordpress-premium-plugins/'>
@@ -233,7 +230,6 @@ class STSWooCommerceInit {
 		add_settings_field('enablePriority',"<span class='proVersion'>".esc_html__( "Enable Priority Field to Ticket Creation",'support-ticket-system-for-woocommerce' )."</span>", array($this, 'enablePriority'),  esc_html( $this->plugin )."general-options",esc_html( $this->plugin )."general");
 		register_setting( esc_html( $this->plugin )."general",  '' );
 
-
 		add_settings_field('renameOrderButtonLink',esc_html__( "Rename Button on Orders Table in My Account Page for Tickets",'support-ticket-system-for-woocommerce' ), array($this, 'renameOrderButtonLink'), esc_html( $this->plugin )."general-options", esc_html( $this->plugin )."general");
 		register_setting(esc_html( $this->plugin )."general", esc_html( $this->plugin ).esc_html( $this->renameOrderButtonLink ) );
 
@@ -252,10 +248,8 @@ class STSWooCommerceInit {
 		add_settings_field('textforResponseSave',esc_html__( "Text to display once Response is saved",'support-ticket-system-for-woocommerce' ), array($this, 'textforResponseSave'),  esc_html( $this->plugin )."general-options", esc_html( $this->plugin )."general");
 		register_setting( esc_html( $this->plugin  )."general", esc_html( $this->plugin ).esc_html( $this->textforResponseSave ) );
 
-
 		add_settings_field('mailToAssignee',"<span class='proVersion'>".esc_html__( "Notify Assignee by Email",'support-ticket-system-for-woocommerce' )."</span>", array($this, 'mailToAssignee'),  esc_html( $this->plugin )."notifications-options", esc_html( $this->plugin )."notifications");
 		register_setting( esc_html( $this->plugin )."notifications", '' );
-
 
 		add_settings_field('mailToADmin',esc_html__( "Notify Admin by Email",'support-ticket-system-for-woocommerce' ), array($this, 'mailToADmin'),  esc_html( $this->plugin )."notifications-options", esc_html( $this->plugin )."notifications");
 		register_setting( esc_html( $this->plugin )."notifications", esc_html( $this->plugin ).esc_html( $this->mailToADmin ) );
@@ -278,7 +272,6 @@ class STSWooCommerceInit {
 		register_setting( esc_html( $this->plugin )."notifications", esc_html( $this->plugin ). esc_html( $this->mailIt_contentToCust ) );
 
 	}
-
 
 	public function assignToRole(){
 		?>
@@ -314,7 +307,6 @@ class STSWooCommerceInit {
 
 	}
 
-
 	public function renameAccountTabLink(){
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'renameAccountTabLink'] ) ){
 			$this->renameAccountTabLink =  sanitize_text_field($_REQUEST[esc_html( $this->plugin ).'renameAccountTabLink']);
@@ -332,7 +324,6 @@ class STSWooCommerceInit {
 			<input type="text" name="<?php esc_attr( print esc_html( $this->plugin ).'renameOrderButtonLink' ); ?>" id="<?php print esc_attr( $this->plugin.'renameOrderButtonLink' ); ?>" value='<?php if($this->renameOrderButtonLink !='')print esc_attr( $this->renameOrderButtonLink ); ?>' />
 		<?php
 	}
-
 
 	public function hideClosed(){
 		if( isset($_REQUEST[$this->plugin.'hideClosed'] ) ){
@@ -386,7 +377,6 @@ class STSWooCommerceInit {
 		<?php
 	}
 
-
 	public function mailToCustomer(){
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'mailToCustomer'] ) ){
 			$this->mailToCustomer =  sanitize_text_field($_REQUEST[ esc_html( $this->plugin ).'mailToCustomer']);
@@ -401,7 +391,6 @@ class STSWooCommerceInit {
 			<input class='proVersion' disabled />
 		<?php
 	}
-
 
 	public function mailIt_contentToAs(){
 
@@ -470,9 +459,6 @@ class STSWooCommerceInit {
 		echo wp_editor( apply_filters($this->mailIt_contentToCust,$this->mailIt_contentToCust), esc_html( $this->plugin ).'mailIt_contentToCust', array("wpautop" => true, 'textarea_name' => esc_html( $this->plugin ).'mailIt_contentToCust', 'textarea_rows' => '5','editor_height' => 225)  );
 	}
 
-
-
-
 	public function adminProcessSettings(){
 
 		if($_SERVER['REQUEST_METHOD'] == 'POST' && current_user_can('administrator') ){
@@ -484,7 +470,6 @@ class STSWooCommerceInit {
 				update_option(esc_html( $this->plugin ).'mailToADmin',sanitize_text_field($_REQUEST[ esc_html( $this->plugin ).'mailToADmin']));
 			}else update_option( esc_html( $this->plugin ).'mailToADmin','');
 
-
 			if( isset($_REQUEST[ esc_html( $this->plugin ).'AdminEmailAddress']) ){
 				update_option( esc_html( $this->plugin ).'AdminEmailAddress',sanitize_text_field($_REQUEST[ esc_html( $this->plugin ).'AdminEmailAddress']));
 			}
@@ -493,11 +478,9 @@ class STSWooCommerceInit {
 				update_option( esc_html( $this->plugin ).'mailToCustomer',sanitize_text_field($_REQUEST[esc_html( $this->plugin ).'mailToCustomer']));
 			}else update_option( esc_html( $this->plugin ).'mailToCustomer','');
 
-
 			if( isset($_REQUEST[ esc_html( $this->plugin ).'hideClosed']) && sanitize_text_field($_REQUEST[ esc_html( $this->plugin ).'hideClosed']) ==='1' ){
 				update_option(esc_html( $this->plugin ).'hideClosed',sanitize_text_field($_REQUEST[esc_html( $this->plugin ).'hideClosed']));
 			}else update_option( esc_html( $this->plugin ).'hideClosed','' );
-
 
 			if( isset($_REQUEST[ esc_html( $this->plugin ).'mailIt_contentToCust']) ){
 			   $mailIt_contentToCust =  wp_kses($_REQUEST[$this->plugin.'mailIt_contentToCust'], $this->mailIt_allowed_html );
@@ -508,7 +491,6 @@ class STSWooCommerceInit {
 			   $textforTicketSave =  wp_kses($_REQUEST[$this->plugin.'textforTicketSave'], $this->mailIt_allowed_html );
 			   update_option( esc_html( $this->plugin ).'textforTicketSave',$textforTicketSave);
 			}
-
 
 			if( isset($_REQUEST[ esc_html( $this->plugin ).'textforResponseSave']) ){
 			   $textforResponseSave =  wp_kses($_REQUEST[$this->plugin.'textforResponseSave'], $this->mailIt_allowed_html );

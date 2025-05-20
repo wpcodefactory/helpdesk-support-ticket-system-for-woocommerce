@@ -7,7 +7,6 @@
 (function( $ ) {
 "use strict";
 
-
 	$("#toplevel_page_support-ticket-system-woocommerce .wp-submenu > li:nth-child(4)").addClass('proVersion proSpan');
 	$("#toplevel_page_support-ticket-system-woocommerce .wp-submenu > li:nth-child(3)").addClass('proVersion proSpan');
 	$(".proVersion").click(function(e){
@@ -42,19 +41,15 @@
 			});
 		}
 
-
 	});
 
 	$( ".stswaccordion" ).accordion({
 		collapsible: true
 	});
 
-
-
     $(".STSWooCommerce #tabs").tabs();
 	$(".STSWooCommerce .subtabs").tabs();
     $(".STSWooCommerce #accordion" ).accordion();
-
 
 		$(".STSWooCommerce form").on('submit',function(e){
 			if($(this).hasClass('STSWooCommercelicense')){
@@ -76,6 +71,5 @@
 						});
 			}
 		});
-
 
 })( jQuery )

@@ -29,9 +29,6 @@
 	}
 }
 
-
-
-
 .rightToLeft{
     -webkit-animation: rightToLeft 2s ease-in-out;
     -moz-animation: rightToLeft 2s ease-in-out;
@@ -48,7 +45,6 @@
     max-width: 150px;
 	height:auto !important;
 }
-
 
 /* === ajaxify === */
 .STSWooCommerce.loading > * {
@@ -131,7 +127,6 @@
 		box-shadow:0 2px 3px #000;
 }
 
-
 .STSWooCommercecolumn1,
 .STSWooCommercecolumns2,
 .STSWooCommercecolumns3,
@@ -144,7 +139,6 @@
 	padding:5px;
 	margin:0 0.5%;
 }
-
 
 .STSWooCommercecolumn1{
 	width:100%;
@@ -266,12 +260,10 @@ span.proVersion{
     cursor: pointer;
 }
 
-
 @media (max-width:767px){
 	.STSWooCommercecolumns2,.STSWooCommercecolumns3,.STSWooCommercecolumns4,.STSWooCommercecolumns5,.STSWooCommercecolumns6{
 		float:none !important;
 		width:99% !important;
 	}
-
 
 }

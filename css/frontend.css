@@ -6,20 +6,20 @@
 
 /* === Ajaxify === */
 .stswproaccordion.loading > * {
-    opacity:0.2;
+	opacity:0.2;
 }
 
 .stswproaccordion.loading:before {
-    position:fixed;
-    content: "Loading...";
-    font-size:2em;
-    padding: 22px;
-    background: #000;
-    background: url(../images/loading.gif) no-repeat center center;
-    color: #777;
-    width: 50%;
-    height:50%;
-    margin-left:15%;
-    box-sizing: border-box;
-    text-align:center;
+	position:fixed;
+	content: "Loading...";
+	font-size:2em;
+	padding: 22px;
+	background: #000;
+	background: url(../images/loading.gif) no-repeat center center;
+	color: #777;
+	width: 50%;
+	height:50%;
+	margin-left:15%;
+	box-sizing: border-box;
+	text-align:center;
 }
