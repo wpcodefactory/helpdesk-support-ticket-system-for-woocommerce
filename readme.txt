@@ -4,7 +4,7 @@ Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
 Requires at least: 3.0.1
 Requires PHP: 5.2.4
 Tested up to: 6.8
-Stable tag: 1.5
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,7 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 == Changelog ==
 
 = 2.0.0 - 20/05/2025 =
+* Fix - Translations - Text domain fixed.
 * Dev - Plugin settings copied to the "WPFactory" menu.
 * Dev - "Recommendations" added.
 * Dev - Code refactoring and cleanup.
