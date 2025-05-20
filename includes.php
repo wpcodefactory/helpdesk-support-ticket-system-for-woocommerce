@@ -425,7 +425,6 @@ class STSWooCommerceInc {
 
 			$table_name = $wpdb->prefix . $this->tableName;
 			$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
-			//print $id;
 			die(); // this is required to return a proper result
 		}
 	}
@@ -491,8 +490,9 @@ class STSWooCommerceInc {
 
 		}
 
-		public function column_order($columns) {
-			// reorder columns
+		public function column_order( $columns ) {
+
+			// Reorder columns
 			unset($columns['title']);
 			unset($columns['date']);
 			unset($columns['Assignee']);
@@ -504,18 +504,17 @@ class STSWooCommerceInc {
 			unset($columns['taxonomy-stsw_tickets_status']);
 			unset($columns['priority']);
 
-		   return array_merge ( $columns, array (
-			 'title'                        => esc_html__('Title','support-ticket-system-for-woocommerce' ),
-			 'taxonomy-stsw_tickets_status' => esc_html__('Status','support-ticket-system-for-woocommerce' ),
-			 'User'                         => esc_html__('User','support-ticket-system-for-woocommerce' ),
-			 'Last Response'                => esc_html__('Last Response','support-ticket-system-for-woocommerce' ),
-			 'date'                         => esc_html__('Date','support-ticket-system-for-woocommerce' ),
-			 'subject'                      => esc_html__('Subject','support-ticket-system-for-woocommerce' ),
-			 'priority'                     => esc_html__('Priority','support-ticket-system-for-woocommerce' ),
-			 'Order'                        => esc_html__('Order','support-ticket-system-for-woocommerce' ),
-			 'Assignee'                     => esc_html__('Assignee','support-ticket-system-for-woocommerce' ),
-
-		   ) );
+			return array_merge ( $columns, array (
+				'title'                        => esc_html__('Title','support-ticket-system-for-woocommerce' ),
+				'taxonomy-stsw_tickets_status' => esc_html__('Status','support-ticket-system-for-woocommerce' ),
+				'User'                         => esc_html__('User','support-ticket-system-for-woocommerce' ),
+				'Last Response'                => esc_html__('Last Response','support-ticket-system-for-woocommerce' ),
+				'date'                         => esc_html__('Date','support-ticket-system-for-woocommerce' ),
+				'subject'                      => esc_html__('Subject','support-ticket-system-for-woocommerce' ),
+				'priority'                     => esc_html__('Priority','support-ticket-system-for-woocommerce' ),
+				'Order'                        => esc_html__('Order','support-ticket-system-for-woocommerce' ),
+				'Assignee'                     => esc_html__('Assignee','support-ticket-system-for-woocommerce' ),
+			) );
 
 		}
 
@@ -603,13 +602,14 @@ class STSWooCommerceInc {
 
 		public function getAllTickets(){
 			// function to populate the dashboard screen
-		   $args = array(
-		   'post_type' => 'stsw_tickets'
-		   );
+			$args = array(
+				'post_type' => 'stsw_tickets'
+			);
 			$the_query = new WP_Query( $args );
 			$totalpost = $the_query->found_posts;
 			return esc_html( $totalpost );
 		}
+
 		public function getOpenTickets(){
 			// function to populate the dashboard screen
 			$the_query = new WP_Query( array(
@@ -625,6 +625,7 @@ class STSWooCommerceInc {
 			$totalpost = $the_query->found_posts;
 			return esc_html( $totalpost );
 		}
+
 		public function getInProgressTickets(){
 			// function to populate the dashboard screen
 			$the_query = new WP_Query( array(
