@@ -164,7 +164,12 @@ class STSWooCommerceInc {
 		}
 	}
 
-	public function Tickets(){
+	/**
+	 * Tickets.
+	 *
+	 * @version 2.0.0
+	 */
+	public function Tickets() {
 
 		//TICKETS POST TYPE
 		register_post_type( 'stsw_tickets',
@@ -194,22 +199,22 @@ class STSWooCommerceInc {
 				'capability_type'       => 'page',
 				'hierarchical'          => false,
 				'menu_position'         => null,
-				'public'                => false,  // it's not public, it shouldn't have it's own permalink, and so on
+				'public'                => false, // it's not public, it shouldn't have it's own permalink, and so on
 				'publicly_queryable'    => true,  // you should be able to query it
 				'show_ui'               => true,  // you should be able to edit it in wp-admin
 				'show_in_menu'          => false,
 				'exclude_from_search'   => true,  // you should exclude it from search results
-				'show_in_nav_menus'     => false,  // you shouldn't be able to add it to menus
-				'has_archive'           => false,  // it shouldn't have archive page
-				'rewrite'               => false,  // it shouldn't have rewrite rules
+				'show_in_nav_menus'     => false, // you shouldn't be able to add it to menus
+				'has_archive'           => false, // it shouldn't have archive page
+				'rewrite'               => false, // it shouldn't have rewrite rules
 			)
 		);
 
 		//STATUS TAXONOMY
 		$labels = array(
-			'name'              => _x( 'Status', 'support-ticket-system-for-woocommerce' ),
-			'singular_name'     => _x( 'Status', 'support-ticket-system-for-woocommerce' ),
-			'search_items'      => esc_html__( 'Search Status' ),
+			'name'              => _x( 'Status', 'taxonomy general name', 'support-ticket-system-for-woocommerce' ),
+			'singular_name'     => _x( 'Status', 'taxonomy singular name', 'support-ticket-system-for-woocommerce' ),
+			'search_items'      => esc_html__( 'Search Status', 'support-ticket-system-for-woocommerce' ),
 			'all_items'         => esc_html__( 'All Status','support-ticket-system-for-woocommerce' ),
 			'parent_item'       => esc_html__( 'Parent Status','support-ticket-system-for-woocommerce' ),
 			'parent_item_colon' => esc_html__( 'Parent Status:','support-ticket-system-for-woocommerce' ),
@@ -218,7 +223,7 @@ class STSWooCommerceInc {
 			'add_new_item'      => esc_html__( 'Add New Status' ,'support-ticket-system-for-woocommerce' ),
 			'new_item_name'     => esc_html__( 'New Status Name' ,'support-ticket-system-for-woocommerce' ),
 			'not_found'         => esc_html__( 'No Status found.','support-ticket-system-for-woocommerce' ),
-			'menu_name'         => esc_html__( 'Status' ),
+			'menu_name'         => esc_html__( 'Status', 'support-ticket-system-for-woocommerce' ),
 		);
 
 		register_taxonomy( 'stsw_tickets_status',array('stsw_tickets'), array(
@@ -260,19 +265,24 @@ class STSWooCommerceInc {
 		add_meta_box("stswpro_ticketResponses", esc_html__('New Response','support-ticket-system-for-woocommerce' ), array($this,"responseCreate" ) , "stsw_tickets", "normal", "high");
 	}
 
+	/**
+	 * appInfoCreate.
+	 *
+	 * @version 2.0.0
+	 */
 	public function appInfoCreate($post){
 		global $post;
 		?>
-		<b><?php _e('Order', 'stswpro_transactions_table')?></b>:
+		<b><?php _e( 'Order', 'support-ticket-system-for-woocommerce' )?></b>:
 		<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
 		<br/>
 		<?php $user = get_post_meta($post->ID, esc_html( $this->plugin ).'ticketuser' , true ) ; ?>
-		<b><?php _e('User', 'stswpro_transactions_table')?></b>:
+		<b><?php _e( 'User', 'support-ticket-system-for-woocommerce' )?></b>:
 		<?php if(!empty($user)) { ?>
 			<?php print "<a href='".esc_url( admin_url() )."user-edit.php?user_id=".esc_html( $user )."' target='_blank'>". esc_attr($this->getUsername($user)); ?></a>
 		<?php } ?>
 		<br/>
-		<b><?php _e('Ticket Assignee', 'stswpro_transactions_table')?></b>:
+		<b><?php _e( 'Ticket Assignee', 'support-ticket-system-for-woocommerce' )?></b>:
 			<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
 			<?php
 	}
@@ -640,6 +650,11 @@ class STSWooCommerceInc {
 		return esc_html( $totalpost );
 	}
 
+	/**
+	 * stswpro_add_my_account_order_actions.
+	 *
+	 * @version 2.0.0
+	 */
 	public function stswpro_add_my_account_order_actions( $actions, $order ) {
 		//add a button to actions column of my account orders page
 		if( get_option($this->plugin.'renameOrderButtonLink') && !empty( get_option($this->plugin.'renameOrderButtonLink') ) ){
@@ -648,17 +663,23 @@ class STSWooCommerceInc {
 		$actions['help'] = array(
 			// adjust URL as needed
 			'url'  => esc_url( get_permalink( get_option('woocommerce_myaccount_page_id') ).'/tickets/' ),
-			'name' => esc_html__( $buttonTitle  ,'support-ticket-system-for-woocommerce' ),
+			'name' => esc_html( $buttonTitle ),
 		);
 
 		return $actions;
 	}
 
-	/* ADD TICKETING FUNCTIONALITY TO USERS ACCOUNT PAGE */
+	/**
+	 * stswproTicketsLink.
+	 *
+	 * Add ticketing functionality to users account page.
+	 *
+	 * @version 2.0.0
+	 */
 	public function stswproTicketsLink( $menu_links ){
 		//add tab to my account page to ticketing system
 		if( get_option( esc_html( $this->plugin ).'renameAccountTabLink') && !empty( get_option( esc_html( $this->plugin ).'renameAccountTabLink') ) ){
-			$new = array( 'tickets' => esc_html__( get_option( esc_html( $this->plugin ).'renameAccountTabLink' ), 'support-ticket-system-for-woocommerce' ) );
+			$new = array( 'tickets' => esc_html( get_option( $this->plugin . 'renameAccountTabLink' ) ) );
 
 		}else $new = array( 'tickets' => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ) );
 
@@ -674,7 +695,13 @@ class STSWooCommerceInc {
 		add_rewrite_endpoint( 'tickets', EP_PAGES );
 	}
 
-	/* ADD CONTENT TO SUPPORT TICKETING SYSTEM */
+	/**
+	 * stswpro_my_account_endpoint_content.
+	 *
+	 * Add content to support ticketing system.
+	 *
+	 * @version 2.0.0
+	 */
 	public function stswpro_my_account_endpoint_content() {
 		//user needs to be logged in
 		if ( is_user_logged_in() ) {
@@ -815,7 +842,7 @@ class STSWooCommerceInc {
 									<input type="hidden" value="<?php print esc_attr( $customer->ID );?>"  name="customer_id" />
 									<input type="hidden" value="<?php print esc_attr( get_the_ID() );?>"  name="post_id" />
 
-									<label for='closeTicket'><?php esc_html_e( "Close Ticket", $this->plugin); ?></label> <input type='checkbox' name='closeTicket' value='1' />
+									<label for='closeTicket'><?php esc_html_e( "Close Ticket", 'support-ticket-system-for-woocommerce' ); ?></label> <input type='checkbox' name='closeTicket' value='1' />
 									<p></p>
 									<?php wp_nonce_field( 'stswresponsefrontend','stswresponsefrontend' ); ?>
 									<input type="submit" value="<?php esc_html_e( "Send", 'support-ticket-system-for-woocommerce' ); ?>" tabindex="6" id="submit" name="submit" />
@@ -1173,10 +1200,15 @@ class STSWooCommerceInc {
 		}
 	}
 
+	/**
+	 * stswpro_view_order.
+	 *
+	 * @version 2.0.0
+	 */
 	public function stswpro_view_order( $order_id ){
 		// this function adds a title to ticket support page
 		if( get_option( esc_html( $this->plugin ).'renameAccountTabLink') && !empty( get_option( esc_html( $this->plugin ).'renameAccountTabLink') ) ){ ?>
-			<h2><?php esc_html__(get_option( esc_html( $this->plugin ).'renameAccountTabLink'),'support-ticket-system-for-woocommerce' ) ; ?></h2>
+			<h2><?php esc_html( get_option( $this->plugin . 'renameAccountTabLink' ) ) ; ?></h2>
 			<?php
 		}else{ ?> <h2><?php esc_html__("Tickets",'support-ticket-system-for-woocommerce' ) ; ?></h2> <?php } ?>
 		<?php
