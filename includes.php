@@ -16,66 +16,66 @@ class STSWooCommerceInc {
 	public $tableName                = 'stsw_responses';
 	public $stswpro_table_db_version = '1.4';
 	public $mailIt_allowed_html      = array(
-            'a' => array(
-                'style' => array(),
-                'href' => array(),
-                'title' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
+			'a' => array(
+				'style' => array(),
+				'href' => array(),
+				'title' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
 			'i' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'br' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'em' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'strong' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h1' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h2' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h3' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h4' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h5' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h6' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'img' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'p' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'div' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'section' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'ul' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'li' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'ol' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'video' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'blockquote' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'figure' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'figcaption' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'style' => array(),
-            'iframe' => array(
-                'height' => array(),
-                'src' => array(),
-                'width' => array(),
-                'allowfullscreen' => array(),
-                'style' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-            'img' => array(
-                'alt' => array(),
-                'src' => array(),
-                'title' => array(),
-                'style' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-            'video' => array(
-                'width' => array(),
-                'height' => array(),
-                'controls'=>array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-            'source' => array(
-                'src' => array(),
-                'type' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-        );
+			'br' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'em' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'strong' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h1' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h2' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h3' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h4' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h5' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h6' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'img' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'p' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'div' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'section' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'ul' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'li' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'ol' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'video' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'blockquote' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'figure' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'figcaption' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'style' => array(),
+			'iframe' => array(
+				'height' => array(),
+				'src' => array(),
+				'width' => array(),
+				'allowfullscreen' => array(),
+				'style' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
+			'img' => array(
+				'alt' => array(),
+				'src' => array(),
+				'title' => array(),
+				'style' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
+			'video' => array(
+				'width' => array(),
+				'height' => array(),
+				'controls'=>array(),
+				'class' => array(),
+				'id'=>array()
+			),
+			'source' => array(
+				'src' => array(),
+				'type' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
+		);
 	public function __construct() {
 		add_action("init", array( $this,"Tickets" ) );
 
@@ -275,7 +275,7 @@ class STSWooCommerceInc {
 		<br/>
 		<b><?php _e('Ticket Assignee', 'stswpro_transactions_table')?></b>:
 			<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
-		    <?php
+			<?php
 	}
 
 	public function getUsername($id){
@@ -309,8 +309,8 @@ class STSWooCommerceInc {
 	public function responses($post){
 		// query & display responses in ticket edit screen post box
 		global $post;
-        global $wpdb;
-        $table_name = esc_html( $wpdb->prefix . $this->tableName );
+		global $wpdb;
+		$table_name = esc_html( $wpdb->prefix . $this->tableName );
 
 		$result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM ".esc_html( $table_name )."  WHERE post_id=%d  AND user !='0'  ORDER BY creationdate DESC ",$post->ID ) );
 		$count = 0;
@@ -602,9 +602,9 @@ class STSWooCommerceInc {
 
 		public function getAllTickets(){
 			// function to populate the dashboard screen
-           $args = array(
-           'post_type' => 'stsw_tickets'
-           );
+		   $args = array(
+		   'post_type' => 'stsw_tickets'
+		   );
 			$the_query = new WP_Query( $args );
 			$totalpost = $the_query->found_posts;
 			return esc_html( $totalpost );
@@ -1073,9 +1073,9 @@ class STSWooCommerceInc {
 			$adminEmail = sanitize_email( get_option( esc_html( $this->plugin ).'AdminEmailAddress' ) );
 		}else $adminEmail = sanitize_email( get_bloginfo("admin_email") );
 
-    	$headers[] = "Content-Type: text/html; charset=UTF-8";
-    	$headers[] = "From: ".esc_html( get_bloginfo('name') )." <".esc_html( $adminEmail ).">";
-    	$headers[] = "Reply-To: ".$to." <".$to.">";
+		$headers[] = "Content-Type: text/html; charset=UTF-8";
+		$headers[] = "From: ".esc_html( get_bloginfo('name') )." <".esc_html( $adminEmail ).">";
+		$headers[] = "Reply-To: ".$to." <".$to.">";
 		$sent_message = wp_mail( $to, $subject, $message, $headers);
 	}
 

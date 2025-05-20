@@ -26,66 +26,66 @@ class STSWooCommerceInit {
 	public $mailIt_subjectToCust  = '';
 
 	public $mailIt_allowed_html = array(
-            'a' => array(
-                'style' => array(),
-                'href' => array(),
-                'title' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
+			'a' => array(
+				'style' => array(),
+				'href' => array(),
+				'title' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
 			'i' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'br' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'em' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'strong' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h1' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h2' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h3' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h4' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h5' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'h6' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'img' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'p' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'div' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'section' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'ul' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'li' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'ol' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'video' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'blockquote' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'figure' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'figcaption' => array('style' => array(),'class' => array(),'id'=>array() ),
-            'style' => array(),
-            'iframe' => array(
-                'height' => array(),
-                'src' => array(),
-                'width' => array(),
-                'allowfullscreen' => array(),
-                'style' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-            'img' => array(
-                'alt' => array(),
-                'src' => array(),
-                'title' => array(),
-                'style' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-            'video' => array(
-                'width' => array(),
-                'height' => array(),
-                'controls'=>array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-            'source' => array(
-                'src' => array(),
-                'type' => array(),
-                'class' => array(),
-                'id'=>array()
-            ),
-        );
+			'br' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'em' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'strong' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h1' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h2' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h3' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h4' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h5' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'h6' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'img' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'p' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'div' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'section' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'ul' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'li' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'ol' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'video' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'blockquote' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'figure' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'figcaption' => array('style' => array(),'class' => array(),'id'=>array() ),
+			'style' => array(),
+			'iframe' => array(
+				'height' => array(),
+				'src' => array(),
+				'width' => array(),
+				'allowfullscreen' => array(),
+				'style' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
+			'img' => array(
+				'alt' => array(),
+				'src' => array(),
+				'title' => array(),
+				'style' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
+			'video' => array(
+				'width' => array(),
+				'height' => array(),
+				'controls'=>array(),
+				'class' => array(),
+				'id'=>array()
+			),
+			'source' => array(
+				'src' => array(),
+				'type' => array(),
+				'class' => array(),
+				'id'=>array()
+			),
+		);
 
 	public function adminHeader(){
 		?>

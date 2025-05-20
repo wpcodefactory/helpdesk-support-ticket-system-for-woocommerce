@@ -47,9 +47,9 @@
 		collapsible: true
 	});
 
-    $(".STSWooCommerce #tabs").tabs();
+	$(".STSWooCommerce #tabs").tabs();
 	$(".STSWooCommerce .subtabs").tabs();
-    $(".STSWooCommerce #accordion" ).accordion();
+	$(".STSWooCommerce #accordion" ).accordion();
 
 		$(".STSWooCommerce form").on('submit',function(e){
 			if($(this).hasClass('STSWooCommercelicense')){
