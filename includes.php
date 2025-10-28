@@ -245,37 +245,55 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * displayTickets.
-	 */
-	public function displayTickets(){
-		// a general function to display tickets
-		$args = array(
-			'post_type'      => array('stsw_tickets' ),
-			'posts_per_page' => -1,
-			'post_status'    => 'publish',
-		);
-
-		$loop = new WP_Query( $args );
-
-		while ( $loop->have_posts() ) : $loop->the_post();
-			global $Ticket;
-			global $post;
-		endwhile;
-
-		wp_reset_query();
-
-	}
-
-	/**
-	 * metaBox.
+	 * Add metaboxes to tickets newly created post type.
 	 */
 	public function metaBox($post){
-		//add metaboxes to tickets newly created post type
-		add_meta_box("stswpro_ticketContent", esc_html__('Ticket Content','support-ticket-system-for-woocommerce' ), array($this,"ticketContent" ) , "stsw_tickets", "normal", "high");
-		add_meta_box("stswpro_ticketResponded", esc_html__('Responses','support-ticket-system-for-woocommerce' ), array($this,"responses" ) , "stsw_tickets", "normal", "high");
-		add_meta_box("appInfo", esc_html__('Ticket Info','support-ticket-system-for-woocommerce' ), array($this,"appInfoCreate" ) , "stsw_tickets", "side", "high");
-		add_meta_box("assignTouser", esc_html__('Assign to User','support-ticket-system-for-woocommerce' ), array($this,"assignTouser" ) , "stsw_tickets", "side", "high");
-		add_meta_box("stswpro_ticketResponses", esc_html__('New Response','support-ticket-system-for-woocommerce' ), array($this,"responseCreate" ) , "stsw_tickets", "normal", "high");
+
+		add_meta_box(
+			'stswpro_ticketContent',
+			esc_html__( 'Ticket Content', 'support-ticket-system-for-woocommerce' ),
+			array( $this, 'ticketContent' ),
+			'stsw_tickets',
+			'normal',
+			'high'
+		);
+
+		add_meta_box(
+			'stswpro_ticketResponded',
+			esc_html__( 'Responses', 'support-ticket-system-for-woocommerce' ),
+			array( $this, 'responses' ),
+			'stsw_tickets',
+			'normal',
+			'high'
+		);
+
+		add_meta_box(
+			'appInfo',
+			esc_html__( 'Ticket Info', 'support-ticket-system-for-woocommerce' ),
+			array( $this, 'appInfoCreate' ),
+			'stsw_tickets',
+			'side',
+			'high'
+		);
+
+		add_meta_box(
+			'assignTouser',
+			esc_html__( 'Assign to User', 'support-ticket-system-for-woocommerce' ),
+			array( $this, 'assignTouser' ),
+			'stsw_tickets',
+			'side',
+			'high'
+		);
+
+		add_meta_box(
+			'stswpro_ticketResponses',
+			esc_html__( 'New Response', 'support-ticket-system-for-woocommerce' ),
+			array( $this, 'responseCreate' ),
+			'stsw_tickets',
+			'normal',
+			'high'
+		);
+
 	}
 
 	/**
