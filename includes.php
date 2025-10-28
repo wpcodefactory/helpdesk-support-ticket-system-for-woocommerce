@@ -77,6 +77,9 @@ class STSWooCommerceInc {
 		),
 	);
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		add_action("init", array( $this,"Tickets" ) );
 
@@ -109,6 +112,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * stswpro_ticketReponse_table_install.
+	 */
 	public function stswpro_ticketReponse_table_install(){
 		global $wpdb;
 
@@ -237,6 +243,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * displayTickets.
+	 */
 	public function displayTickets(){
 		// a general function to display tickets
 		$args = array(
@@ -256,6 +265,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * metaBox.
+	 */
 	public function metaBox($post){
 		//add metaboxes to tickets newly created post type
 		add_meta_box("stswpro_ticketContent", esc_html__('Ticket Content','support-ticket-system-for-woocommerce' ), array($this,"ticketContent" ) , "stsw_tickets", "normal", "high");
@@ -287,12 +299,18 @@ class STSWooCommerceInc {
 			<?php
 	}
 
+	/**
+	 * getUsername.
+	 */
 	public function getUsername($id){
 		//a function to return the name of a user based on id
 		$user = get_user_by( 'id', $id);
 		return esc_html( $user->first_name ." ".$user->last_name );
 	}
 
+	/**
+	 * ticketContent.
+	 */
 	public function ticketContent($post){
 		// display ticket content in ticket edit screen post box
 		?>
@@ -315,6 +333,9 @@ class STSWooCommerceInc {
 		<?php
 	}
 
+	/**
+	 * responses.
+	 */
 	public function responses($post){
 		// query & display responses in ticket edit screen post box
 		global $post;
@@ -351,12 +372,18 @@ class STSWooCommerceInc {
 		}else print esc_html__("No responses yet",'support-ticket-system-for-woocommerce' );
 	}
 
+	/**
+	 * responseCreate.
+	 */
 	public function responseCreate($post){
 		// wp editor for adding a new response to ticket from ticket edit screen
 		global $post;
 		echo wp_editor( '', esc_html( $this->plugin )."response" , array( 'textarea_name' => esc_html( $this->plugin )."response" ) );
 	}
 
+	/**
+	 * assignTouser.
+	 */
 	public function assignTouser($post){
 		global $post;
 			?>
@@ -364,6 +391,9 @@ class STSWooCommerceInc {
 			<?php
 	}
 
+	/**
+	 * saveFields.
+	 */
 	public function saveFields(){
 		//function to save any custom meta fields for tickets created
 		global $post;
@@ -392,6 +422,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * deleteResponseEvent.
+	 */
 	public function deleteResponseEvent() {
 		// on delete button click, delete the response and clear the row from the table - via ajax  call  to responseDelete
 		global $post;
@@ -421,6 +454,9 @@ class STSWooCommerceInc {
 	<?php
 	}
 
+	/**
+	 * responseDelete.
+	 */
 	public function responseDelete() {
 		// function to delete the response and clear the row from the table
 		if ( isset( $_POST['nonce'] ) &&  isset( $_POST['id'] ) && wp_verify_nonce( $_POST['nonce'], 'responseDelete' ) ) {
@@ -437,6 +473,9 @@ class STSWooCommerceInc {
 		}
 	}
 
+	/**
+	 * deleteRelevantResponses.
+	 */
 	public function deleteRelevantResponses($post_id){
 		// on ticket delete, clear all responses from table
 		$post_type = get_post_type( $post_id );
@@ -453,6 +492,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * addColumnHeader.
+	 */
 	public function addColumnHeader( $columns ) {
 		// add extra columns to tickets list table for better management
 		$columns['Order']  = esc_html__('Order','support-ticket-system-for-woocommerce' );
@@ -463,6 +505,9 @@ class STSWooCommerceInc {
 		return $columns;
 	}
 
+	/**
+	 * addAdColumns.
+	 */
 	public function addAdColumns( $column_name, $post_id ) {
 		// populate the new columns added with relevant content
 		global $post;
@@ -498,6 +543,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * column_order.
+	 */
 	public function column_order( $columns ) {
 
 		// Reorder columns
@@ -573,6 +621,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * ticketsDashboard.
+	 */
 	public function ticketsDashboard() {
 		// content for dashboard tab  - the default in support tickets
 		?>
@@ -608,6 +659,9 @@ class STSWooCommerceInc {
 	<?php
 	}
 
+	/**
+	 * getAllTickets.
+	 */
 	public function getAllTickets(){
 		// function to populate the dashboard screen
 		$args = array(
@@ -618,6 +672,9 @@ class STSWooCommerceInc {
 		return esc_html( $totalpost );
 	}
 
+	/**
+	 * getOpenTickets.
+	 */
 	public function getOpenTickets(){
 		// function to populate the dashboard screen
 		$the_query = new WP_Query( array(
@@ -634,6 +691,9 @@ class STSWooCommerceInc {
 		return esc_html( $totalpost );
 	}
 
+	/**
+	 * getInProgressTickets.
+	 */
 	public function getInProgressTickets(){
 		// function to populate the dashboard screen
 		$the_query = new WP_Query( array(
@@ -894,6 +954,9 @@ class STSWooCommerceInc {
 
 	}
 
+	/**
+	 * stswproSaveResponse.
+	 */
 	public function stswproSaveResponse() {
 		// function to save a response from frontend
 		if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['stswresponsefrontend']) ){
@@ -952,6 +1015,9 @@ class STSWooCommerceInc {
 		}
 	}
 
+	/**
+	 * stswproSaveTicket.
+	 */
 	public function stswproSaveTicket() {
 		//save ticket submitted from frontend
 		if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['stswticketfrontend']) ){
@@ -1018,6 +1084,9 @@ class STSWooCommerceInc {
 		}
 	}
 
+	/**
+	 * sendWithPlaceholders.
+	 */
 	public function sendWithPlaceholders($ticketId,$responseId,$title,$content,$toEmail,$toFirstName,$toLastName,$user){
 
 			//proversion placeholders
@@ -1091,6 +1160,9 @@ class STSWooCommerceInc {
 			}
 	}
 
+	/**
+	 * notifyUsers.
+	 */
 	public function notifyUsers($to,$subject,$message){
 
 		if (!empty(get_option( esc_html( $this->plugin ).'AdminEmailAddress' )) ) {
@@ -1103,6 +1175,9 @@ class STSWooCommerceInc {
 		$sent_message = wp_mail( $to, $subject, $message, $headers);
 	}
 
+	/**
+	 * notifyUserOnWPedit.
+	 */
 	public function notifyUserOnWPedit( $post_id, $post, $update  ) {
 
 		if(isset( $_REQUEST[ esc_html( $this->plugin ).'response'] ) && !empty( $_REQUEST[ esc_html( $this->plugin ).'response'] ) ){
@@ -1160,6 +1235,9 @@ class STSWooCommerceInc {
 		}
 	}
 
+	/**
+	 * stswpro_filter_tickets.
+	 */
 	public function stswpro_filter_tickets( $post_type, $which ) {
 		// this function adds filtering based on status in tickets list table
 		// Apply this only on stsw_tickets specific post type
@@ -1217,4 +1295,7 @@ class STSWooCommerceInc {
 
 }
 
+/**
+ * start.
+ */
 $start = new STSWooCommerceInc();
