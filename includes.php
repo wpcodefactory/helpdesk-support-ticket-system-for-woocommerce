@@ -162,7 +162,7 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * Trick to update plugin database, see docs
+	 * Trick to update plugin database, see docs.
 	 */
 	public function stswpro_tickets_table_update_db_check() {
 		if (get_site_option('stswpro_tickets_table_db_version') != $this->stswpro_table_db_version) {
@@ -750,7 +750,9 @@ class STSWooCommerceInc {
 
 	}
 
-	/* Register Permalink Endpoint */
+	/**
+	 * Register Permalink Endpoint.
+	 */
 	public function stswpro_add_endpoint() {
 		add_rewrite_endpoint( 'tickets', EP_PAGES );
 	}
