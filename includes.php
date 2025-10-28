@@ -411,32 +411,34 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * saveFields.
+	 * Function to save any custom meta fields for tickets created.
 	 */
-	public function saveFields(){
-		//function to save any custom meta fields for tickets created
+	public function saveFields() {
+
 		global $post;
 
-		if(isset($_POST[ esc_html( $this->plugin ).'response'])){
-			if (!empty($_POST[ esc_html( $this->plugin ).'response']) ) {
-				$user = get_post_meta($post->ID, esc_html( $this->plugin ).'ticketuser' , true ) ;
+		if ( isset( $_POST[ esc_html( $this->plugin ) . 'response'] ) ) {
+			if ( ! empty( $_POST[ esc_html( $this->plugin ) . 'response'] ) ) {
+
+				$user         = get_post_meta( $post->ID, esc_html( $this->plugin ) . 'ticketuser', true );
 				$current_user = wp_get_current_user();
 
-				$response = htmlspecialchars(sanitize_textarea_field($_POST[ esc_html( $this->plugin ).'response']) );
+				$response = htmlspecialchars( sanitize_textarea_field( $_POST[ esc_html( $this->plugin ) . 'response'] ) );
 				global $wpdb;
-				$table_name = esc_html( $wpdb->prefix . $this->tableName ); // do not forget about tables prefix
+				$table_name = esc_html( $wpdb->prefix . $this->tableName );
 
-				$wpdb->insert($table_name, array(
-					'user' => $user,
-					'creationdate' => current_time('mysql', 1),
-					'content' => $response,
-					'agent' =>	(int)$current_user->ID,
-					'post_id' =>	(int)$post->ID
-				));
+				$wpdb->insert(
+					$table_name,
+					array(
+						'user'         => $user,
+						'creationdate' => current_time( 'mysql', 1 ),
+						'content'      => $response,
+						'agent'        => (int) $current_user->ID,
+						'post_id'      => (int) $post->ID
+					)
+				);
 
-				//wp_set_object_terms( $post->ID, 'In Progress', 'stsw_tickets_status');
 			}
-
 		}
 
 	}
