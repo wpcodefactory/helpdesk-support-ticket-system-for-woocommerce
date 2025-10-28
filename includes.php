@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
- * @version 2.0.0
+ * @version 2.0.4
  *
  * @author  WPFactory
  */
@@ -402,12 +402,13 @@ class STSWooCommerceInc {
 
 	/**
 	 * assignTouser.
+	 *
+	 * @version 2.0.4
 	 */
-	public function assignTouser($post){
-		global $post;
-			?>
-			<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
-			<?php
+	public function assignTouser( $post ) {
+		?>
+		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
+		<?php
 	}
 
 	/**
@@ -807,14 +808,15 @@ class STSWooCommerceInc {
 				$category = 'stsw_tickets_status';
 				$term = 'closed';
 
-					 $cat_query = array(
-						array(
+				 $cat_query = array(
+					array(
 						'taxonomy' => sanitize_text_field( $category ),
-						'field' => 'slug',
+						'field'    => 'slug',
 						'terms'    => sanitize_text_field( $term ),
 						'operator' => 'NOT IN',
-						 ),
-					);
+					),
+				);
+
 			}
 
 			$meta_query = array();
@@ -1001,13 +1003,16 @@ class STSWooCommerceInc {
 				$customer_id = (int)$_POST['customer_id'] ;
 				global $wpdb;
 
-				$table_name = $wpdb->prefix . $this->tableName; // do not forget about tables prefix
-				$wpdb->insert($table_name, array(
-					'user' => $customer_id,
-					'creationdate' => current_time('mysql', 1),
-					'content' => $response,
-					'post_id' =>	$post_id
-				));
+				$table_name = $wpdb->prefix . $this->tableName;
+				$wpdb->insert(
+					$table_name,
+					array(
+						'user'         => $customer_id,
+						'creationdate' => current_time( 'mysql', 1 ),
+						'content'      => $response,
+						'post_id'      => $post_id,
+					)
+				);
 
 				if(get_option( esc_html( $this->plugin ).'textforResponseSave' ) && !empty(get_option( $this->plugin.'textforResponseSave' )) ){
 					//echo esc_html__(get_option( $this->plugin.'textforResponseSave' ) ) ;
