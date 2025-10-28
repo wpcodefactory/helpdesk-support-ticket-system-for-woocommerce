@@ -81,34 +81,35 @@ class STSWooCommerceInc {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action("init", array( $this,"Tickets" ) );
 
-		add_action("admin_init", array( $this,"metaBox" ) );
+		add_action( 'init', array( $this, 'Tickets' ) );
 
-		add_action("save_post", array( $this,"saveFields" ) );
-		add_action( 'post_updated', array( $this,"notifyUserOnWPedit" ), 10, 3 );
-		add_action( 'admin_menu', array( $this,'menu_page') );
-		add_action( 'admin_footer', array( $this,'deleteResponseEvent') );
-		add_action( 'wp_ajax_responseDelete', array( $this,'responseDelete' ) );
-		add_action( 'before_delete_post', array( $this,'deleteRelevantResponses' ) );
+		add_action( 'admin_init', array( $this, 'metaBox' ) );
 
-		add_filter ( 'woocommerce_account_menu_items', array( $this,'stswproTicketsLink' ) );
+		add_action( 'save_post', array( $this, 'saveFields' ) );
+		add_action( 'post_updated', array( $this, 'notifyUserOnWPedit' ), 10, 3 );
+		add_action( 'admin_menu', array( $this, 'menu_page' ) );
+		add_action( 'admin_footer', array( $this, 'deleteResponseEvent' ) );
+		add_action( 'wp_ajax_responseDelete', array( $this, 'responseDelete' ) );
+		add_action( 'before_delete_post', array( $this, 'deleteRelevantResponses' ) );
+
+		add_filter( 'woocommerce_account_menu_items', array( $this,'stswproTicketsLink' ) );
 		add_action( 'init', array( $this,'stswpro_add_endpoint' ) );
-		add_filter( 'woocommerce_my_account_my_orders_actions', array( $this,'stswpro_add_my_account_order_actions'), 10, 2 );
-		add_action( 'woocommerce_account_tickets_endpoint', array( $this,'stswpro_my_account_endpoint_content' ) );
-		add_shortcode( 'stsw_user_tickets' , array( $this,'stswpro_my_account_endpoint_content' ));
+		add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'stswpro_add_my_account_order_actions'), 10, 2 );
+		add_action( 'woocommerce_account_tickets_endpoint', array( $this, 'stswpro_my_account_endpoint_content' ) );
+		add_shortcode( 'stsw_user_tickets' , array( $this, 'stswpro_my_account_endpoint_content' ) );
 
-		add_filter('manage_stsw_tickets_posts_columns', array( $this,'addColumnHeader' ) );
-		add_action( 'manage_stsw_tickets_posts_custom_column', array( $this,'addAdColumns' ),10,2 );
-		add_filter("manage_edit-stsw_tickets_sortable_columns", array( $this,"addColumnHeader" ) );
-		add_filter("manage_stsw_tickets_posts_columns", array( $this,"column_order" ) );
+		add_filter( 'manage_stsw_tickets_posts_columns', array( $this, 'addColumnHeader' ) );
+		add_action( 'manage_stsw_tickets_posts_custom_column', array( $this, 'addAdColumns' ), 10, 2 );
+		add_filter( 'manage_edit-stsw_tickets_sortable_columns', array( $this, 'addColumnHeader' ) );
+		add_filter( 'manage_stsw_tickets_posts_columns', array( $this, 'column_order' ) );
 
-		add_action( 'restrict_manage_posts', array( $this,'stswpro_filter_tickets' ) , 10, 2);
-		register_activation_hook(__FILE__, array( $this,'stswpro_ticketReponse_table_install' ) );
-		add_action('plugins_loaded', array( $this,'stswpro_tickets_table_update_db_check' ) );
-		add_action( 'woocommerce_view_order', array( $this,'stswpro_view_order' ), 20 );
+		add_action( 'restrict_manage_posts', array( $this, 'stswpro_filter_tickets' ), 10, 2);
+		register_activation_hook( __FILE__, array( $this, 'stswpro_ticketReponse_table_install' ) );
+		add_action( 'plugins_loaded', array( $this, 'stswpro_tickets_table_update_db_check' ) );
+		add_action( 'woocommerce_view_order', array( $this, 'stswpro_view_order' ), 20 );
 
-		add_filter( 'hook' ,  array( $this,"sendWithPlaceholders" ), 10, 2 );
+		add_filter( 'hook', array( $this, 'sendWithPlaceholders' ), 10, 2 );
 
 	}
 
