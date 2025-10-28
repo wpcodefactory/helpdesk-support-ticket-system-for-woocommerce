@@ -114,6 +114,9 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 
 == Changelog ==
 
+= 2.0.4 - 28/10/2025 =
+* WC tested up to: 10.3.
+
 = 2.0.3 - 13/10/2025 =
 * WPFactory Admin Menu - Library updated (to v1.0.8).
 * WPFactory Recommendations - Library updated (to v1.0.6).
