@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInit Class
  *
- * @version 2.0.0
+ * @version 2.0.4
  *
  * @author  WPFactory
  */
@@ -397,10 +397,15 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * mailIt_contentToAs.
+	 *
+	 * @version 2.0.4
+	 */
 	public function mailIt_contentToAs(){
 
 		?>
-		<textarea class='proVersion' disabled placeholder='<?php print esc_html__( "Pro Vesion Only - html enabled",'support-ticket-system-for-woocommerce' ) ; ?>' ></textarea>
+		<textarea class='proVersion' disabled placeholder='<?php print esc_html__( "Pro Version Only - html enabled",'support-ticket-system-for-woocommerce' ) ; ?>' ></textarea>
 		<?php
 	}
 
