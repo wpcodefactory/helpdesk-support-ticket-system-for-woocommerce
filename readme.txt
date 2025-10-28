@@ -116,6 +116,7 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 
 = 2.0.4 - 28/10/2025 =
 * Fix - Text typo fixed.
+* Dev - Coding standards improved.
 * WC tested up to: 10.3.
 
 = 2.0.3 - 13/10/2025 =

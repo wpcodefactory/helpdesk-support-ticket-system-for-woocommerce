@@ -87,6 +87,9 @@ class STSWooCommerceInit {
 		),
 	);
 
+	/**
+	 * adminHeader.
+	 */
 	public function adminHeader(){
 		?>
 			<h1 style='display:flex;align-items:center;' ><a target='_blank' href='<?php print esc_url( $this->proUrl ); ?>'>
@@ -98,6 +101,9 @@ class STSWooCommerceInit {
 
 	}
 
+	/**
+	 * adminSettings.
+	 */
 	public function adminSettings(){
 			esc_html( $this->adminTabs() );	// add tabs for tickets screen
 
@@ -212,6 +218,9 @@ class STSWooCommerceInit {
 
 	}
 
+	/**
+	 * adminPanels.
+	 */
 	public function adminPanels(){
 		// add settings for ticket system
 		add_settings_section( esc_html( $this->plugin )."general", "", null, esc_html( $this->plugin )."general-options");
@@ -278,6 +287,9 @@ class STSWooCommerceInit {
 
 	}
 
+	/**
+	 * assignToRole.
+	 */
 	public function assignToRole(){
 		?>
 
@@ -288,6 +300,10 @@ class STSWooCommerceInit {
 		<?php
 
 	}
+
+	/**
+	 * assignToUser.
+	 */
 	public function assignToUser(){
 
 		$users_query = new WP_User_Query( array(
@@ -312,6 +328,9 @@ class STSWooCommerceInit {
 
 	}
 
+	/**
+	 * renameAccountTabLink.
+	 */
 	public function renameAccountTabLink(){
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'renameAccountTabLink'] ) ){
 			$this->renameAccountTabLink =  sanitize_text_field($_REQUEST[esc_html( $this->plugin ).'renameAccountTabLink']);
@@ -321,6 +340,9 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * renameOrderButtonLink.
+	 */
 	public function renameOrderButtonLink(){
 		if( isset($_REQUEST[esc_html( $this->plugin ).'renameOrderButtonLink'] ) ){
 			$this->renameOrderButtonLink =  sanitize_text_field($_REQUEST[esc_html( $this->plugin ).'renameOrderButtonLink']);
@@ -330,6 +352,9 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * hideClosed.
+	 */
 	public function hideClosed(){
 		if( isset($_REQUEST[$this->plugin.'hideClosed'] ) ){
 			$this->hideClosed =  sanitize_text_field($_REQUEST[ esc_html( $this->plugin ).'hideClosed']);
@@ -339,6 +364,9 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * enableAttachments.
+	 */
 	public function enableAttachments(){
 
 		?>
@@ -346,17 +374,27 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * enablePriority.
+	 */
 	public function enablePriority(){
 		?>
 			<input type="checkbox" disabled />
 		<?php
 	}
 
+	/**
+	 * mailToAssignee.
+	 */
 	public function mailToAssignee(){
 		?>
 			<input <input type="checkbox" class='proVersion' disabled />
 		<?php
 	}
+
+	/**
+	 * mailToADmin.
+	 */
 	public function mailToADmin(){
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'mailToADmin'] ) ){
 			$this->mailToADmin =  sanitize_text_field($_REQUEST[esc_html( $this->plugin ).'mailToADmin']);
@@ -382,6 +420,9 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * mailToCustomer.
+	 */
 	public function mailToCustomer(){
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'mailToCustomer'] ) ){
 			$this->mailToCustomer =  sanitize_text_field($_REQUEST[ esc_html( $this->plugin ).'mailToCustomer']);
@@ -391,6 +432,9 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * mailIt_subjectToAs.
+	 */
 	public function mailIt_subjectToAs(){
 		?>
 			<input class='proVersion' disabled />
@@ -409,6 +453,9 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * textforTicketSave.
+	 */
 	public function textforTicketSave(){
 
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'textforTicketSave'] ) ){
@@ -418,6 +465,10 @@ class STSWooCommerceInit {
 		}
 		echo wp_editor( apply_filters($this->textforTicketSave,$this->textforTicketSave), esc_html( $this->plugin ).'textforTicketSave', array("wpautop" => true, 'textarea_name' => esc_html( $this->plugin ).'textforTicketSave', 'textarea_rows' => '5','editor_height' => 125)  );
 	}
+
+	/**
+	 * textforResponseSave.
+	 */
 	public function textforResponseSave(){
 
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'textforResponseSave'] ) ){
@@ -442,23 +493,37 @@ class STSWooCommerceInit {
 		<?php
 	}
 
+	/**
+	 * allowedExtensions.
+	 */
 	public function allowedExtensions(){
 
 		?>
 			<input disabled class='proVersion' placeholder='<?php print esc_html__('Extensions allowed - Pro Version','support-ticket-system-for-woocommerce' ) ; ?>'  />
 		<?php
 	}
+
+	/**
+	 * allowedSize.
+	 */
 	public function allowedSize(){
 		?>
 			<input type="text" disabled class='proVersion' placeholder='<?php print esc_html__('Files size - Pro Version','support-ticket-system-for-woocommerce' ); ?>'   />
 		<?php
 	}
+
+	/**
+	 * allowedAttachNum.
+	 */
 	public function allowedAttachNum(){
 		?>
 			<input type="number" disabled class='proVersion'  placeholder='<?php print esc_html__('Allowed N.Files  - Pro Version ','support-ticket-system-for-woocommerce' ); ?>'  />
 		<?php
 	}
 
+	/**
+	 * mailIt_contentToCust.
+	 */
 	public function mailIt_contentToCust(){
 
 		if( isset($_REQUEST[ esc_html( $this->plugin ).'mailIt_contentToCust'] ) ){
@@ -469,6 +534,9 @@ class STSWooCommerceInit {
 		echo wp_editor( apply_filters($this->mailIt_contentToCust,$this->mailIt_contentToCust), esc_html( $this->plugin ).'mailIt_contentToCust', array("wpautop" => true, 'textarea_name' => esc_html( $this->plugin ).'mailIt_contentToCust', 'textarea_rows' => '5','editor_height' => 225)  );
 	}
 
+	/**
+	 * adminProcessSettings.
+	 */
 	public function adminProcessSettings(){
 
 		if($_SERVER['REQUEST_METHOD'] == 'POST' && current_user_can('administrator') ){

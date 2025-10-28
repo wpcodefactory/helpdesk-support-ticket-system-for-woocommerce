@@ -438,7 +438,7 @@ class STSWooCommerceInc {
 	}
 
 	public function deleteRelevantResponses($post_id){
-		// on ticket delete, clear all reponses from table
+		// on ticket delete, clear all responses from table
 		$post_type = get_post_type( $post_id );
 		// does not run on other post types
 		if ( $post_type != 'stsw_tickets' ) {
