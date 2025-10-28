@@ -1028,15 +1028,24 @@ class STSWooCommerceInc {
 				$user = get_user_by('id', $customer_id);
 
 				//sendWithPlaceholders
-				$ticketId = $post_id;
-				$responseId = $lastid;
-				$title='';
+				$ticketId        = $post_id;
+				$responseId      = $lastid;
+				$title           = '';
 				$responseContent = $response;
-				$toEmail = sanitize_email( $user->user_email );
-				$toFirstName = esc_html( $user->first_name );
-				$toLastName = esc_html( $user->last_name );
+				$toEmail         = sanitize_email( $user->user_email );
+				$toFirstName     = esc_html( $user->first_name );
+				$toLastName      = esc_html( $user->last_name );
 
-				$this->sendWithPlaceholders($ticketId,$responseId,$title,$responseContent,$toEmail,$toFirstName,$toLastName,$user);
+				$this->sendWithPlaceholders(
+					$ticketId,
+					$responseId,
+					$title,
+					$responseContent,
+					$toEmail,
+					$toFirstName,
+					$toLastName,
+					$user
+				);
 
 			}
 
