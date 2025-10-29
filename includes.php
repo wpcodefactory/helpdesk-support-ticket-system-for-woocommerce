@@ -521,13 +521,13 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * deleteRelevantResponses.
+	 * On ticket delete, clear all responses from table.
 	 */
-	public function deleteRelevantResponses($post_id){
-		// on ticket delete, clear all responses from table
+	public function deleteRelevantResponses( $post_id ) {
+
+		// Do not run on other post types
 		$post_type = get_post_type( $post_id );
-		// does not run on other post types
-		if ( $post_type != 'stsw_tickets' ) {
+		if ( 'stsw_tickets' !== $post_type ) {
 			return true;
 		}
 
@@ -535,20 +535,22 @@ class STSWooCommerceInc {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . $this->tableName;
-		$wpdb->delete( esc_html( $table_name ), array( 'post_id' => (int)$post_id  ) );
+		$wpdb->delete(
+			esc_html( $table_name ),
+			array( 'post_id' => (int) $post_id )
+		);
 
 	}
 
 	/**
-	 * addColumnHeader.
+	 * Add extra columns to tickets list table for better management.
 	 */
 	public function addColumnHeader( $columns ) {
-		// add extra columns to tickets list table for better management
-		$columns['Order']  = esc_html__('Order','support-ticket-system-for-woocommerce' );
-		$columns['User']  = esc_html__('User','support-ticket-system-for-woocommerce' );
-		$columns['Assignee']  = esc_html__('Assignee','support-ticket-system-for-woocommerce' );
-		$columns['Last Response']  = esc_html__('Last Response','support-ticket-system-for-woocommerce' );
-		$columns['priority']  = esc_html__('Priority','support-ticket-system-for-woocommerce' );
+		$columns['Order']         = esc_html__( 'Order', 'support-ticket-system-for-woocommerce' );
+		$columns['User']          = esc_html__( 'User', 'support-ticket-system-for-woocommerce' );
+		$columns['Assignee']      = esc_html__( 'Assignee', 'support-ticket-system-for-woocommerce' );
+		$columns['Last Response'] = esc_html__( 'Last Response', 'support-ticket-system-for-woocommerce' );
+		$columns['priority']      = esc_html__( 'Priority', 'support-ticket-system-for-woocommerce' );
 		return $columns;
 	}
 
