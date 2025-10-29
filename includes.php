@@ -301,8 +301,6 @@ class STSWooCommerceInc {
 	 *
 	 * @version 2.1.0
 	 * @since   2.1.0
-	 *
-	 * @todo    (v2.1.0) use this everywhere (note that `$this->plugin . 'ticketuser'` gives `STSWooCommerceticketuser`, i.e., not `STSWooCommerceProticketuser`)
 	 */
 	public function get_ticket_user_id( $ticket_id ) {
 		return get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
@@ -450,6 +448,8 @@ class STSWooCommerceInc {
 
 	/**
 	 * Function to save any custom meta fields for tickets created.
+	 *
+	 * @todo    (v2.1.0) use `get_ticket_user_id()`
 	 */
 	public function saveFields() {
 
@@ -1144,7 +1144,7 @@ class STSWooCommerceInc {
 	 *
 	 * @version 2.1.0
 	 *
-	 * @todo    (v2.1.0) `verify_user()`?
+	 * @todo    (v2.1.0) use `verify_user()`?
 	 */
 	public function stswproSaveTicket() {
 
@@ -1326,6 +1326,8 @@ class STSWooCommerceInc {
 
 	/**
 	 * notifyUserOnWPedit.
+	 *
+	 * @todo    (v2.1.0) use `get_ticket_user_id()`
 	 */
 	public function notifyUserOnWPedit( $post_id, $post, $update  ) {
 
