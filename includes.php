@@ -1162,7 +1162,7 @@ class STSWooCommerceInc {
 			// Check user
 			if (
 				! function_exists( 'get_current_user_id' ) ||
-				get_current_user_id() !== ( $ticketuser = (int) $_REQUEST['ticketuser'] )
+				get_current_user_id() !== ( $ticket_user = (int) $_REQUEST['ticketuser'] )
 			) {
 				esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
 				return;
@@ -1206,12 +1206,12 @@ class STSWooCommerceInc {
 			}
 
 			// Update user for ticket
-			$this->set_ticket_user_id( $ticketid, $ticketuser );
+			$this->set_ticket_user_id( $ticketid, $ticket_user );
 
 			//set ticket status as open
 			wp_set_object_terms( $ticketid, 'Open', 'stsw_tickets_status' );
 
-			$user = get_user_by( 'id', $ticketuser );
+			$user = get_user_by( 'id', $ticket_user );
 
 			// sendWithPlaceholders
 			$ticketId      = $ticketid;
