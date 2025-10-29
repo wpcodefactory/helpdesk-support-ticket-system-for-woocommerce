@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.0.3\n"
+"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/support-ticket-system-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-13T17:19:59+00:00\n"
+"POT-Creation-Date: 2025-10-29T16:31:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: support-ticket-system-for-woocommerce\n"
@@ -39,321 +39,325 @@ msgstr ""
 msgid "https://wpfactory.com"
 msgstr ""
 
-#: includes.php:178
-#: includes.php:190
-#: includes.php:540
-#: includes.php:541
-#: includes.php:684
-#: includes.php:1213
+#: includes.php:185
+#: includes.php:197
+#: includes.php:643
+#: includes.php:644
+#: includes.php:799
+#: includes.php:1486
 msgid "Tickets"
 msgstr ""
 
-#: includes.php:179
+#: includes.php:186
 msgid "Ticket"
 msgstr ""
 
-#: includes.php:180
+#: includes.php:187
 msgid "Search Tickets"
 msgstr ""
 
-#: includes.php:181
+#: includes.php:188
 msgid "All Tickets"
 msgstr ""
 
-#: includes.php:182
+#: includes.php:189
 msgid "Parent Ticket"
 msgstr ""
 
-#: includes.php:183
+#: includes.php:190
 msgid "Parent Ticket:"
 msgstr ""
 
-#: includes.php:184
+#: includes.php:191
 msgid "Edit Ticket"
 msgstr ""
 
-#: includes.php:185
+#: includes.php:192
 msgid "Update Ticket"
 msgstr ""
 
-#: includes.php:186
+#: includes.php:193
 msgid "Add New Ticket"
 msgstr ""
 
-#: includes.php:187
-#: includes.php:189
+#: includes.php:194
+#: includes.php:196
 msgid "New Ticket"
 msgstr ""
 
-#: includes.php:188
+#: includes.php:195
 msgid "New Ticket Name"
 msgstr ""
 
-#: includes.php:191
+#: includes.php:198
 msgid "No Tickets found"
 msgstr ""
 
-#: includes.php:193
+#: includes.php:200
 msgid "Adding and editing my Tickets"
 msgstr ""
 
-#: includes.php:215
+#: includes.php:222
 msgctxt "taxonomy general name"
 msgid "Status"
 msgstr ""
 
-#: includes.php:216
+#: includes.php:223
 msgctxt "taxonomy singular name"
 msgid "Status"
 msgstr ""
 
-#: includes.php:217
+#: includes.php:224
 msgid "Search Status"
 msgstr ""
 
-#: includes.php:218
+#: includes.php:225
 msgid "All Status"
 msgstr ""
 
-#: includes.php:219
+#: includes.php:226
 msgid "Parent Status"
 msgstr ""
 
-#: includes.php:220
+#: includes.php:227
 msgid "Parent Status:"
 msgstr ""
 
-#: includes.php:221
+#: includes.php:228
 msgid "Edit Status"
 msgstr ""
 
-#: includes.php:222
+#: includes.php:229
 msgid "Update Status"
 msgstr ""
 
-#: includes.php:223
+#: includes.php:230
 msgid "Add New Status"
 msgstr ""
 
-#: includes.php:224
+#: includes.php:231
 msgid "New Status Name"
 msgstr ""
 
-#: includes.php:225
+#: includes.php:232
 msgid "No Status found."
 msgstr ""
 
-#: includes.php:226
-#: includes.php:517
+#: includes.php:233
+#: includes.php:620
 msgid "Status"
 msgstr ""
 
-#: includes.php:261
+#: includes.php:254
 msgid "Ticket Content"
 msgstr ""
 
-#: includes.php:262
-#: includes.php:799
+#: includes.php:263
+#: includes.php:917
 msgid "Responses"
 msgstr ""
 
-#: includes.php:263
+#: includes.php:272
 msgid "Ticket Info"
 msgstr ""
 
-#: includes.php:264
+#: includes.php:281
 msgid "Assign to User"
 msgstr ""
 
-#: includes.php:265
+#: includes.php:290
 msgid "New Response"
 msgstr ""
 
-#: includes.php:276
-#: includes.php:458
-#: includes.php:523
+#: includes.php:330
+#: includes.php:557
+#: includes.php:626
 msgid "Order"
 msgstr ""
 
-#: includes.php:277
-#: includes.php:286
-#: includes.php:310
-#: includes.php:344
-#: includes.php:363
+#: includes.php:331
+#: includes.php:348
+#: includes.php:377
+#: includes.php:419
+#: includes.php:445
 msgid "Pro Version"
 msgstr ""
 
-#: includes.php:280
-#: includes.php:459
-#: includes.php:518
+#: includes.php:335
+#: includes.php:558
+#: includes.php:621
 msgid "User"
 msgstr ""
 
-#: includes.php:285
+#: includes.php:347
 msgid "Ticket Assignee"
 msgstr ""
 
-#: includes.php:302
+#: includes.php:369
 msgid "Issue"
 msgstr ""
 
-#: includes.php:303
-#: includes.php:332
+#: includes.php:370
+#: includes.php:407
 msgid "Attachments"
 msgstr ""
 
-#: includes.php:329
-#: includes.php:520
-#: includes.php:802
+#: includes.php:404
+#: includes.php:623
+#: includes.php:920
 msgid "Date"
 msgstr ""
 
-#: includes.php:330
+#: includes.php:405
 msgid "Who Sent It"
 msgstr ""
 
-#: includes.php:331
-#: includes.php:876
+#: includes.php:406
+#: includes.php:994
 msgid "Message"
 msgstr ""
 
-#: includes.php:333
+#: includes.php:408
 msgid "Action"
 msgstr ""
 
-#: includes.php:351
+#: includes.php:426
 msgid "No responses yet"
 msgstr ""
 
-#: includes.php:460
-#: includes.php:524
+#: includes.php:559
+#: includes.php:627
 msgid "Assignee"
 msgstr ""
 
-#: includes.php:461
-#: includes.php:519
+#: includes.php:560
+#: includes.php:622
 msgid "Last Response"
 msgstr ""
 
-#: includes.php:462
-#: includes.php:522
+#: includes.php:561
+#: includes.php:625
 msgid "Priority"
 msgstr ""
 
-#: includes.php:473
-#: includes.php:485
-msgid "Pro "
+#: includes.php:574
+msgid "Pro"
 msgstr ""
 
-#: includes.php:516
-#: includes.php:782
-#: includes.php:869
+#: includes.php:619
+#: includes.php:900
+#: includes.php:987
 msgid "Title"
 msgstr ""
 
-#: includes.php:521
-#: includes.php:558
-#: includes.php:559
+#: includes.php:624
+#: includes.php:661
+#: includes.php:662
 msgid "Subject"
 msgstr ""
 
-#: includes.php:549
-#: includes.php:550
+#: includes.php:652
+#: includes.php:653
 msgid "Priorities"
 msgstr ""
 
-#: includes.php:567
-#: includes.php:568
+#: includes.php:670
+#: includes.php:671
 #: includes/class-wpfactory-wc-sts.php:147
 msgid "Settings"
 msgstr ""
 
-#: includes.php:583
+#: includes.php:689
 msgid "ALL"
 msgstr ""
 
-#: includes.php:592
+#: includes.php:698
 msgid "OPEN"
 msgstr ""
 
-#: includes.php:601
+#: includes.php:707
 msgid "IN PROGRESS"
 msgstr ""
 
-#: includes.php:662
+#: includes.php:777
 msgid "Get Help"
 msgstr ""
 
-#: includes.php:763
+#: includes.php:881
 msgid "TICKETS"
 msgstr ""
 
-#: includes.php:803
+#: includes.php:921
 msgid "Who Responded"
 msgstr ""
 
-#: includes.php:804
+#: includes.php:922
 msgid "Content"
 msgstr ""
 
-#: includes.php:838
+#: includes.php:956
 msgid "Add a response"
 msgstr ""
 
-#: includes.php:845
+#: includes.php:963
 msgid "Close Ticket"
 msgstr ""
 
-#: includes.php:848
-#: includes.php:885
+#: includes.php:966
+#: includes.php:1003
 msgid "Send"
 msgstr ""
 
-#: includes.php:860
+#: includes.php:978
 msgid " No Tickets found"
 msgstr ""
 
-#: includes.php:862
+#: includes.php:980
 msgid "ADD NEW TICKET"
 msgstr ""
 
-#: includes.php:908
+#: includes.php:1069
 msgid "Did not save because your submission is invalid..."
 msgstr ""
 
-#: includes.php:968
-msgid "Did not save because your submission has issues"
+#: includes.php:1079
+#: includes.php:1163
+msgid "Wrong user."
 msgstr ""
 
-#: includes.php:974
+#: includes.php:1169
+msgid "Did not save because your submission has issues."
+msgstr ""
+
+#: includes.php:1175
 msgid "Please enter a proper title. Titles must be at least 3 characters long."
 msgstr ""
 
-#: includes.php:978
-msgid "Please enter content more than 1 characters in length"
+#: includes.php:1179
+msgid "Please enter content more than 1 characters in length."
 msgstr ""
 
-#: includes.php:1034
-#: includes.php:1048
+#: includes.php:1252
+#: includes.php:1266
 msgid "New Ticket to "
 msgstr ""
 
-#: includes.php:1036
-#: includes.php:1053
-#: includes.php:1072
-#: includes.php:1087
-#: includes.php:1139
-#: includes.php:1147
+#: includes.php:1254
+#: includes.php:1271
+#: includes.php:1290
+#: includes.php:1305
+#: includes.php:1389
+#: includes.php:1412
 msgid "Check it Here"
 msgstr ""
 
-#: includes.php:1069
-#: includes.php:1133
+#: includes.php:1287
+#: includes.php:1373
 msgid "New Response to ticket #"
 msgstr ""
 
 #. Translators: %s: Taxonomy name.
-#: includes.php:1186
+#: includes.php:1459
 msgid "Show All %s"
 msgstr ""
 
@@ -373,136 +377,136 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: init.php:94
-#: init.php:209
+#: init.php:97
+#: init.php:215
 msgid "Get more plugins by extendWP"
 msgstr ""
 
-#: init.php:105
+#: init.php:111
 msgid "Use Ticket System in any page with the shortcode [stsw_user_tickets]"
 msgstr ""
 
-#: init.php:106
+#: init.php:112
 msgid "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend"
 msgstr ""
 
-#: init.php:122
+#: init.php:128
 msgid "General"
 msgstr ""
 
-#: init.php:123
+#: init.php:129
 msgid "Notifications"
 msgstr ""
 
-#: init.php:137
+#: init.php:143
 msgid "Available placeholders for your Emails:"
 msgstr ""
 
-#: init.php:139
+#: init.php:145
 msgid "in PRO Version"
 msgstr ""
 
-#: init.php:220
+#: init.php:229
 msgid "Rename Tab Link in My Account Page for Tickets"
 msgstr ""
 
-#: init.php:223
+#: init.php:232
 msgid "Enable Attachments to Ticket"
 msgstr ""
 
-#: init.php:226
+#: init.php:235
 msgid "Allowed Attachments File Types"
 msgstr ""
 
-#: init.php:229
+#: init.php:238
 msgid "Max File Size "
 msgstr ""
 
-#: init.php:232
+#: init.php:241
 msgid "Allowed Number of Attachments "
 msgstr ""
 
-#: init.php:235
+#: init.php:244
 msgid "Enable Priority Field to Ticket Creation"
 msgstr ""
 
-#: init.php:238
+#: init.php:247
 msgid "Rename Button on Orders Table in My Account Page for Tickets"
 msgstr ""
 
-#: init.php:241
+#: init.php:250
 msgid "Show only Open in Frontend"
 msgstr ""
 
-#: init.php:244
+#: init.php:253
 msgid "Default User Role for Ticket Assignment"
 msgstr ""
 
-#: init.php:247
+#: init.php:256
 msgid "Default Assignee"
 msgstr ""
 
-#: init.php:250
+#: init.php:259
 msgid "Text to display once Ticket is saved"
 msgstr ""
 
-#: init.php:253
+#: init.php:262
 msgid "Text to display once Response is saved"
 msgstr ""
 
-#: init.php:256
+#: init.php:265
 msgid "Notify Assignee by Email"
 msgstr ""
 
-#: init.php:259
+#: init.php:268
 msgid "Notify Admin by Email"
 msgstr ""
 
-#: init.php:262
+#: init.php:271
 msgid "Admin Address"
 msgstr ""
 
-#: init.php:265
+#: init.php:274
 msgid "Notify Customer by Email"
 msgstr ""
 
-#: init.php:268
+#: init.php:277
 msgid "Email Subject sent to Assignee"
 msgstr ""
 
-#: init.php:271
+#: init.php:280
 msgid "Email Content sent to Assignee"
 msgstr ""
 
-#: init.php:274
+#: init.php:283
 msgid "Email Subject sent to Customer"
 msgstr ""
 
-#: init.php:276
+#: init.php:285
 msgid "Email Content sent to Customer"
 msgstr ""
 
-#: init.php:381
+#: init.php:419
 msgid "Admin Email Address"
 msgstr ""
 
-#: init.php:403
-msgid "Pro Vesion Only - html enabled"
+#: init.php:452
+msgid "Pro Version Only - html enabled"
 msgstr ""
 
-#: init.php:436
+#: init.php:492
 msgid "Mail Subject"
 msgstr ""
 
-#: init.php:443
+#: init.php:502
 msgid "Extensions allowed - Pro Version"
 msgstr ""
 
-#: init.php:448
+#: init.php:511
 msgid "Files size - Pro Version"
 msgstr ""
 
-#: init.php:453
+#: init.php:520
 msgid "Allowed N.Files  - Pro Version "
 msgstr ""
 
