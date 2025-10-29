@@ -453,10 +453,7 @@ class STSWooCommerceInc {
 	 */
 	public function saveFields() {
 
-		if (
-			! isset( $_POST[ esc_html( $this->plugin ) . 'response' ] ) ||
-			empty( $_POST[ esc_html( $this->plugin ) . 'response' ]
-		) {
+		if ( empty( $_POST[ $this->plugin . 'response' ] ) ) {
 			return;
 		}
 
@@ -464,7 +461,7 @@ class STSWooCommerceInc {
 
 		$user         = $this->get_ticket_user_id( $post->ID );
 		$current_user = wp_get_current_user();
-		$response     = htmlspecialchars( sanitize_textarea_field( $_POST[ esc_html( $this->plugin ) . 'response' ] ) );
+		$response     = htmlspecialchars( sanitize_textarea_field( $_POST[ $this->plugin . 'response' ] ) );
 		$table_name   = esc_html( $wpdb->prefix . $this->tableName );
 
 		$wpdb->insert(
