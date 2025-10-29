@@ -323,15 +323,15 @@ class STSWooCommerceInc {
 
 		<?php $user = (int) $this->get_ticket_user_id( $post->ID ); ?>
 		<b><?php esc_html_e( 'User', 'support-ticket-system-for-woocommerce' ); ?></b>:
-		<?php if ( ! empty( $user ) ) { ?>
-			<?php
+		<?php
+		if ( ! empty( $user ) ) {
 			printf(
 				'<a href="%1$s" target="_blank">%2$s</a>',
 				esc_url( admin_url( 'user-edit.php?user_id=' . $user ) ),
 				esc_attr( $this->getUsername( $user ) )
 			);
-			?>
-		<?php } ?>
+		}
+		?>
 		<br/>
 
 		<b><?php esc_html_e( 'Ticket Assignee', 'support-ticket-system-for-woocommerce' )?></b>:
