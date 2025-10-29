@@ -1330,45 +1330,64 @@ class STSWooCommerceInc {
 	/**
 	 * notifyUserOnWPedit.
 	 *
+	 * @version 2.1.0
+	 *
 	 * @todo    (v2.1.0) use `get_ticket_user_id()`
 	 */
-	public function notifyUserOnWPedit( $post_id, $post, $update  ) {
+	public function notifyUserOnWPedit( $post_id, $post, $update ) {
 
-		if(isset( $_REQUEST[ esc_html( $this->plugin ).'response'] ) && !empty( $_REQUEST[ esc_html( $this->plugin ).'response'] ) ){
+		if (
+			isset( $_REQUEST[ esc_html( $this->plugin ).'response'] ) &&
+			!empty( $_REQUEST[ esc_html( $this->plugin ).'response'] )
+		){
 
-			$ticketId = $post_id;
-			$responseContent = esc_html ( $_REQUEST[$this->plugin.'response'] );
-			$user = get_post_meta( $post_id, esc_html( $this->plugin )."ticketuser",true);
-			$user = get_user_by('id', $user);
-			$toEmail = sanitize_email( $user->user_email );
-			$toFirstName = esc_html( $user->first_name );
-			$toLastName = esc_html( $user->last_name );
-			$title = get_the_title( $post_id );
-			$content = 	get_the_content( $post_id );
+		$ticketId        = $post_id;
+		$responseContent = esc_html ( $_REQUEST[$this->plugin.'response'] );
+		$user            = get_post_meta( $post_id, esc_html( $this->plugin )."ticketuser",true);
+		$user            = get_user_by('id', $user);
+		$toEmail         = sanitize_email( $user->user_email );
+		$toFirstName     = esc_html( $user->first_name );
+		$toLastName      = esc_html( $user->last_name );
+		$title           = get_the_title( $post_id );
+		$content         = get_the_content( $post_id );
 
-		//NOTIFY USER ON WO EDIT ADDING RESPONSE
-		if(get_option( esc_html( $this->plugin ).'mailToCustomer' ) && get_option( esc_html( $this->plugin ).'mailToCustomer' )=='1'){
+		// Notify user on WP edit adding response
+		if (
+			get_option( esc_html( $this->plugin ).'mailToCustomer' ) &&
+			get_option( esc_html( $this->plugin ).'mailToCustomer' )=='1'
+		){
 			$post_type = get_post_type($post_id);
 			// If this isn't a 'stsw_tickets' post, don't update it.
 			if ( "stsw_tickets" != $post_type ) return;
 
-			if ( get_post_meta($post_id, esc_html( $this->plugin )."ticketuser")  ) {
-				$user = get_user_by('id',get_post_meta($post_id, esc_html( $this->plugin )."ticketuser" , true)  );
+			if ( $user  ) {
+				$user = get_user_by( 'id', $user );
 				$to =  sanitize_email( $user->user_email ) ;
 			}
 
-			if(get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' ) && !empty(get_option(  esc_html( $this->plugin ).'mailIt_subjectToCust' )) ){
+			if(
+				get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' ) &&
+				!empty(get_option(  esc_html( $this->plugin ).'mailIt_subjectToCust' ))
+			){
 				$sub = esc_html( $subjectToCust );
-			}else  $sub = esc_html__( "New Response to ticket #",'support-ticket-system-for-woocommerce' ).(int)$post_id." - ".esc_html( $title);
+			} else {
+				$sub = esc_html__( "New Response to ticket #",'support-ticket-system-for-woocommerce' ).(int)$post_id." - ".esc_html( $title);
+			}
 
-			if(get_option(  esc_html( $this->plugin ).'mailIt_contentToCust' ) && !empty(get_option(  esc_html( $this->plugin ).'mailIt_contentToCust' )) ){
+			if(
+				get_option(  esc_html( $this->plugin ).'mailIt_contentToCust' ) &&
+				!empty(get_option(  esc_html( $this->plugin ).'mailIt_contentToCust' ))
+			){
 				$msg = esc_html( $messageToCust );
 			}else{
 				$msg = esc_html( $responseContent )."
 					<br/><a href='".esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) )."/tickets'>". esc_html_e( "Check it Here",'support-ticket-system-for-woocommerce' ) ."</a>";
 			}
 
-			if(get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' ) && !empty(get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' )) ){
+			if (
+				get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' ) &&
+				!empty(get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' ))
+			){
 				$msg = wp_kses( get_option( esc_html( $this->plugin ).'mailIt_subjectToCust' ) , $this->mailIt_allowed_html );
 			}else{
 				$msg = esc_html( $title ). "<br/>".esc_html( $content )."<br/>
@@ -1378,7 +1397,10 @@ class STSWooCommerceInc {
 
 			if (!empty(get_option( esc_html( $this->plugin ).'AdminEmailAddress' )) ) {
 				$adminEmail = esc_html( get_option( esc_html( $this->plugin ).'AdminEmailAddress' ) );
-			}else $adminEmail = sanitize_email( get_bloginfo("admin_email") );
+			}else {
+				$adminEmail = sanitize_email( get_bloginfo("admin_email") );
+			}
+
 			$headers[] = "Content-Type: text/html; charset=UTF-8";
 			$headers[] = "From: ".esc_html( get_bloginfo('name') )." <".$adminEmail.">";
 			$headers[] = "Reply-To: ".$to." <".$to.">";
