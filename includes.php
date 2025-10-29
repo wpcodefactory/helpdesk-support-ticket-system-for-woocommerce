@@ -998,9 +998,10 @@ class STSWooCommerceInc {
 			}
 			if (strlen($_POST['response_content']) > 1) {
 
-				$response = sanitize_textarea_field($_POST['response_content']) ;
-				$post_id = (int)$_POST['post_id'] ;
-				$customer_id = (int)$_POST['customer_id'] ;
+				$response    = sanitize_textarea_field( $_POST['response_content'] ) ;
+				$post_id     = (int) $_POST['post_id'];
+				$customer_id = (int) $_POST['customer_id'];
+
 				global $wpdb;
 
 				$table_name = $wpdb->prefix . $this->tableName;
