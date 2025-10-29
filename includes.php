@@ -341,32 +341,30 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * getUsername.
+	 * Function to return the name of a user based on id.
 	 */
-	public function getUsername($id){
-		//a function to return the name of a user based on id
-		$user = get_user_by( 'id', $id);
-		return esc_html( $user->first_name ." ".$user->last_name );
+	public function getUsername( $id ) {
+		$user = get_user_by( 'id', $id );
+		return esc_html( $user->first_name . ' ' . $user->last_name );
 	}
 
 	/**
-	 * ticketContent.
+	 * Display ticket content in ticket edit screen post box.
 	 */
 	public function ticketContent($post){
-		// display ticket content in ticket edit screen post box
 		?>
-		<table class='wp-list-table widefat fixed striped posts'>
+		<table class="wp-list-table widefat fixed striped posts">
 			<thead>
 				<tr>
-					<th><?php esc_html_e("Issue",'support-ticket-system-for-woocommerce' ); ?></th>
-					<th><?php esc_html_e("Attachments",'support-ticket-system-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Issue', 'support-ticket-system-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Attachments', 'support-ticket-system-for-woocommerce' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<th><?php print esc_html( $post->post_content ); ?></th>
+					<th><?php echo esc_html( $post->post_content ); ?></th>
 					<th>
-						<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
+						<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 					</th>
 				</tr>
 			</tbody>
@@ -375,15 +373,20 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * responses.
+	 * Query & display responses in ticket edit screen post box.
 	 */
 	public function responses($post){
-		// query & display responses in ticket edit screen post box
+
 		global $post;
 		global $wpdb;
 		$table_name = esc_html( $wpdb->prefix . $this->tableName );
 
-		$result = $wpdb->get_results( $wpdb->prepare("SELECT * FROM ".esc_html( $table_name )."  WHERE post_id=%d  AND user !='0'  ORDER BY creationdate DESC ",$post->ID ) );
+		$result = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM " . esc_html( $table_name ) . " WHERE post_id=%d  AND user !='0' ORDER BY creationdate DESC ",
+				$post->ID
+			)
+		);
 		$count = 0;
 		if(!empty($result)){
 			print "<table class='wp-list-table widefat fixed striped posts'>";
