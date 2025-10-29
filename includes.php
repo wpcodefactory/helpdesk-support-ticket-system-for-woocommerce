@@ -980,15 +980,19 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * stswproSaveResponse.
+	 * Function to save a response from frontend.
 	 *
 	 * @version 2.0.4
 	 */
 	public function stswproSaveResponse() {
-		// function to save a response from frontend
-		if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['stswresponsefrontend']) ){
-			//form is submitted via ajax
-			check_ajax_referer( 'stswresponsefrontend','stswresponsefrontend' );
+
+		if (
+			'POST' === $_SERVER['REQUEST_METHOD'] &&
+			isset( $_POST['stswresponsefrontend'] )
+		) {
+
+			// Form is submitted via ajax
+			check_ajax_referer( 'stswresponsefrontend', 'stswresponsefrontend' );
 
 			// Stop running function if form wasn't submitted
 			if (
@@ -997,67 +1001,75 @@ class STSWooCommerceInc {
 			) {
 				return;
 			}
-			if( !wp_verify_nonce($_POST['stswresponsefrontend'], 'stswresponsefrontend') ) {
-				echo esc_html__('Did not save because your submission is invalid...' ,'support-ticket-system-for-woocommerce' );
+
+			if ( ! wp_verify_nonce( $_POST['stswresponsefrontend'], 'stswresponsefrontend' ) ) {
+				esc_html_e( 'Did not save because your submission is invalid...', 'support-ticket-system-for-woocommerce' );
 				return;
 			}
 
-				$response    = sanitize_textarea_field( $_POST['response_content'] ) ;
-				$post_id     = (int) $_POST['post_id'];
-				$customer_id = (int) $_POST['customer_id'];
+			$response    = sanitize_textarea_field( $_POST['response_content'] ) ;
+			$post_id     = (int) $_POST['post_id'];
+			$customer_id = (int) $_POST['customer_id'];
 
-				if ( ! $this->verify_user( $customer_id, $post_id ) ) {
-					esc_html_e( 'Wrong user.' ,'support-ticket-system-for-woocommerce' );
-					return;
-				}
+			// Verify user
+			if ( ! $this->verify_user( $customer_id, $post_id ) ) {
+				esc_html_e( 'Wrong user.' ,'support-ticket-system-for-woocommerce' );
+				return;
+			}
 
-				global $wpdb;
+			global $wpdb;
 
-				$table_name = $wpdb->prefix . $this->tableName;
-				$wpdb->insert(
-					$table_name,
-					array(
-						'user'         => $customer_id,
-						'creationdate' => current_time( 'mysql', 1 ),
-						'content'      => $response,
-						'post_id'      => $post_id,
-					)
+			$table_name = $wpdb->prefix . $this->tableName;
+			$wpdb->insert(
+				$table_name,
+				array(
+					'user'         => $customer_id,
+					'creationdate' => current_time( 'mysql', 1 ),
+					'content'      => $response,
+					'post_id'      => $post_id,
+				)
+			);
+
+			if (
+				get_option( esc_html( $this->plugin ) . 'textforResponseSave' ) &&
+				! empty( get_option( $this->plugin . 'textforResponseSave' ) )
+			) {
+				echo wp_kses(
+					get_option( esc_html( $this->plugin ) . 'textforResponseSave' ),
+					$this->mailIt_allowed_html
 				);
+			}
 
-				if(get_option( esc_html( $this->plugin ).'textforResponseSave' ) && !empty(get_option( $this->plugin.'textforResponseSave' )) ){
-					//echo esc_html__(get_option( $this->plugin.'textforResponseSave' ) ) ;
-					echo wp_kses( get_option( esc_html( $this->plugin ).'textforResponseSave' ), $this->mailIt_allowed_html );
-				}
+			if ( ! empty( $_POST['closeTicket'] ) ) {
+				wp_set_object_terms( $post_id, 'Closed', 'stsw_tickets_status' );
+			}
 
-				if(isset($_POST['closeTicket']) && !empty($_POST['closeTicket']) ) {
-					wp_set_object_terms( $post_id, 'Closed', 'stsw_tickets_status');
-				}
+			$lastid = (int) $wpdb->insert_id;
 
-				$lastid = (int)$wpdb->insert_id;
+			$user = get_user_by( 'id', $customer_id );
 
-				$user = get_user_by('id', $customer_id);
+			// SendWithPlaceholders
+			$ticketId        = $post_id;
+			$responseId      = $lastid;
+			$title           = '';
+			$responseContent = $response;
+			$toEmail         = sanitize_email( $user->user_email );
+			$toFirstName     = esc_html( $user->first_name );
+			$toLastName      = esc_html( $user->last_name );
 
-				//sendWithPlaceholders
-				$ticketId        = $post_id;
-				$responseId      = $lastid;
-				$title           = '';
-				$responseContent = $response;
-				$toEmail         = sanitize_email( $user->user_email );
-				$toFirstName     = esc_html( $user->first_name );
-				$toLastName      = esc_html( $user->last_name );
-
-				$this->sendWithPlaceholders(
-					$ticketId,
-					$responseId,
-					$title,
-					$responseContent,
-					$toEmail,
-					$toFirstName,
-					$toLastName,
-					$user
-				);
+			$this->sendWithPlaceholders(
+				$ticketId,
+				$responseId,
+				$title,
+				$responseContent,
+				$toEmail,
+				$toFirstName,
+				$toLastName,
+				$user
+			);
 
 		}
+
 	}
 
 	/**
