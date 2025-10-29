@@ -554,6 +554,8 @@ class STSWooCommerceInc {
 
 	/**
 	 * addAdColumns.
+	 *
+	 * @version 2.0.4
 	 */
 	public function addAdColumns( $column_name, $post_id ) {
 		// populate the new columns added with relevant content
@@ -566,12 +568,13 @@ class STSWooCommerceInc {
 			<?php
 		}
 
-		if( $column_name == 'User' ) {
-			$user = get_post_meta( $post_id, esc_html( $this->plugin ).'ticketuser', true );
-			if($user !='') {
-				echo esc_html($this->getUsername($user));
+		if ( 'User' === $column_name ) {
+			$user = (int) $this->get_ticket_user_id( $post_id );
+			if ( $user ) {
+				echo esc_html( $this->getUsername( $user ) );
 			}
 		}
+
 		if( $column_name == 'Assignee' ) {
 			?>
 			<span class='proVersion' ><?php print esc_html__( "Pro ",'support-ticket-system-for-woocommerce' ) ; ?></span>
