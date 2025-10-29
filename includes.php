@@ -1140,66 +1140,80 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * stswproSaveTicket.
+	 * Save ticket submitted from frontend.
+	 *
+	 * @version 2.1.0
+	 *
+	 * @todo    (v2.1.0) `verify_user()`?
 	 */
 	public function stswproSaveTicket() {
-		//save ticket submitted from frontend
-		if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['stswticketfrontend']) ){
-			//submission via ajax - check
+
+		if (
+			'POST' === $_SERVER['REQUEST_METHOD'] &&
+			isset( $_POST['stswticketfrontend'] )
+		) {
+
+			// Submission via ajax - check
 			check_ajax_referer( 'stswticketfrontend','stswticketfrontend' );
 
 			// Stop running function if form wasn't submitted
-			if ( !isset($_POST['title']) ) {
+			if ( ! isset( $_POST['title'], $_POST['content'] ) ) {
 				return;
 			}
 
 			// Check that the nonce was set and valid
-			if( !wp_verify_nonce($_POST['stswticketfrontend'], 'stswticketfrontend') ) {
-				echo esc_html__('Did not save because your submission has issues','support-ticket-system-for-woocommerce' ) ;
+			if ( ! wp_verify_nonce( $_POST['stswticketfrontend'], 'stswticketfrontend' ) ) {
+				esc_html_e( 'Did not save because your submission has issues', 'support-ticket-system-for-woocommerce' );
 				return;
 			}
 
-			// form validation to make sure there is content
-			if (strlen($_POST['title']) < 3) {
-				echo esc_html__( 'Please enter a proper title. Titles must be at least 3 characters long.','support-ticket-system-for-woocommerce' ) ;
+			// Form validation to make sure there is content
+			if ( strlen( $_POST['title'] ) < 3 ) {
+				esc_html_e( 'Please enter a proper title. Titles must be at least 3 characters long.', 'support-ticket-system-for-woocommerce' ) ;
 				return;
 			}
-			if (strlen($_POST['content']) < 1) {
-				echo esc_html__( 'Please enter content more than 1 characters in length','support-ticket-system-for-woocommerce' ) ;
+			if ( strlen( $_POST['content'] ) < 1 ) {
+				esc_html_e( 'Please enter content more than 1 characters in length','support-ticket-system-for-woocommerce' ) ;
 				return;
 			}
 
 			// Add the content of the form to $post as an array
 			$post = array(
-				'post_title'    => sanitize_text_field( $_POST['title'] ),
-				'post_content'  => sanitize_text_field( $_POST['content'] ),
-				'post_type' 	=> 'stsw_tickets',
-				'post_status' 	=> 'publish'
+				'post_title'   => sanitize_text_field( $_POST['title'] ),
+				'post_content' => sanitize_text_field( $_POST['content'] ),
+				'post_type'    => 'stsw_tickets',
+				'post_status'  => 'publish',
 			);
-			$ticketid = wp_insert_post($post);
-			$ticketid = (int)$ticketid;
+			$ticketid = wp_insert_post( $post );
+			$ticketid = (int) $ticketid;
 
-			//display a message
-			if(get_option( esc_html( $this->plugin ).'textforTicketSave' ) && !empty(get_option( esc_html( $this->plugin ).'textforTicketSave' )) ){
-				echo wp_kses( get_option( esc_html( $this->plugin ).'textforTicketSave' ), $this->mailIt_allowed_html );
+			// Display a message
+			if (
+				get_option( esc_html( $this->plugin ) . 'textforTicketSave' ) &&
+				! empty( get_option( esc_html( $this->plugin ) . 'textforTicketSave' ) )
+			) {
+				echo wp_kses(
+					get_option( esc_html( $this->plugin ) . 'textforTicketSave' ),
+					$this->mailIt_allowed_html
+				);
 			}
 
-			//update user for ticket
-			if (isset($_REQUEST['ticketuser'])){
-				$ticketuser = (int)$_REQUEST['ticketuser'];
-				update_post_meta($ticketid, 'STSWooCommerceProticketuser', $ticketuser);
+			// Update user for ticket
+			if ( isset( $_REQUEST['ticketuser'] ) ) {
+				$ticketuser = (int) $_REQUEST['ticketuser'];
+				$this->set_ticket_user_id( $ticketid, $ticketuser );
 			}
 
 			//set ticket status as open
-			wp_set_object_terms( $ticketid, 'Open', 'stsw_tickets_status');
+			wp_set_object_terms( $ticketid, 'Open', 'stsw_tickets_status' );
 
-			$user = get_user_by('id', $ticketuser);
+			$user = get_user_by( 'id', $ticketuser );
 
 			// sendWithPlaceholders
 			$ticketId      = $ticketid;
 			$responseId    ='';
-			$ticketTitle   = esc_html($_POST['title']);
-			$ticketContent = esc_html($_POST['content']);
+			$ticketTitle   = esc_html( $_POST['title'] );
+			$ticketContent = esc_html( $_POST['content'] );
 			$toEmail       = sanitize_email( $user->user_email );
 			$toFirstName   = esc_html( $user->first_name );
 			$toLastName    = esc_html( $user->last_name );
@@ -1216,6 +1230,7 @@ class STSWooCommerceInc {
 			);
 
 		}
+
 	}
 
 	/**
