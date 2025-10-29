@@ -1191,8 +1191,8 @@ class STSWooCommerceInc {
 				'post_type'    => 'stsw_tickets',
 				'post_status'  => 'publish',
 			);
-			$ticketid = wp_insert_post( $post );
-			$ticketid = (int) $ticketid;
+			$ticket_id = wp_insert_post( $post );
+			$ticket_id = (int) $ticket_id;
 
 			// Display a message
 			if (
@@ -1206,15 +1206,15 @@ class STSWooCommerceInc {
 			}
 
 			// Update user for ticket
-			$this->set_ticket_user_id( $ticketid, $ticket_user );
+			$this->set_ticket_user_id( $ticket_id, $ticket_user );
 
 			//set ticket status as open
-			wp_set_object_terms( $ticketid, 'Open', 'stsw_tickets_status' );
+			wp_set_object_terms( $ticket_id, 'Open', 'stsw_tickets_status' );
 
 			$user = get_user_by( 'id', $ticket_user );
 
 			// sendWithPlaceholders
-			$ticketId      = $ticketid;
+			$ticketId      = $ticket_id;
 			$responseId    ='';
 			$ticketTitle   = esc_html( $_POST['title'] );
 			$ticketContent = esc_html( $_POST['content'] );
