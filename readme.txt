@@ -117,7 +117,7 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 = 2.1.0 - 29/10/2025 =
 * Fix - Security - "Missing Authorization" vulnerability fixed.
 * Fix - Admin ticket list - "User" column value fixed.
-* Fix - Admin meta boxes - Ticket Info - "User" line value fixed.
+* Fix - Admin meta boxes - Ticket Info - "User" row value fixed.
 * Fix - Save fields - "User" DB column value fixed.
 * Fix - Notify user on WP edit - "User" value fixed.
 * Fix - Text typo fixed.
