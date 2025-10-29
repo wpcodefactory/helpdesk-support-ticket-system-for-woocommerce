@@ -1331,8 +1331,6 @@ class STSWooCommerceInc {
 	 * Notify user on WP edit adding response.
 	 *
 	 * @version 2.1.0
-	 *
-	 * @todo    (v2.1.0) use `get_ticket_user_id()`
 	 */
 	public function notifyUserOnWPedit( $post_id, $post, $update ) {
 
@@ -1344,7 +1342,7 @@ class STSWooCommerceInc {
 
 			$ticketId        = $post_id;
 			$responseContent = esc_html( $_REQUEST[ $this->plugin . 'response' ] );
-			$user_id         = get_post_meta( $post_id, $this->plugin . "ticketuser", true );
+			$user_id         = $this->get_ticket_user_id( $post_id );
 			$user            = get_user_by( 'id', $user_id );
 			$toEmail         = sanitize_email( $user->user_email );
 			$toFirstName     = esc_html( $user->first_name );
