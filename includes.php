@@ -1328,7 +1328,7 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * notifyUserOnWPedit.
+	 * Notify user on WP edit adding response.
 	 *
 	 * @version 2.1.0
 	 *
@@ -1337,31 +1337,24 @@ class STSWooCommerceInc {
 	public function notifyUserOnWPedit( $post_id, $post, $update ) {
 
 		if (
-			! isset( $_REQUEST[ esc_html( $this->plugin ) . 'response'] ) ||
-			empty( $_REQUEST[ esc_html( $this->plugin ) . 'response' ] )
+			! empty( $_REQUEST[ $this->plugin . 'response' ] ) &&
+			get_option( $this->plugin . 'mailToCustomer' ) &&
+			'1' == get_option( $this->plugin . 'mailToCustomer' )
 		) {
-			return;
-		}
 
-		$ticketId        = $post_id;
-		$responseContent = esc_html( $_REQUEST[ $this->plugin . 'response' ] );
-		$user_id         = get_post_meta( $post_id, esc_html( $this->plugin ) . "ticketuser", true );
-		$user            = get_user_by( 'id', $user_id );
-		$toEmail         = sanitize_email( $user->user_email );
-		$toFirstName     = esc_html( $user->first_name );
-		$toLastName      = esc_html( $user->last_name );
-		$title           = get_the_title( $post_id );
-		$content         = get_the_content( $post_id );
+			$ticketId        = $post_id;
+			$responseContent = esc_html( $_REQUEST[ $this->plugin . 'response' ] );
+			$user_id         = get_post_meta( $post_id, $this->plugin . "ticketuser", true );
+			$user            = get_user_by( 'id', $user_id );
+			$toEmail         = sanitize_email( $user->user_email );
+			$toFirstName     = esc_html( $user->first_name );
+			$toLastName      = esc_html( $user->last_name );
+			$title           = get_the_title( $post_id );
+			$content         = get_the_content( $post_id );
 
-		// Notify user on WP edit adding response
-		if (
-			get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) &&
-			'1' == get_option( esc_html( $this->plugin ) . 'mailToCustomer' )
-		){
-
-			// If this isn't a 'stsw_tickets' post, don't update it.
+			// If this isn't a `stsw_tickets` post, don't update it
 			$post_type = get_post_type($post_id);
-			if ( "stsw_tickets" != $post_type ) {
+			if ( 'stsw_tickets' !== $post_type ) {
 				return;
 			}
 
@@ -1370,8 +1363,8 @@ class STSWooCommerceInc {
 			}
 
 			if (
-				get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) &&
-				! empty( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) )
+				get_option( $this->plugin . 'mailIt_subjectToCust' ) &&
+				! empty( get_option( $this->plugin . 'mailIt_subjectToCust' ) )
 			) {
 				$sub = esc_html( $subjectToCust );
 			} else {
@@ -1383,8 +1376,8 @@ class STSWooCommerceInc {
 			}
 
 			if(
-				get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) &&
-				! empty( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) )
+				get_option( $this->plugin . 'mailIt_contentToCust' ) &&
+				! empty( get_option( $this->plugin . 'mailIt_contentToCust' ) )
 			) {
 				$msg = esc_html( $messageToCust );
 			} else {
@@ -1398,37 +1391,38 @@ class STSWooCommerceInc {
 			}
 
 			if (
-				get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) &&
-				! empty( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) )
+				get_option( $this->plugin . 'mailIt_subjectToCust' ) &&
+				! empty( get_option( $this->plugin . 'mailIt_subjectToCust' ) )
 			) {
 				$msg = wp_kses(
-					get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ),
+					get_option( $this->plugin . 'mailIt_subjectToCust' ),
 					$this->mailIt_allowed_html
 				);
 			} else {
 				$msg = (
 					esc_html( $title ) .
-					"<br/>" .
+					'<br/>' .
 					esc_html( $content ) .
-					"<br/>
-					Last Response: " .
+					'<br/>
+					Last Response: ' .
 					esc_html( $responseContent ) .
-					"<br/>
-					<a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" .
-						esc_html_e( "Check it Here",'support-ticket-system-for-woocommerce' ) .
-					"</a>"
+					'<br/>
+					<a href="' . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . '/tickets">' .
+						esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) .
+					'</a>'
 				);
 			}
 
-			if ( ! empty( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) ) ) {
-				$adminEmail = esc_html( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) );
+			if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
+				$adminEmail = esc_html( get_option( $this->plugin . 'AdminEmailAddress' ) );
 			} else {
 				$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
 			}
 
-			$headers[] = "Content-Type: text/html; charset=UTF-8";
-			$headers[] = "From: " . esc_html( get_bloginfo( 'name' ) ) . " <" . $adminEmail . ">";
-			$headers[] = "Reply-To: " . $to . " <" . $to . ">";
+			$headers[] = 'Content-Type: text/html; charset=UTF-8';
+			$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . $adminEmail . '>';
+			$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
+
 			$sent_message = wp_mail( $to, $sub, $msg, $headers );
 
 		}
