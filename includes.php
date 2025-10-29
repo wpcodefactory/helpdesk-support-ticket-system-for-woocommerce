@@ -309,6 +309,18 @@ class STSWooCommerceInc {
 	}
 
 	/**
+	 * set_ticket_user_id.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 *
+	 * @todo    (v2.1.0) why `STSWooCommerceProticketuser` and not `STSWooCommerceticketuser`?
+	 */
+	public function set_ticket_user_id( $ticket_id, $user_id ) {
+		return update_post_meta( $ticket_id, 'STSWooCommerceProticketuser', $user_id );
+	}
+
+	/**
 	 * appInfoCreate.
 	 *
 	 * @version 2.1.0
@@ -1103,7 +1115,7 @@ class STSWooCommerceInc {
 
 			$user = get_user_by( 'id', $customer_id );
 
-			// SendWithPlaceholders
+			// sendWithPlaceholders
 			$ticketId        = $post_id;
 			$responseId      = $lastid;
 			$title           = '';
@@ -1169,7 +1181,6 @@ class STSWooCommerceInc {
 
 			//display a message
 			if(get_option( esc_html( $this->plugin ).'textforTicketSave' ) && !empty(get_option( esc_html( $this->plugin ).'textforTicketSave' )) ){
-				//echo esc_html__(get_option( $this->plugin.'textforTicketSave' ) ) ;
 				echo wp_kses( get_option( esc_html( $this->plugin ).'textforTicketSave' ), $this->mailIt_allowed_html );
 			}
 
@@ -1184,15 +1195,26 @@ class STSWooCommerceInc {
 
 			$user = get_user_by('id', $ticketuser);
 
-			//sendWithPlaceholders
-			$ticketId = $ticketid;
-			$responseId='';
-			$ticketTitle = esc_html($_POST['title']);
+			// sendWithPlaceholders
+			$ticketId      = $ticketid;
+			$responseId    ='';
+			$ticketTitle   = esc_html($_POST['title']);
 			$ticketContent = esc_html($_POST['content']);
-			$toEmail = sanitize_email( $user->user_email );
-			$toFirstName = esc_html( $user->first_name );
-			$toLastName = esc_html( $user->last_name );
-			$this->sendWithPlaceholders($ticketId,$responseId,$ticketTitle,$ticketContent,$toEmail,$toFirstName,$toLastName,$user);
+			$toEmail       = sanitize_email( $user->user_email );
+			$toFirstName   = esc_html( $user->first_name );
+			$toLastName    = esc_html( $user->last_name );
+
+			$this->sendWithPlaceholders(
+				$ticketId,
+				$responseId,
+				$ticketTitle,
+				$ticketContent,
+				$toEmail,
+				$toFirstName,
+				$toLastName,
+				$user
+			);
+
 		}
 	}
 
