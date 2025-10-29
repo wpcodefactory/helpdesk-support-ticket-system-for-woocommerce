@@ -312,7 +312,7 @@ class STSWooCommerceInc {
 	 * @version 2.1.0
 	 * @since   2.1.0
 	 *
-	 * @todo    (v2.1.0) why `STSWooCommerceProticketuser` and not `STSWooCommerceticketuser`?
+	 * @todo    (v2.1.0) why `STSWooCommerceProticketuser` (and not `STSWooCommerceticketuser`)?
 	 */
 	public function set_ticket_user_id( $ticket_id, $user_id ) {
 		return update_post_meta( $ticket_id, 'STSWooCommerceProticketuser', $user_id );
@@ -449,35 +449,36 @@ class STSWooCommerceInc {
 	/**
 	 * Function to save any custom meta fields for tickets created.
 	 *
+	 * @version 2.1.0
+	 *
 	 * @todo    (v2.1.0) use `get_ticket_user_id()`
 	 */
 	public function saveFields() {
 
-		global $post;
-
-		if ( isset( $_POST[ esc_html( $this->plugin ) . 'response'] ) ) {
-			if ( ! empty( $_POST[ esc_html( $this->plugin ) . 'response'] ) ) {
-
-				$user         = get_post_meta( $post->ID, esc_html( $this->plugin ) . 'ticketuser', true );
-				$current_user = wp_get_current_user();
-
-				$response = htmlspecialchars( sanitize_textarea_field( $_POST[ esc_html( $this->plugin ) . 'response'] ) );
-				global $wpdb;
-				$table_name = esc_html( $wpdb->prefix . $this->tableName );
-
-				$wpdb->insert(
-					$table_name,
-					array(
-						'user'         => $user,
-						'creationdate' => current_time( 'mysql', 1 ),
-						'content'      => $response,
-						'agent'        => (int) $current_user->ID,
-						'post_id'      => (int) $post->ID
-					)
-				);
-
-			}
+		if (
+			! isset( $_POST[ esc_html( $this->plugin ) . 'response' ] ) ||
+			empty( $_POST[ esc_html( $this->plugin ) . 'response' ]
+		) {
+			return;
 		}
+
+		global $post, $wpdb;
+
+		$user         = get_post_meta( $post->ID, esc_html( $this->plugin ) . 'ticketuser', true );
+		$current_user = wp_get_current_user();
+		$response     = htmlspecialchars( sanitize_textarea_field( $_POST[ esc_html( $this->plugin ) . 'response' ] ) );
+		$table_name   = esc_html( $wpdb->prefix . $this->tableName );
+
+		$wpdb->insert(
+			$table_name,
+			array(
+				'user'         => $user,
+				'creationdate' => current_time( 'mysql', 1 ),
+				'content'      => $response,
+				'agent'        => (int) $current_user->ID,
+				'post_id'      => (int) $post->ID
+			)
+		);
 
 	}
 
@@ -487,7 +488,7 @@ class STSWooCommerceInc {
 	public function deleteResponseEvent() {
 		// on delete button click, delete the response and clear the row from the table - via ajax  call  to responseDelete
 		global $post;
-	?>
+		?>
 		<script type="text/javascript" >
 
 		jQuery(function ($) {
@@ -510,7 +511,7 @@ class STSWooCommerceInc {
 		});
 
 		</script>
-	<?php
+		<?php
 	}
 
 	/**
