@@ -301,31 +301,43 @@ class STSWooCommerceInc {
 	 *
 	 * @version 2.0.4
 	 * @since   2.0.4
+	 *
+	 * @todo    (v2.0.4) use this everywhere (note that `$this->plugin . 'ticketuser'` gives `STSWooCommerceticketuser`, i.e., not `STSWooCommerceProticketuser`)
 	 */
 	public function get_ticket_user_id( $ticket_id ) {
-		return get_post_meta( $ticket_id, $this->plugin . 'ticketuser', true );
+		return get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
 	}
 
 	/**
 	 * appInfoCreate.
 	 *
-	 * @version 2.0.0
+	 * @version 2.0.4
 	 */
-	public function appInfoCreate($post){
+	public function appInfoCreate( $post ) {
 		global $post;
+
 		?>
-		<b><?php _e( 'Order', 'support-ticket-system-for-woocommerce' )?></b>:
-		<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
+		<b><?php esc_html_e( 'Order', 'support-ticket-system-for-woocommerce' ); ?></b>:
+		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 		<br/>
-		<?php $user = get_post_meta($post->ID, esc_html( $this->plugin ).'ticketuser' , true ) ; ?>
-		<b><?php _e( 'User', 'support-ticket-system-for-woocommerce' )?></b>:
-		<?php if(!empty($user)) { ?>
-			<?php print "<a href='".esc_url( admin_url() )."user-edit.php?user_id=".esc_html( $user )."' target='_blank'>". esc_attr($this->getUsername($user)); ?></a>
+
+		<?php $user = (int) $this->get_ticket_user_id( $post->ID ); ?>
+		<b><?php esc_html_e( 'User', 'support-ticket-system-for-woocommerce' ); ?></b>:
+		<?php if ( ! empty( $user ) ) { ?>
+			<?php
+			printf(
+				'<a href="%1$s" target="_blank">%2$s</a>',
+				esc_url( admin_url( 'user-edit.php?user_id=' . $user ) ),
+				esc_attr( $this->getUsername( $user ) )
+			);
+			?>
 		<?php } ?>
 		<br/>
-		<b><?php _e( 'Ticket Assignee', 'support-ticket-system-for-woocommerce' )?></b>:
-			<span class='proVersion' ><?php print esc_html__( "Pro Version",'support-ticket-system-for-woocommerce' ) ; ?></span>
-			<?php
+
+		<b><?php esc_html_e( 'Ticket Assignee', 'support-ticket-system-for-woocommerce' )?></b>:
+		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
+		<?php
+
 	}
 
 	/**
