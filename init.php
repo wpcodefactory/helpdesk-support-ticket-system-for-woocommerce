@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInit Class
  *
- * @version 2.0.4
+ * @version 2.1.0
  *
  * @author  WPFactory
  */
@@ -444,7 +444,7 @@ class STSWooCommerceInit {
 	/**
 	 * mailIt_contentToAs.
 	 *
-	 * @version 2.0.4
+	 * @version 2.1.0
 	 */
 	public function mailIt_contentToAs(){
 

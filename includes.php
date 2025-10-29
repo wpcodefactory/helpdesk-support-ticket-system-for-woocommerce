@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
- * @version 2.0.4
+ * @version 2.1.0
  *
  * @author  WPFactory
  */
@@ -299,10 +299,10 @@ class STSWooCommerceInc {
 	/**
 	 * get_ticket_user_id.
 	 *
-	 * @version 2.0.4
-	 * @since   2.0.4
+	 * @version 2.1.0
+	 * @since   2.1.0
 	 *
-	 * @todo    (v2.0.4) use this everywhere (note that `$this->plugin . 'ticketuser'` gives `STSWooCommerceticketuser`, i.e., not `STSWooCommerceProticketuser`)
+	 * @todo    (v2.1.0) use this everywhere (note that `$this->plugin . 'ticketuser'` gives `STSWooCommerceticketuser`, i.e., not `STSWooCommerceProticketuser`)
 	 */
 	public function get_ticket_user_id( $ticket_id ) {
 		return get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
@@ -311,7 +311,7 @@ class STSWooCommerceInc {
 	/**
 	 * appInfoCreate.
 	 *
-	 * @version 2.0.4
+	 * @version 2.1.0
 	 */
 	public function appInfoCreate( $post ) {
 		global $post;
@@ -428,7 +428,7 @@ class STSWooCommerceInc {
 	/**
 	 * assignTouser.
 	 *
-	 * @version 2.0.4
+	 * @version 2.1.0
 	 */
 	public function assignTouser( $post ) {
 		?>
@@ -555,7 +555,7 @@ class STSWooCommerceInc {
 	/**
 	 * Populate the new columns added with relevant content.
 	 *
-	 * @version 2.0.4
+	 * @version 2.1.0
 	 */
 	public function addAdColumns( $column_name, $post_id ) {
 
@@ -1005,8 +1005,8 @@ class STSWooCommerceInc {
 	/**
 	 * verify_user.
 	 *
-	 * @version 2.0.4
-	 * @since   2.0.4
+	 * @version 2.1.0
+	 * @since   2.1.0
 	 */
 	public function verify_user( $user_id, $ticket_id ) {
 
@@ -1035,7 +1035,7 @@ class STSWooCommerceInc {
 	/**
 	 * Function to save a response from frontend.
 	 *
-	 * @version 2.0.4
+	 * @version 2.1.0
 	 */
 	public function stswproSaveResponse() {
 
