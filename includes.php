@@ -553,18 +553,15 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * addAdColumns.
+	 * Populate the new columns added with relevant content.
 	 *
 	 * @version 2.0.4
 	 */
 	public function addAdColumns( $column_name, $post_id ) {
-		// populate the new columns added with relevant content
-		global $post;
 
-		if( $column_name == 'priority' || $column_name == 'Order' || $column_name == 'subject' ) {
-
+		if ( in_array( $column_name, array( 'priority', 'Order', 'subject', 'Assignee' ) ) ) {
 			?>
-			<span class='proVersion' ><?php print esc_html__( "Pro ",'support-ticket-system-for-woocommerce' ) ; ?></span>
+			<span class="proVersion"><?php esc_html_e( 'Pro', 'support-ticket-system-for-woocommerce' ); ?></span>
 			<?php
 		}
 
@@ -575,19 +572,17 @@ class STSWooCommerceInc {
 			}
 		}
 
-		if( $column_name == 'Assignee' ) {
-			?>
-			<span class='proVersion' ><?php print esc_html__( "Pro ",'support-ticket-system-for-woocommerce' ) ; ?></span>
-			<?php
-		}
-
-		if( $column_name == 'Last Response' ) {
+		if ( 'Last Response' === $column_name ) {
 			global $wpdb;
-			$table_name = $wpdb->prefix . $this->tableName; // do not forget about tables prefix
-			$result = $wpdb->get_row( $wpdb->prepare("SELECT * FROM ".esc_html( $table_name )."  WHERE post_id=%d  AND user !='0' ORDER BY creationdate DESC ",(int)$post_id ) );
-
-			if(!empty($result)){
-					print esc_html( $result->creationdate );
+			$table_name = $wpdb->prefix . $this->tableName;
+			$result = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM " . esc_html( $table_name ) . " WHERE post_id=%d AND user != '0' ORDER BY creationdate DESC ",
+					(int) $post_id
+				)
+			);
+			if ( ! empty( $result ) ) {
+				echo esc_html( $result->creationdate );
 			}
 		}
 
