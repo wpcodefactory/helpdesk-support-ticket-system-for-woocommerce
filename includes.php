@@ -981,6 +981,8 @@ class STSWooCommerceInc {
 
 	/**
 	 * stswproSaveResponse.
+	 *
+	 * @version 2.0.4
 	 */
 	public function stswproSaveResponse() {
 		// function to save a response from frontend
@@ -1001,6 +1003,11 @@ class STSWooCommerceInc {
 				$response    = sanitize_textarea_field( $_POST['response_content'] ) ;
 				$post_id     = (int) $_POST['post_id'];
 				$customer_id = (int) $_POST['customer_id'];
+
+				if ( ! $this->verify_user( $customer_id, $post_id ) ) {
+					esc_html_e( 'Wrong user.' ,'support-ticket-system-for-woocommerce' );
+					return;
+				}
 
 				global $wpdb;
 
@@ -1329,6 +1336,36 @@ class STSWooCommerceInc {
 		}else{ ?> <h2><?php esc_html__("Tickets",'support-ticket-system-for-woocommerce' ) ; ?></h2> <?php } ?>
 		<?php
 		$this->stswpro_my_account_endpoint_content();
+	}
+
+	/**
+	 * verify_user.
+	 *
+	 * @version 2.0.4
+	 * @since   2.0.4
+	 */
+	function verify_user( $user_id, $ticket_id ) {
+
+		if (
+			! function_exists( 'wp_get_current_user' ) ||
+			! ( $current_user = wp_get_current_user() ) ||
+			$user_id !== $current_user->ID
+		) {
+			return false;
+		}
+
+		if (
+			! current_user_can( 'manage_woocommerce' ) &&
+			(
+				! ( $ticket_user_id = (int) get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true ) ) ||
+				$user_id !== $ticket_user_id
+			)
+		) {
+			return false;
+		}
+
+		return true;
+
 	}
 
 }
