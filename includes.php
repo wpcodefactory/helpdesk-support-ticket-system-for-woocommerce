@@ -991,14 +991,16 @@ class STSWooCommerceInc {
 			check_ajax_referer( 'stswresponsefrontend','stswresponsefrontend' );
 
 			// Stop running function if form wasn't submitted
-			if ( !isset($_POST['response_content']) ) {
+			if (
+				! isset( $_POST['response_content'] ) ||
+				strlen( $_POST['response_content'] ) <= 1
+			) {
 				return;
 			}
 			if( !wp_verify_nonce($_POST['stswresponsefrontend'], 'stswresponsefrontend') ) {
 				echo esc_html__('Did not save because your submission is invalid...' ,'support-ticket-system-for-woocommerce' );
 				return;
 			}
-			if (strlen($_POST['response_content']) > 1) {
 
 				$response    = sanitize_textarea_field( $_POST['response_content'] ) ;
 				$post_id     = (int) $_POST['post_id'];
@@ -1054,8 +1056,6 @@ class STSWooCommerceInc {
 					$toLastName,
 					$user
 				);
-
-			}
 
 		}
 	}
