@@ -1143,8 +1143,6 @@ class STSWooCommerceInc {
 	 * Save ticket submitted from frontend.
 	 *
 	 * @version 2.1.0
-	 *
-	 * @todo    (v2.1.0) use `verify_user()`?
 	 */
 	public function stswproSaveTicket() {
 
@@ -1157,13 +1155,22 @@ class STSWooCommerceInc {
 			check_ajax_referer( 'stswticketfrontend','stswticketfrontend' );
 
 			// Stop running function if form wasn't submitted
-			if ( ! isset( $_POST['title'], $_POST['content'] ) ) {
+			if ( ! isset( $_POST['title'], $_POST['content'], $_REQUEST['ticketuser'] ) ) {
+				return;
+			}
+
+			// Check user
+			if (
+				! function_exists( 'get_current_user_id' ) ||
+				get_current_user_id() !== (int) $_REQUEST['ticketuser']
+			) {
+				esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
 				return;
 			}
 
 			// Check that the nonce was set and valid
 			if ( ! wp_verify_nonce( $_POST['stswticketfrontend'], 'stswticketfrontend' ) ) {
-				esc_html_e( 'Did not save because your submission has issues', 'support-ticket-system-for-woocommerce' );
+				esc_html_e( 'Did not save because your submission has issues.', 'support-ticket-system-for-woocommerce' );
 				return;
 			}
 
@@ -1173,7 +1180,7 @@ class STSWooCommerceInc {
 				return;
 			}
 			if ( strlen( $_POST['content'] ) < 1 ) {
-				esc_html_e( 'Please enter content more than 1 characters in length','support-ticket-system-for-woocommerce' ) ;
+				esc_html_e( 'Please enter content more than 1 characters in length.', 'support-ticket-system-for-woocommerce' ) ;
 				return;
 			}
 
@@ -1199,10 +1206,8 @@ class STSWooCommerceInc {
 			}
 
 			// Update user for ticket
-			if ( isset( $_REQUEST['ticketuser'] ) ) {
-				$ticketuser = (int) $_REQUEST['ticketuser'];
-				$this->set_ticket_user_id( $ticketid, $ticketuser );
-			}
+			$ticketuser = (int) $_REQUEST['ticketuser'];
+			$this->set_ticket_user_id( $ticketid, $ticketuser );
 
 			//set ticket status as open
 			wp_set_object_terms( $ticketid, 'Open', 'stsw_tickets_status' );
