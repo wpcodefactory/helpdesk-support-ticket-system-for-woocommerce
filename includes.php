@@ -450,8 +450,6 @@ class STSWooCommerceInc {
 	 * Function to save any custom meta fields for tickets created.
 	 *
 	 * @version 2.1.0
-	 *
-	 * @todo    (v2.1.0) use `get_ticket_user_id()`
 	 */
 	public function saveFields() {
 
@@ -464,7 +462,7 @@ class STSWooCommerceInc {
 
 		global $post, $wpdb;
 
-		$user         = get_post_meta( $post->ID, esc_html( $this->plugin ) . 'ticketuser', true );
+		$user         = $this->get_ticket_user_id( $post->ID );
 		$current_user = wp_get_current_user();
 		$response     = htmlspecialchars( sanitize_textarea_field( $_POST[ esc_html( $this->plugin ) . 'response' ] ) );
 		$table_name   = esc_html( $wpdb->prefix . $this->tableName );
@@ -486,7 +484,7 @@ class STSWooCommerceInc {
 	 * deleteResponseEvent.
 	 */
 	public function deleteResponseEvent() {
-		// on delete button click, delete the response and clear the row from the table - via ajax  call  to responseDelete
+		// on delete button click, delete the response and clear the row from the table - via ajax call to responseDelete
 		global $post;
 		?>
 		<script type="text/javascript" >
