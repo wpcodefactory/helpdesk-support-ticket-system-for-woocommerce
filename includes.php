@@ -1314,17 +1314,23 @@ class STSWooCommerceInc {
 
 	/**
 	 * notifyUsers.
+	 *
+	 * @version 2.1.0
 	 */
-	public function notifyUsers($to,$subject,$message){
+	public function notifyUsers( $to, $subject, $message ) {
 
-		if (!empty(get_option( esc_html( $this->plugin ).'AdminEmailAddress' )) ) {
-			$adminEmail = sanitize_email( get_option( esc_html( $this->plugin ).'AdminEmailAddress' ) );
-		}else $adminEmail = sanitize_email( get_bloginfo("admin_email") );
+		if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
+			$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
+		} else {
+			$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
+		}
 
-		$headers[] = "Content-Type: text/html; charset=UTF-8";
-		$headers[] = "From: ".esc_html( get_bloginfo('name') )." <".esc_html( $adminEmail ).">";
-		$headers[] = "Reply-To: ".$to." <".$to.">";
-		$sent_message = wp_mail( $to, $subject, $message, $headers);
+		$headers[] = 'Content-Type: text/html; charset=UTF-8';
+		$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . esc_html( $adminEmail ) . '>';
+		$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
+
+		$sent_message = wp_mail( $to, $subject, $message, $headers );
+
 	}
 
 	/**
