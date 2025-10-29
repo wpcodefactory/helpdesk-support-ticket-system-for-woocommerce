@@ -297,6 +297,16 @@ class STSWooCommerceInc {
 	}
 
 	/**
+	 * get_ticket_user_id.
+	 *
+	 * @version 2.0.4
+	 * @since   2.0.4
+	 */
+	public function get_ticket_user_id( $ticket_id ) {
+		return get_post_meta( $ticket_id, $this->plugin . 'ticketuser', true );
+	}
+
+	/**
 	 * appInfoCreate.
 	 *
 	 * @version 2.0.0
@@ -985,7 +995,7 @@ class STSWooCommerceInc {
 	 * @version 2.0.4
 	 * @since   2.0.4
 	 */
-	function verify_user( $user_id, $ticket_id ) {
+	public function verify_user( $user_id, $ticket_id ) {
 
 		if (
 			! function_exists( 'wp_get_current_user' ) ||
@@ -998,7 +1008,7 @@ class STSWooCommerceInc {
 		if (
 			! current_user_can( 'manage_woocommerce' ) &&
 			(
-				! ( $ticket_user_id = (int) get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true ) ) ||
+				! ( $ticket_user_id = (int) $this->get_ticket_user_id( $ticket_id ) ) ||
 				$user_id !== $ticket_user_id
 			)
 		) {
