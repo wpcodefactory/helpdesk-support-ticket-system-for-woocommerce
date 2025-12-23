@@ -1,10 +1,10 @@
 === Helpdesk Support Ticket System for WooCommerce ===
-Contributors: wpcodefactory, anbinder, karzin, omardabbas
+Contributors: wpcodefactory
 Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
 Requires at least: 3.0.1
 Requires PHP: 5.2.4
-Tested up to: 6.8
-Stable tag: 2.1.0
+Tested up to: 6.9
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,9 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 = Can I exchange PRIVATE notes? =
 This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce "Support Ticket System for WooCommerce PRO")
 
+= Where do I report security bugs found in this plugin? =
+Please report security bugs found in the source code of the plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/b7fe7602-463e-4f5a-bf83-ed6fa9065b00). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 == Screenshots ==
 
 1. Backend Settings Page
@@ -113,6 +116,10 @@ This is available in the [PRO Version](https://extend-wp.com/product/helpdesk-su
 4. Frontend use Support Ticket System for WooCommerce from My Account section - respond to ticket
 
 == Changelog ==
+
+= 2.1.1 - 23/12/2025 =
+* WC tested up to: 10.4.
+* Tested up to: 6.9.
 
 = 2.1.0 - 29/10/2025 =
 * Fix - Security - "Missing Authorization" vulnerability fixed.
