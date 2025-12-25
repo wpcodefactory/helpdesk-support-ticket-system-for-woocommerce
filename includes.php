@@ -481,7 +481,6 @@ class STSWooCommerceInc {
 	 * On delete button click, delete the response and clear the row from the table - via AJAX call to `responseDelete()`.
 	 */
 	public function deleteResponseEvent() {
-		global $post;
 		?>
 		<script type="text/javascript">
 		jQuery(
