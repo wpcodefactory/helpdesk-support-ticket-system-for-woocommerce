@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.1.2-dev-20251225-0042' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.1.2-dev-20251225-0046' );
 
 defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ );
 
