@@ -523,6 +523,7 @@ class STSWooCommerceInc {
 			$id = (int)$_POST['id'];
 
 			if ( ! $this->verify_ticket_user_id( get_current_user_id(), $id ) ) {
+				echo 0;
 				die();
 			}
 
@@ -530,6 +531,7 @@ class STSWooCommerceInc {
 
 			$table_name = $wpdb->prefix . $this->tableName;
 			$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
+			echo $id;
 			die(); // this is required to return a proper result
 		}
 	}
