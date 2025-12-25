@@ -118,6 +118,7 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 2.1.2 - 25/12/2025 =
+* Fix - Security - "Missing Authorization" vulnerability fixed.
 * Dev - Code refactoring.
 
 = 2.1.1 - 23/12/2025 =

@@ -511,6 +511,8 @@ class STSWooCommerceInc {
 
 	/**
 	 * responseDelete.
+	 *
+	 * @version 2.1.2
 	 */
 	public function responseDelete() {
 		// function to delete the response and clear the row from the table
@@ -518,9 +520,13 @@ class STSWooCommerceInc {
 
 			check_ajax_referer( 'responseDelete','nonce' );
 
-			global $post_type;
-			global $wpdb;
 			$id = (int)$_POST['id'];
+
+			if ( ! $this->verify_ticket_user_id( get_current_user_id(), $id ) ) {
+				die();
+			}
+
+			global $wpdb;
 
 			$table_name = $wpdb->prefix . $this->tableName;
 			$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
