@@ -484,24 +484,32 @@ class STSWooCommerceInc {
 		global $post;
 		?>
 		<script type="text/javascript">
-		jQuery( function ( $ ) {
+		jQuery(
+			function ( $ ) {
+				$( document ).on(
+					'click',
+					'#deleteResponse a',
+					function ( event ) {
+						event.preventDefault();
 
-			$( document ).on( "click", '#deleteResponse a', function( event ) {
-				event.preventDefault();
+						var ajax_options = {
+							action: 'responseDelete',
+							nonce: '<?php echo wp_create_nonce( 'responseDelete' ); ?>',
+							ajaxurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+							id: $( this ).attr( 'id' ),
+						};
 
-				var ajax_options = {
-					action: 'responseDelete',
-					nonce: '<?php echo wp_create_nonce( 'responseDelete' ); ?>',
-					ajaxurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-					id: $( this ).attr( "id" ),
-				};
-
-				$.post( ajaxurl, ajax_options, function( data ) {
-					$( "tr." + data ).remove(); // remove row of the deleted item
-				} );
-			} );
-
-		} );
+						$.post(
+							ajaxurl,
+							ajax_options,
+							function ( data ) {
+								$( 'tr.' + data ).remove(); // remove row of the deleted item
+							}
+						);
+					}
+				);
+			}
+		);
 		</script>
 		<?php
 	}
