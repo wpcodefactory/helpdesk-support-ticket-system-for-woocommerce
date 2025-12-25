@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
- * @version 2.1.0
+ * @version 2.1.2
  *
  * @author  WPFactory
  */
@@ -1015,7 +1015,7 @@ class STSWooCommerceInc {
 	/**
 	 * verify_user.
 	 *
-	 * @version 2.1.0
+	 * @version 2.1.2
 	 * @since   2.1.0
 	 */
 	public function verify_user( $user_id, $ticket_id ) {
@@ -1023,23 +1023,29 @@ class STSWooCommerceInc {
 		if (
 			! function_exists( 'wp_get_current_user' ) ||
 			! ( $current_user = wp_get_current_user() ) ||
-			$user_id !== $current_user->ID
+			(int) $user_id !== (int) $current_user->ID
 		) {
 			return false;
 		}
 
-		if (
-			! current_user_can( 'manage_woocommerce' ) &&
+		return $this->verify_ticket_user_id( $user_id, $ticket_id );
+
+	}
+
+	/**
+	 * verify_ticket_user_id.
+	 *
+	 * @version 2.1.2
+	 * @since   2.1.2
+	 */
+	public function verify_ticket_user_id( $user_id, $ticket_id ) {
+		return (
+			current_user_can( 'manage_woocommerce' ) ||
 			(
-				! ( $ticket_user_id = (int) $this->get_ticket_user_id( $ticket_id ) ) ||
-				$user_id !== $ticket_user_id
+				( $ticket_user_id = (int) $this->get_ticket_user_id( $ticket_id ) ) &&
+				(int) $user_id === $ticket_user_id
 			)
-		) {
-			return false;
-		}
-
-		return true;
-
+		);
 	}
 
 	/**
