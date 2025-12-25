@@ -120,7 +120,8 @@ Please report security bugs found in the source code of the plugin through the [
 = 2.1.2 - 25/12/2025 =
 * Fix - Security - "Missing Authorization" vulnerability fixed.
 * Fix - JS response delete - Clear the table row.
-* Dev - Code refactoring.
+* Dev - Code refactoring and cleanup.
+* Dev - Coding standards improved.
 
 = 2.1.1 - 23/12/2025 =
 * WC tested up to: 10.4.

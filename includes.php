@@ -478,62 +478,67 @@ class STSWooCommerceInc {
 	}
 
 	/**
-	 * deleteResponseEvent.
+	 * On delete button click, delete the response and clear the row from the table - via AJAX call to `responseDelete()`.
 	 */
 	public function deleteResponseEvent() {
-		// on delete button click, delete the response and clear the row from the table - via ajax call to responseDelete
 		global $post;
 		?>
-		<script type="text/javascript" >
+		<script type="text/javascript">
+		jQuery( function ( $ ) {
 
-		jQuery(function ($) {
-
-			$(document).on("click", '#deleteResponse a', function(event){
+			$( document ).on( "click", '#deleteResponse a', function( event ) {
 				event.preventDefault();
 
 				var ajax_options = {
 					action: 'responseDelete',
-					nonce: '<?php echo wp_create_nonce( 'responseDelete'); ?>',
+					nonce: '<?php echo wp_create_nonce( 'responseDelete' ); ?>',
 					ajaxurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-					id: $( this ).attr( "id" )
+					id: $( this ).attr( "id" ),
 				};
 
-				$.post( ajaxurl, ajax_options, function(data) {
-					$("tr."+data).remove(); //remove row of the deleted item
-				});
-			});
+				$.post( ajaxurl, ajax_options, function( data ) {
+					$( "tr." + data ).remove(); // remove row of the deleted item
+				} );
+			} );
 
-		});
-
+		} );
 		</script>
 		<?php
 	}
 
 	/**
-	 * responseDelete.
+	 * Function to delete the response and clear the row from the table.
 	 *
 	 * @version 2.1.2
 	 */
 	public function responseDelete() {
-		// function to delete the response and clear the row from the table
-		if ( isset( $_POST['nonce'] ) &&  isset( $_POST['id'] ) && wp_verify_nonce( $_POST['nonce'], 'responseDelete' ) ) {
-
-			check_ajax_referer( 'responseDelete','nonce' );
-
-			$id = (int)$_POST['id'];
-
-			if ( ! $this->verify_ticket_user_id( get_current_user_id(), $id ) ) {
-				echo 0;
-				die();
-			}
-
-			global $wpdb;
-
-			$table_name = $wpdb->prefix . $this->tableName;
-			$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
-			echo $id;
-			die(); // this is required to return a proper result
+		if ( ! isset( $_POST['id'] ) ) {
+			return;
 		}
+
+		if (
+			! isset( $_POST['nonce'] ) ||
+			! wp_verify_nonce(
+				sanitize_text_field( wp_unslash( $_POST['nonce'] ) ),
+				'responseDelete'
+			)
+		) {
+			wp_die( esc_html__( 'Link expired.', 'support-ticket-system-for-woocommerce' ) );
+		}
+
+		check_ajax_referer( 'responseDelete', 'nonce' );
+
+		$id = (int) $_POST['id'];
+
+		if ( ! $this->verify_ticket_user_id( get_current_user_id(), $id ) ) {
+			wp_die( esc_html__( 'Wrong user.', 'support-ticket-system-for-woocommerce' ) );
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . $this->tableName;
+		$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
+		echo $id;
+		die();
 	}
 
 	/**
