@@ -4,7 +4,7 @@ Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
 Requires at least: 3.0.1
 Requires PHP: 5.2.4
 Tested up to: 6.9
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,7 +117,7 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
-= 2.1.2 - 25/12/2025 =
+= 2.1.2 - 26/12/2025 =
 * Fix - Security - "Missing Authorization" vulnerability fixed.
 * Fix - JS response delete - Clear the table row.
 * Dev - Code refactoring and cleanup.
