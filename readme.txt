@@ -117,6 +117,9 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
+= 2.1.3 - 13/01/2026 =
+* Fix - Security - "Broken Access Control" vulnerability fixed.
+
 = 2.1.2 - 26/12/2025 =
 * Fix - Security - "Missing Authorization" vulnerability fixed.
 * Fix - JS response delete - Clear the table row.

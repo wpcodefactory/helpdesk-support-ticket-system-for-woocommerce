@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
- * @version 2.1.2
+ * @version 2.1.3
  *
  * @author  WPFactory
  */
@@ -174,7 +174,7 @@ class STSWooCommerceInc {
 	/**
 	 * Tickets.
 	 *
-	 * @version 2.0.0
+	 * @version 2.1.3
 	 */
 	public function Tickets() {
 
@@ -200,14 +200,12 @@ class STSWooCommerceInc {
 				'description'           => esc_html__('Adding and editing my Tickets','support-ticket-system-for-woocommerce' ),
 				'menu_icon'             => 'dashicons-calendar',
 				'supports'              => array( 'title'),
-				'show_in_rest'          => true,
-				'rest_base'             => 'stsw_tickets',
-				'rest_controller_class' => 'WP_REST_Posts_Controller',
+				'show_in_rest'          => false,
 				'capability_type'       => 'page',
 				'hierarchical'          => false,
 				'menu_position'         => null,
 				'public'                => false, // it's not public, it shouldn't have it's own permalink, and so on
-				'publicly_queryable'    => true,  // you should be able to query it
+				'publicly_queryable'    => false,
 				'show_ui'               => true,  // you should be able to edit it in wp-admin
 				'show_in_menu'          => false,
 				'exclude_from_search'   => true,  // you should exclude it from search results
