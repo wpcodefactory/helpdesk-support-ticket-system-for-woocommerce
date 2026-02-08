@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.1.3\n"
+"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.1.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/support-ticket-system-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-01-14T13:50:52+00:00\n"
+"POT-Creation-Date: 2026-02-08T21:45:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: support-ticket-system-for-woocommerce\n"
@@ -44,7 +44,7 @@ msgstr ""
 #: includes.php:661
 #: includes.php:662
 #: includes.php:817
-#: includes.php:1510
+#: includes.php:1511
 msgid "Tickets"
 msgstr ""
 
@@ -230,8 +230,8 @@ msgid "Link expired."
 msgstr ""
 
 #: includes.php:539
-#: includes.php:1103
-#: includes.php:1187
+#: includes.php:1104
+#: includes.php:1188
 msgid "Wrong user."
 msgstr ""
 
@@ -326,43 +326,43 @@ msgstr ""
 msgid "ADD NEW TICKET"
 msgstr ""
 
-#: includes.php:1093
+#: includes.php:1094
 msgid "Did not save because your submission is invalid..."
 msgstr ""
 
-#: includes.php:1193
+#: includes.php:1194
 msgid "Did not save because your submission has issues."
 msgstr ""
 
-#: includes.php:1199
+#: includes.php:1200
 msgid "Please enter a proper title. Titles must be at least 3 characters long."
 msgstr ""
 
-#: includes.php:1203
+#: includes.php:1204
 msgid "Please enter content more than 1 characters in length."
 msgstr ""
 
-#: includes.php:1276
-#: includes.php:1290
+#: includes.php:1277
+#: includes.php:1291
 msgid "New Ticket to "
 msgstr ""
 
-#: includes.php:1278
-#: includes.php:1295
-#: includes.php:1314
-#: includes.php:1329
-#: includes.php:1413
-#: includes.php:1436
+#: includes.php:1279
+#: includes.php:1296
+#: includes.php:1315
+#: includes.php:1330
+#: includes.php:1414
+#: includes.php:1437
 msgid "Check it Here"
 msgstr ""
 
-#: includes.php:1311
-#: includes.php:1397
+#: includes.php:1312
+#: includes.php:1398
 msgid "New Response to ticket #"
 msgstr ""
 
 #. Translators: %s: Taxonomy name.
-#: includes.php:1483
+#: includes.php:1484
 msgid "Show All %s"
 msgstr ""
 
@@ -515,66 +515,66 @@ msgstr ""
 msgid "Allowed N.Files  - Pro Version "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:121
+#: support-ticket-system-for-woocommerce.php:120
 msgid "Add your Email below & get "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:121
+#: support-ticket-system-for-woocommerce.php:120
 msgid " in our PRO plugins! "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:126
+#: support-ticket-system-for-woocommerce.php:125
 msgid "Sign up"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:127
+#: support-ticket-system-for-woocommerce.php:126
 msgid "By adding your email you will be able to use your email as coupon to a future purchase at "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:174
+#: support-ticket-system-for-woocommerce.php:173
 msgid "Go PRO and get more important features!"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:175
+#: support-ticket-system-for-woocommerce.php:174
 msgid "Enable Attachments on Ticket Submission"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:176
+#: support-ticket-system-for-woocommerce.php:175
 msgid "Choose File Size, Number and Type for Upload"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:177
+#: support-ticket-system-for-woocommerce.php:176
 msgid "Enable Ticket Priorities for Better Management"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:178
+#: support-ticket-system-for-woocommerce.php:177
 msgid "Assign Ticket to Different Users"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:179
+#: support-ticket-system-for-woocommerce.php:178
 msgid "Private Notes that customer cannot view "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:180
+#: support-ticket-system-for-woocommerce.php:179
 msgid "Add Ticket Subject and Automate Ticket Assignment"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:181
+#: support-ticket-system-for-woocommerce.php:180
 msgid "Customize your Email Notifications "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:182
+#: support-ticket-system-for-woocommerce.php:181
 msgid "Useful Placeholders for your Notification Template"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:183
+#: support-ticket-system-for-woocommerce.php:182
 msgid ".. and a lot more!"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:184
+#: support-ticket-system-for-woocommerce.php:183
 msgid "GET IT HERE"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:241
+#: support-ticket-system-for-woocommerce.php:240
 msgid "Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system."
 msgstr ""
