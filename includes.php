@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
- * @version 2.1.3
+ * @version 2.1.4
  *
  * @author  WPFactory
  */
@@ -297,11 +297,11 @@ class STSWooCommerceInc {
 	/**
 	 * get_ticket_user_id.
 	 *
-	 * @version 2.1.0
+	 * @version 2.1.4
 	 * @since   2.1.0
 	 */
 	public function get_ticket_user_id( $ticket_id ) {
-		return get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
+		return (int) get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
 	}
 
 	/**
@@ -319,7 +319,7 @@ class STSWooCommerceInc {
 	/**
 	 * appInfoCreate.
 	 *
-	 * @version 2.1.0
+	 * @version 2.1.4
 	 */
 	public function appInfoCreate( $post ) {
 		global $post;
@@ -329,7 +329,7 @@ class STSWooCommerceInc {
 		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 		<br/>
 
-		<?php $user = (int) $this->get_ticket_user_id( $post->ID ); ?>
+		<?php $user = $this->get_ticket_user_id( $post->ID ); ?>
 		<b><?php esc_html_e( 'User', 'support-ticket-system-for-woocommerce' ); ?></b>:
 		<?php
 		if ( ! empty( $user ) ) {
@@ -514,7 +514,7 @@ class STSWooCommerceInc {
 	/**
 	 * Function to delete the response and clear the row from the table.
 	 *
-	 * @version 2.1.2
+	 * @version 2.1.4
 	 */
 	public function responseDelete() {
 		if ( ! isset( $_POST['id'] ) ) {
@@ -535,7 +535,7 @@ class STSWooCommerceInc {
 
 		$id = (int) $_POST['id'];
 
-		if ( ! $this->verify_ticket_user_id( get_current_user_id(), $id ) ) {
+		if ( ! $this->verify_ticket_current_user_id( $id ) ) {
 			wp_die( esc_html__( 'Wrong user.', 'support-ticket-system-for-woocommerce' ) );
 		}
 
@@ -583,7 +583,7 @@ class STSWooCommerceInc {
 	/**
 	 * Populate the new columns added with relevant content.
 	 *
-	 * @version 2.1.0
+	 * @version 2.1.4
 	 */
 	public function addAdColumns( $column_name, $post_id ) {
 
@@ -594,7 +594,7 @@ class STSWooCommerceInc {
 		}
 
 		if ( 'User' === $column_name ) {
-			$user = (int) $this->get_ticket_user_id( $post_id );
+			$user = $this->get_ticket_user_id( $post_id );
 			if ( $user ) {
 				echo esc_html( $this->getUsername( $user ) );
 			}
@@ -1033,7 +1033,7 @@ class STSWooCommerceInc {
 	/**
 	 * verify_user.
 	 *
-	 * @version 2.1.2
+	 * @version 2.1.4
 	 * @since   2.1.0
 	 */
 	public function verify_user( $user_id, $ticket_id ) {
@@ -1046,22 +1046,23 @@ class STSWooCommerceInc {
 			return false;
 		}
 
-		return $this->verify_ticket_user_id( $user_id, $ticket_id );
+		return $this->verify_ticket_current_user_id( $ticket_id );
 
 	}
 
 	/**
-	 * verify_ticket_user_id.
+	 * verify_ticket_current_user_id.
 	 *
-	 * @version 2.1.2
+	 * @version 2.1.4
 	 * @since   2.1.2
 	 */
-	public function verify_ticket_user_id( $user_id, $ticket_id ) {
+	public function verify_ticket_current_user_id( $ticket_id ) {
 		return (
 			current_user_can( 'manage_woocommerce' ) ||
 			(
-				( $ticket_user_id = (int) $this->get_ticket_user_id( $ticket_id ) ) &&
-				(int) $user_id === $ticket_user_id
+				( $user_id = get_current_user_id() ) &&
+				( $ticket_user_id = $this->get_ticket_user_id( $ticket_id ) ) &&
+				$user_id === $ticket_user_id
 			)
 		);
 	}
@@ -1100,7 +1101,7 @@ class STSWooCommerceInc {
 
 			// Verify user
 			if ( ! $this->verify_user( $customer_id, $post_id ) ) {
-				esc_html_e( 'Wrong user.' ,'support-ticket-system-for-woocommerce' );
+				esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
 				return;
 			}
 
