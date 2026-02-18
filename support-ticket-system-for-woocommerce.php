@@ -13,7 +13,7 @@
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Created On: 09-10-2019
- * Updated On: 08-02-2026
+ * Updated On: 19-02-2026
  */
 
 defined( 'ABSPATH' ) || exit;
