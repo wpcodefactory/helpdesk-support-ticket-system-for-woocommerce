@@ -63,7 +63,7 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 * **Tickets can be assigned to other Users in various ways**
 * Tickets Subject: Pre Define  subjects for the tickets to categorize tickets and manage them better
 * **Auto Assign** tickets to specific User based on the selected Subject
-* **Manage Support directly from the frontend for the assignees**- Users that are assigned a specific ticket and are other than Administrators, do not access backend for Ticket Management but directly via My account section, or from a dedicated page that admin can build using the shortcode [stsw_user_tickets]
+* **Manage Support directly from the frontend for the assignees** - Users that are assigned a specific ticket and are other than Administrators, do not access backend for Ticket Management but directly via My account section, or from a dedicated page that admin can build using the shortcode [stsw_user_tickets]
 * Administrator can define a **default Assignee** for all tickets
 * Choose whether to also notify Assignee via Email once a ticket opens  or a new response is added
 * Write different Text for Email Notification for assignee and customer. This can work as a template as various placeholders can be added
@@ -118,7 +118,7 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 2.1.5 - 19/02/2026 =
-* Fix - Plugin readme pro version invalid link.
+* Fix - readme.txt - Plugin Pro version invalid link.
 
 = 2.1.4 - 08/02/2026 =
 * Dev - Code refactoring.
