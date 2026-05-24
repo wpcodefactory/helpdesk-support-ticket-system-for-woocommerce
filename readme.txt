@@ -3,8 +3,8 @@ Contributors: wpcodefactory
 Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
 Requires at least: 3.0.1
 Requires PHP: 5.2.4
-Tested up to: 6.9
-Stable tag: 2.1.5
+Tested up to: 7.0
+Stable tag: 2.1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Please report security bugs found in the source code of the plugin through the [
 4. Frontend use Support Ticket System for WooCommerce from My Account section - respond to ticket
 
 == Changelog ==
+
+= 2.1.6 - 24/05/2026 =
+* Tested up to: 7.0.
+* WC tested up to: 10.7.
 
 = 2.1.5 - 19/02/2026 =
 * Fix - readme.txt - Plugin Pro version invalid link.
