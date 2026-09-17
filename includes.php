@@ -2,7 +2,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - STSWooCommerceInc Class
  *
- * @version 2.1.4
+ * @version 2.2.0
  *
  * @author WPFactory
  *
@@ -11,202 +11,239 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class STSWooCommerceInc {
+if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 
-	public $plugin                   = 'STSWooCommerce';
-	public $name                     = 'Support Ticket System for WooCommerce';
-	public $tableName                = 'stsw_responses';
-	public $stswpro_table_db_version = '1.4';
-	public $mailIt_allowed_html      = array(
-		'a'          => array(
-			'style' => array(),
-			'href'  => array(),
-			'title' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'i'          => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'br'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'em'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'strong'     => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'h1'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'h2'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'h3'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'h4'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'h5'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'h6'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'img'        => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'p'          => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'div'        => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'section'    => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'ul'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'li'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'ol'         => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'video'      => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'blockquote' => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'figure'     => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'figcaption' => array(
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'style'      => array(),
-		'iframe'     => array(
-			'height'          => array(),
-			'src'             => array(),
-			'width'           => array(),
-			'allowfullscreen' => array(),
-			'style'           => array(),
-			'class'           => array(),
-			'id'              => array(),
-		),
-		'img'        => array(
-			'alt'   => array(),
-			'src'   => array(),
-			'title' => array(),
-			'style' => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-		'video'      => array(
-			'width'    => array(),
-			'height'   => array(),
-			'controls' => array(),
-			'class'    => array(),
-			'id'       => array(),
-		),
-		'source'     => array(
-			'src'   => array(),
-			'type'  => array(),
-			'class' => array(),
-			'id'    => array(),
-		),
-	);
+	class STSWooCommerceInc {
 
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
+		/**
+		 * Plugin identifier.
+		 *
+		 * @var string
+		 */
+		public $plugin = 'STSWooCommerce';
 
-		add_action( 'init', array( $this, 'Tickets' ) );
+		/**
+		 * Plugin name.
+		 *
+		 * @var string
+		 */
+		public $name = 'Support Ticket System for WooCommerce';
 
-		add_action( 'admin_init', array( $this, 'metaBox' ) );
+		/**
+		 * Table name for storing responses.
+		 *
+		 * @version 2.2.0
+		 *
+		 * @var string
+		 */
+		public $table_name = 'stsw_responses';
 
-		add_action( 'save_post', array( $this, 'saveFields' ) );
-		add_action( 'post_updated', array( $this, 'notifyUserOnWPedit' ), 10, 3 );
-		add_action( 'admin_menu', array( $this, 'menu_page' ) );
-		add_action( 'admin_footer', array( $this, 'deleteResponseEvent' ) );
-		add_action( 'wp_ajax_responseDelete', array( $this, 'responseDelete' ) );
-		add_action( 'before_delete_post', array( $this, 'deleteRelevantResponses' ) );
+		/**
+		 * Database version for the table.
+		 *
+		 * @var string
+		 */
+		public $stswpro_table_db_version = '1.4';
 
-		add_filter( 'woocommerce_account_menu_items', array( $this, 'stswproTicketsLink' ) );
-		add_action( 'init', array( $this, 'stswpro_add_endpoint' ) );
-		add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'stswpro_add_my_account_order_actions' ), 10, 2 );
-		add_action( 'woocommerce_account_tickets_endpoint', array( $this, 'stswpro_my_account_endpoint_content' ) );
-		add_shortcode( 'stsw_user_tickets', array( $this, 'stswpro_my_account_endpoint_content' ) );
+		/**
+		 * Allowed HTML tags.
+		 *
+		 * @version 2.2.0
+		 *
+		 * @var array
+		 */
+		public $allowed_html = array(
+			'a'          => array(
+				'style' => array(),
+				'href'  => array(),
+				'title' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'i'          => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'br'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'em'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'strong'     => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'h1'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'h2'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'h3'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'h4'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'h5'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'h6'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'img'        => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'p'          => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'div'        => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'section'    => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'ul'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'li'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'ol'         => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'video'      => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'blockquote' => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'figure'     => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'figcaption' => array(
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'style'      => array(),
+			'iframe'     => array(
+				'height'          => array(),
+				'src'             => array(),
+				'width'           => array(),
+				'allowfullscreen' => array(),
+				'style'           => array(),
+				'class'           => array(),
+				'id'              => array(),
+			),
+			'img'        => array(
+				'alt'   => array(),
+				'src'   => array(),
+				'title' => array(),
+				'style' => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+			'video'      => array(
+				'width'    => array(),
+				'height'   => array(),
+				'controls' => array(),
+				'class'    => array(),
+				'id'       => array(),
+			),
+			'source'     => array(
+				'src'   => array(),
+				'type'  => array(),
+				'class' => array(),
+				'id'    => array(),
+			),
+		);
 
-		add_filter( 'manage_stsw_tickets_posts_columns', array( $this, 'addColumnHeader' ) );
-		add_action( 'manage_stsw_tickets_posts_custom_column', array( $this, 'addAdColumns' ), 10, 2 );
-		add_filter( 'manage_edit-stsw_tickets_sortable_columns', array( $this, 'addColumnHeader' ) );
-		add_filter( 'manage_stsw_tickets_posts_columns', array( $this, 'column_order' ) );
+		/**
+		 * Constructor.
+		 */
+		public function __construct() {
 
-		add_action( 'restrict_manage_posts', array( $this, 'stswpro_filter_tickets' ), 10, 2 );
-		register_activation_hook( __FILE__, array( $this, 'stswpro_ticketReponse_table_install' ) );
-		add_action( 'plugins_loaded', array( $this, 'stswpro_tickets_table_update_db_check' ) );
-		add_action( 'woocommerce_view_order', array( $this, 'stswpro_view_order' ), 20 );
+			add_action( 'init', array( $this, 'Tickets' ) );
 
-		add_filter( 'hook', array( $this, 'sendWithPlaceholders' ), 10, 2 );
-	}
+			add_action( 'admin_init', array( $this, 'metaBox' ) );
 
-	/**
-	 * stswpro_ticketReponse_table_install.
-	 */
-	public function stswpro_ticketReponse_table_install() {
-		global $wpdb;
+			add_action( 'save_post', array( $this, 'saveFields' ) );
+			add_action( 'post_updated', array( $this, 'notifyUserOnWPedit' ), 10, 3 );
+			add_action( 'admin_menu', array( $this, 'menu_page' ) );
+			add_action( 'admin_footer', array( $this, 'deleteResponseEvent' ) );
+			add_action( 'wp_ajax_responseDelete', array( $this, 'responseDelete' ) );
+			add_action( 'before_delete_post', array( $this, 'deleteRelevantResponses' ) );
 
-		$table_name = $wpdb->prefix . $this->tableName;
+			add_filter( 'woocommerce_account_menu_items', array( $this, 'stswproTicketsLink' ) );
+			add_action( 'init', array( $this, 'stswpro_add_endpoint' ) );
+			add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'stswpro_add_my_account_order_actions' ), 10, 2 );
+			add_action( 'woocommerce_account_tickets_endpoint', array( $this, 'stswpro_my_account_endpoint_content' ) );
+			add_shortcode( 'stsw_user_tickets', array( $this, 'stswpro_my_account_endpoint_content' ) );
 
-		$sql = 'CREATE TABLE ' . sanitize_text_field( $table_name ) . ' (
+			add_filter( 'manage_stsw_tickets_posts_columns', array( $this, 'addColumnHeader' ) );
+			add_action( 'manage_stsw_tickets_posts_custom_column', array( $this, 'addAdColumns' ), 10, 2 );
+			add_filter( 'manage_edit-stsw_tickets_sortable_columns', array( $this, 'addColumnHeader' ) );
+			add_filter( 'manage_stsw_tickets_posts_columns', array( $this, 'column_order' ) );
+
+			add_action( 'restrict_manage_posts', array( $this, 'stswpro_filter_tickets' ), 10, 2 );
+			register_activation_hook( __FILE__, array( $this, 'stswpro_ticketReponse_table_install' ) );
+			add_action( 'plugins_loaded', array( $this, 'stswpro_tickets_table_update_db_check' ) );
+			add_action( 'woocommerce_view_order', array( $this, 'stswpro_view_order' ), 20 );
+
+			add_filter( 'hook', array( $this, 'sendWithPlaceholders' ), 10, 2 );
+		}
+
+		/**
+		 * stswpro_ticketReponse_table_install.
+		 *
+		 * @version 2.2.0
+		 */
+		public function stswpro_ticketReponse_table_install() {
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . $this->table_name;
+
+			$sql = 'CREATE TABLE ' . sanitize_text_field( $table_name ) . ' (
 			id int(11) NOT NULL AUTO_INCREMENT,
 			user int(11) NOT NULL,
 			post_id int(11) NOT NULL,
@@ -217,18 +254,18 @@ class STSWooCommerceInc {
 			PRIMARY KEY  (id)
 		);';
 
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+			dbDelta( $sql );
 
-		// save current database version for later use (on upgrade)
-		add_option( 'stswpro_tickets_table_db_version', sanitize_text_field( $this->stswpro_table_db_version ) );
+			// save current database version for later use (on upgrade)
+			add_option( 'stswpro_tickets_table_db_version', sanitize_text_field( $this->stswpro_table_db_version ) );
 
-		/**
-		*  new version of table
-		*/
-		$installed_ver = get_option( 'stswpro_tickets_table_db_version' );
-		if ( $installed_ver != $this->stswpro_table_db_version ) {
-			$sql = 'CREATE TABLE ' . sanitize_text_field( $table_name ) . ' (
+			/**
+			*  new version of table
+			*/
+			$installed_ver = get_option( 'stswpro_tickets_table_db_version' );
+			if ( $installed_ver != $this->stswpro_table_db_version ) {
+				$sql = 'CREATE TABLE ' . sanitize_text_field( $table_name ) . ' (
 			id int(11) NOT NULL AUTO_INCREMENT,
 			user int(11) NOT NULL,
 			post_id int(11) NOT NULL,
@@ -239,215 +276,215 @@ class STSWooCommerceInc {
 			PRIMARY KEY  (id)
 			);';
 
-			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-			dbDelta( $sql );
+				require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+				dbDelta( $sql );
 
-			// notice that we are updating option, rather than adding it
-			update_option( 'stswpro_tickets_table_db_version', sanitize_text_field( $this->stswpro_table_db_version ) );
+				// notice that we are updating option, rather than adding it
+				update_option( 'stswpro_tickets_table_db_version', sanitize_text_field( $this->stswpro_table_db_version ) );
+			}
 		}
-	}
 
-	/**
-	 * Trick to update plugin database, see docs.
-	 */
-	public function stswpro_tickets_table_update_db_check() {
-		if ( get_site_option( 'stswpro_tickets_table_db_version' ) != $this->stswpro_table_db_version ) {
-			$this->stswpro_ticketReponse_table_install();
+		/**
+		 * Trick to update plugin database, see docs.
+		 */
+		public function stswpro_tickets_table_update_db_check() {
+			if ( get_site_option( 'stswpro_tickets_table_db_version' ) != $this->stswpro_table_db_version ) {
+				$this->stswpro_ticketReponse_table_install();
+			}
 		}
-	}
 
-	/**
-	 * Tickets.
-	 *
-	 * @version 2.1.3
-	 */
-	public function Tickets() {
+		/**
+		 * Tickets.
+		 *
+		 * @version 2.1.3
+		 */
+		public function Tickets() {
 
-		// TICKETS POST TYPE
-		register_post_type(
-			'stsw_tickets',
-			array(
-				'labels'              => array(
-					'name'              => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
-					'singular_name'     => esc_html__( 'Ticket', 'support-ticket-system-for-woocommerce' ),
-					'search_items'      => esc_html__( 'Search Tickets', 'support-ticket-system-for-woocommerce' ),
-					'all_items'         => esc_html__( 'All Tickets', 'support-ticket-system-for-woocommerce' ),
-					'parent_item'       => esc_html__( 'Parent Ticket', 'support-ticket-system-for-woocommerce' ),
-					'parent_item_colon' => esc_html__( 'Parent Ticket:', 'support-ticket-system-for-woocommerce' ),
-					'edit_item'         => esc_html__( 'Edit Ticket', 'support-ticket-system-for-woocommerce' ),
-					'update_item'       => esc_html__( 'Update Ticket', 'support-ticket-system-for-woocommerce' ),
-					'add_new_item'      => esc_html__( 'Add New Ticket', 'support-ticket-system-for-woocommerce' ),
-					'add_new'           => esc_html__( 'New Ticket', 'support-ticket-system-for-woocommerce' ),
-					'new_item_name'     => esc_html__( 'New Ticket Name', 'support-ticket-system-for-woocommerce' ),
-					'new_item'          => esc_html__( 'New Ticket', 'support-ticket-system-for-woocommerce' ),
-					'menu_name'         => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
-					'not_found'         => esc_html__( 'No Tickets found', 'support-ticket-system-for-woocommerce' ),
-				),
-				'description'         => esc_html__( 'Adding and editing my Tickets', 'support-ticket-system-for-woocommerce' ),
-				'menu_icon'           => 'dashicons-calendar',
-				'supports'            => array( 'title' ),
-				'show_in_rest'        => false,
-				'capability_type'     => 'page',
-				'hierarchical'        => false,
-				'menu_position'       => null,
-				'public'              => false, // it's not public, it shouldn't have it's own permalink, and so on
-				'publicly_queryable'  => false,
-				'show_ui'             => true,  // you should be able to edit it in wp-admin
-				'show_in_menu'        => false,
-				'exclude_from_search' => true,  // you should exclude it from search results
-				'show_in_nav_menus'   => false, // you shouldn't be able to add it to menus
-				'has_archive'         => false, // it shouldn't have archive page
-				'rewrite'             => false, // it shouldn't have rewrite rules
-			)
-		);
+			// TICKETS POST TYPE
+			register_post_type(
+				'stsw_tickets',
+				array(
+					'labels'              => array(
+						'name'              => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+						'singular_name'     => esc_html__( 'Ticket', 'support-ticket-system-for-woocommerce' ),
+						'search_items'      => esc_html__( 'Search Tickets', 'support-ticket-system-for-woocommerce' ),
+						'all_items'         => esc_html__( 'All Tickets', 'support-ticket-system-for-woocommerce' ),
+						'parent_item'       => esc_html__( 'Parent Ticket', 'support-ticket-system-for-woocommerce' ),
+						'parent_item_colon' => esc_html__( 'Parent Ticket:', 'support-ticket-system-for-woocommerce' ),
+						'edit_item'         => esc_html__( 'Edit Ticket', 'support-ticket-system-for-woocommerce' ),
+						'update_item'       => esc_html__( 'Update Ticket', 'support-ticket-system-for-woocommerce' ),
+						'add_new_item'      => esc_html__( 'Add New Ticket', 'support-ticket-system-for-woocommerce' ),
+						'add_new'           => esc_html__( 'New Ticket', 'support-ticket-system-for-woocommerce' ),
+						'new_item_name'     => esc_html__( 'New Ticket Name', 'support-ticket-system-for-woocommerce' ),
+						'new_item'          => esc_html__( 'New Ticket', 'support-ticket-system-for-woocommerce' ),
+						'menu_name'         => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+						'not_found'         => esc_html__( 'No Tickets found', 'support-ticket-system-for-woocommerce' ),
+					),
+					'description'         => esc_html__( 'Adding and editing my Tickets', 'support-ticket-system-for-woocommerce' ),
+					'menu_icon'           => 'dashicons-calendar',
+					'supports'            => array( 'title' ),
+					'show_in_rest'        => false,
+					'capability_type'     => 'page',
+					'hierarchical'        => false,
+					'menu_position'       => null,
+					'public'              => false, // it's not public, it shouldn't have it's own permalink, and so on
+					'publicly_queryable'  => false,
+					'show_ui'             => true,  // you should be able to edit it in wp-admin
+					'show_in_menu'        => false,
+					'exclude_from_search' => true,  // you should exclude it from search results
+					'show_in_nav_menus'   => false, // you shouldn't be able to add it to menus
+					'has_archive'         => false, // it shouldn't have archive page
+					'rewrite'             => false, // it shouldn't have rewrite rules
+				)
+			);
 
-		// STATUS TAXONOMY
-		$labels = array(
-			'name'              => _x( 'Status', 'taxonomy general name', 'support-ticket-system-for-woocommerce' ),
-			'singular_name'     => _x( 'Status', 'taxonomy singular name', 'support-ticket-system-for-woocommerce' ),
-			'search_items'      => esc_html__( 'Search Status', 'support-ticket-system-for-woocommerce' ),
-			'all_items'         => esc_html__( 'All Status', 'support-ticket-system-for-woocommerce' ),
-			'parent_item'       => esc_html__( 'Parent Status', 'support-ticket-system-for-woocommerce' ),
-			'parent_item_colon' => esc_html__( 'Parent Status:', 'support-ticket-system-for-woocommerce' ),
-			'edit_item'         => esc_html__( 'Edit Status', 'support-ticket-system-for-woocommerce' ),
-			'update_item'       => esc_html__( 'Update Status', 'support-ticket-system-for-woocommerce' ),
-			'add_new_item'      => esc_html__( 'Add New Status', 'support-ticket-system-for-woocommerce' ),
-			'new_item_name'     => esc_html__( 'New Status Name', 'support-ticket-system-for-woocommerce' ),
-			'not_found'         => esc_html__( 'No Status found.', 'support-ticket-system-for-woocommerce' ),
-			'menu_name'         => esc_html__( 'Status', 'support-ticket-system-for-woocommerce' ),
-		);
+			// STATUS TAXONOMY
+			$labels = array(
+				'name'              => _x( 'Status', 'taxonomy general name', 'support-ticket-system-for-woocommerce' ),
+				'singular_name'     => _x( 'Status', 'taxonomy singular name', 'support-ticket-system-for-woocommerce' ),
+				'search_items'      => esc_html__( 'Search Status', 'support-ticket-system-for-woocommerce' ),
+				'all_items'         => esc_html__( 'All Status', 'support-ticket-system-for-woocommerce' ),
+				'parent_item'       => esc_html__( 'Parent Status', 'support-ticket-system-for-woocommerce' ),
+				'parent_item_colon' => esc_html__( 'Parent Status:', 'support-ticket-system-for-woocommerce' ),
+				'edit_item'         => esc_html__( 'Edit Status', 'support-ticket-system-for-woocommerce' ),
+				'update_item'       => esc_html__( 'Update Status', 'support-ticket-system-for-woocommerce' ),
+				'add_new_item'      => esc_html__( 'Add New Status', 'support-ticket-system-for-woocommerce' ),
+				'new_item_name'     => esc_html__( 'New Status Name', 'support-ticket-system-for-woocommerce' ),
+				'not_found'         => esc_html__( 'No Status found.', 'support-ticket-system-for-woocommerce' ),
+				'menu_name'         => esc_html__( 'Status', 'support-ticket-system-for-woocommerce' ),
+			);
 
-		register_taxonomy(
-			'stsw_tickets_status',
-			array( 'stsw_tickets' ),
-			array(
-				'hierarchical'      => true,
-				'labels'            => $labels,
-				'show_ui'           => true,
-				'show_admin_column' => true,
-				'query_var'         => true,
-				'rewrite'           => array( 'slug' => 'stsw_tickets_status' ),
-			)
-		);
-	}
+			register_taxonomy(
+				'stsw_tickets_status',
+				array( 'stsw_tickets' ),
+				array(
+					'hierarchical'      => true,
+					'labels'            => $labels,
+					'show_ui'           => true,
+					'show_admin_column' => true,
+					'query_var'         => true,
+					'rewrite'           => array( 'slug' => 'stsw_tickets_status' ),
+				)
+			);
+		}
 
-	/**
-	 * Add metaboxes to tickets newly created post type.
-	 */
-	public function metaBox( $post ) {
+		/**
+		 * Add metaboxes to tickets newly created post type.
+		 */
+		public function metaBox( $post ) {
 
-		add_meta_box(
-			'stswpro_ticketContent',
-			esc_html__( 'Ticket Content', 'support-ticket-system-for-woocommerce' ),
-			array( $this, 'ticketContent' ),
-			'stsw_tickets',
-			'normal',
-			'high'
-		);
+			add_meta_box(
+				'stswpro_ticketContent',
+				esc_html__( 'Ticket Content', 'support-ticket-system-for-woocommerce' ),
+				array( $this, 'ticketContent' ),
+				'stsw_tickets',
+				'normal',
+				'high'
+			);
 
-		add_meta_box(
-			'stswpro_ticketResponded',
-			esc_html__( 'Responses', 'support-ticket-system-for-woocommerce' ),
-			array( $this, 'responses' ),
-			'stsw_tickets',
-			'normal',
-			'high'
-		);
+			add_meta_box(
+				'stswpro_ticketResponded',
+				esc_html__( 'Responses', 'support-ticket-system-for-woocommerce' ),
+				array( $this, 'responses' ),
+				'stsw_tickets',
+				'normal',
+				'high'
+			);
 
-		add_meta_box(
-			'appInfo',
-			esc_html__( 'Ticket Info', 'support-ticket-system-for-woocommerce' ),
-			array( $this, 'appInfoCreate' ),
-			'stsw_tickets',
-			'side',
-			'high'
-		);
+			add_meta_box(
+				'appInfo',
+				esc_html__( 'Ticket Info', 'support-ticket-system-for-woocommerce' ),
+				array( $this, 'appInfoCreate' ),
+				'stsw_tickets',
+				'side',
+				'high'
+			);
 
-		add_meta_box(
-			'assignTouser',
-			esc_html__( 'Assign to User', 'support-ticket-system-for-woocommerce' ),
-			array( $this, 'assignTouser' ),
-			'stsw_tickets',
-			'side',
-			'high'
-		);
+			add_meta_box(
+				'assignTouser',
+				esc_html__( 'Assign to User', 'support-ticket-system-for-woocommerce' ),
+				array( $this, 'assignTouser' ),
+				'stsw_tickets',
+				'side',
+				'high'
+			);
 
-		add_meta_box(
-			'stswpro_ticketResponses',
-			esc_html__( 'New Response', 'support-ticket-system-for-woocommerce' ),
-			array( $this, 'responseCreate' ),
-			'stsw_tickets',
-			'normal',
-			'high'
-		);
-	}
+			add_meta_box(
+				'stswpro_ticketResponses',
+				esc_html__( 'New Response', 'support-ticket-system-for-woocommerce' ),
+				array( $this, 'responseCreate' ),
+				'stsw_tickets',
+				'normal',
+				'high'
+			);
+		}
 
-	/**
-	 * get_ticket_user_id.
-	 *
-	 * @version 2.1.4
-	 * @since   2.1.0
-	 */
-	public function get_ticket_user_id( $ticket_id ) {
-		return (int) get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
-	}
+		/**
+		 * get_ticket_user_id.
+		 *
+		 * @version 2.1.4
+		 * @since   2.1.0
+		 */
+		public function get_ticket_user_id( $ticket_id ) {
+			return (int) get_post_meta( $ticket_id, 'STSWooCommerceProticketuser', true );
+		}
 
-	/**
-	 * set_ticket_user_id.
-	 *
-	 * @version 2.1.0
-	 * @since   2.1.0
-	 *
-	 * @todo    (v2.1.0) why `STSWooCommerceProticketuser` (and not `STSWooCommerceticketuser`)?
-	 */
-	public function set_ticket_user_id( $ticket_id, $user_id ) {
-		return update_post_meta( $ticket_id, 'STSWooCommerceProticketuser', $user_id );
-	}
+		/**
+		 * set_ticket_user_id.
+		 *
+		 * @version 2.1.0
+		 * @since   2.1.0
+		 *
+		 * @todo    (v2.1.0) why `STSWooCommerceProticketuser` (and not `STSWooCommerceticketuser`)?
+		 */
+		public function set_ticket_user_id( $ticket_id, $user_id ) {
+			return update_post_meta( $ticket_id, 'STSWooCommerceProticketuser', $user_id );
+		}
 
-	/**
-	 * appInfoCreate.
-	 *
-	 * @version 2.1.4
-	 */
-	public function appInfoCreate( $post ) {
-		global $post;
+		/**
+		 * appInfoCreate.
+		 *
+		 * @version 2.1.4
+		 */
+		public function appInfoCreate( $post ) {
+			global $post;
 
-		?>
+			?>
 		<b><?php esc_html_e( 'Order', 'support-ticket-system-for-woocommerce' ); ?></b>:
 		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 		<br/>
 
-		<?php $user = $this->get_ticket_user_id( $post->ID ); ?>
+			<?php $user = $this->get_ticket_user_id( $post->ID ); ?>
 		<b><?php esc_html_e( 'User', 'support-ticket-system-for-woocommerce' ); ?></b>:
-		<?php
-		if ( ! empty( $user ) ) {
-			printf(
-				'<a href="%1$s" target="_blank">%2$s</a>',
-				esc_url( admin_url( 'user-edit.php?user_id=' . $user ) ),
-				esc_attr( $this->getUsername( $user ) )
-			);
-		}
-		?>
+			<?php
+			if ( ! empty( $user ) ) {
+				printf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					esc_url( admin_url( 'user-edit.php?user_id=' . $user ) ),
+					esc_attr( $this->getUsername( $user ) )
+				);
+			}
+			?>
 		<br/>
 
 		<b><?php esc_html_e( 'Ticket Assignee', 'support-ticket-system-for-woocommerce' ); ?></b>:
 		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
-		<?php
-	}
+			<?php
+		}
 
-	/**
-	 * Function to return the name of a user based on id.
-	 */
-	public function getUsername( $id ) {
-		$user = get_user_by( 'id', $id );
-		return esc_html( $user->first_name . ' ' . $user->last_name );
-	}
+		/**
+		 * Function to return the name of a user based on id.
+		 */
+		public function getUsername( $id ) {
+			$user = get_user_by( 'id', $id );
+			return esc_html( $user->first_name . ' ' . $user->last_name );
+		}
 
-	/**
-	 * Display ticket content in ticket edit screen post box.
-	 */
-	public function ticketContent( $post ) {
-		?>
+		/**
+		 * Display ticket content in ticket edit screen post box.
+		 */
+		public function ticketContent( $post ) {
+			?>
 		<table class="wp-list-table widefat fixed striped posts">
 			<thead>
 				<tr>
@@ -464,112 +501,114 @@ class STSWooCommerceInc {
 				</tr>
 			</tbody>
 		</table>
-		<?php
-	}
+			<?php
+		}
 
-	/**
-	 * Query & display responses in ticket edit screen post box.
-	 */
-	public function responses( $post ) {
+		/**
+		 * Query & display responses in ticket edit screen post box.
+		 *
+		 * @version 2.2.0
+		 */
+		public function responses( $post ) {
 
-		global $post;
-		global $wpdb;
-		$table_name = esc_html( $wpdb->prefix . $this->tableName );
+			global $post;
+			global $wpdb;
+			$table_name = esc_html( $wpdb->prefix . $this->table_name );
 
-		$result = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT * FROM ' . esc_html( $table_name ) . " WHERE post_id=%d  AND user !='0' ORDER BY creationdate DESC ",
-				$post->ID
-			)
-		);
-		$count  = 0;
-		if ( ! empty( $result ) ) {
-			print "<table class='wp-list-table widefat fixed striped posts'>";
-			print '<tr>
+			$result = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM ' . esc_html( $table_name ) . " WHERE post_id=%d  AND user !='0' ORDER BY creationdate DESC ",
+					$post->ID
+				)
+			);
+			$count  = 0;
+			if ( ! empty( $result ) ) {
+				print "<table class='wp-list-table widefat fixed striped posts'>";
+				print '<tr>
 			<th>' . esc_html__( 'Date', 'support-ticket-system-for-woocommerce' ) . '</th>
 			<th>' . esc_html__( 'Who Sent It', 'support-ticket-system-for-woocommerce' ) . '</th>
 			<th>' . esc_html__( 'Message', 'support-ticket-system-for-woocommerce' ) . '</th>
 			<th>' . esc_html__( 'Attachments', 'support-ticket-system-for-woocommerce' ) . '</th>
 			<th>' . esc_html__( 'Action', 'support-ticket-system-for-woocommerce' ) . '</th>';
 
-			foreach ( $result as $res ) {
-				if ( $res->user == '1' ) {
-					$who = 'site';
-				} elseif ( $res->user != '1' ) {
-					$who = 'customer';
-				} else {
-					$who = 'site';
-				}
+				foreach ( $result as $res ) {
+					if ( $res->user == '1' ) {
+						$who = 'site';
+					} elseif ( $res->user != '1' ) {
+						$who = 'customer';
+					} else {
+						$who = 'site';
+					}
 
-				print "<tr class='" . (int) $res->id . "'><th>" . esc_html( $res->creationdate ) . '</th><th>' . esc_html( $who ) . '</th><th>' . esc_html( $res->content ) . '</th><th>';
-				?>
+					print "<tr class='" . (int) $res->id . "'><th>" . esc_html( $res->creationdate ) . '</th><th>' . esc_html( $who ) . '</th><th>' . esc_html( $res->content ) . '</th><th>';
+					?>
 						<span class='proVersion' ><?php print esc_html__( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 						<?php
 						print "</th>
 				<th><p id='deleteResponse'><a href='" . esc_url( $res->id ) . "' id='" . esc_attr( $res->id ) . "'>Delete</a></th>
 				</tr>";
+				}
+				print '</table>';
+			} else {
+				print esc_html__( 'No responses yet', 'support-ticket-system-for-woocommerce' );
 			}
-			print '</table>';
-		} else {
-			print esc_html__( 'No responses yet', 'support-ticket-system-for-woocommerce' );
 		}
-	}
 
-	/**
-	 * responseCreate.
-	 */
-	public function responseCreate( $post ) {
-		// wp editor for adding a new response to ticket from ticket edit screen
-		global $post;
-		echo wp_editor( '', esc_html( $this->plugin ) . 'response', array( 'textarea_name' => esc_html( $this->plugin ) . 'response' ) );
-	}
+		/**
+		 * responseCreate.
+		 */
+		public function responseCreate( $post ) {
+			// wp editor for adding a new response to ticket from ticket edit screen
+			global $post;
+			echo wp_editor( '', esc_html( $this->plugin ) . 'response', array( 'textarea_name' => esc_html( $this->plugin ) . 'response' ) );
+		}
 
-	/**
-	 * assignTouser.
-	 *
-	 * @version 2.1.0
-	 */
-	public function assignTouser( $post ) {
-		?>
+		/**
+		 * assignTouser.
+		 *
+		 * @version 2.1.0
+		 */
+		public function assignTouser( $post ) {
+			?>
 		<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
-		<?php
-	}
-
-	/**
-	 * Function to save any custom meta fields for tickets created.
-	 *
-	 * @version 2.1.0
-	 */
-	public function saveFields() {
-
-		if ( empty( $_POST[ $this->plugin . 'response' ] ) ) {
-			return;
+			<?php
 		}
 
-		global $post, $wpdb;
+		/**
+		 * Function to save any custom meta fields for tickets created.
+		 *
+		 * @version 2.2.0
+		 */
+		public function saveFields() {
 
-		$user         = $this->get_ticket_user_id( $post->ID );
-		$current_user = wp_get_current_user();
-		$response     = htmlspecialchars( sanitize_textarea_field( $_POST[ $this->plugin . 'response' ] ) );
-		$table_name   = esc_html( $wpdb->prefix . $this->tableName );
+			if ( empty( $_POST[ $this->plugin . 'response' ] ) ) {
+				return;
+			}
 
-		$wpdb->insert(
-			$table_name,
-			array(
-				'user'         => $user,
-				'creationdate' => current_time( 'mysql', 1 ),
-				'content'      => $response,
-				'agent'        => (int) $current_user->ID,
-				'post_id'      => (int) $post->ID,
-			)
-		);
-	}
+			global $post, $wpdb;
 
-	/**
-	 * On delete button click, delete the response and clear the row from the table - via AJAX call to `responseDelete()`.
-	 */
-	public function deleteResponseEvent() {
-		?>
+			$user         = $this->get_ticket_user_id( $post->ID );
+			$current_user = wp_get_current_user();
+			$response     = htmlspecialchars( sanitize_textarea_field( $_POST[ $this->plugin . 'response' ] ) );
+			$table_name   = esc_html( $wpdb->prefix . $this->table_name );
+
+			$wpdb->insert(
+				$table_name,
+				array(
+					'user'         => $user,
+					'creationdate' => current_time( 'mysql', 1 ),
+					'content'      => $response,
+					'agent'        => (int) $current_user->ID,
+					'post_id'      => (int) $post->ID,
+				)
+			);
+		}
+
+		/**
+		 * On delete button click, delete the response and clear the row from the table - via AJAX call to `responseDelete()`.
+		 */
+		public function deleteResponseEvent() {
+			?>
 		<script type="text/javascript">
 		jQuery(
 			function ( $ ) {
@@ -598,197 +637,198 @@ class STSWooCommerceInc {
 			}
 		);
 		</script>
-		<?php
-	}
-
-	/**
-	 * Function to delete the response and clear the row from the table.
-	 *
-	 * @version 2.1.4
-	 */
-	public function responseDelete() {
-		if ( ! isset( $_POST['id'] ) ) {
-			return;
+			<?php
 		}
 
-		if (
+		/**
+		 * Function to delete the response and clear the row from the table.
+		 *
+		 * @version 2.2.0
+		 */
+		public function responseDelete() {
+			if ( ! isset( $_POST['id'] ) ) {
+				return;
+			}
+
+			if (
 			! isset( $_POST['nonce'] ) ||
 			! wp_verify_nonce(
 				sanitize_text_field( wp_unslash( $_POST['nonce'] ) ),
 				'responseDelete'
 			)
-		) {
-			wp_die( esc_html__( 'Link expired.', 'support-ticket-system-for-woocommerce' ) );
+			) {
+				wp_die( esc_html__( 'Link expired.', 'support-ticket-system-for-woocommerce' ) );
+			}
+
+			check_ajax_referer( 'responseDelete', 'nonce' );
+
+			$id = (int) $_POST['id'];
+
+			if ( ! $this->verify_ticket_current_user_id( $id ) ) {
+				wp_die( esc_html__( 'Wrong user.', 'support-ticket-system-for-woocommerce' ) );
+			}
+
+			global $wpdb;
+			$table_name = $wpdb->prefix . $this->table_name;
+			$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
+			echo $id;
+			die();
 		}
 
-		check_ajax_referer( 'responseDelete', 'nonce' );
+		/**
+		 * On ticket delete, clear all responses from table.
+		 *
+		 * @version 2.2.0
+		 */
+		public function deleteRelevantResponses( $post_id ) {
 
-		$id = (int) $_POST['id'];
+			// Do not run on other post types
+			$post_type = get_post_type( $post_id );
+			if ( 'stsw_tickets' !== $post_type ) {
+				return true;
+			}
 
-		if ( ! $this->verify_ticket_current_user_id( $id ) ) {
-			wp_die( esc_html__( 'Wrong user.', 'support-ticket-system-for-woocommerce' ) );
+			global $wpdb;
+
+			$table_name = $wpdb->prefix . $this->table_name;
+			$wpdb->delete(
+				esc_html( $table_name ),
+				array( 'post_id' => (int) $post_id )
+			);
 		}
 
-		global $wpdb;
-		$table_name = $wpdb->prefix . $this->tableName;
-		$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
-		echo $id;
-		die();
-	}
-
-	/**
-	 * On ticket delete, clear all responses from table.
-	 */
-	public function deleteRelevantResponses( $post_id ) {
-
-		// Do not run on other post types
-		$post_type = get_post_type( $post_id );
-		if ( 'stsw_tickets' !== $post_type ) {
-			return true;
+		/**
+		 * Add extra columns to tickets list table for better management.
+		 */
+		public function addColumnHeader( $columns ) {
+			$columns['Order']         = esc_html__( 'Order', 'support-ticket-system-for-woocommerce' );
+			$columns['User']          = esc_html__( 'User', 'support-ticket-system-for-woocommerce' );
+			$columns['Assignee']      = esc_html__( 'Assignee', 'support-ticket-system-for-woocommerce' );
+			$columns['Last Response'] = esc_html__( 'Last Response', 'support-ticket-system-for-woocommerce' );
+			$columns['priority']      = esc_html__( 'Priority', 'support-ticket-system-for-woocommerce' );
+			return $columns;
 		}
 
-		global $post;
-		global $wpdb;
+		/**
+		 * Populate the new columns added with relevant content.
+		 *
+		 * @version 2.2.0
+		 */
+		public function addAdColumns( $column_name, $post_id ) {
 
-		$table_name = $wpdb->prefix . $this->tableName;
-		$wpdb->delete(
-			esc_html( $table_name ),
-			array( 'post_id' => (int) $post_id )
-		);
-	}
-
-	/**
-	 * Add extra columns to tickets list table for better management.
-	 */
-	public function addColumnHeader( $columns ) {
-		$columns['Order']         = esc_html__( 'Order', 'support-ticket-system-for-woocommerce' );
-		$columns['User']          = esc_html__( 'User', 'support-ticket-system-for-woocommerce' );
-		$columns['Assignee']      = esc_html__( 'Assignee', 'support-ticket-system-for-woocommerce' );
-		$columns['Last Response'] = esc_html__( 'Last Response', 'support-ticket-system-for-woocommerce' );
-		$columns['priority']      = esc_html__( 'Priority', 'support-ticket-system-for-woocommerce' );
-		return $columns;
-	}
-
-	/**
-	 * Populate the new columns added with relevant content.
-	 *
-	 * @version 2.1.4
-	 */
-	public function addAdColumns( $column_name, $post_id ) {
-
-		if ( in_array( $column_name, array( 'priority', 'Order', 'subject', 'Assignee' ) ) ) {
-			?>
+			if ( in_array( $column_name, array( 'priority', 'Order', 'subject', 'Assignee' ) ) ) {
+				?>
 			<span class="proVersion"><?php esc_html_e( 'Pro', 'support-ticket-system-for-woocommerce' ); ?></span>
-			<?php
-		}
+				<?php
+			}
 
-		if ( 'User' === $column_name ) {
-			$user = $this->get_ticket_user_id( $post_id );
-			if ( $user ) {
-				echo esc_html( $this->getUsername( $user ) );
+			if ( 'User' === $column_name ) {
+				$user = $this->get_ticket_user_id( $post_id );
+				if ( $user ) {
+					echo esc_html( $this->getUsername( $user ) );
+				}
+			}
+
+			if ( 'Last Response' === $column_name ) {
+				global $wpdb;
+				$table_name = $wpdb->prefix . $this->table_name;
+				$result     = $wpdb->get_row(
+					$wpdb->prepare(
+						'SELECT * FROM ' . esc_html( $table_name ) . " WHERE post_id=%d AND user != '0' ORDER BY creationdate DESC ",
+						(int) $post_id
+					)
+				);
+				if ( ! empty( $result ) ) {
+					echo esc_html( $result->creationdate );
+				}
 			}
 		}
 
-		if ( 'Last Response' === $column_name ) {
-			global $wpdb;
-			$table_name = $wpdb->prefix . $this->tableName;
-			$result     = $wpdb->get_row(
-				$wpdb->prepare(
-					'SELECT * FROM ' . esc_html( $table_name ) . " WHERE post_id=%d AND user != '0' ORDER BY creationdate DESC ",
-					(int) $post_id
+		/**
+		 * column_order.
+		 */
+		public function column_order( $columns ) {
+
+			// Reorder columns
+			unset( $columns['title'] );
+			unset( $columns['date'] );
+			unset( $columns['Assignee'] );
+			unset( $columns['Last Response'] );
+			unset( $columns['Order'] );
+			unset( $columns['User'] );
+			unset( $columns['subject'] );
+			unset( $columns['title'] );
+			unset( $columns['taxonomy-stsw_tickets_status'] );
+			unset( $columns['priority'] );
+
+			return array_merge(
+				$columns,
+				array(
+					'title'                        => esc_html__( 'Title', 'support-ticket-system-for-woocommerce' ),
+					'taxonomy-stsw_tickets_status' => esc_html__( 'Status', 'support-ticket-system-for-woocommerce' ),
+					'User'                         => esc_html__( 'User', 'support-ticket-system-for-woocommerce' ),
+					'Last Response'                => esc_html__( 'Last Response', 'support-ticket-system-for-woocommerce' ),
+					'date'                         => esc_html__( 'Date', 'support-ticket-system-for-woocommerce' ),
+					'subject'                      => esc_html__( 'Subject', 'support-ticket-system-for-woocommerce' ),
+					'priority'                     => esc_html__( 'Priority', 'support-ticket-system-for-woocommerce' ),
+					'Order'                        => esc_html__( 'Order', 'support-ticket-system-for-woocommerce' ),
+					'Assignee'                     => esc_html__( 'Assignee', 'support-ticket-system-for-woocommerce' ),
 				)
 			);
-			if ( ! empty( $result ) ) {
-				echo esc_html( $result->creationdate );
-			}
 		}
-	}
 
-	/**
-	 * column_order.
-	 */
-	public function column_order( $columns ) {
+		/**
+		 * menu_page.
+		 *
+		 * Add submenu pages to supports tickets link.
+		 *
+		 * @version 2.0.0
+		 */
+		public function menu_page() {
 
-		// Reorder columns
-		unset( $columns['title'] );
-		unset( $columns['date'] );
-		unset( $columns['Assignee'] );
-		unset( $columns['Last Response'] );
-		unset( $columns['Order'] );
-		unset( $columns['User'] );
-		unset( $columns['subject'] );
-		unset( $columns['title'] );
-		unset( $columns['taxonomy-stsw_tickets_status'] );
-		unset( $columns['priority'] );
+			add_submenu_page(
+				'support-ticket-system-woocommerce',
+				__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+				__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
+				'edit.php?post_type=stsw_tickets',
+				null
+			);
 
-		return array_merge(
-			$columns,
-			array(
-				'title'                        => esc_html__( 'Title', 'support-ticket-system-for-woocommerce' ),
-				'taxonomy-stsw_tickets_status' => esc_html__( 'Status', 'support-ticket-system-for-woocommerce' ),
-				'User'                         => esc_html__( 'User', 'support-ticket-system-for-woocommerce' ),
-				'Last Response'                => esc_html__( 'Last Response', 'support-ticket-system-for-woocommerce' ),
-				'date'                         => esc_html__( 'Date', 'support-ticket-system-for-woocommerce' ),
-				'subject'                      => esc_html__( 'Subject', 'support-ticket-system-for-woocommerce' ),
-				'priority'                     => esc_html__( 'Priority', 'support-ticket-system-for-woocommerce' ),
-				'Order'                        => esc_html__( 'Order', 'support-ticket-system-for-woocommerce' ),
-				'Assignee'                     => esc_html__( 'Assignee', 'support-ticket-system-for-woocommerce' ),
-			)
-		);
-	}
+			add_submenu_page(
+				'support-ticket-system-woocommerce',
+				__( 'Priorities', 'support-ticket-system-for-woocommerce' ),
+				__( 'Priorities', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
+				'#',
+				null
+			);
 
-	/**
-	 * menu_page.
-	 *
-	 * Add submenu pages to supports tickets link.
-	 *
-	 * @version 2.0.0
-	 */
-	public function menu_page() {
+			add_submenu_page(
+				'support-ticket-system-woocommerce',
+				__( 'Subject', 'support-ticket-system-for-woocommerce' ),
+				__( 'Subject', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
+				'#',
+				null
+			);
 
-		add_submenu_page(
-			'support-ticket-system-woocommerce',
-			__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
-			__( 'Tickets', 'support-ticket-system-for-woocommerce' ),
-			'manage_woocommerce',
-			'edit.php?post_type=stsw_tickets',
-			null
-		);
+			add_submenu_page(
+				'support-ticket-system-woocommerce',
+				__( 'Settings', 'support-ticket-system-for-woocommerce' ),
+				__( 'Settings', 'support-ticket-system-for-woocommerce' ),
+				'manage_woocommerce',
+				admin_url( 'admin.php?page=support-ticket-system-woocommerce&tab=settings' ),
+				array( $this, 'init' )
+			);
+		}
 
-		add_submenu_page(
-			'support-ticket-system-woocommerce',
-			__( 'Priorities', 'support-ticket-system-for-woocommerce' ),
-			__( 'Priorities', 'support-ticket-system-for-woocommerce' ),
-			'manage_woocommerce',
-			'#',
-			null
-		);
-
-		add_submenu_page(
-			'support-ticket-system-woocommerce',
-			__( 'Subject', 'support-ticket-system-for-woocommerce' ),
-			__( 'Subject', 'support-ticket-system-for-woocommerce' ),
-			'manage_woocommerce',
-			'#',
-			null
-		);
-
-		add_submenu_page(
-			'support-ticket-system-woocommerce',
-			__( 'Settings', 'support-ticket-system-for-woocommerce' ),
-			__( 'Settings', 'support-ticket-system-for-woocommerce' ),
-			'manage_woocommerce',
-			admin_url( 'admin.php?page=support-ticket-system-woocommerce&tab=settings' ),
-			array( $this, 'init' )
-		);
-	}
-
-	/**
-	 * ticketsDashboard.
-	 */
-	public function ticketsDashboard() {
-		// content for dashboard tab  - the default in support tickets
-		?>
+		/**
+		 * ticketsDashboard.
+		 */
+		public function ticketsDashboard() {
+			// content for dashboard tab  - the default in support tickets
+			?>
 		<div class='clearfix'>
 			<div class='report_widget <?php print esc_html( $this->plugin ); ?>columns3 em'>
 				<b>
@@ -818,127 +858,127 @@ class STSWooCommerceInc {
 				</a>
 			</div>
 		</div>
-		<?php
-	}
-
-	/**
-	 * getAllTickets.
-	 */
-	public function getAllTickets() {
-		// function to populate the dashboard screen
-		$args      = array(
-			'post_type' => 'stsw_tickets',
-		);
-		$the_query = new WP_Query( $args );
-		$totalpost = $the_query->found_posts;
-		return esc_html( $totalpost );
-	}
-
-	/**
-	 * getOpenTickets.
-	 */
-	public function getOpenTickets() {
-		// function to populate the dashboard screen
-		$the_query = new WP_Query(
-			array(
-				'post_type' => 'stsw_tickets',
-				'tax_query' => array(
-					array(
-						'taxonomy' => 'stsw_tickets_status',
-						'field'    => 'slug',
-						'terms'    => 'open',
-					),
-				),
-			)
-		);
-		$totalpost = $the_query->found_posts;
-		return esc_html( $totalpost );
-	}
-
-	/**
-	 * getInProgressTickets.
-	 */
-	public function getInProgressTickets() {
-		// function to populate the dashboard screen
-		$the_query = new WP_Query(
-			array(
-				'post_type' => 'stsw_tickets',
-				'tax_query' => array(
-					array(
-						'taxonomy' => 'stsw_tickets_status',
-						'field'    => 'slug',
-						'terms'    => 'in-progress',
-					),
-				),
-			)
-		);
-		$totalpost = $the_query->found_posts;
-		return esc_html( $totalpost );
-	}
-
-	/**
-	 * stswpro_add_my_account_order_actions.
-	 *
-	 * @version 2.0.0
-	 */
-	public function stswpro_add_my_account_order_actions( $actions, $order ) {
-		// add a button to actions column of my account orders page
-		if ( get_option( $this->plugin . 'renameOrderButtonLink' ) && ! empty( get_option( $this->plugin . 'renameOrderButtonLink' ) ) ) {
-			$buttonTitle = get_option( esc_html( $this->plugin ) . 'renameOrderButtonLink' );
-		} else {
-			$buttonTitle = esc_html__( 'Get Help', 'support-ticket-system-for-woocommerce' );
-		}
-		$actions['help'] = array(
-			// adjust URL as needed
-			'url'  => esc_url( get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) . '/tickets/' ),
-			'name' => esc_html( $buttonTitle ),
-		);
-
-		return $actions;
-	}
-
-	/**
-	 * stswproTicketsLink.
-	 *
-	 * Add ticketing functionality to users account page.
-	 *
-	 * @version 2.0.0
-	 */
-	public function stswproTicketsLink( $menu_links ) {
-		// add tab to my account page to ticketing system
-		if ( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) && ! empty( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) ) ) {
-			$new = array( 'tickets' => esc_html( get_option( $this->plugin . 'renameAccountTabLink' ) ) );
-
-		} else {
-			$new = array( 'tickets' => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ) );
+			<?php
 		}
 
-		$menu_links = array_slice( $menu_links, 0, 5, true )
-		+ $new
-		+ array_slice( $menu_links, 1, null, true );
-		return $menu_links;
-	}
+		/**
+		 * getAllTickets.
+		 */
+		public function getAllTickets() {
+			// function to populate the dashboard screen
+			$args      = array(
+				'post_type' => 'stsw_tickets',
+			);
+			$the_query = new WP_Query( $args );
+			$totalpost = $the_query->found_posts;
+			return esc_html( $totalpost );
+		}
 
-	/**
-	 * Register Permalink Endpoint.
-	 */
-	public function stswpro_add_endpoint() {
-		add_rewrite_endpoint( 'tickets', EP_PAGES );
-	}
+		/**
+		 * getOpenTickets.
+		 */
+		public function getOpenTickets() {
+			// function to populate the dashboard screen
+			$the_query = new WP_Query(
+				array(
+					'post_type' => 'stsw_tickets',
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'stsw_tickets_status',
+							'field'    => 'slug',
+							'terms'    => 'open',
+						),
+					),
+				)
+			);
+			$totalpost = $the_query->found_posts;
+			return esc_html( $totalpost );
+		}
 
-	/**
-	 * stswpro_my_account_endpoint_content.
-	 *
-	 * Add content to support ticketing system.
-	 *
-	 * @version 2.0.0
-	 */
-	public function stswpro_my_account_endpoint_content() {
-		// user needs to be logged in
-		if ( is_user_logged_in() ) {
-			$this->stswproSaveTicket();
-			$this->stswproSaveResponse();
-			?>
+		/**
+		 * getInProgressTickets.
+		 */
+		public function getInProgressTickets() {
+			// function to populate the dashboard screen
+			$the_query = new WP_Query(
+				array(
+					'post_type' => 'stsw_tickets',
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'stsw_tickets_status',
+							'field'    => 'slug',
+							'terms'    => 'in-progress',
+						),
+					),
+				)
+			);
+			$totalpost = $the_query->found_posts;
+			return esc_html( $totalpost );
+		}
+
+		/**
+		 * stswpro_add_my_account_order_actions.
+		 *
+		 * @version 2.0.0
+		 */
+		public function stswpro_add_my_account_order_actions( $actions, $order ) {
+			// add a button to actions column of my account orders page
+			if ( get_option( $this->plugin . 'renameOrderButtonLink' ) && ! empty( get_option( $this->plugin . 'renameOrderButtonLink' ) ) ) {
+				$buttonTitle = get_option( esc_html( $this->plugin ) . 'renameOrderButtonLink' );
+			} else {
+				$buttonTitle = esc_html__( 'Get Help', 'support-ticket-system-for-woocommerce' );
+			}
+			$actions['help'] = array(
+				// adjust URL as needed
+				'url'  => esc_url( get_permalink( get_option( 'woocommerce_myaccount_page_id' ) ) . '/tickets/' ),
+				'name' => esc_html( $buttonTitle ),
+			);
+
+			return $actions;
+		}
+
+		/**
+		 * stswproTicketsLink.
+		 *
+		 * Add ticketing functionality to users account page.
+		 *
+		 * @version 2.0.0
+		 */
+		public function stswproTicketsLink( $menu_links ) {
+			// add tab to my account page to ticketing system
+			if ( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) && ! empty( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) ) ) {
+				$new = array( 'tickets' => esc_html( get_option( $this->plugin . 'renameAccountTabLink' ) ) );
+
+			} else {
+				$new = array( 'tickets' => esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ) );
+			}
+
+			$menu_links = array_slice( $menu_links, 0, 5, true )
+			+ $new
+			+ array_slice( $menu_links, 1, null, true );
+			return $menu_links;
+		}
+
+		/**
+		 * Register Permalink Endpoint.
+		 */
+		public function stswpro_add_endpoint() {
+			add_rewrite_endpoint( 'tickets', EP_PAGES );
+		}
+
+		/**
+		 * stswpro_my_account_endpoint_content.
+		 *
+		 * Add content to support ticketing system.
+		 *
+		 * @version 2.2.0
+		 */
+		public function stswpro_my_account_endpoint_content() {
+			// user needs to be logged in
+			if ( is_user_logged_in() ) {
+				$this->stswproSaveTicket();
+				$this->stswproSaveResponse();
+				?>
 			<style>
 			.entry-title{display:none;}
 			.ui-accordion-content{
@@ -946,75 +986,75 @@ class STSWooCommerceInc {
 			}
 			</style>
 		<div class='stswproaccordion'>
-			<?php
-			$customer = wp_get_current_user();
+				<?php
+				$customer = wp_get_current_user();
 
-			$cat_query = '';
-			// hide closed tickets setting
-			if ( get_option( esc_html( $this->plugin ) . 'hideClosed' ) && get_option( esc_html( $this->plugin ) . 'hideClosed' ) === '1' ) {
-				$category = 'stsw_tickets_status';
-				$term     = 'closed';
+				$cat_query = '';
+				// hide closed tickets setting
+				if ( get_option( esc_html( $this->plugin ) . 'hideClosed' ) && get_option( esc_html( $this->plugin ) . 'hideClosed' ) === '1' ) {
+					$category = 'stsw_tickets_status';
+					$term     = 'closed';
 
-				$cat_query = array(
-					array(
-						'taxonomy' => sanitize_text_field( $category ),
-						'field'    => 'slug',
-						'terms'    => sanitize_text_field( $term ),
-						'operator' => 'NOT IN',
-					),
+					$cat_query = array(
+						array(
+							'taxonomy' => sanitize_text_field( $category ),
+							'field'    => 'slug',
+							'terms'    => sanitize_text_field( $term ),
+							'operator' => 'NOT IN',
+						),
+					);
+
+				}
+
+				$meta_query = array();
+				// SHOW IN ADMIN ALL, SHOW IN ASSIGNEED ONLY WHAT IS ASSIGNED, SHOW TO CUSTOMER WHAT HE/SHE OPENED
+				if ( in_array( 'customer', $customer->roles ) && ! in_array( 'administrator', $customer->roles ) ) {
+					$user_id = array(
+						'key'     => 'STSWooCommerceProticketuser',
+						'value'   => (int) $customer->ID,
+						'compare' => '=',
+					);
+					array_push( $meta_query, $user_id );
+
+				} elseif ( in_array( 'administrator', $customer->roles ) ) {
+
+				} else {
+					$user_id = array(
+						'key'     => 'STSWooCommerceProticketagent',
+						'value'   => (int) $customer->ID,
+						'compare' => '=',
+					);
+					array_push( $meta_query, $user_id );
+				}
+
+				$args = array(
+					'meta_query'     => $meta_query,
+					'tax_query'      => $cat_query,
+					'post_type'      => 'stsw_tickets',
+					'posts_per_page' => -1,
 				);
 
-			}
-
-			$meta_query = array();
-			// SHOW IN ADMIN ALL, SHOW IN ASSIGNEED ONLY WHAT IS ASSIGNED, SHOW TO CUSTOMER WHAT HE/SHE OPENED
-			if ( in_array( 'customer', $customer->roles ) && ! in_array( 'administrator', $customer->roles ) ) {
-				$user_id = array(
-					'key'     => 'STSWooCommerceProticketuser',
-					'value'   => (int) $customer->ID,
-					'compare' => '=',
-				);
-				array_push( $meta_query, $user_id );
-
-			} elseif ( in_array( 'administrator', $customer->roles ) ) {
-
-			} else {
-				$user_id = array(
-					'key'     => 'STSWooCommerceProticketagent',
-					'value'   => (int) $customer->ID,
-					'compare' => '=',
-				);
-				array_push( $meta_query, $user_id );
-			}
-
-			$args = array(
-				'meta_query'     => $meta_query,
-				'tax_query'      => $cat_query,
-				'post_type'      => 'stsw_tickets',
-				'posts_per_page' => -1,
-			);
-
-			$query = new WP_Query( $args );
-			if ( $query->have_posts() ) {
-				?>
+				$query = new WP_Query( $args );
+				if ( $query->have_posts() ) {
+					?>
 				<h3>
-				<?php esc_html_e( 'TICKETS', 'support-ticket-system-for-woocommerce' ); ?> <i class='fa fa-angle-down'></i>
+					<?php esc_html_e( 'TICKETS', 'support-ticket-system-for-woocommerce' ); ?> <i class='fa fa-angle-down'></i>
 				</h3>
 				<div class="postbox">
 					<div class='stswproaccordion2'>
-				<?php
-				while ( $query->have_posts() ) {
-					$query->the_post();
+					<?php
+					while ( $query->have_posts() ) {
+						$query->the_post();
 
-					$status = wp_get_post_terms( get_the_ID(), 'stsw_tickets_status', 'name' );
-					?>
+						$status = wp_get_post_terms( get_the_ID(), 'stsw_tickets_status', 'name' );
+						?>
 
 					<h3>
-					<?php the_title(); ?> - <?php echo esc_html( get_the_date() ); ?> -
-					<?php
-					if ( ! empty( $status ) ) {
+						<?php the_title(); ?> - <?php echo esc_html( get_the_date() ); ?> -
+						<?php
+						if ( ! empty( $status ) ) {
 							print esc_html( $status[0]->name );}
-					?>
+						?>
 							<i class='fa fa-angle-down'></i>
 					</h3>
 					<div class='post-content'>
@@ -1035,7 +1075,7 @@ class STSWooCommerceInc {
 						<?php
 
 						global $wpdb;
-						$table_name = esc_html( $wpdb->prefix . $this->tableName ); // do not forget about tables prefix
+						$table_name = esc_html( $wpdb->prefix . $this->table_name );
 						$result     = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $table_name . '  WHERE post_id=%d  ORDER BY creationdate DESC ', (int) get_the_ID() ) );
 						$count      = 0;
 						if ( ! empty( $result ) ) {
@@ -1094,15 +1134,15 @@ class STSWooCommerceInc {
 						<?php } ?>
 						</div>
 						<?php
+					}
+					?>
+				</div>
+				</div>
+					<?php
+				} else {
+					esc_html_e( ' No Tickets found', 'support-ticket-system-for-woocommerce' );
 				}
 				?>
-				</div>
-				</div>
-				<?php
-			} else {
-				esc_html_e( ' No Tickets found', 'support-ticket-system-for-woocommerce' );
-			}
-			?>
 
 			<h3><?php esc_html_e( 'ADD NEW TICKET', 'support-ticket-system-for-woocommerce' ); ?> <i class='fa fa-plus'></i></h3>
 
@@ -1132,416 +1172,418 @@ class STSWooCommerceInc {
 				</form>
 			</div>
 		</div>
-			<?php
-		} else { // check if user is logged in, if not display login form
-			echo do_shortcode( '[woocommerce_my_account]' );
+				<?php
+			} else { // check if user is logged in, if not display login form
+				echo do_shortcode( '[woocommerce_my_account]' );
+			}
 		}
-	}
 
-	/**
-	 * verify_user.
-	 *
-	 * @version 2.1.4
-	 * @since   2.1.0
-	 */
-	public function verify_user( $user_id, $ticket_id ) {
+		/**
+		 * verify_user.
+		 *
+		 * @version 2.1.4
+		 * @since   2.1.0
+		 */
+		public function verify_user( $user_id, $ticket_id ) {
 
-		if (
+			if (
 			! function_exists( 'wp_get_current_user' ) ||
 			! ( $current_user = wp_get_current_user() ) ||
 			(int) $user_id !== (int) $current_user->ID
-		) {
-			return false;
+			) {
+				return false;
+			}
+
+			return $this->verify_ticket_current_user_id( $ticket_id );
 		}
 
-		return $this->verify_ticket_current_user_id( $ticket_id );
-	}
-
-	/**
-	 * verify_ticket_current_user_id.
-	 *
-	 * @version 2.1.4
-	 * @since   2.1.2
-	 */
-	public function verify_ticket_current_user_id( $ticket_id ) {
-		return (
+		/**
+		 * verify_ticket_current_user_id.
+		 *
+		 * @version 2.1.4
+		 * @since   2.1.2
+		 */
+		public function verify_ticket_current_user_id( $ticket_id ) {
+			return (
 			current_user_can( 'manage_woocommerce' ) ||
 			(
 				( $user_id = get_current_user_id() ) &&
 				( $ticket_user_id = $this->get_ticket_user_id( $ticket_id ) ) &&
 				$user_id === $ticket_user_id
 			)
-		);
-	}
+			);
+		}
 
-	/**
-	 * Function to save a response from frontend.
-	 *
-	 * @version 2.1.0
-	 */
-	public function stswproSaveResponse() {
+		/**
+		 * Function to save a response from frontend.
+		 *
+		 * @version 2.2.0
+		 */
+		public function stswproSaveResponse() {
 
-		if (
+			if (
 			'POST' === $_SERVER['REQUEST_METHOD'] &&
 			isset( $_POST['stswresponsefrontend'] )
-		) {
+			) {
 
-			// Form is submitted via ajax
-			check_ajax_referer( 'stswresponsefrontend', 'stswresponsefrontend' );
+				// Form is submitted via ajax
+				check_ajax_referer( 'stswresponsefrontend', 'stswresponsefrontend' );
 
-			// Stop running function if form wasn't submitted
-			if (
+				// Stop running function if form wasn't submitted
+				if (
 				! isset( $_POST['response_content'] ) ||
 				strlen( $_POST['response_content'] ) <= 1
-			) {
-				return;
+				) {
+					return;
+				}
+
+				if ( ! wp_verify_nonce( $_POST['stswresponsefrontend'], 'stswresponsefrontend' ) ) {
+					esc_html_e( 'Did not save because your submission is invalid...', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
+
+				$response    = sanitize_textarea_field( $_POST['response_content'] );
+				$post_id     = (int) $_POST['post_id'];
+				$customer_id = (int) $_POST['customer_id'];
+
+				// Verify user
+				if ( ! $this->verify_user( $customer_id, $post_id ) ) {
+					esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
+
+				global $wpdb;
+
+				$table_name = $wpdb->prefix . $this->table_name;
+				$wpdb->insert(
+					$table_name,
+					array(
+						'user'         => $customer_id,
+						'creationdate' => current_time( 'mysql', 1 ),
+						'content'      => $response,
+						'post_id'      => $post_id,
+					)
+				);
+
+				if (
+					get_option( esc_html( $this->plugin ) . 'textforResponseSave' ) &&
+					! empty( get_option( $this->plugin . 'textforResponseSave' ) )
+				) {
+					echo wp_kses(
+						get_option( esc_html( $this->plugin ) . 'textforResponseSave' ),
+						$this->allowed_html
+					);
+				}
+
+				if ( ! empty( $_POST['closeTicket'] ) ) {
+					wp_set_object_terms( $post_id, 'Closed', 'stsw_tickets_status' );
+				}
+
+				$lastid = (int) $wpdb->insert_id;
+
+				$user = get_user_by( 'id', $customer_id );
+
+				// sendWithPlaceholders
+				$ticketId        = $post_id;
+				$responseId      = $lastid;
+				$title           = '';
+				$responseContent = $response;
+				$toEmail         = sanitize_email( $user->user_email );
+				$toFirstName     = esc_html( $user->first_name );
+				$toLastName      = esc_html( $user->last_name );
+
+				$this->sendWithPlaceholders(
+					$ticketId,
+					$responseId,
+					$title,
+					$responseContent,
+					$toEmail,
+					$toFirstName,
+					$toLastName,
+					$user
+				);
+
 			}
+		}
 
-			if ( ! wp_verify_nonce( $_POST['stswresponsefrontend'], 'stswresponsefrontend' ) ) {
-				esc_html_e( 'Did not save because your submission is invalid...', 'support-ticket-system-for-woocommerce' );
-				return;
-			}
-
-			$response    = sanitize_textarea_field( $_POST['response_content'] );
-			$post_id     = (int) $_POST['post_id'];
-			$customer_id = (int) $_POST['customer_id'];
-
-			// Verify user
-			if ( ! $this->verify_user( $customer_id, $post_id ) ) {
-				esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
-				return;
-			}
-
-			global $wpdb;
-
-			$table_name = $wpdb->prefix . $this->tableName;
-			$wpdb->insert(
-				$table_name,
-				array(
-					'user'         => $customer_id,
-					'creationdate' => current_time( 'mysql', 1 ),
-					'content'      => $response,
-					'post_id'      => $post_id,
-				)
-			);
+		/**
+		 * Save ticket submitted from frontend.
+		 *
+		 * @version 2.2.0
+		 */
+		public function stswproSaveTicket() {
 
 			if (
-				get_option( esc_html( $this->plugin ) . 'textforResponseSave' ) &&
-				! empty( get_option( $this->plugin . 'textforResponseSave' ) )
-			) {
-				echo wp_kses(
-					get_option( esc_html( $this->plugin ) . 'textforResponseSave' ),
-					$this->mailIt_allowed_html
-				);
-			}
-
-			if ( ! empty( $_POST['closeTicket'] ) ) {
-				wp_set_object_terms( $post_id, 'Closed', 'stsw_tickets_status' );
-			}
-
-			$lastid = (int) $wpdb->insert_id;
-
-			$user = get_user_by( 'id', $customer_id );
-
-			// sendWithPlaceholders
-			$ticketId        = $post_id;
-			$responseId      = $lastid;
-			$title           = '';
-			$responseContent = $response;
-			$toEmail         = sanitize_email( $user->user_email );
-			$toFirstName     = esc_html( $user->first_name );
-			$toLastName      = esc_html( $user->last_name );
-
-			$this->sendWithPlaceholders(
-				$ticketId,
-				$responseId,
-				$title,
-				$responseContent,
-				$toEmail,
-				$toFirstName,
-				$toLastName,
-				$user
-			);
-
-		}
-	}
-
-	/**
-	 * Save ticket submitted from frontend.
-	 *
-	 * @version 2.1.0
-	 */
-	public function stswproSaveTicket() {
-
-		if (
 			'POST' === $_SERVER['REQUEST_METHOD'] &&
 			isset( $_POST['stswticketfrontend'] )
-		) {
+			) {
 
-			// Submission via ajax - check
-			check_ajax_referer( 'stswticketfrontend', 'stswticketfrontend' );
+				// Submission via ajax - check
+				check_ajax_referer( 'stswticketfrontend', 'stswticketfrontend' );
 
-			// Stop running function if form wasn't submitted
-			if ( ! isset( $_POST['title'], $_POST['content'], $_REQUEST['ticketuser'] ) ) {
-				return;
-			}
+				// Stop running function if form wasn't submitted
+				if ( ! isset( $_POST['title'], $_POST['content'], $_REQUEST['ticketuser'] ) ) {
+					return;
+				}
 
-			// Check user
-			if (
+				// Check user
+				if (
 				! function_exists( 'get_current_user_id' ) ||
 				get_current_user_id() !== ( $ticket_user = (int) $_REQUEST['ticketuser'] )
-			) {
-				esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
-				return;
-			}
+				) {
+					esc_html_e( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
 
-			// Check that the nonce was set and valid
-			if ( ! wp_verify_nonce( $_POST['stswticketfrontend'], 'stswticketfrontend' ) ) {
-				esc_html_e( 'Did not save because your submission has issues.', 'support-ticket-system-for-woocommerce' );
-				return;
-			}
+				// Check that the nonce was set and valid
+				if ( ! wp_verify_nonce( $_POST['stswticketfrontend'], 'stswticketfrontend' ) ) {
+					esc_html_e( 'Did not save because your submission has issues.', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
 
-			// Form validation to make sure there is content
-			if ( strlen( $_POST['title'] ) < 3 ) {
-				esc_html_e( 'Please enter a proper title. Titles must be at least 3 characters long.', 'support-ticket-system-for-woocommerce' );
-				return;
-			}
-			if ( strlen( $_POST['content'] ) < 1 ) {
-				esc_html_e( 'Please enter content more than 1 characters in length.', 'support-ticket-system-for-woocommerce' );
-				return;
-			}
+				// Form validation to make sure there is content
+				if ( strlen( $_POST['title'] ) < 3 ) {
+					esc_html_e( 'Please enter a proper title. Titles must be at least 3 characters long.', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
+				if ( strlen( $_POST['content'] ) < 1 ) {
+					esc_html_e( 'Please enter content more than 1 characters in length.', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
 
-			// Add the content of the form to $post as an array
-			$post      = array(
-				'post_title'   => sanitize_text_field( $_POST['title'] ),
-				'post_content' => sanitize_text_field( $_POST['content'] ),
-				'post_type'    => 'stsw_tickets',
-				'post_status'  => 'publish',
-			);
-			$ticket_id = wp_insert_post( $post );
-			$ticket_id = (int) $ticket_id;
+				// Add the content of the form to $post as an array
+				$post      = array(
+					'post_title'   => sanitize_text_field( $_POST['title'] ),
+					'post_content' => sanitize_text_field( $_POST['content'] ),
+					'post_type'    => 'stsw_tickets',
+					'post_status'  => 'publish',
+				);
+				$ticket_id = wp_insert_post( $post );
+				$ticket_id = (int) $ticket_id;
 
-			// Display a message
-			if (
+				// Display a message
+				if (
 				get_option( esc_html( $this->plugin ) . 'textforTicketSave' ) &&
 				! empty( get_option( esc_html( $this->plugin ) . 'textforTicketSave' ) )
-			) {
-				echo wp_kses(
-					get_option( esc_html( $this->plugin ) . 'textforTicketSave' ),
-					$this->mailIt_allowed_html
+				) {
+					echo wp_kses(
+						get_option( esc_html( $this->plugin ) . 'textforTicketSave' ),
+						$this->allowed_html
+					);
+				}
+
+				// Update user for ticket
+				$this->set_ticket_user_id( $ticket_id, $ticket_user );
+
+				// set ticket status as open
+				wp_set_object_terms( $ticket_id, 'Open', 'stsw_tickets_status' );
+
+				$user = get_user_by( 'id', $ticket_user );
+
+				// sendWithPlaceholders
+				$ticketId      = $ticket_id;
+				$responseId    = '';
+				$ticketTitle   = esc_html( $_POST['title'] );
+				$ticketContent = esc_html( $_POST['content'] );
+				$toEmail       = sanitize_email( $user->user_email );
+				$toFirstName   = esc_html( $user->first_name );
+				$toLastName    = esc_html( $user->last_name );
+
+				$this->sendWithPlaceholders(
+					$ticketId,
+					$responseId,
+					$ticketTitle,
+					$ticketContent,
+					$toEmail,
+					$toFirstName,
+					$toLastName,
+					$user
 				);
+
 			}
-
-			// Update user for ticket
-			$this->set_ticket_user_id( $ticket_id, $ticket_user );
-
-			// set ticket status as open
-			wp_set_object_terms( $ticket_id, 'Open', 'stsw_tickets_status' );
-
-			$user = get_user_by( 'id', $ticket_user );
-
-			// sendWithPlaceholders
-			$ticketId      = $ticket_id;
-			$responseId    = '';
-			$ticketTitle   = esc_html( $_POST['title'] );
-			$ticketContent = esc_html( $_POST['content'] );
-			$toEmail       = sanitize_email( $user->user_email );
-			$toFirstName   = esc_html( $user->first_name );
-			$toLastName    = esc_html( $user->last_name );
-
-			$this->sendWithPlaceholders(
-				$ticketId,
-				$responseId,
-				$ticketTitle,
-				$ticketContent,
-				$toEmail,
-				$toFirstName,
-				$toLastName,
-				$user
-			);
-
 		}
-	}
 
-	/**
-	 * sendWithPlaceholders.
-	 */
-	public function sendWithPlaceholders( $ticketId, $responseId, $title, $content, $toEmail, $toFirstName, $toLastName, $user ) {
+		/**
+		 * sendWithPlaceholders.
+		 *
+		 * @version 2.2.0
+		 */
+		public function sendWithPlaceholders( $ticketId, $responseId, $title, $content, $toEmail, $toFirstName, $toLastName, $user ) {
 
 			// proversion placeholders
 
 			// TICKET SUBMITTED CASE - THEN SEND EMAIL
-		if ( isset( $_POST['title'] ) ) {
-			// SEND EMAIL TO ADMIN
-			if ( get_option( esc_html( $this->plugin ) . 'mailToADmin' ) && get_option( esc_html( $this->plugin ) . 'mailToADmin' ) == '1' ) {
+			if ( isset( $_POST['title'] ) ) {
+				// SEND EMAIL TO ADMIN
+				if ( get_option( esc_html( $this->plugin ) . 'mailToADmin' ) && get_option( esc_html( $this->plugin ) . 'mailToADmin' ) == '1' ) {
 
-				if ( ! empty( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) ) ) {
-					$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
-				} else {
-					$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
-				}
+					if ( ! empty( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) ) ) {
+						$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
+					} else {
+						$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
+					}
 
-				$sub = esc_html__( 'New Ticket to ', 'support-ticket-system-for-woocommerce' ) . esc_html( get_bloginfo( 'name' ) ) . ' - #' . (int) $ticketId . ' ' . esc_html( $_POST['title'] );
-
-				$msg = esc_html( $_POST['title'] ) . '<br/>' . esc_html( $_POST['content'] ) . "<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
-
-				$this->notifyUsers( $adminEmail, $sub, $msg );
-			}
-
-			// SEND EMAIL TO USER
-			if ( get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) && get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) == '1' ) {
-				$to = sanitize_email( $user->user_email );
-
-				if ( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) ) ) {
-					$sub = esc_html( get_option( $this->plugin . 'mailIt_subjectToCust' ) );
-
-				} else {
 					$sub = esc_html__( 'New Ticket to ', 'support-ticket-system-for-woocommerce' ) . esc_html( get_bloginfo( 'name' ) ) . ' - #' . (int) $ticketId . ' ' . esc_html( $_POST['title'] );
+
+					$msg = esc_html( $_POST['title'] ) . '<br/>' . esc_html( $_POST['content'] ) . "<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
+
+					$this->notifyUsers( $adminEmail, $sub, $msg );
 				}
 
-				if ( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) ) ) {
-					$msg = wp_kses( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ), $this->mailIt_allowed_html );
-				} else {
-					$msg = esc_html( $title ) . '<br/>' . esc_html( $content ) . "
+				// SEND EMAIL TO USER
+				if ( get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) && get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) == '1' ) {
+					$to = sanitize_email( $user->user_email );
+
+					if ( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) ) ) {
+						$sub = esc_html( get_option( $this->plugin . 'mailIt_subjectToCust' ) );
+
+					} else {
+						$sub = esc_html__( 'New Ticket to ', 'support-ticket-system-for-woocommerce' ) . esc_html( get_bloginfo( 'name' ) ) . ' - #' . (int) $ticketId . ' ' . esc_html( $_POST['title'] );
+					}
+
+					if ( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) ) ) {
+						$msg = wp_kses( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ), $this->allowed_html );
+					} else {
+						$msg = esc_html( $title ) . '<br/>' . esc_html( $content ) . "
 					<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
-				}
-
-				$this->notifyUsers( $to, $sub, $msg );
-			}
-		}
-
-			// RESPONSE TO TICKET SUBMITTED CASE - THEN SEND EMAIL
-		if ( isset( $_POST['response_content'] ) ) {
-
-			// SEND EMAIL TO ADMIN
-			if ( get_option( esc_html( $this->plugin ) . 'mailToADmin' ) && get_option( esc_html( $this->plugin ) . 'mailToADmin' ) == '1' ) {
-
-				if ( ! empty( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) ) ) {
-					$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
-				} else {
-					$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
-				}
-
-				$sub = esc_html__( 'New Response to ticket #', 'support-ticket-system-for-woocommerce' ) . (int) $ticketId . ' - #' . (int) $responseId;
-
-				$msg = esc_html( $_POST['response_content'] ) . "
-					<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
-
-				$this->notifyUsers( $adminEmail, $sub, $msg );
-			}
-
-			// SEND EMAIL TO USER
-			if ( get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) && get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) == '1' ) {
-				$to = sanitize_email( $user->user_email );
-				if ( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) ) ) {
-					$sub = esc_html( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) );
-				} else {
-					$sub = esc_html( get_bloginfo( 'name' ) ) . ' - we received #' . (int) $responseId . ' for ticket #' . (int) $ticketId;
-				}
-
-				if ( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) ) ) {
-					$msg = wp_kses( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ), $this->mailIt_allowed_html );
-				} else {
-					$msg = esc_html( $title ) . '<br/>' . esc_html( $content ) . "
-						<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
-				}
+					}
 
 					$this->notifyUsers( $to, $sub, $msg );
+				}
+			}
+
+			// RESPONSE TO TICKET SUBMITTED CASE - THEN SEND EMAIL
+			if ( isset( $_POST['response_content'] ) ) {
+
+				// SEND EMAIL TO ADMIN
+				if ( get_option( esc_html( $this->plugin ) . 'mailToADmin' ) && get_option( esc_html( $this->plugin ) . 'mailToADmin' ) == '1' ) {
+
+					if ( ! empty( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) ) ) {
+						$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
+					} else {
+						$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
+					}
+
+					$sub = esc_html__( 'New Response to ticket #', 'support-ticket-system-for-woocommerce' ) . (int) $ticketId . ' - #' . (int) $responseId;
+
+					$msg = esc_html( $_POST['response_content'] ) . "
+					<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
+
+					$this->notifyUsers( $adminEmail, $sub, $msg );
+				}
+
+				// SEND EMAIL TO USER
+				if ( get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) && get_option( esc_html( $this->plugin ) . 'mailToCustomer' ) == '1' ) {
+					$to = sanitize_email( $user->user_email );
+					if ( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) ) ) {
+						$sub = esc_html( get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' ) );
+					} else {
+						$sub = esc_html( get_bloginfo( 'name' ) ) . ' - we received #' . (int) $responseId . ' for ticket #' . (int) $ticketId;
+					}
+
+					if ( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) && ! empty( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ) ) ) {
+						$msg = wp_kses( get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' ), $this->allowed_html );
+					} else {
+						$msg = esc_html( $title ) . '<br/>' . esc_html( $content ) . "
+						<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
+					}
+
+					$this->notifyUsers( $to, $sub, $msg );
+				}
 			}
 		}
-	}
 
-	/**
-	 * notifyUsers.
-	 *
-	 * @version 2.1.0
-	 */
-	public function notifyUsers( $to, $subject, $message ) {
+		/**
+		 * notifyUsers.
+		 *
+		 * @version 2.1.0
+		 */
+		public function notifyUsers( $to, $subject, $message ) {
 
-		if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
-			$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
-		} else {
-			$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
+			if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
+				$adminEmail = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
+			} else {
+				$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
+			}
+
+			$headers[] = 'Content-Type: text/html; charset=UTF-8';
+			$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . esc_html( $adminEmail ) . '>';
+			$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
+
+			$sent_message = wp_mail( $to, $subject, $message, $headers );
 		}
 
-		$headers[] = 'Content-Type: text/html; charset=UTF-8';
-		$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . esc_html( $adminEmail ) . '>';
-		$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
+		/**
+		 * Notify user on WP edit adding response.
+		 *
+		 * @version 2.2.0
+		 */
+		public function notifyUserOnWPedit( $post_id, $post, $update ) {
 
-		$sent_message = wp_mail( $to, $subject, $message, $headers );
-	}
-
-	/**
-	 * Notify user on WP edit adding response.
-	 *
-	 * @version 2.1.0
-	 */
-	public function notifyUserOnWPedit( $post_id, $post, $update ) {
-
-		if (
+			if (
 			! empty( $_REQUEST[ $this->plugin . 'response' ] ) &&
 			get_option( $this->plugin . 'mailToCustomer' ) &&
 			'1' == get_option( $this->plugin . 'mailToCustomer' )
-		) {
+			) {
 
-			$ticketId        = $post_id;
-			$responseContent = esc_html( $_REQUEST[ $this->plugin . 'response' ] );
-			$user_id         = $this->get_ticket_user_id( $post_id );
-			$user            = get_user_by( 'id', $user_id );
-			$toEmail         = sanitize_email( $user->user_email );
-			$toFirstName     = esc_html( $user->first_name );
-			$toLastName      = esc_html( $user->last_name );
-			$title           = get_the_title( $post_id );
-			$content         = get_the_content( $post_id );
+				$ticketId        = $post_id;
+				$responseContent = esc_html( $_REQUEST[ $this->plugin . 'response' ] );
+				$user_id         = $this->get_ticket_user_id( $post_id );
+				$user            = get_user_by( 'id', $user_id );
+				$toEmail         = sanitize_email( $user->user_email );
+				$toFirstName     = esc_html( $user->first_name );
+				$toLastName      = esc_html( $user->last_name );
+				$title           = get_the_title( $post_id );
+				$content         = get_the_content( $post_id );
 
-			// If this isn't a `stsw_tickets` post, don't update it
-			$post_type = get_post_type( $post_id );
-			if ( 'stsw_tickets' !== $post_type ) {
-				return;
-			}
+				// If this isn't a `stsw_tickets` post, don't update it
+				$post_type = get_post_type( $post_id );
+				if ( 'stsw_tickets' !== $post_type ) {
+					return;
+				}
 
-			if ( $user ) {
-				$to = sanitize_email( $user->user_email );
-			}
+				if ( $user ) {
+					$to = sanitize_email( $user->user_email );
+				}
 
-			if (
+				if (
 				get_option( $this->plugin . 'mailIt_subjectToCust' ) &&
 				! empty( get_option( $this->plugin . 'mailIt_subjectToCust' ) )
-			) {
-				$sub = esc_html( $subjectToCust );
-			} else {
-				$sub = (
+				) {
+					$sub = esc_html( $subjectToCust );
+				} else {
+					$sub = (
 					esc_html__( 'New Response to ticket #', 'support-ticket-system-for-woocommerce' ) .
 					(int) $post_id . ' - ' .
 					esc_html( $title )
-				);
-			}
+					);
+				}
 
-			if (
+				if (
 				get_option( $this->plugin . 'mailIt_contentToCust' ) &&
 				! empty( get_option( $this->plugin . 'mailIt_contentToCust' ) )
-			) {
-				$msg = esc_html( $messageToCust );
-			} else {
-				$msg = (
+				) {
+					$msg = esc_html( $messageToCust );
+				} else {
+					$msg = (
 					esc_html( $responseContent ) .
 					'
 					<br/><a href="' . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . '/tickets">' .
 						esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) .
 					'</a>'
-				);
-			}
+					);
+				}
 
-			if (
+				if (
 				get_option( $this->plugin . 'mailIt_subjectToCust' ) &&
 				! empty( get_option( $this->plugin . 'mailIt_subjectToCust' ) )
-			) {
-				$msg = wp_kses(
-					get_option( $this->plugin . 'mailIt_subjectToCust' ),
-					$this->mailIt_allowed_html
-				);
-			} else {
-				$msg = (
+				) {
+					$msg = wp_kses(
+						get_option( $this->plugin . 'mailIt_subjectToCust' ),
+						$this->allowed_html
+					);
+				} else {
+					$msg = (
 					esc_html( $title ) .
 					'<br/>' .
 					esc_html( $content ) .
@@ -1552,86 +1594,88 @@ class STSWooCommerceInc {
 					<a href="' . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . '/tickets">' .
 						esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) .
 					'</a>'
-				);
+					);
+				}
+
+				if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
+					$adminEmail = esc_html( get_option( $this->plugin . 'AdminEmailAddress' ) );
+				} else {
+					$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
+				}
+
+				$headers[] = 'Content-Type: text/html; charset=UTF-8';
+				$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . $adminEmail . '>';
+				$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
+
+				$sent_message = wp_mail( $to, $sub, $msg, $headers );
+
 			}
-
-			if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
-				$adminEmail = esc_html( get_option( $this->plugin . 'AdminEmailAddress' ) );
-			} else {
-				$adminEmail = sanitize_email( get_bloginfo( 'admin_email' ) );
-			}
-
-			$headers[] = 'Content-Type: text/html; charset=UTF-8';
-			$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . $adminEmail . '>';
-			$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
-
-			$sent_message = wp_mail( $to, $sub, $msg, $headers );
-
-		}
-	}
-
-	/**
-	 * stswpro_filter_tickets.
-	 */
-	public function stswpro_filter_tickets( $post_type, $which ) {
-		// this function adds filtering based on status in tickets list table
-		// Apply this only on stsw_tickets specific post type
-		if ( 'stsw_tickets' !== $post_type ) {
-			return;
 		}
 
-		// A list of taxonomy slugs to filter by
-		$taxonomies = array( 'stsw_tickets_status' );
+		/**
+		 * stswpro_filter_tickets.
+		 */
+		public function stswpro_filter_tickets( $post_type, $which ) {
+			// this function adds filtering based on status in tickets list table
+			// Apply this only on stsw_tickets specific post type
+			if ( 'stsw_tickets' !== $post_type ) {
+				return;
+			}
 
-		foreach ( $taxonomies as $taxonomy_slug ) {
+			// A list of taxonomy slugs to filter by
+			$taxonomies = array( 'stsw_tickets_status' );
 
-			// Retrieve taxonomy data
-			$taxonomy_obj  = get_taxonomy( $taxonomy_slug );
-			$taxonomy_name = $taxonomy_obj->labels->name;
+			foreach ( $taxonomies as $taxonomy_slug ) {
 
-			// Retrieve taxonomy terms
-			$terms = get_terms( $taxonomy_slug );
+				// Retrieve taxonomy data
+				$taxonomy_obj  = get_taxonomy( $taxonomy_slug );
+				$taxonomy_name = $taxonomy_obj->labels->name;
 
-			// Display filter HTML
-			echo "<select name='" . esc_attr( $taxonomy_slug ) . "' id='" . esc_attr( $taxonomy_slug ) . "' class='postform'>";
-			echo '<option value="">' .
+				// Retrieve taxonomy terms
+				$terms = get_terms( $taxonomy_slug );
+
+				// Display filter HTML
+				echo "<select name='" . esc_attr( $taxonomy_slug ) . "' id='" . esc_attr( $taxonomy_slug ) . "' class='postform'>";
+				echo '<option value="">' .
 				sprintf(
 					/* Translators: %s: Taxonomy name. */
 					esc_html__( 'Show All %s', 'support-ticket-system-for-woocommerce' ),
 					esc_attr( $taxonomy_name )
 				) .
-			'</option>';
-			foreach ( $terms as $term ) {
-				printf(
-					'<option value="%1$s" %2$s>%3$s (%4$s)</option>',
-					esc_attr( $term->slug ),
-					( ( isset( $_GET[ $taxonomy_slug ] ) && ( $_GET[ $taxonomy_slug ] == $term->slug ) ) ? ' selected="selected"' : '' ),
-					esc_attr( $term->name ),
-					esc_attr( $term->count )
-				);
+				'</option>';
+				foreach ( $terms as $term ) {
+					printf(
+						'<option value="%1$s" %2$s>%3$s (%4$s)</option>',
+						esc_attr( $term->slug ),
+						( ( isset( $_GET[ $taxonomy_slug ] ) && ( $_GET[ $taxonomy_slug ] == $term->slug ) ) ? ' selected="selected"' : '' ),
+						esc_attr( $term->name ),
+						esc_attr( $term->count )
+					);
+				}
+				echo '</select>';
 			}
-			echo '</select>';
+		}
+
+		/**
+		 * stswpro_view_order.
+		 *
+		 * @version 2.0.0
+		 */
+		public function stswpro_view_order( $order_id ) {
+			// this function adds a title to ticket support page
+			if ( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) && ! empty( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) ) ) {
+				?>
+			<h2><?php esc_html( get_option( $this->plugin . 'renameAccountTabLink' ) ); ?></h2>
+				<?php
+			} else {
+				?>
+		<h2><?php esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ); ?></h2> <?php } ?>
+			<?php
+			$this->stswpro_my_account_endpoint_content();
 		}
 	}
 
-	/**
-	 * stswpro_view_order.
-	 *
-	 * @version 2.0.0
-	 */
-	public function stswpro_view_order( $order_id ) {
-		// this function adds a title to ticket support page
-		if ( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) && ! empty( get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' ) ) ) {
-			?>
-			<h2><?php esc_html( get_option( $this->plugin . 'renameAccountTabLink' ) ); ?></h2>
-			<?php
-		} else {
-			?>
-		<h2><?php esc_html__( 'Tickets', 'support-ticket-system-for-woocommerce' ); ?></h2> <?php } ?>
-		<?php
-		$this->stswpro_my_account_endpoint_content();
-	}
-}
+endif;
 
 /**
  * start.
