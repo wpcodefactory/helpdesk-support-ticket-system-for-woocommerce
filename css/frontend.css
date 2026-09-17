@@ -5,21 +5,21 @@
  */
 
 /* === Ajaxify === */
-.stswproaccordion.loading > * {
-	opacity:0.2;
+.stswproaccordion.loading>* {
+	opacity: 0.2;
 }
 
 .stswproaccordion.loading:before {
-	position:fixed;
+	position: fixed;
 	content: "Loading...";
-	font-size:2em;
+	font-size: 2em;
 	padding: 22px;
 	background: #000;
 	background: url(../images/loading.gif) no-repeat center center;
 	color: #777;
 	width: 50%;
-	height:50%;
-	margin-left:15%;
+	height: 50%;
+	margin-left: 15%;
 	box-sizing: border-box;
-	text-align:center;
+	text-align: center;
 }
