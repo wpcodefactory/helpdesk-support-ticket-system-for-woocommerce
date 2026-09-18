@@ -200,6 +200,8 @@ if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 
 		/**
 		 * Constructor.
+		 *
+		 * @version 2.2.0
 		 */
 		public function __construct() {
 
@@ -211,7 +213,7 @@ if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 			add_action( 'post_updated', array( $this, 'notifyUserOnWPedit' ), 10, 3 );
 			add_action( 'admin_menu', array( $this, 'menu_page' ) );
 			add_action( 'admin_footer', array( $this, 'deleteResponseEvent' ) );
-			add_action( 'wp_ajax_responseDelete', array( $this, 'responseDelete' ) );
+			add_action( 'wp_ajax_wpfactory_wc_sts_response_delete', array( $this, 'response_delete' ) );
 			add_action( 'before_delete_post', array( $this, 'deleteRelevantResponses' ) );
 
 			add_filter( 'woocommerce_account_menu_items', array( $this, 'stswproTicketsLink' ) );
@@ -244,15 +246,15 @@ if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 			$table_name = $wpdb->prefix . $this->table_name;
 
 			$sql = 'CREATE TABLE ' . sanitize_text_field( $table_name ) . ' (
-			id int(11) NOT NULL AUTO_INCREMENT,
-			user int(11) NOT NULL,
-			post_id int(11) NOT NULL,
-			creationdate DATETIME NULL,
-			agent int(11) NOT NULL,
-			content longtext NOT NULL,
-			attachments longtext NOT NULL,
-			PRIMARY KEY  (id)
-		);';
+				id int(11) NOT NULL AUTO_INCREMENT,
+				user int(11) NOT NULL,
+				post_id int(11) NOT NULL,
+				creationdate DATETIME NULL,
+				agent int(11) NOT NULL,
+				content longtext NOT NULL,
+				attachments longtext NOT NULL,
+				PRIMARY KEY  (id)
+			);';
 
 			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 			dbDelta( $sql );
@@ -605,7 +607,9 @@ if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 		}
 
 		/**
-		 * On delete button click, delete the response and clear the row from the table - via AJAX call to `responseDelete()`.
+		 * On delete button click, delete the response and clear the row from the table - via AJAX call to `response_delete()`.
+		 *
+		 * @version 2.2.0
 		 */
 		public function deleteResponseEvent() {
 			?>
@@ -619,8 +623,8 @@ if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 						event.preventDefault();
 
 						var ajax_options = {
-							action: 'responseDelete',
-							nonce: '<?php echo wp_create_nonce( 'responseDelete' ); ?>',
+							action: 'wpfactory_wc_sts_response_delete',
+							nonce: '<?php echo wp_create_nonce( 'wpfactory_wc_sts_response_delete' ); ?>',
 							ajaxurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
 							id: $( this ).attr( 'id' ),
 						};
@@ -641,37 +645,43 @@ if ( ! class_exists( 'STSWooCommerceInc' ) ) :
 		}
 
 		/**
-		 * Function to delete the response and clear the row from the table.
+		 * Function to delete the response.
 		 *
 		 * @version 2.2.0
 		 */
-		public function responseDelete() {
+		public function response_delete() {
 			if ( ! isset( $_POST['id'] ) ) {
 				return;
 			}
 
-			if (
-			! isset( $_POST['nonce'] ) ||
-			! wp_verify_nonce(
-				sanitize_text_field( wp_unslash( $_POST['nonce'] ) ),
-				'responseDelete'
-			)
-			) {
-				wp_die( esc_html__( 'Link expired.', 'support-ticket-system-for-woocommerce' ) );
-			}
-
-			check_ajax_referer( 'responseDelete', 'nonce' );
+			check_ajax_referer( 'wpfactory_wc_sts_response_delete', 'nonce' );
 
 			$id = (int) $_POST['id'];
 
-			if ( ! $this->verify_ticket_current_user_id( $id ) ) {
+			global $wpdb;
+			$table_name = $wpdb->prefix . $this->table_name;
+
+			$ticket_id = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare(
+					'SELECT post_id FROM %i WHERE id = %d',
+					$table_name,
+					$id
+				)
+			);
+
+			if (
+				! $ticket_id ||
+				! $this->verify_ticket_current_user_id( (int) $ticket_id )
+			) {
 				wp_die( esc_html__( 'Wrong user.', 'support-ticket-system-for-woocommerce' ) );
 			}
 
-			global $wpdb;
-			$table_name = $wpdb->prefix . $this->table_name;
-			$wpdb->delete( esc_html( $table_name ), array( 'id' => $id ) );
-			echo $id;
+			$wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$table_name,
+				array( 'id' => $id )
+			);
+
+			echo esc_html( (string) $id );
 			die();
 		}
 

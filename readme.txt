@@ -117,7 +117,9 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
-= 2.2.0 - 17/09/2026 =
+= 2.2.0 - 18/09/2026 =
+* Fix - "Delete response" user verification fixed.
+* Dev - AJAX action names prefixed.
 * Dev - Code refactoring.
 * Dev - Coding standards improved.
 * Tested up to: 7.1.

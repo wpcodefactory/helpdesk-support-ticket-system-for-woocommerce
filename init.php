@@ -177,10 +177,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * adminHeader.
+		 *
+		 * @version 2.2.0
 		 */
 		public function adminHeader() {
 			?>
-			<h1 style='display:flex;align-items:center;' ><a target='_blank' href='<?php print esc_url( $this->proUrl ); ?>'>
+			<h1 style='display:flex;align-items:center;' ><a target='_blank' href='<?php print esc_url( $this->pro_url ); ?>'>
 
 			<img   style='width:170px;padding-right:30px' src='<?php echo plugins_url( 'images/extendwp.png', __FILE__ ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> />
 				</a> <span style='color:#2271b1;'><?php print esc_html( $this->name ); ?></span></h1>
