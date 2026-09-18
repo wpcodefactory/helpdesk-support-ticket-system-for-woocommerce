@@ -192,6 +192,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * adminSettings.
+		 *
+		 * @version 2.2.0
 		 */
 		public function adminSettings() {
 			esc_html( $this->adminTabs() ); // add tabs for tickets screen
@@ -202,9 +204,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			<?php
 
 			if ( isset( $_GET['tab'] ) ) {
-				$this->activeTab = esc_html( $_GET['tab'] );
+				$this->activeTab = esc_html( wp_unslash( $_GET['tab'] ) );
 				if ( isset( $_GET['action'] ) ) {
-					$this->activeAction = esc_html( $_GET['action'] );
+					$this->activeAction = esc_html( wp_unslash( $_GET['action'] ) );
 				}
 			} else {
 				$this->activeTab = 'general';
@@ -277,7 +279,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'more'       => 'Go PRO',
 			);
 			if ( isset( $_GET['tab'] ) ) {
-				$this->activeTab = esc_html( $_GET['tab'] );
+				$this->activeTab = esc_html( wp_unslash( $_GET['tab'] ) );
 
 			} elseif ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'stsw_tickets' ) {
 
@@ -431,12 +433,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * renameAccountTabLink.
+		 *
+		 * @version 2.2.0
 		 */
 		public function renameAccountTabLink() {
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'renameAccountTabLink' ] ) ) {
-				$this->renameAccountTabLink = sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'renameAccountTabLink' ] );
+			if ( isset( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) ) {
+				$this->renameAccountTabLink = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) );
 			} else {
-				$this->renameAccountTabLink = get_option( esc_html( $this->plugin ) . 'renameAccountTabLink' );
+				$this->renameAccountTabLink = get_option( $this->plugin . 'renameAccountTabLink' );
 			}
 			?>
 			<input type="text" name="<?php esc_attr( print esc_html( $this->plugin ) . 'renameAccountTabLink' ); ?>" id="<?php print esc_attr( $this->plugin . 'renameAccountTabLink' ); ?>" value='
@@ -450,12 +454,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * renameOrderButtonLink.
+		 *
+		 * @version 2.2.0
 		 */
 		public function renameOrderButtonLink() {
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'renameOrderButtonLink' ] ) ) {
-				$this->renameOrderButtonLink = sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'renameOrderButtonLink' ] );
+			if ( isset( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) ) {
+				$this->renameOrderButtonLink = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) );
 			} else {
-				$this->renameOrderButtonLink = get_option( esc_html( $this->plugin ) . 'renameOrderButtonLink' );
+				$this->renameOrderButtonLink = get_option( $this->plugin . 'renameOrderButtonLink' );
 			}
 			?>
 			<input type="text" name="<?php esc_attr( print esc_html( $this->plugin ) . 'renameOrderButtonLink' ); ?>" id="<?php print esc_attr( $this->plugin . 'renameOrderButtonLink' ); ?>" value='
@@ -469,12 +475,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * hideClosed.
+		 *
+		 * @version 2.2.0
 		 */
 		public function hideClosed() {
 			if ( isset( $_REQUEST[ $this->plugin . 'hideClosed' ] ) ) {
-				$this->hideClosed = sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'hideClosed' ] );
+				$this->hideClosed = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'hideClosed' ] ) );
 			} else {
-				$this->hideClosed = get_option( esc_html( $this->plugin ) . 'hideClosed' );
+				$this->hideClosed = get_option( $this->plugin . 'hideClosed' );
 			}
 			?>
 			<input type="checkbox" name="<?php esc_attr( print $this->plugin . 'hideClosed' ); ?>" id="<?php print esc_attr( $this->plugin . 'hideClosed' ); ?>" value='1'
@@ -516,15 +524,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * mailToADmin.
+		 *
+		 * @version 2.2.0
 		 */
 		public function mailToADmin() {
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailToADmin' ] ) ) {
-				$this->mailToADmin = sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailToADmin' ] );
+			if ( isset( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) ) {
+				$this->mailToADmin = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) );
 			} else {
-				$this->mailToADmin = get_option( esc_html( $this->plugin ) . 'mailToADmin' );
+				$this->mailToADmin = get_option( $this->plugin . 'mailToADmin' );
 			}
 			?>
-			<input type="checkbox" name="<?php print esc_attr( $this->plugin . 'mailToADmin' ); ?>" id="<?php print esc_attr( $this->plugin . 'mailToADmin' ); ?>" value='1'
+			<input type="checkbox" name="<?php echo esc_attr( $this->plugin . 'mailToADmin' ); ?>" id="<?php echo esc_attr( $this->plugin . 'mailToADmin' ); ?>" value='1'
 			<?php
 			if ( $this->mailToADmin === '1' ) {
 				print 'checked';}
@@ -536,29 +546,31 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		/**
 		 * AdminEmailAddress.
 		 *
-		 * @version 2.0.0
+		 * @version 2.2.0
 		 */
 		public function AdminEmailAddress() {
 			if ( isset( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) ) {
-				$this->AdminEmailAddress = sanitize_email( $_REQUEST[ esc_html( $this->plugin ) . 'AdminEmailAddress' ] );
-			} elseif ( get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' ) != '' ) {
-				$this->AdminEmailAddress = get_option( esc_html( $this->plugin ) . 'AdminEmailAddress' );
+				$this->AdminEmailAddress = sanitize_email( wp_unslash( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) );
+			} elseif ( get_option( $this->plugin . 'AdminEmailAddress' ) != '' ) {
+				$this->AdminEmailAddress = get_option( $this->plugin . 'AdminEmailAddress' );
 			} else {
 				$this->AdminEmailAddress = sanitize_email( get_bloginfo( 'admin_email' ) );
 			}
 			?>
-			<input type="text"  name="<?php print esc_attr( esc_html( $this->plugin ) . 'AdminEmailAddress' ); ?>" id="<?php print esc_attr( $this->plugin . 'AdminEmailAddress' ); ?>" placeholder='<?php print esc_html__( 'Admin Email Address', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo esc_attr( $this->AdminEmailAddress ); ?>"  />
+			<input type="text"  name="<?php print esc_attr( $this->plugin . 'AdminEmailAddress' ); ?>" id="<?php print esc_attr( $this->plugin . 'AdminEmailAddress' ); ?>" placeholder='<?php print esc_html__( 'Admin Email Address', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo esc_attr( $this->AdminEmailAddress ); ?>"  />
 			<?php
 		}
 
 		/**
 		 * mailToCustomer.
+		 *
+		 * @version 2.2.0
 		 */
 		public function mailToCustomer() {
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailToCustomer' ] ) ) {
-				$this->mailToCustomer = sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailToCustomer' ] );
+			if ( isset( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) ) {
+				$this->mailToCustomer = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) );
 			} else {
-				$this->mailToCustomer = get_option( esc_html( $this->plugin ) . 'mailToCustomer' );
+				$this->mailToCustomer = get_option( $this->plugin . 'mailToCustomer' );
 			}
 			?>
 			<input type="checkbox" name="<?php print esc_attr( $this->plugin . 'mailToCustomer' ); ?>" id="<?php print esc_attr( $this->plugin . 'mailToCustomer' ); ?>" value='1'
@@ -598,17 +610,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 */
 		public function textforTicketSave() {
 
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'textforTicketSave' ] ) ) {
-				$this->textforTicketSave = wp_kses( $_REQUEST[ esc_html( $this->plugin ) . 'textforTicketSave' ], $this->allowed_html );
-			} elseif ( ! empty( get_option( esc_html( $this->plugin ) . 'textforTicketSave' ) ) ) {
-				$this->textforTicketSave = get_option( esc_html( $this->plugin ) . 'textforTicketSave' );
+			if ( isset( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ) ) {
+				$this->textforTicketSave = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ), $this->allowed_html );
+			} elseif ( ! empty( get_option( $this->plugin . 'textforTicketSave' ) ) ) {
+				$this->textforTicketSave = get_option( $this->plugin . 'textforTicketSave' );
 			}
 			echo wp_editor(
 				apply_filters( $this->textforTicketSave, $this->textforTicketSave ),
-				esc_html( $this->plugin ) . 'textforTicketSave',
+				$this->plugin . 'textforTicketSave',
 				array(
 					'wpautop'       => true,
-					'textarea_name' => esc_html( $this->plugin ) . 'textforTicketSave',
+					'textarea_name' => $this->plugin . 'textforTicketSave',
 					'textarea_rows' => '5',
 					'editor_height' => 125,
 				)
@@ -622,10 +634,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 */
 		public function textforResponseSave() {
 
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'textforResponseSave' ] ) ) {
-				$this->textforResponseSave = wp_kses( $_REQUEST[ esc_html( $this->plugin ) . 'textforResponseSave' ], $this->allowed_html );
-			} elseif ( ! empty( get_option( esc_html( $this->plugin ) . 'textforResponseSave' ) ) ) {
-				$this->textforResponseSave = get_option( esc_html( $this->plugin ) . 'textforResponseSave' );
+			if ( isset( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ) ) {
+				$this->textforResponseSave = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ), $this->allowed_html );
+			} elseif ( ! empty( get_option( $this->plugin . 'textforResponseSave' ) ) ) {
+				$this->textforResponseSave = get_option( $this->plugin . 'textforResponseSave' );
 			}
 			echo wp_editor(
 				apply_filters( $this->textforResponseSave, $this->textforResponseSave ),
@@ -642,16 +654,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		/**
 		 * mailIt_subjectToCust.
 		 *
-		 * @version 2.0.0
+		 * @version 2.2.0
 		 */
 		public function mailIt_subjectToCust() {
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailIt_subjectToCust' ] ) ) {
-				$this->mailIt_subjectToCust = sanitize_text_field( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] );
+			if ( isset( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) ) {
+				$this->mailIt_subjectToCust = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) );
 			} else {
-				$this->mailIt_subjectToCust = get_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust' );
+				$this->mailIt_subjectToCust = get_option( $this->plugin . 'mailIt_subjectToCust' );
 			}
 			?>
-			<input type="text"  name="<?php print esc_attr( $this->plugin . 'mailIt_subjectToCust' ); ?>" id="<?php print esc_attr( $this->plugin . 'mailIt_subjectToCust' ); ?>" placeholder='<?php print esc_html__( 'Mail Subject', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo esc_attr( $this->mailIt_subjectToCust ); ?>"  />
+			<input type="text"  name="<?php echo esc_attr( $this->plugin . 'mailIt_subjectToCust' ); ?>" id="<?php echo esc_attr( $this->plugin . 'mailIt_subjectToCust' ); ?>" placeholder='<?php echo esc_attr__( 'Mail Subject', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo esc_attr( $this->mailIt_subjectToCust ); ?>"  />
 			<?php
 		}
 
@@ -690,17 +702,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 */
 		public function mailIt_contentToCust() {
 
-			if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailIt_contentToCust' ] ) ) {
-				$this->mailIt_contentToCust = wp_kses( $_REQUEST[ esc_html( $this->plugin ) . 'mailIt_contentToCust' ], $this->allowed_html );
+			if ( isset( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ) ) {
+				$this->mailIt_contentToCust = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ), $this->allowed_html );
 			} else {
-				$this->mailIt_contentToCust = get_option( esc_html( $this->plugin ) . 'mailIt_contentToCust' );
+				$this->mailIt_contentToCust = get_option( $this->plugin . 'mailIt_contentToCust' );
 			}
 			echo wp_editor(
 				apply_filters( $this->mailIt_contentToCust, $this->mailIt_contentToCust ),
-				esc_html( $this->plugin ) . 'mailIt_contentToCust',
+				$this->plugin . 'mailIt_contentToCust',
 				array(
 					'wpautop'       => true,
-					'textarea_name' => esc_html( $this->plugin ) . 'mailIt_contentToCust',
+					'textarea_name' => $this->plugin . 'mailIt_contentToCust',
 					'textarea_rows' => '5',
 					'editor_height' => 225,
 				)
@@ -713,58 +725,57 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @version 2.2.0
 		 */
 		public function adminProcessSettings() {
+			if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' && current_user_can( 'administrator' ) ) {
 
-			if ( $_SERVER['REQUEST_METHOD'] == 'POST' && current_user_can( 'administrator' ) ) {
+				check_admin_referer( $this->plugin );
+				check_ajax_referer( $this->plugin );
 
-				check_admin_referer( esc_html( $this->plugin ) );
-				check_ajax_referer( esc_html( $this->plugin ) );
-
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailToADmin' ] ) && sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailToADmin' ] ) === '1' ) {
-					update_option( esc_html( $this->plugin ) . 'mailToADmin', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailToADmin' ] ) );
+				if ( isset( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) && sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) ) === '1' ) {
+					update_option( $this->plugin . 'mailToADmin', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) ) );
 				} else {
-					update_option( esc_html( $this->plugin ) . 'mailToADmin', '' );
+					update_option( $this->plugin . 'mailToADmin', '' );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'AdminEmailAddress' ] ) ) {
-					update_option( esc_html( $this->plugin ) . 'AdminEmailAddress', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'AdminEmailAddress' ] ) );
+				if ( isset( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) ) {
+					update_option( $this->plugin . 'AdminEmailAddress', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) ) );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailToCustomer' ] ) && sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailToCustomer' ] ) === '1' ) {
-					update_option( esc_html( $this->plugin ) . 'mailToCustomer', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailToCustomer' ] ) );
+				if ( isset( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) && sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) ) === '1' ) {
+					update_option( $this->plugin . 'mailToCustomer', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) ) );
 				} else {
-					update_option( esc_html( $this->plugin ) . 'mailToCustomer', '' );
+					update_option( $this->plugin . 'mailToCustomer', '' );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'hideClosed' ] ) && sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'hideClosed' ] ) === '1' ) {
-					update_option( esc_html( $this->plugin ) . 'hideClosed', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'hideClosed' ] ) );
+				if ( isset( $_REQUEST[ $this->plugin . 'hideClosed' ] ) && sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'hideClosed' ] ) ) === '1' ) {
+					update_option( $this->plugin . 'hideClosed', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'hideClosed' ] ) ) );
 				} else {
-					update_option( esc_html( $this->plugin ) . 'hideClosed', '' );
+					update_option( $this->plugin . 'hideClosed', '' );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailIt_contentToCust' ] ) ) {
-					$mailIt_contentToCust = wp_kses( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ], $this->allowed_html );
-					update_option( esc_html( $this->plugin ) . 'mailIt_contentToCust', $mailIt_contentToCust );
+				if ( isset( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ) ) {
+					$mailIt_contentToCust = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ), $this->allowed_html );
+					update_option( $this->plugin . 'mailIt_contentToCust', $mailIt_contentToCust );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'textforTicketSave' ] ) ) {
-					$textforTicketSave = wp_kses( $_REQUEST[ $this->plugin . 'textforTicketSave' ], $this->allowed_html );
-					update_option( esc_html( $this->plugin ) . 'textforTicketSave', $textforTicketSave );
+				if ( isset( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ) ) {
+					$textforTicketSave = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ), $this->allowed_html );
+					update_option( $this->plugin . 'textforTicketSave', $textforTicketSave );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'textforResponseSave' ] ) ) {
-					$textforResponseSave = wp_kses( $_REQUEST[ $this->plugin . 'textforResponseSave' ], $this->allowed_html );
-					update_option( esc_html( $this->plugin ) . 'textforResponseSave', $textforResponseSave );
+				if ( isset( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ) ) {
+					$textforResponseSave = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ), $this->allowed_html );
+					update_option( $this->plugin . 'textforResponseSave', $textforResponseSave );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'mailIt_subjectToCust' ] ) ) {
-					update_option( esc_html( $this->plugin ) . 'mailIt_subjectToCust', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'mailIt_subjectToCust' ] ) );
+				if ( isset( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) ) {
+					update_option( $this->plugin . 'mailIt_subjectToCust', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) ) );
 				}
 
-				if ( isset( $_REQUEST[ esc_html( $this->plugin ) . 'renameOrderButtonLink' ] ) ) {
-					$renameOrderButtonLink = update_option( esc_html( $this->plugin ) . 'renameOrderButtonLink', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'renameOrderButtonLink' ] ) );
+				if ( isset( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) ) {
+					$renameOrderButtonLink = update_option( $this->plugin . 'renameOrderButtonLink', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) ) );
 				}
 				if ( isset( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) ) {
-					$renameAccountTabLink = update_option( esc_html( $this->plugin ) . 'renameAccountTabLink', sanitize_text_field( $_REQUEST[ esc_html( $this->plugin ) . 'renameAccountTabLink' ] ) );
+					$renameAccountTabLink = update_option( $this->plugin . 'renameAccountTabLink', sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) ) );
 				}
 			}
 		}

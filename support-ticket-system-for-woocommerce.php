@@ -20,10 +20,28 @@
 
 defined( 'ABSPATH' ) || exit;
 
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260918-1019' );
+/**
+ * Plugin version.
+ *
+ * @version 2.0.0
+ * @since   2.0.0
+ */
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260918-1522' );
 
+/**
+ * Plugin file.
+ *
+ * @version 2.0.0
+ * @since   2.0.0
+ */
 defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ );
 
+/**
+ * Plugin main class.
+ *
+ * @version 2.0.0
+ * @since   2.0.0
+ */
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts.php';
 
 if ( ! function_exists( 'wpfactory_wc_sts' ) ) {
@@ -38,6 +56,12 @@ if ( ! function_exists( 'wpfactory_wc_sts' ) ) {
 	}
 }
 
+/**
+ * Initialize the plugin.
+ *
+ * @version 2.0.0
+ * @since   2.0.0
+ */
 add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
 
 /**
@@ -45,6 +69,6 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @version 2.2.0
  */
-require_once plugin_dir_path( __FILE__ ) . '/init.php';
-require_once plugin_dir_path( __FILE__ ) . '/includes.php';
-require_once plugin_dir_path( __FILE__ ) . '/class-wpfactory-wc-sts-core.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/init.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/includes.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-core.php';

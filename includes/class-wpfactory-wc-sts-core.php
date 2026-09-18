@@ -159,18 +159,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 */
 		public function proModal() {
 			?>
-			<div id="<?php print esc_html( $this->plugin ) . 'Modal'; ?>">
+			<div id="<?php print esc_attr( $this->plugin ) . 'Modal'; ?>">
 				<!-- Modal content -->
 				<div class="modal-content">
-					<div class='<?php print esc_html( $this->plugin ); ?>clearfix'><span class="close">&times;</span></div>
-					<div class='<?php print esc_html( $this->plugin ); ?>clearfix'>
-						<div class='<?php print esc_html( $this->plugin ); ?>columns2'>
+					<div class='<?php print esc_attr( $this->plugin ); ?>clearfix'><span class="close">&times;</span></div>
+					<div class='<?php print esc_attr( $this->plugin ); ?>clearfix'>
+						<div class='<?php print esc_attr( $this->plugin ); ?>columns2'>
 							<center>
 								<img style='width:90%' src='<?php echo esc_url( plugins_url( 'images/support-ticket-system-woocommerce-pro.png', WPFACTORY_WC_STS_FILE ) ); ?>' style='width:100%' />
 							</center>
 						</div>
 
-						<div class='<?php print esc_html( $this->plugin ); ?>columns2'>
+						<div class='<?php print esc_attr( $this->plugin ); ?>columns2'>
 							<h3><?php esc_html_e( 'Go PRO and get more important features!', 'support-ticket-system-for-woocommerce' ); ?></h3>
 							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Enable Attachments on Ticket Submission', 'support-ticket-system-for-woocommerce' ); ?></p>
 							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Choose File Size, Number and Type for Upload', 'support-ticket-system-for-woocommerce' ); ?></p>
@@ -293,9 +293,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 
 		/**
 		 * Init.
+		 *
+		 * @version 2.2.0
 		 */
 		public function init() {
-			print "<div class='" . esc_html( $this->plugin ) . "'>";
+			print "<div class='" . esc_attr( $this->plugin ) . "'>";
 				esc_html( $this->adminHeader() );
 				print esc_html__( 'Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system.', 'support-ticket-system-for-woocommerce' );
 				esc_html( $this->adminSettings() );
