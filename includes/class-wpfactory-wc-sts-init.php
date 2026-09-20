@@ -13,22 +13,44 @@ defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
+	/**
+	 * WPFactory_WC_STS_Init class.
+	 *
+	 * @version 2.2.0
+	 */
 	class WPFactory_WC_STS_Init {
 
 		public $tab;
-		public $activeTab;
-		public $hideClosed            = '';
-		public $textforTicketSave     = 'Saved your ticket successfully! We will come back to you soon';
-		public $textforResponseSave   = 'Saved your response successfully! We will come back to you soon';
-		public $renameAccountTabLink  = '';
-		public $renameOrderButtonLink = '';
-		public $mailToADmin           = 'mailToADmin';
-		public $AdminEmailAddress     = 'AdminEmailAddress';
-		public $mailToUser            = 'mailToUser';
-		public $mailToCustomer        = '';
-		public $mailIt_contentToCust  = '';
-		public $mailIt_subjectToCust  = '';
 
+		public $activeTab;
+
+		public $hideClosed = '';
+
+		public $textforTicketSave = 'Saved your ticket successfully! We will come back to you soon';
+
+		public $textforResponseSave = 'Saved your response successfully! We will come back to you soon';
+
+		public $renameAccountTabLink = '';
+
+		public $renameOrderButtonLink = '';
+
+		public $mailToADmin = 'mailToADmin';
+
+		public $AdminEmailAddress = 'AdminEmailAddress';
+
+		public $mailToUser = 'mailToUser';
+
+		public $mailToCustomer = '';
+
+		public $mailIt_contentToCust = '';
+
+		public $mailIt_subjectToCust = '';
+
+		/**
+		 * Allowed HTML tags and attributes.
+		 *
+		 * @version 2.2.0
+		 */
 		public $allowed_html = array(
 			'a'          => array(
 				'style' => array(),
@@ -87,11 +109,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'class' => array(),
 				'id'    => array(),
 			),
-			'img'        => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
 			'p'          => array(
 				'style' => array(),
 				'class' => array(),
@@ -118,11 +135,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'id'    => array(),
 			),
 			'ol'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'video'      => array(
 				'style' => array(),
 				'class' => array(),
 				'id'    => array(),
@@ -164,6 +176,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'width'    => array(),
 				'height'   => array(),
 				'controls' => array(),
+				'style'    => array(),
 				'class'    => array(),
 				'id'       => array(),
 			),
@@ -176,7 +189,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		);
 
 		/**
-		 * adminHeader.
+		 * Admin header.
 		 *
 		 * @version 2.2.0
 		 */
@@ -184,14 +197,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			?>
 			<h1 style='display:flex;align-items:center;' ><a target='_blank' href='<?php print esc_url( $this->pro_url ); ?>'>
 
-			<img   style='width:170px;padding-right:30px' src='<?php echo plugins_url( 'images/extendwp.png', __FILE__ ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> />
+			<img   style='width:170px;padding-right:30px' src='<?php echo plugins_url( 'images/extendwp.png', WPFACTORY_WC_STS_FILE ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> />
 				</a> <span style='color:#2271b1;'><?php print esc_html( $this->name ); ?></span></h1>
 
 			<?php
 		}
 
 		/**
-		 * adminSettings.
+		 * Admin settings.
 		 *
 		 * @version 2.2.0
 		 */
@@ -254,17 +267,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					<?php
 			} elseif ( $this->activeTab == 'general' ) {
 				// display dashboard
-				$tickets = new STSWooCommerceInc();
+				$tickets = new WPFactory_WC_STS_Inc();
 				$tickets->ticketsDashboard();
 
 			} else {
-				$tickets = new STSWooCommerceInc();
+				$tickets = new WPFactory_WC_STS_Inc();
 				$tickets->ticketsDashboard();
 			}
 		}
 
 		/**
-		 * adminTabs.
+		 * Admin tabs.
 		 *
 		 * @version 2.2.0
 		 */
@@ -308,21 +321,21 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * adminFooter.
+		 * Admin footer.
 		 *
-		 * @version 2.0.0
+		 * @version 2.2.0
 		 */
 		public function adminFooter() {
 			?>
 		<hr>
 		<a target='_blank' class='web_logo' href='https://extend-wp.com/wordpress-premium-plugins/'>
-			<img  src='<?php echo esc_url( plugins_url( 'images/extendwp.png', __FILE__ ) ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' />
+			<img  src='<?php echo esc_url( plugins_url( 'images/extendwp.png', WPFACTORY_WC_STS_FILE ) ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' />
 		</a>
 			<?php
 		}
 
 		/**
-		 * adminPanels.
+		 * Admin panels.
 		 */
 		public function adminPanels() {
 			// add settings for ticket system
@@ -391,7 +404,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * assignToRole.
+		 * Assign to role.
 		 */
 		public function assignToRole() {
 			?>
@@ -404,7 +417,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * assignToUser.
+		 * Assign to user.
 		 */
 		public function assignToUser() {
 
@@ -432,7 +445,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * renameAccountTabLink.
+		 * Rename account tab link.
 		 *
 		 * @version 2.2.0
 		 */
@@ -453,7 +466,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * renameOrderButtonLink.
+		 * Rename order button link.
 		 *
 		 * @version 2.2.0
 		 */
@@ -474,7 +487,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * hideClosed.
+		 * Hide closed.
 		 *
 		 * @version 2.2.0
 		 */
@@ -495,7 +508,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * enableAttachments.
+		 * Enable attachments.
 		 */
 		public function enableAttachments() {
 
@@ -505,7 +518,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * enablePriority.
+		 * Enable priority.
 		 */
 		public function enablePriority() {
 			?>
@@ -514,7 +527,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * mailToAssignee.
+		 * Mail to assignee.
 		 */
 		public function mailToAssignee() {
 			?>
@@ -523,7 +536,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * mailToADmin.
+		 * Mail to admin.
 		 *
 		 * @version 2.2.0
 		 */
@@ -544,7 +557,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * AdminEmailAddress.
+		 * Admin email address.
 		 *
 		 * @version 2.2.0
 		 */
@@ -562,7 +575,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * mailToCustomer.
+		 * Mail to customer.
 		 *
 		 * @version 2.2.0
 		 */
@@ -604,7 +617,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * textforTicketSave.
+		 * Text for ticket save.
 		 *
 		 * @version 2.2.0
 		 */
@@ -628,7 +641,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * textforResponseSave.
+		 * Text for response save.
 		 *
 		 * @version 2.2.0
 		 */
@@ -652,7 +665,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * mailIt_subjectToCust.
+		 * Mail subject to customer.
 		 *
 		 * @version 2.2.0
 		 */
@@ -668,7 +681,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * allowedExtensions.
+		 * Allowed extensions.
 		 */
 		public function allowedExtensions() {
 
@@ -678,7 +691,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * allowedSize.
+		 * Allowed size.
 		 */
 		public function allowedSize() {
 			?>
@@ -687,7 +700,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * allowedAttachNum.
+		 * Allowed number of attachments.
 		 */
 		public function allowedAttachNum() {
 			?>
@@ -696,7 +709,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * mailIt_contentToCust.
+		 * Mail content to customer.
 		 *
 		 * @version 2.2.0
 		 */
@@ -720,7 +733,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * adminProcessSettings.
+		 * Admin process settings.
 		 *
 		 * @version 2.2.0
 		 */

@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260918-1522' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260920-1613' );
 
 /**
  * Plugin file.
@@ -69,6 +69,6 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @version 2.2.0
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/init.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/includes.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-init.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-inc.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-core.php';
