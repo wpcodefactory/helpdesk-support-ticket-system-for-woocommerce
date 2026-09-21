@@ -201,14 +201,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 */
 		public function __construct() {
 
-			add_action( 'init', array( $this, 'Tickets' ) );
+			add_action( 'init', array( $this, 'register_ticket_post_type_and_taxonomy' ) );
 
-			add_action( 'admin_init', array( $this, 'metaBox' ) );
+			add_action( 'admin_init', array( $this, 'add_ticket_meta_boxes' ) );
 
-			add_action( 'save_post', array( $this, 'saveFields' ) );
+			add_action( 'save_post', array( $this, 'save_fields' ) );
 			add_action( 'post_updated', array( $this, 'notifyUserOnWPedit' ), 10, 3 );
 			add_action( 'admin_menu', array( $this, 'menu_page' ) );
-			add_action( 'admin_footer', array( $this, 'deleteResponseEvent' ) );
+			add_action( 'admin_footer', array( $this, 'delete_response_event_js' ) );
 			add_action( 'wp_ajax_wpfactory_wc_sts_response_delete', array( $this, 'response_delete' ) );
 			add_action( 'before_delete_post', array( $this, 'deleteRelevantResponses' ) );
 
@@ -294,11 +294,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
-		 * Tickets.
+		 * Register ticket post type and status taxonomy.
 		 *
-		 * @version 2.1.3
+		 * @version 2.2.0
 		 */
-		public function Tickets() {
+		public function register_ticket_post_type_and_taxonomy() {
 			// Tickets post type.
 			register_post_type(
 				'stsw_tickets',
@@ -372,11 +372,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function metaBox() {
+		public function add_ticket_meta_boxes() {
 			add_meta_box(
 				'stswpro_ticketContent',
 				esc_html__( 'Ticket Content', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'ticketContent' ),
+				array( $this, 'render_ticket_content_meta_box' ),
 				'stsw_tickets',
 				'normal',
 				'high'
@@ -394,7 +394,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_meta_box(
 				'appInfo',
 				esc_html__( 'Ticket Info', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'appInfoCreate' ),
+				array( $this, 'render_ticket_info_meta_box' ),
 				'stsw_tickets',
 				'side',
 				'high'
@@ -403,7 +403,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_meta_box(
 				'assignTouser',
 				esc_html__( 'Assign to User', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'assignTouser' ),
+				array( $this, 'render_assign_to_user_meta_box' ),
 				'stsw_tickets',
 				'side',
 				'high'
@@ -412,7 +412,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_meta_box(
 				'stswpro_ticketResponses',
 				esc_html__( 'New Response', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'responseCreate' ),
+				array( $this, 'render_new_response_meta_box' ),
 				'stsw_tickets',
 				'normal',
 				'high'
@@ -439,6 +439,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * @version 2.1.0
 		 * @since   2.1.0
 		 *
+		 * @param int $ticket_id Ticket ID.
+		 * @param int $user_id   User ID.
+		 *
+		 * @return int|bool Meta ID if the key didn't exist, true on successful update, false on failure or if the value passed to the function is the same as the one that is already in the database.
+		 *
 		 * @todo (v2.1.0) why `STSWooCommerceProticketuser` (and not `STSWooCommerceticketuser`)?
 		 */
 		public function set_ticket_user_id( $ticket_id, $user_id ) {
@@ -446,11 +451,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
-		 * App info create.
+		 * Render ticket info meta box.
 		 *
-		 * @version 2.1.4
+		 * @version 2.2.0
+		 *
+		 * @param WP_Post $post The current post object.
 		 */
-		public function appInfoCreate( $post ) {
+		public function render_ticket_info_meta_box( $post ) {
 			global $post;
 
 			?>
@@ -458,17 +465,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 			<br/>
 
-				<?php $user = $this->get_ticket_user_id( $post->ID ); ?>
+			<?php $user = $this->get_ticket_user_id( $post->ID ); ?>
 			<b><?php esc_html_e( 'User', 'support-ticket-system-for-woocommerce' ); ?></b>:
-				<?php
-				if ( ! empty( $user ) ) {
-					printf(
-						'<a href="%1$s" target="_blank">%2$s</a>',
-						esc_url( admin_url( 'user-edit.php?user_id=' . $user ) ),
-						esc_attr( $this->getUsername( $user ) )
-					);
-				}
-				?>
+			<?php
+			if ( ! empty( $user ) ) {
+				printf(
+					'<a href="%1$s" target="_blank">%2$s</a>',
+					esc_url( admin_url( 'user-edit.php?user_id=' . $user ) ),
+					esc_html( $this->get_user_name( $user ) )
+				);
+			}
+			?>
 			<br/>
 
 			<b><?php esc_html_e( 'Ticket Assignee', 'support-ticket-system-for-woocommerce' ); ?></b>:
@@ -477,17 +484,27 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
-		 * Function to return the name of a user based on id.
+		 * Return the name of a user based on user ID.
+		 *
+		 * @version 2.2.0
+		 *
+		 * @param int $id User ID.
+		 *
+		 * @return string User's full name.
 		 */
-		public function getUsername( $id ) {
+		public function get_user_name( $id ) {
 			$user = get_user_by( 'id', $id );
-			return esc_html( $user->first_name . ' ' . $user->last_name );
+			return $user->first_name . ' ' . $user->last_name;
 		}
 
 		/**
-		 * Display ticket content in ticket edit screen post box.
+		 * Render ticket content meta box.
+		 *
+		 * @version 2.2.0
+		 *
+		 * @param WP_Post $post The current post object.
 		 */
-		public function ticketContent( $post ) {
+		public function render_ticket_content_meta_box( $post ) {
 			?>
 			<table class="wp-list-table widefat fixed striped posts">
 				<thead>
@@ -538,9 +555,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					<th>' . esc_html__( 'Action', 'support-ticket-system-for-woocommerce' ) . '</th>';
 
 				foreach ( $result as $res ) {
-					if ( $res->user == '1' ) {
+					if ( ( 1 === absint( $res->user ) ) ) {
 						$who = 'site';
-					} elseif ( $res->user != '1' ) {
+					} elseif ( 1 !== absint( $res->user ) ) {
 						$who = 'customer';
 					} else {
 						$who = 'site';
@@ -548,9 +565,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 
 					print "<tr class='" . (int) $res->id . "'><th>" . esc_html( $res->creationdate ) . '</th><th>' . esc_html( $who ) . '</th><th>' . esc_html( $res->content ) . '</th><th>';
 					?>
-						<span class='proVersion' ><?php print esc_html__( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
-						<?php
-						print "</th>
+					<span class='proVersion' ><?php print esc_html__( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
+					<?php
+					print "</th>
 						<th><p id='deleteResponse'><a href='" . esc_url( $res->id ) . "' id='" . esc_attr( $res->id ) . "'>Delete</a></th>
 						</tr>";
 				}
@@ -567,7 +584,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @param WP_Post $post The current ticket post object.
 		 */
-		public function responseCreate( $post ) {
+		public function render_new_response_meta_box( $post ) {
 			// WP editor for adding a new response to ticket from ticket edit screen.
 			$editor_id = sanitize_key( $this->plugin . 'response' );
 			global $post;
@@ -578,6 +595,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'textarea_name' => $editor_id,
 				)
 			);
+
+			wp_nonce_field(
+				'wpfactory_wc_sts_save',
+				'wpfactory_wc_sts_nonce'
+			);
 		}
 
 		/**
@@ -585,7 +607,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function assignTouser() {
+		public function render_assign_to_user_meta_box() {
 			?>
 			<span class="proVersion"><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></span>
 			<?php
@@ -596,8 +618,23 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function saveFields() {
+		public function save_fields() {
 			if ( empty( $_POST[ $this->plugin . 'response' ] ) ) {
+				return;
+			}
+
+			// Verify the nonce.
+			if (
+				! isset( $_POST['wpfactory_wc_sts_nonce'] ) ||
+				! wp_verify_nonce(
+					sanitize_text_field(
+						wp_unslash(
+							$_POST['wpfactory_wc_sts_nonce']
+						)
+					),
+					'wpfactory_wc_sts_save'
+				)
+			) {
 				return;
 			}
 
@@ -625,7 +662,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function deleteResponseEvent() {
+		public function delete_response_event_js() {
 			?>
 			<script type="text/javascript">
 			jQuery(
@@ -638,7 +675,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 
 							var ajax_options = {
 								action: 'wpfactory_wc_sts_response_delete',
-								nonce: '<?php echo wp_create_nonce( 'wpfactory_wc_sts_response_delete' ); ?>',
+								nonce: '<?php echo esc_js( wp_create_nonce( 'wpfactory_wc_sts_response_delete' ) ); ?>',
 								ajaxurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
 								id: $( this ).attr( 'id' ),
 							};
@@ -756,7 +793,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			if ( 'User' === $column_name ) {
 				$user = $this->get_ticket_user_id( $post_id );
 				if ( $user ) {
-					echo esc_html( $this->getUsername( $user ) );
+					echo esc_html( $this->get_user_name( $user ) );
 				}
 			}
 
