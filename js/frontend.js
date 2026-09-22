@@ -1,7 +1,7 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - Frontend JS
  *
- * @author  WPFactory
+ * @author WPFactory
  */
 
 (function ($) {

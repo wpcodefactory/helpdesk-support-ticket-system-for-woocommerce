@@ -59,7 +59,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 
 			add_action( 'admin_footer', array( $this, 'proModal' ) );
 
-			add_action( 'admin_init', array( $this, 'adminPanels' ) );
+			add_action( 'admin_init', array( $this, 'admin_panels' ) );
 
 			add_action( 'all_admin_notices', array( $this, 'add_tabs_to_tickets' ) );
 
@@ -146,8 +146,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 					'stsw_tickets_status' === sanitize_text_field( wp_unslash( $_REQUEST['taxonomy'] ) )
 				)
 			) {
-				$this->adminHeader();
-				$this->adminTabs();
+				$this->admin_header();
+				$this->admin_tabs();
 			}
 			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
@@ -298,10 +298,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 */
 		public function init() {
 			print "<div class='" . esc_attr( $this->plugin ) . "'>";
-				esc_html( $this->adminHeader() );
+				esc_html( $this->admin_header() );
 				print esc_html__( 'Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system.', 'support-ticket-system-for-woocommerce' );
-				esc_html( $this->adminSettings() );
-				esc_html( $this->adminFooter() );
+				esc_html( $this->admin_settings() );
+				esc_html( $this->admin_footer() );
 			print '</div>';
 		}
 	}

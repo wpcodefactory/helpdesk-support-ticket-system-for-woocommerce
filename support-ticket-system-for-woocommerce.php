@@ -12,8 +12,8 @@
  * Requires Plugins: woocommerce
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
- * Created On: 09-10-2019
- * Updated On: 17-09-2026
+ * Created on: 09-10-2019
+ * Updated on: 22-09-2026
  *
  * @package WPFactory\WC_Support_Ticket_System
  */
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260922-1001' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260922-1845' );
 
 /**
  * Plugin file.

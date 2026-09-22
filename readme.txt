@@ -119,6 +119,7 @@ Please report security bugs found in the source code of the plugin through the [
 
 = 2.2.0 - 22/09/2026 =
 * Fix - "Delete response" user verification fixed.
+* Dev - Output escaped.
 * Dev - Input sanitized.
 * Dev - Nonces added.
 * Dev - AJAX action names prefixed.
