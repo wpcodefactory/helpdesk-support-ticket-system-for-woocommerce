@@ -22,7 +22,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		public $tab;
 
-		public $activeTab;
+		/**
+		 * Active tab.
+		 *
+		 * @version 2.2.0
+		 *
+		 * @var string
+		 */
+		public $active_tab;
 
 		public $hideClosed = '';
 
@@ -197,7 +204,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			?>
 			<h1 style='display:flex;align-items:center;' ><a target='_blank' href='<?php print esc_url( $this->pro_url ); ?>'>
 
-			<img   style='width:170px;padding-right:30px' src='<?php echo plugins_url( 'images/extendwp.png', WPFACTORY_WC_STS_FILE ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?> />
+			<img   style='width:170px;padding-right:30px' src='<?php echo esc_url( plugins_url( 'images/extendwp.png', WPFACTORY_WC_STS_FILE ) ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' />
 				</a> <span style='color:#2271b1;'><?php print esc_html( $this->name ); ?></span></h1>
 
 			<?php
@@ -209,27 +216,27 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @version 2.2.0
 		 */
 		public function adminSettings() {
-			esc_html( $this->adminTabs() ); // add tabs for tickets screen
+			$this->adminTabs(); // Add tabs for tickets screen.
 
 			?>
 			<p><b><?php esc_html_e( 'Use Ticket System in any page with the shortcode [stsw_user_tickets]', 'support-ticket-system-for-woocommerce' ); ?></b>
 			<br/><i><?php esc_html_e( "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend", 'support-ticket-system-for-woocommerce' ); ?></i></p>
 			<?php
 
-			if ( isset( $_GET['tab'] ) ) {
-				$this->activeTab = esc_html( wp_unslash( $_GET['tab'] ) );
-				if ( isset( $_GET['action'] ) ) {
-					$this->activeAction = esc_html( wp_unslash( $_GET['action'] ) );
+			if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->active_tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				if ( isset( $_GET['action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					$this->active_action = sanitize_text_field( wp_unslash( $_GET['action'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				}
 			} else {
-				$this->activeTab = 'general';
+				$this->active_tab = 'general';
 			}
 
-			if ( $this->activeTab == 'settings' ) {
+			if ( 'settings' === $this->active_tab ) {
 				?>
-				<form method="post" id='<?php print esc_html( $this->plugin ); ?>Form' >
+				<form method="post" id='<?php echo esc_attr( $this->plugin ); ?>Form' >
 
-					<div class='result'><?php esc_html( $this->adminProcessSettings() ); ?> </div>
+					<div class='result'><?php $this->adminProcessSettings(); ?> </div>
 
 					<div id="tabs">
 						<ul>
@@ -257,22 +264,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 							settings_fields( esc_html( $this->plugin ) . 'notifications-options' );
 							do_settings_sections( esc_html( $this->plugin ) . 'notifications-options' );
 							?>
-					</div>
+						</div>
 						<?php
 						wp_nonce_field( esc_html( $this->plugin ) );
 						?>
 					<p id='save_changes' ><?php esc_html( submit_button() ); ?></p>
 
 				</form>
-					<?php
-			} elseif ( $this->activeTab == 'general' ) {
-				// display dashboard
-				$tickets = new WPFactory_WC_STS_Inc();
-				$tickets->ticketsDashboard();
-
+				<?php
 			} else {
+				// Display dashboard.
 				$tickets = new WPFactory_WC_STS_Inc();
-				$tickets->ticketsDashboard();
+				$tickets->tickets_dashboard();
 			}
 		}
 
@@ -282,7 +285,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @version 2.2.0
 		 */
 		public function adminTabs() {
-			// the tabs in tickets screen
+			// The tabs in tickets screen.
 			$this->tab = array(
 				'general'    => 'Dashboard',
 				'all'        => 'Tickets',
@@ -291,28 +294,28 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'subject'    => 'Subject',
 				'more'       => 'Go PRO',
 			);
-			if ( isset( $_GET['tab'] ) ) {
-				$this->activeTab = esc_html( wp_unslash( $_GET['tab'] ) );
-
-			} elseif ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'stsw_tickets' ) {
-
-				$this->activeTab = 'all';
-
+			if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->active_tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) );
+			} elseif (
+				isset( $_GET['post_type'] ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'stsw_tickets' === sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			) {
+				$this->active_tab = 'all';
 			} else {
-				$this->activeTab = 'general';
+				$this->active_tab = 'general';
 			}
 
 			echo '<h2 class="nav-tab-wrapper" >';
 			foreach ( $this->tab as $tab => $name ) {
-				$class = ( $tab == $this->activeTab ) ? ' nav-tab-active' : '';
-				if ( $tab == 'all' ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " contant' href='edit.php?post_type=stsw_tickets&tab=" . esc_attr( $tab ) . "'>" . esc_attr( $name ) . '</a>';
-				} elseif ( $tab == 'priorities' ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion disabled' href='#'>" . esc_attr( $name ) . '</a>';
-				} elseif ( $tab == 'subject' ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion disabled' href='#'>" . esc_attr( $name ) . '</a>';
-				} elseif ( $tab == 'more' ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion' href='#'>" . esc_attr( $name ) . '</a>';
+				$class = ( $tab === $this->active_tab ) ? ' nav-tab-active' : '';
+				if ( 'all' === $tab ) {
+					echo "<a class='nav-tab" . esc_attr( $class ) . " contant' href='edit.php?post_type=stsw_tickets&tab=" . esc_attr( $tab ) . "'>" . esc_html( $name ) . '</a>';
+				} elseif ( 'priorities' === $tab ) {
+					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion disabled' href='#'>" . esc_html( $name ) . '</a>';
+				} elseif ( 'subject' === $tab ) {
+					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion disabled' href='#'>" . esc_html( $name ) . '</a>';
+				} elseif ( 'more' === $tab ) {
+					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion' href='#'>" . esc_html( $name ) . '</a>';
 				} else {
 					echo "<a class='nav-tab" . esc_attr( $class ) . " ' href='?page=support-ticket-system-woocommerce&tab=" . esc_attr( $tab ) . "'>" . wp_kses( $name, $this->allowed_html ) . '</a>';
 				}
@@ -405,13 +408,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 		/**
 		 * Assign to role.
+		 *
+		 * @version 2.2.0
 		 */
 		public function assignToRole() {
 			?>
-
 			<select disabled >
-
-				<?php esc_html( wp_dropdown_roles() ); ?>
+				<?php wp_dropdown_roles(); ?>
 			</select>
 			<?php
 		}
@@ -498,10 +501,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				$this->hideClosed = get_option( $this->plugin . 'hideClosed' );
 			}
 			?>
-			<input type="checkbox" name="<?php esc_attr( print $this->plugin . 'hideClosed' ); ?>" id="<?php print esc_attr( $this->plugin . 'hideClosed' ); ?>" value='1'
+			<input type="checkbox" name="<?php print esc_attr( $this->plugin . 'hideClosed' ); ?>" id="<?php print esc_attr( $this->plugin . 'hideClosed' ); ?>" value='1'
 			<?php
-			if ( $this->hideClosed === '1' ) {
-				print 'checked';}
+			if ( '1' === $this->hideClosed ) {
+				print 'checked';
+			}
 			?>
 			/>
 			<?php
@@ -610,9 +614,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @version 2.1.0
 		 */
 		public function mailIt_contentToAs() {
-
 			?>
-		<textarea class='proVersion' disabled placeholder='<?php print esc_html__( 'Pro Version Only - html enabled', 'support-ticket-system-for-woocommerce' ); ?>' ></textarea>
+			<textarea class='proVersion' disabled placeholder='<?php print esc_html__( 'Pro Version Only - html enabled', 'support-ticket-system-for-woocommerce' ); ?>' ></textarea>
 			<?php
 		}
 
@@ -628,7 +631,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			} elseif ( ! empty( get_option( $this->plugin . 'textforTicketSave' ) ) ) {
 				$this->textforTicketSave = get_option( $this->plugin . 'textforTicketSave' );
 			}
-			echo wp_editor(
+			wp_editor(
 				apply_filters( $this->textforTicketSave, $this->textforTicketSave ),
 				$this->plugin . 'textforTicketSave',
 				array(
@@ -652,12 +655,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			} elseif ( ! empty( get_option( $this->plugin . 'textforResponseSave' ) ) ) {
 				$this->textforResponseSave = get_option( $this->plugin . 'textforResponseSave' );
 			}
-			echo wp_editor(
+			wp_editor(
 				apply_filters( $this->textforResponseSave, $this->textforResponseSave ),
-				esc_html( $this->plugin ) . 'textforResponseSave',
+				$this->plugin . 'textforResponseSave',
 				array(
 					'wpautop'       => true,
-					'textarea_name' => esc_html( $this->plugin ) . 'textforResponseSave',
+					'textarea_name' => $this->plugin . 'textforResponseSave',
 					'textarea_rows' => '5',
 					'editor_height' => 125,
 				)
@@ -720,7 +723,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			} else {
 				$this->mailIt_contentToCust = get_option( $this->plugin . 'mailIt_contentToCust' );
 			}
-			echo wp_editor(
+			wp_editor(
 				apply_filters( $this->mailIt_contentToCust, $this->mailIt_contentToCust ),
 				$this->plugin . 'mailIt_contentToCust',
 				array(
