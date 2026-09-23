@@ -1,0 +1,16 @@
+/**
+ * Helpdesk Support Ticket System for WooCommerce - My Account CSS
+ *
+ * @version 2.2.0
+ * @since   2.2.0
+ *
+ * @author WPFactory
+ */
+
+.entry-title {
+	display: none;
+}
+
+.ui-accordion-content {
+	height: auto !important;
+}

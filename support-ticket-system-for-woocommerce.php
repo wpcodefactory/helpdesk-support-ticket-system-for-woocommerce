@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260922-1845' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260923-1557' );
 
 /**
  * Plugin file.

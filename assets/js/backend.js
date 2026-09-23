@@ -73,4 +73,23 @@
 			});
 		}
 	});
+
+	/**
+	 * On delete button click, delete the response and clear the row from the table - via AJAX call to `response_delete()`.
+	 *
+	 * @version 2.2.0
+	 */
+	$(document).on("click", "#deleteResponse a", function (event) {
+		event.preventDefault();
+
+		var ajax_options = {
+			action: "wpfactory_wc_sts_response_delete",
+			nonce: WPFactory_WC_STS_Backend.responseDeleteNonce,
+			id: $(this).attr("id"),
+		};
+
+		$.post(ajaxurl, ajax_options, function (data) {
+			$("tr." + data).remove(); // remove row of the deleted item
+		});
+	});
 })(jQuery);

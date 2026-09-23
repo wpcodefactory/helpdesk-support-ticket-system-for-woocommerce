@@ -66,7 +66,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_action( 'save_post', array( $this, 'save_fields' ) );
 			add_action( 'post_updated', array( $this, 'notify_user_on_wp_edit' ) );
 			add_action( 'admin_menu', array( $this, 'menu_page' ) );
-			add_action( 'admin_footer', array( $this, 'delete_response_event_js' ) );
 			add_action( 'wp_ajax_wpfactory_wc_sts_response_delete', array( $this, 'response_delete' ) );
 			add_action( 'before_delete_post', array( $this, 'delete_relevant_responses' ) );
 
@@ -516,44 +515,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
-		 * On delete button click, delete the response and clear the row from the table - via AJAX call to `response_delete()`.
-		 *
-		 * @version 2.2.0
-		 */
-		public function delete_response_event_js() {
-			?>
-			<script type="text/javascript">
-			jQuery(
-				function ( $ ) {
-					$( document ).on(
-						'click',
-						'#deleteResponse a',
-						function ( event ) {
-							event.preventDefault();
-
-							var ajax_options = {
-								action: 'wpfactory_wc_sts_response_delete',
-								nonce: '<?php echo esc_js( wp_create_nonce( 'wpfactory_wc_sts_response_delete' ) ); ?>',
-								ajaxurl: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-								id: $( this ).attr( 'id' ),
-							};
-
-							$.post(
-								ajaxurl,
-								ajax_options,
-								function ( data ) {
-									$( 'tr.' + data ).remove(); // remove row of the deleted item
-								}
-							);
-						}
-					);
-				}
-			);
-			</script>
-			<?php
-		}
-
-		/**
 		 * Function to delete the response.
 		 *
 		 * @version 2.2.0
@@ -922,12 +883,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				$this->save_ticket();
 				$this->save_response();
 				?>
-				<style>
-				.entry-title{display:none;}
-				.ui-accordion-content{
-					height: auto !important;
-				}
-				</style>
 				<div class='stswproaccordion'>
 					<?php
 					$customer = wp_get_current_user();

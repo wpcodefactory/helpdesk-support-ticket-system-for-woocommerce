@@ -49,15 +49,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 * @version 2.2.0
 		 */
 		public function __construct() {
-			add_action( 'wp_enqueue_scripts', array( $this, 'FrontEndScripts' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'BackEndScripts' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'my_account_tickets_css' ) );
+
+			add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
 
 			add_filter( 'widget_text', 'do_shortcode' );
 
 			add_action( 'wpfactory_wc_sts_output_settings', array( $this, 'init' ) );
 
-			add_action( 'admin_footer', array( $this, 'proModal' ) );
+			add_action( 'admin_footer', array( $this, 'pro_modal' ) );
 
 			add_action( 'admin_init', array( $this, 'admin_panels' ) );
 
@@ -82,6 +84,30 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 			add_action( 'admin_notices', array( $this, 'notification' ) );
 			add_action( 'wp_ajax_nopriv_push_not', array( $this, 'push_not' ) );
 			add_action( 'wp_ajax_push_not', array( $this, 'push_not' ) );
+		}
+
+		/**
+		 * Enqueue CSS for the My Account tickets page.
+		 *
+		 * @version 2.2.0
+		 * @since   2.2.0
+		 */
+		public function my_account_tickets_css() {
+			if (
+				! is_account_page() ||
+				null === get_query_var( 'tickets', null )
+			) {
+				return;
+			}
+
+			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+			wp_enqueue_style(
+				'wpfactory-wc-sts-tickets',
+				plugins_url( 'assets/css/my-account' . $min . '.css', WPFACTORY_WC_STS_FILE ),
+				array(),
+				WPFACTORY_WC_STS_VERSION
+			);
 		}
 
 		/**
@@ -157,7 +183,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function proModal() {
+		public function pro_modal() {
 			?>
 			<div id="<?php print esc_attr( $this->plugin ) . 'Modal'; ?>">
 				<!-- Modal content -->
@@ -194,18 +220,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function BackEndScripts() {
+		public function backend_scripts() {
+			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 			wp_enqueue_style(
-				$this->plugin . 'adminCss',
-				plugins_url( '/css/backend.css', WPFACTORY_WC_STS_FILE ),
+				'wpfactory-wc-sts-backend',
+				plugins_url( 'assets/css/backend' . $min . '.css', WPFACTORY_WC_STS_FILE ),
 				array(),
 				WPFACTORY_WC_STS_VERSION
 			);
 
-			if ( ! wp_script_is( $this->plugin . '_fa', 'enqueued' ) ) {
+			if ( ! wp_script_is( 'wpfactory-wc-sts-fa', 'enqueued' ) ) {
 				wp_enqueue_style(
-					$this->plugin . '_fa',
-					plugins_url( '/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
+					'wpfactory-wc-sts-fa',
+					plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
 					array(),
 					WPFACTORY_WC_STS_VERSION
 				);
@@ -213,7 +241,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 
 			wp_enqueue_style(
 				'jquery-ui-style',
-				plugins_url( '/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
+				plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
 				array(),
 				WPFACTORY_WC_STS_VERSION
 			);
@@ -221,21 +249,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 			wp_enqueue_script( 'jquery-ui-accordion' );
 
 			wp_enqueue_script(
-				$this->plugin . 'adminJs',
-				plugins_url( '/js/backend.js', WPFACTORY_WC_STS_FILE ),
+				'wpfactory-wc-sts-backend',
+				plugins_url( 'assets/js/backend' . $min . '.js', WPFACTORY_WC_STS_FILE ),
 				array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-accordion' ),
 				WPFACTORY_WC_STS_VERSION,
 				true
 			);
 
 			wp_localize_script(
-				$this->plugin . 'adminJs',
-				$this->plugin,
+				'wpfactory-wc-sts-backend',
+				'WPFactory_WC_STS_Backend',
 				array(
-					'plugin_url'     => plugins_url( '', WPFACTORY_WC_STS_FILE ),
-					'ajaxurl'        => admin_url( 'admin-ajax.php' ),
-					'siteUrl'        => site_url(),
-					'plugin_wrapper' => $this->plugin,
+					'responseDeleteNonce' => wp_create_nonce( 'wpfactory_wc_sts_response_delete' ),
 				)
 			);
 		}
@@ -245,18 +270,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function FrontEndScripts() {
+		public function frontend_scripts() {
+			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 			wp_enqueue_style(
-				$this->plugin . 'css',
-				plugins_url( '/css/frontend.css', WPFACTORY_WC_STS_FILE ),
+				'wpfactory-wc-sts-frontend',
+				plugins_url( 'assets/css/frontend' . $min . '.css', WPFACTORY_WC_STS_FILE ),
 				array(),
 				WPFACTORY_WC_STS_VERSION
 			);
 
-			if ( ! wp_script_is( $this->plugin . '_fa', 'enqueued' ) ) {
+			if ( ! wp_script_is( 'wpfactory-wc-sts-fa', 'enqueued' ) ) {
 				wp_enqueue_style(
-					$this->plugin . '_fa',
-					plugins_url( '/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
+					'wpfactory-wc-sts-fa',
+					plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
 					array(),
 					WPFACTORY_WC_STS_VERSION
 				);
@@ -264,7 +291,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 
 			wp_enqueue_style(
 				'jquery-ui-style',
-				plugins_url( '/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
+				plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
 				array(),
 				WPFACTORY_WC_STS_VERSION
 			);
@@ -272,22 +299,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 			wp_enqueue_script( 'jquery-ui-accordion' );
 
 			wp_enqueue_script(
-				$this->plugin . 'jsfront',
-				plugins_url( '/js/frontend.js', WPFACTORY_WC_STS_FILE ),
+				'wpfactory-wc-sts-frontend',
+				plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ),
 				array( 'jquery' ),
 				WPFACTORY_WC_STS_VERSION,
 				true
-			);
-
-			wp_localize_script(
-				$this->plugin . 'jsfront',
-				$this->plugin,
-				array(
-					'plugin_url'     => plugins_url( '', WPFACTORY_WC_STS_FILE ),
-					'ajax_url'       => admin_url( 'admin-ajax.php' ),
-					'siteUrl'        => site_url(),
-					'plugin_wrapper' => $this->plugin,
-				)
 			);
 		}
 
