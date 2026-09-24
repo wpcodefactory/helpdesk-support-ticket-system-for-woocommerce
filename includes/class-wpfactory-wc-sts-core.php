@@ -78,12 +78,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 					return $plugins;
 				}
 			);
-
-			register_activation_hook( WPFACTORY_WC_STS_FILE, array( $this, 'notification_hook' ) );
-
-			add_action( 'admin_notices', array( $this, 'notification' ) );
-			add_action( 'wp_ajax_nopriv_push_not', array( $this, 'push_not' ) );
-			add_action( 'wp_ajax_push_not', array( $this, 'push_not' ) );
 		}
 
 		/**
@@ -108,51 +102,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 				array(),
 				WPFACTORY_WC_STS_VERSION
 			);
-		}
-
-		/**
-		 * Notification.
-		 *
-		 * @version 2.0.0
-		 */
-		public function notification() {
-			$screen = get_current_screen();
-			if ( 'toplevel_page_support-ticket-system-woocommerce' !== $screen->base ) {
-				return;
-			}
-
-			/* Check transient, if available display notice */
-			if ( get_transient( $this->plugin . '_notification' ) ) {
-				?>
-				<div class="updated notice  stsWooCommerce_notification">
-					<a href="#" class='dismiss' style='float:right;padding:4px' >close</a>
-					<h3><?php esc_html_e( 'Add your Email below & get ', 'support-ticket-system-for-woocommerce' ); ?><strong style='color:#00a32a'>10%</strong><?php esc_html_e( ' in our PRO plugins! ', 'support-ticket-system-for-woocommerce' ); ?></h3>
-					<form method='post' id='stsWooCommerce_signup'>
-						<p>
-						<input required type='email' name='woopei_email' />
-						<input required type='hidden' name='product' value='2829' />
-						<input type='submit' class='button button-primary' name='submit' value='<?php esc_html_e( 'Sign up', 'support-ticket-system-for-woocommerce' ); ?>' />
-						<i><?php esc_html_e( 'By adding your email you will be able to use your email as coupon to a future purchase at ', 'support-ticket-system-for-woocommerce' ); ?><a href='https://extend-wp.com' target='_blank' >extend-wp.com</a></i>
-						</p>
-
-					</form>
-				</div>
-				<?php
-			}
-		}
-
-		/**
-		 * Push not.
-		 */
-		public function push_not() {
-			delete_transient( $this->plugin . '_notification' );
-		}
-
-		/**
-		 * Notification hook.
-		 */
-		public function notification_hook() {
-			set_transient( $this->plugin . '_notification', true );
 		}
 
 		/**

@@ -13,7 +13,7 @@
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Created on: 09-10-2019
- * Updated on: 22-09-2026
+ * Updated on: 24-09-2026
  *
  * @package WPFactory\WC_Support_Ticket_System
  */

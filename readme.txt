@@ -117,13 +117,14 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
-= 2.2.0 - 23/09/2026 =
+= 2.2.0 - 24/09/2026 =
 * Fix - "Delete response" user verification fixed.
 * Dev - Output escaped.
 * Dev - Input sanitized.
 * Dev - Nonces added.
 * Dev - AJAX action names prefixed.
 * Dev - JS and CSS files minified and moved to the `assets` folder.
+* Dev - "Signup" notification removed.
 * Dev - Major code refactoring.
 * Dev - Coding standards improved.
 * Tested up to: 7.1.
