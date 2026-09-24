@@ -128,6 +128,8 @@ Please report security bugs found in the source code of the plugin through the [
 * Dev - Deactivation survey removed.
 * Dev - Major code refactoring.
 * Dev - Coding standards improved.
+* Dev - WPFactory Admin Menu - Library updated (to v1.1.2).
+* Dev - WPFactory Cross-Selling - Library updated (to v1.1.6).
 * Tested up to: 7.1.
 * WC tested up to: 11.1.
 * Requires at least: 6.2.
