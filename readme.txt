@@ -125,6 +125,7 @@ Please report security bugs found in the source code of the plugin through the [
 * Dev - AJAX action names prefixed.
 * Dev - JS and CSS files minified and moved to the `assets` folder.
 * Dev - "Signup" notification removed.
+* Dev - Deactivation survey removed.
 * Dev - Major code refactoring.
 * Dev - Coding standards improved.
 * Tested up to: 7.1.

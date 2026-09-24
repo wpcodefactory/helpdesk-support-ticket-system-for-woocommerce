@@ -64,20 +64,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 			add_action( 'admin_init', array( $this, 'admin_panels' ) );
 
 			add_action( 'all_admin_notices', array( $this, 'add_tabs_to_tickets' ) );
-
-			// Deactivation survey.
-			include plugin_dir_path( WPFACTORY_WC_STS_FILE ) . '/lib/codecabin/plugin-deactivation-survey/deactivate-feedback-form.php';
-			add_filter(
-				'codecabin_deactivate_feedback_form_plugins',
-				function ( $plugins ) {
-					$plugins[] = (object) array(
-						'slug'    => 'support-ticket-system-woocommerce',
-						'version' => '1.5',
-					);
-
-					return $plugins;
-				}
-			);
 		}
 
 		/**
@@ -263,10 +249,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Core' ) ) :
 		 */
 		public function init() {
 			print "<div class='" . esc_attr( $this->plugin ) . "'>";
-				esc_html( $this->admin_header() );
-				print esc_html__( 'Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system.', 'support-ticket-system-for-woocommerce' );
-				esc_html( $this->admin_settings() );
-				esc_html( $this->admin_footer() );
+				$this->admin_header();
+				printf(
+					/* translators: %s: shortcode [stsw_user_tickets] */
+					esc_html__( 'Use the %s shortcode in any page you like as alternative to provide the ticketing system.', 'support-ticket-system-for-woocommerce' ),
+					'<code>[stsw_user_tickets]</code>'
+				);
+				$this->admin_settings();
+				$this->admin_footer();
 			print '</div>';
 		}
 	}
