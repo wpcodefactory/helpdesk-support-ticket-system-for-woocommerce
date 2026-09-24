@@ -55,7 +55,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @version 2.2.0
 		 *
-		 * @todo (v2.0.0) What is `hook`!?
+		 * @todo (v2.2.0) What is `hook` in `add_filter( 'hook', array( $this, 'send_with_placeholders' ), 10, 2 )`?
 		 */
 		public function __construct() {
 
@@ -876,6 +876,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * Add content to support ticketing system.
 		 *
 		 * @version 2.2.0
+		 *
+		 * @todo (v2.2.0) Fix: when this function is used for the `[stsw_user_tickets]` shortcode, it has to `return` the content instead of directly printing it.
 		 */
 		public function stswpro_my_account_endpoint_content() {
 			// User needs to be logged in.

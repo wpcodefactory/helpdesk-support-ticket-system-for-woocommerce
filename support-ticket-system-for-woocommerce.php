@@ -68,7 +68,8 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  * Includes.
  *
  * @version 2.2.0
+ *
+ * @todo (v2.2.0) Move everything to the `plugins_loaded` action.
  */
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-init.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-inc.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-core.php';
