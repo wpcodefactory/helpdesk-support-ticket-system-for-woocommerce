@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Helpdesk Support Ticket System for WooCommerce
  * Description: WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system.
- * Plugin URI: https://extend-wp.com/support-ticket-system-for-woocommerce
- * Version: 2.2.0-dev
+ * Plugin URI: https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce
+ * Version: 2.2.0
  * Author: WPFactory
  * Author URI: https://wpfactory.com
  * Text Domain: support-ticket-system-for-woocommerce
@@ -13,7 +13,7 @@
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Created on: 09-10-2019
- * Updated on: 24-09-2026
+ * Updated on: 25-09-2026
  *
  * @package WPFactory\WC_Support_Ticket_System
  */
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0-dev-20260923-1557' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0' );
 
 /**
  * Plugin file.

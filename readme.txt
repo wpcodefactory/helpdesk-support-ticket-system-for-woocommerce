@@ -2,9 +2,9 @@
 Contributors: wpcodefactory
 Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
 Requires at least: 6.2
-Requires PHP: 5.2.4
+Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 2.1.6
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,7 +117,7 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
-= 2.2.0 - 24/09/2026 =
+= 2.2.0 - 25/09/2026 =
 * Fix - "Delete response" user verification fixed.
 * Dev - Output escaped.
 * Dev - Input sanitized.
@@ -126,6 +126,8 @@ Please report security bugs found in the source code of the plugin through the [
 * Dev - JS and CSS files minified and moved to the `assets` folder.
 * Dev - "Signup" notification removed.
 * Dev - Deactivation survey removed.
+* Dev - Admin promo footer removed.
+* Dev - Pro version link updated.
 * Dev - Major code refactoring.
 * Dev - Coding standards improved.
 * Dev - WPFactory Admin Menu - Library updated (to v1.1.2).
@@ -133,6 +135,7 @@ Please report security bugs found in the source code of the plugin through the [
 * Tested up to: 7.1.
 * WC tested up to: 11.1.
 * Requires at least: 6.2.
+* Requires PHP: 7.4.
 
 = 2.1.6 - 24/05/2026 =
 * Tested up to: 7.0.

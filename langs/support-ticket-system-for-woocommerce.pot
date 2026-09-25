@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.1.5\n"
+"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/support-ticket-system-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-19T10:50:07+00:00\n"
+"POT-Creation-Date: 2026-09-25T16:26:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: support-ticket-system-for-woocommerce\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: support-ticket-system-for-woocommerce.php
-msgid "https://extend-wp.com/support-ticket-system-for-woocommerce"
+msgid "https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce"
 msgstr ""
 
 #. Description of the plugin
@@ -39,542 +39,522 @@ msgstr ""
 msgid "https://wpfactory.com"
 msgstr ""
 
-#: includes.php:185
-#: includes.php:197
-#: includes.php:661
-#: includes.php:662
-#: includes.php:817
-#: includes.php:1511
+#: includes/class-wpfactory-wc-sts-inc.php:164
+#: includes/class-wpfactory-wc-sts-inc.php:176
+#: includes/class-wpfactory-wc-sts-inc.php:682
+#: includes/class-wpfactory-wc-sts-inc.php:683
+#: includes/class-wpfactory-wc-sts-inc.php:859
+#: includes/class-wpfactory-wc-sts-inc.php:1629
 msgid "Tickets"
 msgstr ""
 
-#: includes.php:186
+#: includes/class-wpfactory-wc-sts-inc.php:165
 msgid "Ticket"
 msgstr ""
 
-#: includes.php:187
+#: includes/class-wpfactory-wc-sts-inc.php:166
 msgid "Search Tickets"
 msgstr ""
 
-#: includes.php:188
+#: includes/class-wpfactory-wc-sts-inc.php:167
 msgid "All Tickets"
 msgstr ""
 
-#: includes.php:189
+#: includes/class-wpfactory-wc-sts-inc.php:168
 msgid "Parent Ticket"
 msgstr ""
 
-#: includes.php:190
+#: includes/class-wpfactory-wc-sts-inc.php:169
 msgid "Parent Ticket:"
 msgstr ""
 
-#: includes.php:191
+#: includes/class-wpfactory-wc-sts-inc.php:170
 msgid "Edit Ticket"
 msgstr ""
 
-#: includes.php:192
+#: includes/class-wpfactory-wc-sts-inc.php:171
 msgid "Update Ticket"
 msgstr ""
 
-#: includes.php:193
+#: includes/class-wpfactory-wc-sts-inc.php:172
 msgid "Add New Ticket"
 msgstr ""
 
-#: includes.php:194
-#: includes.php:196
+#: includes/class-wpfactory-wc-sts-inc.php:173
+#: includes/class-wpfactory-wc-sts-inc.php:175
 msgid "New Ticket"
 msgstr ""
 
-#: includes.php:195
+#: includes/class-wpfactory-wc-sts-inc.php:174
 msgid "New Ticket Name"
 msgstr ""
 
-#: includes.php:198
+#: includes/class-wpfactory-wc-sts-inc.php:177
 msgid "No Tickets found"
 msgstr ""
 
-#: includes.php:200
+#: includes/class-wpfactory-wc-sts-inc.php:179
 msgid "Adding and editing my Tickets"
 msgstr ""
 
-#: includes.php:220
+#: includes/class-wpfactory-wc-sts-inc.php:199
 msgctxt "taxonomy general name"
 msgid "Status"
 msgstr ""
 
-#: includes.php:221
+#: includes/class-wpfactory-wc-sts-inc.php:200
 msgctxt "taxonomy singular name"
 msgid "Status"
 msgstr ""
 
-#: includes.php:222
+#: includes/class-wpfactory-wc-sts-inc.php:201
 msgid "Search Status"
 msgstr ""
 
-#: includes.php:223
+#: includes/class-wpfactory-wc-sts-inc.php:202
 msgid "All Status"
 msgstr ""
 
-#: includes.php:224
+#: includes/class-wpfactory-wc-sts-inc.php:203
 msgid "Parent Status"
 msgstr ""
 
-#: includes.php:225
+#: includes/class-wpfactory-wc-sts-inc.php:204
 msgid "Parent Status:"
 msgstr ""
 
-#: includes.php:226
+#: includes/class-wpfactory-wc-sts-inc.php:205
 msgid "Edit Status"
 msgstr ""
 
-#: includes.php:227
+#: includes/class-wpfactory-wc-sts-inc.php:206
 msgid "Update Status"
 msgstr ""
 
-#: includes.php:228
+#: includes/class-wpfactory-wc-sts-inc.php:207
 msgid "Add New Status"
 msgstr ""
 
-#: includes.php:229
+#: includes/class-wpfactory-wc-sts-inc.php:208
 msgid "New Status Name"
 msgstr ""
 
-#: includes.php:230
+#: includes/class-wpfactory-wc-sts-inc.php:209
 msgid "No Status found."
 msgstr ""
 
-#: includes.php:231
-#: includes.php:638
+#: includes/class-wpfactory-wc-sts-inc.php:210
+#: includes/class-wpfactory-wc-sts-inc.php:662
 msgid "Status"
 msgstr ""
 
-#: includes.php:252
+#: includes/class-wpfactory-wc-sts-inc.php:235
 msgid "Ticket Content"
 msgstr ""
 
-#: includes.php:261
-#: includes.php:935
+#: includes/class-wpfactory-wc-sts-inc.php:244
+#: includes/class-wpfactory-wc-sts-inc.php:988
 msgid "Responses"
 msgstr ""
 
-#: includes.php:270
+#: includes/class-wpfactory-wc-sts-inc.php:253
 msgid "Ticket Info"
 msgstr ""
 
-#: includes.php:279
+#: includes/class-wpfactory-wc-sts-inc.php:262
 msgid "Assign to User"
 msgstr ""
 
-#: includes.php:288
+#: includes/class-wpfactory-wc-sts-inc.php:271
 msgid "New Response"
 msgstr ""
 
-#: includes.php:328
-#: includes.php:575
-#: includes.php:644
+#: includes/class-wpfactory-wc-sts-inc.php:321
+#: includes/class-wpfactory-wc-sts-inc.php:591
+#: includes/class-wpfactory-wc-sts-inc.php:668
 msgid "Order"
 msgstr ""
 
-#: includes.php:329
-#: includes.php:346
-#: includes.php:375
-#: includes.php:417
-#: includes.php:443
+#: includes/class-wpfactory-wc-sts-inc.php:322
+#: includes/class-wpfactory-wc-sts-inc.php:339
+#: includes/class-wpfactory-wc-sts-inc.php:377
+#: includes/class-wpfactory-wc-sts-inc.php:425
+#: includes/class-wpfactory-wc-sts-inc.php:469
 msgid "Pro Version"
 msgstr ""
 
-#: includes.php:333
-#: includes.php:576
-#: includes.php:639
+#: includes/class-wpfactory-wc-sts-inc.php:326
+#: includes/class-wpfactory-wc-sts-inc.php:592
+#: includes/class-wpfactory-wc-sts-inc.php:663
 msgid "User"
 msgstr ""
 
-#: includes.php:345
+#: includes/class-wpfactory-wc-sts-inc.php:338
 msgid "Ticket Assignee"
 msgstr ""
 
-#: includes.php:367
+#: includes/class-wpfactory-wc-sts-inc.php:369
 msgid "Issue"
 msgstr ""
 
-#: includes.php:368
-#: includes.php:405
+#: includes/class-wpfactory-wc-sts-inc.php:370
+#: includes/class-wpfactory-wc-sts-inc.php:411
 msgid "Attachments"
 msgstr ""
 
-#: includes.php:402
-#: includes.php:641
-#: includes.php:938
+#: includes/class-wpfactory-wc-sts-inc.php:408
+#: includes/class-wpfactory-wc-sts-inc.php:665
+#: includes/class-wpfactory-wc-sts-inc.php:991
 msgid "Date"
 msgstr ""
 
-#: includes.php:403
+#: includes/class-wpfactory-wc-sts-inc.php:409
 msgid "Who Sent It"
 msgstr ""
 
-#: includes.php:404
-#: includes.php:1012
+#: includes/class-wpfactory-wc-sts-inc.php:410
+#: includes/class-wpfactory-wc-sts-inc.php:1061
 msgid "Message"
 msgstr ""
 
-#: includes.php:406
+#: includes/class-wpfactory-wc-sts-inc.php:412
 msgid "Action"
 msgstr ""
 
-#: includes.php:424
+#: includes/class-wpfactory-wc-sts-inc.php:433
 msgid "No responses yet"
 msgstr ""
 
-#: includes.php:531
-msgid "Link expired."
-msgstr ""
-
-#: includes.php:539
-#: includes.php:1104
-#: includes.php:1188
+#: includes/class-wpfactory-wc-sts-inc.php:546
+#: includes/class-wpfactory-wc-sts-inc.php:1176
+#: includes/class-wpfactory-wc-sts-inc.php:1261
 msgid "Wrong user."
 msgstr ""
 
-#: includes.php:577
-#: includes.php:645
+#: includes/class-wpfactory-wc-sts-inc.php:593
+#: includes/class-wpfactory-wc-sts-inc.php:669
 msgid "Assignee"
 msgstr ""
 
-#: includes.php:578
-#: includes.php:640
+#: includes/class-wpfactory-wc-sts-inc.php:594
+#: includes/class-wpfactory-wc-sts-inc.php:664
 msgid "Last Response"
 msgstr ""
 
-#: includes.php:579
-#: includes.php:643
+#: includes/class-wpfactory-wc-sts-inc.php:595
+#: includes/class-wpfactory-wc-sts-inc.php:667
 msgid "Priority"
 msgstr ""
 
-#: includes.php:592
+#: includes/class-wpfactory-wc-sts-inc.php:610
 msgid "Pro"
 msgstr ""
 
-#: includes.php:637
-#: includes.php:918
-#: includes.php:1005
+#: includes/class-wpfactory-wc-sts-inc.php:661
+#: includes/class-wpfactory-wc-sts-inc.php:966
+#: includes/class-wpfactory-wc-sts-inc.php:1054
 msgid "Title"
 msgstr ""
 
-#: includes.php:642
-#: includes.php:679
-#: includes.php:680
+#: includes/class-wpfactory-wc-sts-inc.php:666
+#: includes/class-wpfactory-wc-sts-inc.php:700
+#: includes/class-wpfactory-wc-sts-inc.php:701
 msgid "Subject"
 msgstr ""
 
-#: includes.php:670
-#: includes.php:671
+#: includes/class-wpfactory-wc-sts-inc.php:691
+#: includes/class-wpfactory-wc-sts-inc.php:692
 msgid "Priorities"
 msgstr ""
 
-#: includes.php:688
-#: includes.php:689
-#: includes/class-wpfactory-wc-sts.php:147
+#: includes/class-wpfactory-wc-sts-inc.php:709
+#: includes/class-wpfactory-wc-sts-inc.php:710
+#: includes/class-wpfactory-wc-sts.php:142
 msgid "Settings"
 msgstr ""
 
-#: includes.php:707
+#: includes/class-wpfactory-wc-sts-inc.php:729
 msgid "ALL"
 msgstr ""
 
-#: includes.php:716
+#: includes/class-wpfactory-wc-sts-inc.php:738
 msgid "OPEN"
 msgstr ""
 
-#: includes.php:725
+#: includes/class-wpfactory-wc-sts-inc.php:747
 msgid "IN PROGRESS"
 msgstr ""
 
-#: includes.php:795
+#: includes/class-wpfactory-wc-sts-inc.php:833
 msgid "Get Help"
 msgstr ""
 
-#: includes.php:899
+#: includes/class-wpfactory-wc-sts-inc.php:942
 msgid "TICKETS"
 msgstr ""
 
-#: includes.php:939
+#: includes/class-wpfactory-wc-sts-inc.php:992
 msgid "Who Responded"
 msgstr ""
 
-#: includes.php:940
+#: includes/class-wpfactory-wc-sts-inc.php:993
 msgid "Content"
 msgstr ""
 
-#: includes.php:974
+#: includes/class-wpfactory-wc-sts-inc.php:1019
 msgid "Add a response"
 msgstr ""
 
-#: includes.php:981
+#: includes/class-wpfactory-wc-sts-inc.php:1026
 msgid "Close Ticket"
 msgstr ""
 
-#: includes.php:984
-#: includes.php:1021
+#: includes/class-wpfactory-wc-sts-inc.php:1029
+#: includes/class-wpfactory-wc-sts-inc.php:1070
 msgid "Send"
 msgstr ""
 
-#: includes.php:996
+#: includes/class-wpfactory-wc-sts-inc.php:1043
 msgid " No Tickets found"
 msgstr ""
 
-#: includes.php:998
+#: includes/class-wpfactory-wc-sts-inc.php:1047
 msgid "ADD NEW TICKET"
 msgstr ""
 
-#: includes.php:1094
+#: includes/class-wpfactory-wc-sts-inc.php:1166
 msgid "Did not save because your submission is invalid..."
 msgstr ""
 
-#: includes.php:1194
+#: includes/class-wpfactory-wc-sts-inc.php:1272
 msgid "Did not save because your submission has issues."
 msgstr ""
 
-#: includes.php:1200
+#: includes/class-wpfactory-wc-sts-inc.php:1281
 msgid "Please enter a proper title. Titles must be at least 3 characters long."
 msgstr ""
 
-#: includes.php:1204
+#: includes/class-wpfactory-wc-sts-inc.php:1288
 msgid "Please enter content more than 1 characters in length."
 msgstr ""
 
-#: includes.php:1277
-#: includes.php:1291
+#: includes/class-wpfactory-wc-sts-inc.php:1372
+#: includes/class-wpfactory-wc-sts-inc.php:1387
 msgid "New Ticket to "
 msgstr ""
 
-#: includes.php:1279
-#: includes.php:1296
-#: includes.php:1315
-#: includes.php:1330
-#: includes.php:1414
-#: includes.php:1437
+#: includes/class-wpfactory-wc-sts-inc.php:1374
+#: includes/class-wpfactory-wc-sts-inc.php:1394
+#: includes/class-wpfactory-wc-sts-inc.php:1416
+#: includes/class-wpfactory-wc-sts-inc.php:1434
+#: includes/class-wpfactory-wc-sts-inc.php:1518
+#: includes/class-wpfactory-wc-sts-inc.php:1541
 msgid "Check it Here"
 msgstr ""
 
-#: includes.php:1312
-#: includes.php:1398
+#: includes/class-wpfactory-wc-sts-inc.php:1413
+#: includes/class-wpfactory-wc-sts-inc.php:1502
 msgid "New Response to ticket #"
 msgstr ""
 
 #. Translators: %s: Taxonomy name.
-#: includes.php:1484
+#: includes/class-wpfactory-wc-sts-inc.php:1590
 msgid "Show All %s"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts.php:152
-msgid "Go Pro"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts.php:185
-#: includes/class-wpfactory-wc-sts.php:186
-#: includes/class-wpfactory-wc-sts.php:211
-#: includes/class-wpfactory-wc-sts.php:212
-msgid "Support Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts.php:196
-#: includes/class-wpfactory-wc-sts.php:197
-msgid "Dashboard"
-msgstr ""
-
-#: init.php:97
-#: init.php:215
-msgid "Get more plugins by extendWP"
-msgstr ""
-
-#: init.php:111
-msgid "Use Ticket System in any page with the shortcode [stsw_user_tickets]"
-msgstr ""
-
-#: init.php:112
-msgid "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend"
-msgstr ""
-
-#: init.php:128
-msgid "General"
-msgstr ""
-
-#: init.php:129
-msgid "Notifications"
-msgstr ""
-
-#: init.php:143
-msgid "Available placeholders for your Emails:"
-msgstr ""
-
-#: init.php:145
-msgid "in PRO Version"
-msgstr ""
-
-#: init.php:229
-msgid "Rename Tab Link in My Account Page for Tickets"
-msgstr ""
-
-#: init.php:232
-msgid "Enable Attachments to Ticket"
-msgstr ""
-
-#: init.php:235
-msgid "Allowed Attachments File Types"
-msgstr ""
-
-#: init.php:238
-msgid "Max File Size "
-msgstr ""
-
-#: init.php:241
-msgid "Allowed Number of Attachments "
-msgstr ""
-
-#: init.php:244
-msgid "Enable Priority Field to Ticket Creation"
-msgstr ""
-
-#: init.php:247
-msgid "Rename Button on Orders Table in My Account Page for Tickets"
-msgstr ""
-
-#: init.php:250
-msgid "Show only Open in Frontend"
-msgstr ""
-
-#: init.php:253
-msgid "Default User Role for Ticket Assignment"
-msgstr ""
-
-#: init.php:256
-msgid "Default Assignee"
-msgstr ""
-
-#: init.php:259
-msgid "Text to display once Ticket is saved"
-msgstr ""
-
-#: init.php:262
-msgid "Text to display once Response is saved"
-msgstr ""
-
-#: init.php:265
-msgid "Notify Assignee by Email"
-msgstr ""
-
-#: init.php:268
-msgid "Notify Admin by Email"
-msgstr ""
-
-#: init.php:271
-msgid "Admin Address"
-msgstr ""
-
-#: init.php:274
-msgid "Notify Customer by Email"
-msgstr ""
-
-#: init.php:277
-msgid "Email Subject sent to Assignee"
-msgstr ""
-
-#: init.php:280
-msgid "Email Content sent to Assignee"
-msgstr ""
-
-#: init.php:283
-msgid "Email Subject sent to Customer"
-msgstr ""
-
-#: init.php:285
-msgid "Email Content sent to Customer"
-msgstr ""
-
-#: init.php:419
-msgid "Admin Email Address"
-msgstr ""
-
-#: init.php:452
-msgid "Pro Version Only - html enabled"
-msgstr ""
-
-#: init.php:492
-msgid "Mail Subject"
-msgstr ""
-
-#: init.php:502
-msgid "Extensions allowed - Pro Version"
-msgstr ""
-
-#: init.php:511
-msgid "Files size - Pro Version"
-msgstr ""
-
-#: init.php:520
-msgid "Allowed N.Files  - Pro Version "
-msgstr ""
-
-#: support-ticket-system-for-woocommerce.php:120
-msgid "Add your Email below & get "
-msgstr ""
-
-#: support-ticket-system-for-woocommerce.php:120
-msgid " in our PRO plugins! "
-msgstr ""
-
-#: support-ticket-system-for-woocommerce.php:125
-msgid "Sign up"
-msgstr ""
-
-#: support-ticket-system-for-woocommerce.php:126
-msgid "By adding your email you will be able to use your email as coupon to a future purchase at "
-msgstr ""
-
-#: support-ticket-system-for-woocommerce.php:173
+#: includes/class-wpfactory-wc-sts-init.php:394
 msgid "Go PRO and get more important features!"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:174
+#: includes/class-wpfactory-wc-sts-init.php:395
 msgid "Enable Attachments on Ticket Submission"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:175
+#: includes/class-wpfactory-wc-sts-init.php:396
 msgid "Choose File Size, Number and Type for Upload"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:176
+#: includes/class-wpfactory-wc-sts-init.php:397
 msgid "Enable Ticket Priorities for Better Management"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:177
+#: includes/class-wpfactory-wc-sts-init.php:398
 msgid "Assign Ticket to Different Users"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:178
+#: includes/class-wpfactory-wc-sts-init.php:399
 msgid "Private Notes that customer cannot view "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:179
+#: includes/class-wpfactory-wc-sts-init.php:400
 msgid "Add Ticket Subject and Automate Ticket Assignment"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:180
+#: includes/class-wpfactory-wc-sts-init.php:401
 msgid "Customize your Email Notifications "
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:181
+#: includes/class-wpfactory-wc-sts-init.php:402
 msgid "Useful Placeholders for your Notification Template"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:182
+#: includes/class-wpfactory-wc-sts-init.php:403
 msgid ".. and a lot more!"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:183
+#: includes/class-wpfactory-wc-sts-init.php:404
 msgid "GET IT HERE"
 msgstr ""
 
-#: support-ticket-system-for-woocommerce.php:240
-msgid "Use the shortcode [stsw_user_tickets] in any page you like as alternative to provide the ticketing system."
+#. translators: %s: shortcode [stsw_user_tickets]
+#: includes/class-wpfactory-wc-sts-init.php:516
+msgid "Use the %s shortcode in any page you like as alternative to provide the ticketing system."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:532
+msgid "Get more plugins by extendWP"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:547
+msgid "Use Ticket System in any page with the shortcode [stsw_user_tickets]"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:548
+msgid "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:568
+msgid "General"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:569
+msgid "Notifications"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:583
+msgid "Available placeholders for your Emails:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:585
+msgid "in PRO Version"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:673
+msgid "Rename Tab Link in My Account Page for Tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:690
+msgid "Enable Attachments to Ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:698
+msgid "Allowed Attachments File Types"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:706
+msgid "Max File Size "
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:714
+msgid "Allowed Number of Attachments "
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:722
+msgid "Enable Priority Field to Ticket Creation"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:730
+msgid "Rename Button on Orders Table in My Account Page for Tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:747
+msgid "Show only Open in Frontend"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:766
+msgid "Default User Role for Ticket Assignment"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:774
+msgid "Default Assignee"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:782
+msgid "Text to display once Ticket is saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:799
+msgid "Text to display once Response is saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:816
+msgid "Notify Assignee by Email"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:824
+msgid "Notify Admin by Email"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:843
+msgid "Admin Address"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:860
+msgid "Notify Customer by Email"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:879
+msgid "Email Subject sent to Assignee"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:887
+msgid "Email Content sent to Assignee"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:895
+msgid "Email Subject sent to Customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:912
+msgid "Email Content sent to Customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:1100
+msgid "Admin Email Address"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:1143
+msgid "Pro Version Only - html enabled"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:1207
+msgid "Mail Subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:1218
+msgid "Extensions allowed - Pro Version"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:1229
+msgid "Files size - Pro Version"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:1240
+msgid "Allowed N.Files  - Pro Version "
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:147
+msgid "Go Pro"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:177
+#: includes/class-wpfactory-wc-sts.php:178
+#: includes/class-wpfactory-wc-sts.php:203
+#: includes/class-wpfactory-wc-sts.php:204
+msgid "Support Tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:188
+#: includes/class-wpfactory-wc-sts.php:189
+msgid "Dashboard"
 msgstr ""

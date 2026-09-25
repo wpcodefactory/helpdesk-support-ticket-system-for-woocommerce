@@ -41,7 +41,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 *
 		 * @var string
 		 */
-		public $pro_url = 'https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce';
+		public $pro_url = 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce';
 
 		/**
 		 * Tabs.
@@ -376,8 +376,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * Pro modal.
 		 *
 		 * @version 2.2.0
-		 *
-		 * @todo (v2.2.0) Fix: `fa fa-check` icons are not displaying correctly.
 		 */
 		public function pro_modal() {
 			?>
@@ -394,15 +392,15 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 						<div class='<?php print esc_attr( $this->plugin ); ?>columns2'>
 							<h3><?php esc_html_e( 'Go PRO and get more important features!', 'support-ticket-system-for-woocommerce' ); ?></h3>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Enable Attachments on Ticket Submission', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Choose File Size, Number and Type for Upload', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Enable Ticket Priorities for Better Management', 'support-ticket-system-for-woocommerce' ); ?></strong></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Assign Ticket to Different Users', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Private Notes that customer cannot view ', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Add Ticket Subject and Automate Ticket Assignment', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Customize your Email Notifications ', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( 'Useful Placeholders for your Notification Template', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p><i class='fa fa-check'></i> <?php esc_html_e( '.. and a lot more!', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Enable Attachments on Ticket Submission', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Choose File Size, Number and Type for Upload', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Enable Ticket Priorities for Better Management', 'support-ticket-system-for-woocommerce' ); ?></strong></p>
+							<p>&#10003; <?php esc_html_e( 'Assign Ticket to Different Users', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Private Notes that customer cannot view ', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Add Ticket Subject and Automate Ticket Assignment', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Customize your Email Notifications ', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( 'Useful Placeholders for your Notification Template', 'support-ticket-system-for-woocommerce' ); ?></p>
+							<p>&#10003; <?php esc_html_e( '.. and a lot more!', 'support-ticket-system-for-woocommerce' ); ?></p>
 							<p class='bottomToUp'><center><a target='_blank' class='proUrl' href='<?php print esc_url( $this->pro_url ); ?>'><?php esc_html_e( 'GET IT HERE', 'support-ticket-system-for-woocommerce' ); ?></a></center></p>
 						</div>
 					</div>
@@ -415,6 +413,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * Backend scripts.
 		 *
 		 * @version 2.2.0
+		 *
+		 * @todo (v2.2.0) Check if we need all the scripts and styles being enqueued, e.g., `font-awesome`?
 		 */
 		public function backend_scripts() {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -517,7 +517,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					'<code>[stsw_user_tickets]</code>'
 				);
 				$this->admin_settings();
-				$this->admin_footer();
 			print '</div>';
 		}
 
@@ -647,20 +646,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				}
 			}
 			echo '</h2>';
-		}
-
-		/**
-		 * Admin footer.
-		 *
-		 * @version 2.2.0
-		 */
-		public function admin_footer() {
-			?>
-			<hr>
-			<a target='_blank' class='web_logo' href='https://extend-wp.com/wordpress-premium-plugins/'>
-				<img  src='<?php echo esc_url( plugins_url( 'images/extendwp.png', WPFACTORY_WC_STS_FILE ) ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' />
-			</a>
-			<?php
 		}
 
 		/**

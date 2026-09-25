@@ -128,7 +128,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 		/**
 		 * Action links.
 		 *
-		 * @version 2.0.0
+		 * @version 2.2.0
 		 * @since   2.0.0
 		 *
 		 * @param mixed $links Action links for the plugin.
@@ -142,7 +142,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				__( 'Settings', 'support-ticket-system-for-woocommerce' ) .
 			'</a>';
 
-			$pro_url        = 'https://extend-wp.com/product/helpdesk-support-ticket-system-woocommerce';
+			$pro_url        = 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce';
 			$custom_links[] = '<a target="_blank" style="font-weight: bold; color: green;" href="' . $pro_url . '">' .
 				__( 'Go Pro', 'support-ticket-system-for-woocommerce' ) .
 			'</a>';
