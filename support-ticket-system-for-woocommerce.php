@@ -122,6 +122,6 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @todo (v2.2.0) Move everything to the `plugins_loaded` action.
  */
-foreach ( array( 'init', 'inc', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy' ) as $wpfactory_wc_sts_part ) {
+foreach ( array( 'init', 'inc', 'customer', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy' ) as $wpfactory_wc_sts_part ) {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-' . $wpfactory_wc_sts_part . '.php';
 }

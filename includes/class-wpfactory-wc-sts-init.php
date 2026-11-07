@@ -170,9 +170,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		public function frontend_scripts() {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			wp_register_style( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/css/frontend' . $min . '.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
-			wp_register_style( 'wpfactory-wc-sts-fa', plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
-			wp_register_style( 'wpfactory-wc-sts-jquery-ui', plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
-			wp_register_script( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ), array( 'jquery', 'jquery-ui-accordion' ), WPFACTORY_WC_STS_VERSION, true );
+			wp_register_script( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION, true );
+			wp_localize_script( 'wpfactory-wc-sts-frontend', 'WPFactory_WC_STS_Frontend', array( 'sending' => __( 'Sending...', 'support-ticket-system-for-woocommerce' ) ) );
 
 			if ( function_exists( 'is_account_page' ) && is_account_page() ) {
 				self::enqueue_frontend_assets();
@@ -189,8 +188,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 */
 		public static function enqueue_frontend_assets() {
 			wp_enqueue_style( 'wpfactory-wc-sts-frontend' );
-			wp_enqueue_style( 'wpfactory-wc-sts-fa' );
-			wp_enqueue_style( 'wpfactory-wc-sts-jquery-ui' );
 			wp_enqueue_script( 'wpfactory-wc-sts-frontend' );
 		}
 

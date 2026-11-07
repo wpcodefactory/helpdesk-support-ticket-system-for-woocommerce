@@ -1,1 +1,351 @@
-.stswproaccordion.loading>*{opacity:.2}.stswproaccordion.loading:before{position:fixed;content:"Loading...";font-size:2em;padding:22px;background:#000;background:url(../images/loading.gif) no-repeat center center;color:#777;width:50%;height:50%;margin-left:15%;box-sizing:border-box;text-align:center}
+/**
+ * Helpdesk Support Ticket System for WooCommerce - customer screens.
+ *
+ * Inherits the theme: fonts and text colour come from the page, accents from theme.json presets when the theme has
+ * them, otherwise from the text colour. Works with block and classic themes.
+ *
+ * @author WPFactory
+ */
+
+.stsw {
+	--stsw-accent: var(--wp--preset--color--primary, var(--wp--preset--color--contrast, currentColor));
+	--stsw-border: color-mix(in srgb, currentColor 22%, transparent);
+	--stsw-soft: color-mix(in srgb, currentColor 6%, transparent);
+	--stsw-radius: 8px;
+	--stsw-gap: 1rem;
+	font: inherit;
+	color: inherit;
+}
+
+.stsw [hidden] {
+	display: none !important;
+}
+
+.stsw *,
+.stsw *::before,
+.stsw *::after {
+	box-sizing: border-box;
+}
+
+.stsw-head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 0 var(--stsw-gap);
+}
+
+.stsw-title {
+	margin: 0;
+	font-size: 1.4em;
+	line-height: 1.3;
+}
+
+.stsw-link {
+	color: inherit;
+	text-decoration: underline;
+}
+
+/* Buttons: at least 44px tall, visible focus. */
+.stsw-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	min-width: 44px;
+	padding: 0.6em 1.2em;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* Primary buttons also carry the theme's `button` and `wp-element-button` classes: the theme gives them its colours. */
+.stsw-button--primary {
+	border-color: transparent;
+}
+
+.stsw-button:hover {
+	filter: brightness(0.95);
+}
+
+.stsw a:focus-visible,
+.stsw button:focus-visible,
+.stsw input:focus-visible,
+.stsw select:focus-visible,
+.stsw textarea:focus-visible,
+.stsw [tabindex="-1"]:focus-visible {
+	outline: 3px solid var(--stsw-accent);
+	outline-offset: 2px;
+}
+
+.stsw-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-top: var(--stsw-gap);
+}
+
+/* Requests list. */
+.stsw-empty {
+	padding: 1.5rem;
+	border: 1px dashed var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	text-align: center;
+}
+
+.stsw-cards {
+	display: grid;
+	gap: 0.75rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stsw-card {
+	position: relative;
+	padding: 1rem 1.1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+}
+
+.stsw-card--reply_needed {
+	border-left: 4px solid var(--stsw-accent);
+}
+
+.stsw-card__link {
+	color: inherit;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.stsw-card__link::after {
+	position: absolute;
+	inset: 0;
+	content: "";
+}
+
+.stsw-card__link:hover {
+	text-decoration: underline;
+}
+
+.stsw-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 1rem;
+	margin: 0.35rem 0 0;
+	font-size: 0.9em;
+	opacity: 0.85;
+}
+
+.stsw-card__chips {
+	margin: 0.5rem 0 0;
+}
+
+.stsw-chip {
+	display: inline-block;
+	padding: 0.15em 0.65em;
+	border: 1px solid var(--stsw-border);
+	border-radius: 999px;
+	background: var(--stsw-soft);
+	font-size: 0.85em;
+	line-height: 1.5;
+}
+
+.stsw-chip--closed {
+	opacity: 0.75;
+}
+
+.stsw-chip--attention {
+	border: 2px solid currentColor;
+	font-weight: 700;
+}
+
+/* Ask flow. */
+.stsw-step {
+	margin: 0 0 var(--stsw-gap);
+	padding: 1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+}
+
+.stsw-step__title {
+	padding: 0 0.35rem;
+	font-weight: 600;
+}
+
+.stsw-js .stsw-step[hidden],
+.stsw-js .stsw-items[hidden] {
+	display: none;
+}
+
+.stsw-choices {
+	display: grid;
+	gap: 0.5rem;
+}
+
+.stsw-choice {
+	display: flex;
+	gap: 0.6rem;
+	align-items: flex-start;
+	min-height: 44px;
+	padding: 0.6rem 0.75rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	cursor: pointer;
+}
+
+.stsw-choice:has(input:checked) {
+	border-color: var(--stsw-accent);
+	background: var(--stsw-soft);
+}
+
+.stsw-choice input {
+	margin-top: 0.25em;
+}
+
+.stsw-items {
+	margin: 0 0 var(--stsw-gap);
+	padding: 0;
+	border: 0;
+}
+
+.stsw-items legend {
+	margin-bottom: 0.5rem;
+}
+
+.stsw-field {
+	display: grid;
+	gap: 0.35rem;
+	margin: 0 0 var(--stsw-gap);
+}
+
+.stsw-field input[type="text"],
+.stsw-field input[type="email"],
+.stsw-field select,
+.stsw-field textarea {
+	width: 100%;
+	min-height: 44px;
+	font: inherit;
+}
+
+.stsw-help {
+	font-size: 0.85em;
+	opacity: 0.85;
+}
+
+.stsw-js .stsw-js-only[hidden] {
+	display: none;
+}
+
+.stsw-js-only {
+	display: none;
+}
+
+.stsw-js .stsw-js-only {
+	display: inline-flex;
+}
+
+/* Confirmation. */
+.stsw-sent {
+	padding: 1.25rem;
+	border: 1px solid var(--stsw-accent);
+	border-radius: var(--stsw-radius);
+}
+
+/* Conversation. */
+.stsw-thread {
+	display: grid;
+	gap: 0.75rem;
+	margin: var(--stsw-gap) 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stsw-msg {
+	max-width: 46rem;
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+}
+
+.stsw-msg--store {
+	margin-left: auto;
+	background: var(--stsw-soft);
+}
+
+.stsw-msg__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0 0 0.4rem;
+	font-size: 0.9em;
+}
+
+.stsw-msg__head time {
+	opacity: 0.8;
+}
+
+.stsw-msg__body {
+	overflow-wrap: anywhere;
+}
+
+.stsw-details {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 0.25rem 0.75rem;
+	margin: 0.75rem 0 0;
+	font-size: 0.9em;
+}
+
+.stsw-details dt {
+	font-weight: 600;
+}
+
+.stsw-details dd {
+	margin: 0;
+}
+
+.stsw-files p {
+	margin: 0.4rem 0 0;
+}
+
+.stsw-notice--error {
+	padding: 0.75rem 1rem;
+	border: 1px solid currentColor;
+	border-radius: var(--stsw-radius);
+}
+
+/* Guest box on the login screen. */
+.wpfactory-wc-sts-guest {
+	margin: 0 0 2rem;
+}
+
+@media (max-width: 600px) {
+	.stsw-head {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.stsw-actions .stsw-button,
+	.stsw-head .stsw-button {
+		width: 100%;
+	}
+
+	.stsw-msg--store {
+		margin-left: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stsw * {
+		scroll-behavior: auto;
+		transition: none;
+	}
+}
