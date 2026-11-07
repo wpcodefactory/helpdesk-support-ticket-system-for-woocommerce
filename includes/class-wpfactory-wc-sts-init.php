@@ -258,6 +258,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'assignment'    => __( 'Assignment', 'support-ticket-system-for-woocommerce' ),
 				'notifications' => __( 'Notifications', 'support-ticket-system-for-woocommerce' ),
 			);
+			foreach ( $this->get_extra_sections() as $id => $section ) {
+				$sections[ $id ] = $section['label'];
+			}
 			?>
 			<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form">
 				<div class="result" role="status"><?php $this->admin_process_settings(); ?></div>
@@ -285,11 +288,35 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						WPFactory_WC_STS_Emails::get_instance()->render_email_health();
 						?>
 					</div>
+					<?php foreach ( $this->get_extra_sections() as $id => $section ) : ?>
+						<div id="<?php echo esc_attr( $id ); ?>">
+							<?php
+							if ( ! empty( $section['intro'] ) ) {
+								echo '<p>' . esc_html( $section['intro'] ) . '</p>';
+							}
+							$this->render_fields( $section['fields'] );
+							?>
+						</div>
+					<?php endforeach; ?>
 				</div>
 				<?php wp_nonce_field( $this->plugin ); ?>
 				<p id="save_changes"><?php submit_button(); ?></p>
 			</form>
 			<?php
+		}
+
+		/**
+		 * Settings sections added by the Pro edition.
+		 *
+		 * @return array id => { label, intro, fields }
+		 */
+		protected function get_extra_sections() {
+			/**
+			 * Extra settings tabs (Pro). Each: label, intro (optional), fields (same format as the core fields).
+			 *
+			 * @param array $sections id => section.
+			 */
+			return (array) apply_filters( 'wpfactory_wc_sts_settings_sections', array() );
 		}
 
 		/**
@@ -480,6 +507,29 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					case 'user':
 						WPFactory_WC_STS_Admin::get_instance()->render_user_select( $name, (int) $value, __( 'Nobody', 'support-ticket-system-for-woocommerce' ), $id );
 						break;
+					case 'roles':
+						echo '<fieldset id="' . esc_attr( $id ) . '">';
+						foreach ( wp_roles()->get_names() as $role => $role_name ) {
+							echo '<label style="display:block"><input type="checkbox" name="' . esc_attr( $name ) . '[]" value="' . esc_attr( $role ) . '"' . checked( in_array( $role, (array) $value, true ), true, false ) . ' /> ' . esc_html( translate_user_role( $role_name ) ) . '</label>';
+						}
+						echo '</fieldset>';
+						break;
+					case 'select':
+						echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '">';
+						foreach ( $field['options'] as $option => $label ) {
+							echo '<option value="' . esc_attr( $option ) . '"' . selected( (string) $value, (string) $option, false ) . '>' . esc_html( $label ) . '</option>';
+						}
+						echo '</select>';
+						break;
+					case 'password':
+						echo '<input type="password" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="" autocomplete="new-password" placeholder="' . esc_attr( '' !== (string) $value ? __( 'Saved. Leave empty to keep it.', 'support-ticket-system-for-woocommerce' ) : '' ) . '" />';
+						break;
+					case 'textarea':
+						echo '<textarea class="large-text" rows="3" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '">' . esc_textarea( (string) $value ) . '</textarea>';
+						break;
+					case 'html':
+						call_user_func( $field['render'] );
+						break;
 					default:
 						echo '<input type="' . esc_attr( $field['type'] ) . '" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . ( isset( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : '' ) . ( 'number' === $field['type'] ? ' min="0" step="1"' : '' ) . ' />';
 				}
@@ -508,7 +558,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			$old_role = (string) get_option( $this->plugin . 'assignToRole' );
 			$fields   = array_merge( $this->get_general_fields(), $this->get_form_fields(), $this->get_assignment_fields(), $this->get_notification_fields() );
+			foreach ( $this->get_extra_sections() as $section ) {
+				$fields = array_merge( $fields, $section['fields'] );
+			}
 			foreach ( $fields as $key => $field ) {
+				if ( 'html' === $field['type'] ) {
+					continue;
+				}
 				$name = $this->option_name( $key );
 				$raw  = isset( $_POST[ $name ] ) ? wp_unslash( $_POST[ $name ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per type below.
 				switch ( $field['type'] ) {
@@ -531,10 +587,25 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					case 'user':
 						$value = absint( $raw ) ? (string) absint( $raw ) : '';
 						break;
+					case 'roles':
+						$value = array_values( array_intersect( array_map( 'sanitize_key', (array) $raw ), array_keys( wp_roles()->get_names() ) ) );
+						break;
+					case 'select':
+						$value = isset( $field['options'][ (string) $raw ] ) ? (string) $raw : (string) array_key_first( $field['options'] );
+						break;
+					case 'password':
+						if ( '' === trim( (string) $raw ) ) {
+							continue 2; // Keep the saved secret.
+						}
+						$value = trim( sanitize_text_field( (string) $raw ) );
+						break;
+					case 'textarea':
+						$value = sanitize_textarea_field( (string) $raw );
+						break;
 					default:
 						$value = sanitize_text_field( (string) $raw );
 				}
-				$autoload = in_array( $field['type'], array( 'editor' ), true ) ? false : null;
+				$autoload = in_array( $field['type'], array( 'editor', 'password', 'textarea' ), true ) ? false : null;
 				update_option( $name, $value, $autoload );
 			}
 

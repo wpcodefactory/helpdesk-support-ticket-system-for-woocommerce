@@ -733,7 +733,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			);
 			$details = WPFactory_WC_STS_Customer::get_instance()->get_ticket_details( $ticket_id );
 			echo '<ol class="stsw-thread">';
-			echo '<li class="stsw-msg stsw-msg--customer"><p class="stsw-msg__head"><strong>' . esc_html( $contact['display_name'] ) . '</strong> <time>' . esc_html( $core->format_response_date( get_post_field( 'post_date_gmt', $ticket_id ) ) ) . '</time></p>';
+			$started = (int) get_post_meta( $ticket_id, WPFactory_WC_STS_Inc::META_STARTED_BY, true );
+			echo '<li class="stsw-msg stsw-msg--' . ( $started ? 'store' : 'customer' ) . '"><p class="stsw-msg__head"><strong>' . esc_html( $started ? $core->get_user_name( $started ) : $contact['display_name'] ) . '</strong> <time>' . esc_html( $core->format_response_date( get_post_field( 'post_date_gmt', $ticket_id ) ) ) . '</time></p>';
 			echo '<div class="stsw-msg__body">' . $core->format_message( get_post_field( 'post_content', $ticket_id, 'raw' ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in format_message().
 			if ( $details ) {
 				echo '<dl class="stsw-details">';
@@ -753,7 +754,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				$row = $item['row'];
 				if ( 'note' === $item['type'] ) {
 					/* translators: %s: staff name. */
-					$who = sprintf( __( 'Private note by %s', 'support-ticket-system-for-woocommerce' ), $core->get_user_name( (int) $row->agent ) );
+					$who = (int) $row->agent ? sprintf( __( 'Private note by %s', 'support-ticket-system-for-woocommerce' ), $core->get_user_name( (int) $row->agent ) ) : __( 'Automatic note', 'support-ticket-system-for-woocommerce' );
 				} elseif ( 'store' === $item['type'] ) {
 					$who = $core->get_user_name( (int) $row->agent );
 				} else {

@@ -706,8 +706,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 
 			echo '<ol class="stsw-thread">';
 			// First message.
+			$started  = (int) get_post_meta( $ticket_id, WPFactory_WC_STS_Inc::META_STARTED_BY, true );
 			$first_by = ( ! $viewer_id || $viewer_id === $owner ) ? $you : $core->get_ticket_contact( $ticket_id )['display_name'];
-			echo '<li class="stsw-msg stsw-msg--customer"><p class="stsw-msg__head"><strong>' . esc_html( $first_by ) . '</strong> <time datetime="' . esc_attr( get_post_time( 'c', true, $ticket_id ) ) . '">' . esc_html( $core->format_response_date( get_post_field( 'post_date_gmt', $ticket_id ) ) ) . '</time></p>';
+			if ( $started ) {
+				$first_by = $staff ? $core->get_user_name( $started ) : $store;
+			}
+			echo '<li class="stsw-msg stsw-msg--' . ( $started ? 'store' : 'customer' ) . '"><p class="stsw-msg__head"><strong>' . esc_html( $first_by ) . '</strong> <time datetime="' . esc_attr( get_post_time( 'c', true, $ticket_id ) ) . '">' . esc_html( $core->format_response_date( get_post_field( 'post_date_gmt', $ticket_id ) ) ) . '</time></p>';
 			echo '<div class="stsw-msg__body">' . $core->format_message( get_post_field( 'post_content', $ticket_id, 'raw' ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in format_message().
 			$details = $this->get_ticket_details( $ticket_id );
 			if ( $details ) {

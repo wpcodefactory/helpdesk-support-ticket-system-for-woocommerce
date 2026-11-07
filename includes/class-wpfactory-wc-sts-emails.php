@@ -177,6 +177,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		 * @param int $ticket_id Ticket ID.
 		 */
 		public function on_ticket_created( $ticket_id ) {
+			if ( get_post_meta( $ticket_id, WPFactory_WC_STS_Inc::META_STARTED_BY, true ) ) {
+				$this->on_ticket_started_by_store( $ticket_id );
+				return;
+			}
 			$content = (string) get_post_field( 'post_content', $ticket_id, 'raw' );
 			$values  = $this->placeholders( $ticket_id, 0, $content, '' );
 			$contact = $this->core->get_ticket_contact( $ticket_id );
@@ -200,6 +204,25 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				$body = $this->with_guest_link( $ticket_id, $body, $values );
 				$this->notify_users( $contact['email'], $subject, $body );
 			}
+		}
+
+		/**
+		 * A staff member opened a ticket for the customer: the customer gets the message and the link.
+		 *
+		 * @param int $ticket_id Ticket ID.
+		 */
+		protected function on_ticket_started_by_store( $ticket_id ) {
+			$contact = $this->core->get_ticket_contact( $ticket_id );
+			if ( ! is_email( $contact['email'] ) ) {
+				return;
+			}
+			$content = (string) get_post_field( 'post_content', $ticket_id, 'raw' );
+			$values  = $this->placeholders( $ticket_id, 0, $content, $content );
+			$site    = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+			/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
+			$subject = sprintf( __( 'A message from %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $values['plain']['{title}'] );
+			$body    = $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
+			$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ) );
 		}
 
 		/**

@@ -123,6 +123,10 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 
 			// Settings.
 			add_action( 'admin_menu', array( $this, 'add_settings' ), 11 );
+
+			// One short, dismissible note about Pro on the plugin's own screens.
+			add_action( 'admin_notices', array( $this, 'pro_notice' ) );
+			add_action( 'admin_post_wpfactory_wc_sts_dismiss_pro_notice', array( $this, 'dismiss_pro_notice' ) );
 		}
 
 		/**
@@ -241,6 +245,42 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 		 */
 		public function plugin_path() {
 			return untrailingslashit( plugin_dir_path( WPFACTORY_WC_STS_FILE ) );
+		}
+
+		/**
+		 * Short note about the Pro edition on the plugin's screens, until dismissed.
+		 *
+		 * @version 2.3.0
+		 * @since   2.3.0
+		 */
+		public function pro_notice() {
+			if ( ! current_user_can( 'manage_woocommerce' ) || get_user_meta( get_current_user_id(), 'wpfactory_wc_sts_pro_notice_dismissed', true ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				return;
+			}
+			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( WPFACTORY_WC_STS_PAGE !== $page ) {
+				return;
+			}
+			$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_dismiss_pro_notice' ), 'wpfactory_wc_sts_dismiss_pro_notice' );
+			echo '<div class="notice notice-info"><p>' .
+				esc_html__( 'Pro adds the order panel and order actions in tickets (refunds, resend emails, status changes), email piping, satisfaction ratings and reports, AI reply drafts with your own key, automation and a REST API.', 'support-ticket-system-for-woocommerce' ) .
+				' <a href="https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce" target="_blank" rel="noopener">' . esc_html__( 'See Pro', 'support-ticket-system-for-woocommerce' ) . '</a>' .
+				' | <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Dismiss', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
+		}
+
+		/**
+		 * Hides the Pro note for this user.
+		 *
+		 * @version 2.3.0
+		 * @since   2.3.0
+		 */
+		public function dismiss_pro_notice() {
+			check_admin_referer( 'wpfactory_wc_sts_dismiss_pro_notice' );
+			if ( current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				update_user_meta( get_current_user_id(), 'wpfactory_wc_sts_pro_notice_dismissed', 1 );
+			}
+			wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) );
+			exit;
 		}
 	}
 
