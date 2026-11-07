@@ -103,14 +103,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * Plugin and Pro (or free) tabs above the plugin's list screens.
+		 * Plugin header above the old WordPress list screens that still exist (none by default; kept for add-ons).
 		 */
 		public function add_tabs_to_tickets() {
 			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-			if ( $screen && in_array( $screen->base, array( 'edit', 'edit-tags', 'term' ), true ) && ( in_array( $screen->post_type, array( 'stsw_tickets', 'stsw_canned_reply' ), true ) ) ) {
-				echo '<div class="' . esc_attr( $this->plugin ) . '">';
-				$this->admin_header();
-				$this->admin_tabs();
+			if ( $screen && 'edit' === $screen->base && 'stsw_tickets' === $screen->post_type ) {
+				echo '<div class="wpf-hd wpf-hd--bar">';
+				WPFactory_WC_STS_UI::header( '' );
 				echo '</div>';
 			}
 		}
@@ -125,8 +124,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			if ( $screen && in_array( $screen->post_type, array( 'stsw_tickets', 'stsw_canned_reply' ), true ) ) {
 				return true;
 			}
-			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return WPFACTORY_WC_STS_PAGE === $page;
+			return WPFactory_WC_STS_UI::is_screen();
 		}
 
 		/**
@@ -140,13 +138,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			}
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			wp_enqueue_style( 'wpfactory-wc-sts-backend', plugins_url( 'assets/css/backend' . $min . '.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
-			wp_enqueue_style( 'wpfactory-wc-sts-fa', plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
-			wp_enqueue_style( 'jquery-ui-style', plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
-			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_script(
 				'wpfactory-wc-sts-backend',
 				plugins_url( 'assets/js/backend' . $min . '.js', WPFACTORY_WC_STS_FILE ),
-				array( 'jquery', 'jquery-ui-tabs', 'wp-color-picker' ),
+				array( 'jquery' ),
 				WPFACTORY_WC_STS_VERSION,
 				true
 			);
@@ -192,117 +187,236 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * Dashboard and settings page.
+		 * Plugin screen: header, then the current tab.
 		 */
 		public function init() {
-			echo '<div class="wrap ' . esc_attr( $this->plugin ) . '">';
-			$this->admin_header();
+			$this->active_tab = $this->current_tab();
+			echo '<div class="wrap wpf-hd ' . esc_attr( $this->plugin ) . '">';
+			echo '<h1 class="screen-reader-text">' . esc_html( WPFACTORY_WC_STS_NAME ) . '</h1>';
+			WPFactory_WC_STS_UI::header( 'inbox' === $this->active_tab ? '' : $this->active_tab );
 			$this->admin_settings();
 			echo '</div>';
 		}
 
 		/**
-		 * Page header.
+		 * Current tab key.
+		 *
+		 * @return string
+		 */
+		public function current_tab() {
+			$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( 'canned' === $tab ) {
+				$tab = 'saved';
+			}
+			$known = array_merge( array( 'priorities', 'subjects', 'statuses', 'saved', 'settings' ), array_keys( (array) apply_filters( 'wpfactory_wc_sts_header_tabs', array() ) ) );
+			return in_array( $tab, $known, true ) ? $tab : 'inbox';
+		}
+
+		/**
+		 * Page header (kept for add-ons that call it).
 		 */
 		public function admin_header() {
-			echo '<h1 class="wpfactory-wc-sts-title">' . esc_html( WPFACTORY_WC_STS_NAME ) . '</h1>';
+			WPFactory_WC_STS_UI::header( 'inbox' === $this->active_tab ? '' : $this->active_tab );
 		}
 
 		/**
-		 * Tabs: Dashboard, Tickets, Priorities, Subjects, Saved replies, Settings.
+		 * Tabs (kept for add-ons; the header prints them now).
 		 */
 		public function admin_tabs() {
-			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-			$tab    = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( $screen && 'stsw_canned_reply' === $screen->post_type ) {
-				$active = 'canned';
-			} elseif ( $screen && in_array( $screen->taxonomy, array( 'stsw_tickets_priority', 'stsw_tickets_subject', 'stsw_tickets_status' ), true ) ) {
-				$active = $screen->taxonomy;
-			} else {
-				$active = 'settings' === $tab ? 'settings' : 'general';
-			}
-			$this->active_tab = $active;
-			$tabs             = array(
-				'general'               => array( __( 'Inbox', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) ),
-				'stsw_tickets_priority' => array( __( 'Priorities', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' ) ),
-				'stsw_tickets_subject'  => array( __( 'Subjects', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' ) ),
-				'canned'                => array( __( 'Saved replies', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_canned_reply' ) ),
-				'settings'              => array( __( 'Settings', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=settings' ) ),
-			);
-			echo '<nav class="nav-tab-wrapper" aria-label="' . esc_attr__( 'Support tickets sections', 'support-ticket-system-for-woocommerce' ) . '">';
-			foreach ( $tabs as $key => $item ) {
-				$current = $key === $active;
-				echo '<a class="nav-tab' . ( $current ? ' nav-tab-active' : '' ) . '" href="' . esc_url( $item[1] ) . '"' . ( $current ? ' aria-current="page"' : '' ) . '>' . esc_html( $item[0] ) . '</a>';
-			}
-			echo '</nav>';
+			$this->active_tab = $this->current_tab();
 		}
 
 		/**
-		 * Settings form or dashboard.
+		 * Settings sub-navigation groups.
+		 *
+		 * @return array group => label
+		 */
+		protected function setting_groups() {
+			return array(
+				'basics'    => __( 'Basics', 'support-ticket-system-for-woocommerce' ),
+				'workflows' => __( 'Workflows', 'support-ticket-system-for-woocommerce' ),
+				'advanced'  => __( 'Advanced', 'support-ticket-system-for-woocommerce' ),
+			);
+		}
+
+		/**
+		 * Tab content: inbox, a term screen, saved replies, an add-on tab or the settings.
 		 *
 		 * @version 2.3.0
 		 */
 		public function admin_settings() {
-			$this->admin_tabs();
-			if ( 'settings' !== $this->active_tab ) {
-				WPFactory_WC_STS_Inbox::get_instance()->render();
-				return;
+			if ( '' === $this->active_tab ) {
+				$this->active_tab = $this->current_tab();
+			}
+			$ui = WPFactory_WC_STS_UI::get_instance();
+			switch ( $this->active_tab ) {
+				case 'inbox':
+					WPFactory_WC_STS_Inbox::get_instance()->render();
+					return;
+				case 'priorities':
+				case 'subjects':
+				case 'statuses':
+					$ui->render_terms( $this->active_tab );
+					return;
+				case 'saved':
+					$ui->render_saved();
+					return;
+				case 'settings':
+					break;
+				default:
+					/**
+					 * Content of an add-on header tab.
+					 */
+					do_action( 'wpfactory_wc_sts_render_tab_' . $this->active_tab );
+					return;
 			}
 			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
-				echo '<div class="notice notice-error inline"><p>' . esc_html__( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				echo '<div class="hd-page">';
+				WPFactory_WC_STS_UI::notice( __( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ), true );
+				echo '</div>';
 				return;
 			}
+			$group_of = array(
+				'pro_ratings'    => 'basics',
+				'pro_automation' => 'workflows',
+				'pro_orders'     => 'workflows',
+				'pro_piping'     => 'workflows',
+				'pro_ai'         => 'advanced',
+				'pro_api'        => 'advanced',
+			);
 			$sections = array(
-				'general'       => __( 'General', 'support-ticket-system-for-woocommerce' ),
-				'form'          => __( 'Ticket form', 'support-ticket-system-for-woocommerce' ),
-				'assignment'    => __( 'Assignment', 'support-ticket-system-for-woocommerce' ),
-				'notifications' => __( 'Notifications', 'support-ticket-system-for-woocommerce' ),
+				'general'       => array(
+					'label' => __( 'General', 'support-ticket-system-for-woocommerce' ),
+					'group' => 'basics',
+					'intro' => __( 'How customers reach support and what they see after they write.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'form'          => array(
+					'label' => __( 'Ticket form', 'support-ticket-system-for-woocommerce' ),
+					'group' => 'basics',
+					'intro' => __( 'Who can open tickets, file uploads and extra questions on the form.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'assignment'    => array(
+					'label' => __( 'Assignment', 'support-ticket-system-for-woocommerce' ),
+					'group' => 'basics',
+					'intro' => __( 'Who answers tickets and who gets new ones.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'notifications' => array(
+					'label' => __( 'Notifications', 'support-ticket-system-for-woocommerce' ),
+					'group' => 'basics',
+					'intro' => __( 'Emails to your team and to customers.', 'support-ticket-system-for-woocommerce' ),
+				),
 			);
 			foreach ( $this->get_extra_sections() as $id => $section ) {
-				$sections[ $id ] = $section['label'];
+				$sections[ $id ] = array(
+					'label' => $section['label'],
+					'group' => $section['group'] ?? ( $group_of[ $id ] ?? 'workflows' ),
+					'intro' => $section['intro'] ?? '',
+				);
 			}
 			?>
-			<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form">
-				<div class="result" role="status"><?php $this->admin_process_settings(); ?></div>
-				<div id="tabs">
-					<ul>
-						<?php foreach ( $sections as $id => $label ) : ?>
-							<li><a href="#<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></a></li>
-						<?php endforeach; ?>
-					</ul>
-					<div id="general"><?php $this->render_fields( $this->get_general_fields() ); ?></div>
-					<div id="form">
-						<?php $this->render_fields( $this->get_form_fields() ); ?>
-						<h2><?php esc_html_e( 'Extra fields', 'support-ticket-system-for-woocommerce' ); ?></h2>
-						<?php WPFactory_WC_STS_Fields::get_instance()->render_settings(); ?>
-					</div>
-					<div id="assignment"><?php $this->render_fields( $this->get_assignment_fields() ); ?></div>
-					<div id="notifications">
-						<p>
-							<?php esc_html_e( 'Placeholders for subjects and texts:', 'support-ticket-system-for-woocommerce' ); ?>
-							<code>{ticketId} {responseId} {title} {content} {responseContent} {toEmail} {toFirstName} {toLastName} {ticketLink}</code>
-						</p>
+			<div class="hd-page hd-page--settings">
+				<?php $this->admin_process_settings(); ?>
+				<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form" class="hd-settings" data-hd-settings>
+					<nav class="hd-subnav" aria-label="<?php esc_attr_e( 'Settings sections', 'support-ticket-system-for-woocommerce' ); ?>">
 						<?php
-						$this->render_fields( $this->get_notification_fields() );
-						WPFactory_WC_STS_Emails::get_instance()->render_test_email_button();
-						WPFactory_WC_STS_Emails::get_instance()->render_email_health();
-						?>
-					</div>
-					<?php foreach ( $this->get_extra_sections() as $id => $section ) : ?>
-						<div id="<?php echo esc_attr( $id ); ?>">
-							<?php
-							if ( ! empty( $section['intro'] ) ) {
-								echo '<p>' . esc_html( $section['intro'] ) . '</p>';
+						foreach ( $this->setting_groups() as $group => $group_label ) :
+							$in_group = array_filter(
+								$sections,
+								function ( $s ) use ( $group ) {
+									return $s['group'] === $group;
+								}
+							);
+							if ( ! $in_group ) {
+								continue;
 							}
-							$this->render_fields( $section['fields'] );
 							?>
-						</div>
-					<?php endforeach; ?>
-				</div>
-				<?php wp_nonce_field( $this->plugin ); ?>
-				<p id="save_changes"><?php submit_button(); ?></p>
-			</form>
+							<p class="hd-subnav__group" id="hd-group-<?php echo esc_attr( $group ); ?>"><?php echo esc_html( $group_label ); ?></p>
+							<ul aria-labelledby="hd-group-<?php echo esc_attr( $group ); ?>">
+								<?php foreach ( $in_group as $id => $section ) : ?>
+									<li><a href="#<?php echo esc_attr( $id ); ?>" data-hd-panel="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $section['label'] ); ?></a></li>
+								<?php endforeach; ?>
+							</ul>
+						<?php endforeach; ?>
+						<a class="hd-subnav__wizard" href="<?php echo esc_url( admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '-setup' ) ); ?>"><?php esc_html_e( 'Run setup wizard again', 'support-ticket-system-for-woocommerce' ); ?></a>
+					</nav>
+					<div class="hd-settings__panels">
+						<?php foreach ( $sections as $id => $section ) : ?>
+							<section id="<?php echo esc_attr( $id ); ?>" class="hd-panel" aria-labelledby="hd-panel-h-<?php echo esc_attr( $id ); ?>" tabindex="-1">
+								<h2 class="hd-h1" id="hd-panel-h-<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $section['label'] ); ?></h2>
+								<?php if ( '' !== $section['intro'] ) : ?>
+									<p class="hd-muted"><?php echo esc_html( $section['intro'] ); ?></p>
+								<?php endif; ?>
+								<?php $this->render_section( $id ); ?>
+							</section>
+						<?php endforeach; ?>
+					</div>
+					<?php wp_nonce_field( $this->plugin ); ?>
+					<div class="hd-savebar" id="save_changes">
+						<span class="hd-savebar__state" data-hd-state aria-live="polite"><?php esc_html_e( 'All changes saved', 'support-ticket-system-for-woocommerce' ); ?></span>
+						<button type="submit" name="submit" class="hd-btn hd-btn--primary"><?php esc_html_e( 'Save changes', 'support-ticket-system-for-woocommerce' ); ?></button>
+					</div>
+				</form>
+			</div>
 			<?php
+		}
+
+		/**
+		 * Cards of one settings section.
+		 *
+		 * @param string $id Section.
+		 */
+		protected function render_section( $id ) {
+			switch ( $id ) {
+				case 'general':
+					$fields = $this->get_general_fields();
+					$this->render_card( __( 'Customer access', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'renameAccountTabLink', 'renameOrderButtonLink', 'hideClosed' ) ) ) );
+					$this->render_card( __( 'Messages', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'textforTicketSave', 'textforResponseSave' ) ) ) );
+					$this->render_card( __( 'Data', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( '@wpfactory_wc_sts_delete_data_on_uninstall' ) ) ) );
+					break;
+				case 'form':
+					$this->render_card( __( 'Form options', 'support-ticket-system-for-woocommerce' ), $this->get_form_fields() );
+					echo '<div class="hd-card"><div class="hd-card__head"><h3 class="hd-h2">' . esc_html__( 'Extra fields', 'support-ticket-system-for-woocommerce' ) . '</h3></div><div class="hd-card__body">';
+					WPFactory_WC_STS_Fields::get_instance()->render_settings();
+					echo '</div></div>';
+					break;
+				case 'assignment':
+					$this->render_card( __( 'Assignment', 'support-ticket-system-for-woocommerce' ), $this->get_assignment_fields() );
+					break;
+				case 'notifications':
+					$fields = $this->get_notification_fields();
+					$this->render_card( __( 'Alerts', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'mailToADmin', 'AdminEmailAddress', 'mailToCustomer' ) ) ) );
+					$this->render_card(
+						__( 'Email templates', 'support-ticket-system-for-woocommerce' ),
+						array_diff_key( $fields, array_flip( array( 'mailToADmin', 'AdminEmailAddress', 'mailToCustomer' ) ) ),
+						__( 'Placeholders:', 'support-ticket-system-for-woocommerce' ) . ' {ticketId} {responseId} {title} {content} {responseContent} {toEmail} {toFirstName} {toLastName} {ticketLink}'
+					);
+					echo '<div class="hd-card"><div class="hd-card__head"><h3 class="hd-h2">' . esc_html__( 'Email delivery', 'support-ticket-system-for-woocommerce' ) . '</h3></div><div class="hd-card__body hd-card__pad">';
+					WPFactory_WC_STS_Emails::get_instance()->render_test_email_button();
+					WPFactory_WC_STS_Emails::get_instance()->render_email_health();
+					echo '</div></div>';
+					break;
+				default:
+					$extra = $this->get_extra_sections();
+					if ( isset( $extra[ $id ] ) ) {
+						$this->render_card( $extra[ $id ]['card'] ?? $extra[ $id ]['label'], $extra[ $id ]['fields'] );
+					}
+			}
+		}
+
+		/**
+		 * One settings card.
+		 *
+		 * @param string $title  Title.
+		 * @param array  $fields Fields.
+		 * @param string $note   Note under the title.
+		 */
+		protected function render_card( $title, $fields, $note = '' ) {
+			if ( ! $fields ) {
+				return;
+			}
+			echo '<div class="hd-card"><div class="hd-card__head"><h3 class="hd-h2">' . esc_html( $title ) . '</h3>' . ( $note ? '<p class="hd-help hd-mono">' . esc_html( $note ) . '</p>' : '' ) . '</div><div class="hd-card__body">';
+			$this->render_fields( $fields );
+			echo '</div></div>';
 		}
 
 		/**
@@ -471,20 +585,32 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * Prints fields as a form table.
+		 * Prints fields as card rows: label and help on the left, control on the right.
 		 *
 		 * @param array $fields Fields.
 		 */
 		protected function render_fields( $fields ) {
-			echo '<table class="form-table" role="presentation"><tbody>';
 			foreach ( $fields as $key => $field ) {
-				$name  = $this->option_name( $key );
-				$id    = sanitize_key( $name );
-				$value = get_option( $name, '' );
-				echo '<tr><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . '</label></th><td>';
+				$name    = $this->option_name( $key );
+				$id      = sanitize_key( $name );
+				$value   = get_option( $name, '' );
+				$help_id = $id . '-help';
+				$help    = ! empty( $field['description'] ) ? ' aria-describedby="' . esc_attr( $help_id ) . '"' : '';
+				$wide    = in_array( $field['type'], array( 'editor', 'html', 'textarea', 'roles' ), true );
+				$group   = in_array( $field['type'], array( 'roles' ), true );
+				echo '<div class="hd-row' . ( $wide ? ' hd-row--wide' : '' ) . '"><div class="hd-row__label">';
+				if ( $group ) {
+					echo '<span class="hd-row__title" id="' . esc_attr( $id ) . '-label">' . esc_html( $field['label'] ) . '</span>';
+				} else {
+					echo '<label class="hd-row__title" for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . '</label>';
+				}
+				if ( ! empty( $field['description'] ) ) {
+					echo '<span class="hd-help" id="' . esc_attr( $help_id ) . '">' . esc_html( $field['description'] ) . '</span>';
+				}
+				echo '</div><div class="hd-row__control">';
 				switch ( $field['type'] ) {
 					case 'checkbox':
-						echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . checked( '1', (string) $value, false ) . ' />';
+						echo '<input type="checkbox" role="switch" class="hd-switch" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . checked( '1', (string) $value, false ) . $help . ' />'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $help escaped above.
 						break;
 					case 'editor':
 						wp_editor(
@@ -500,7 +626,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						);
 						break;
 					case 'role':
-						echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"><option value="">' . esc_html__( 'None', 'support-ticket-system-for-woocommerce' ) . '</option>';
+						echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"' . $help . '><option value="">' . esc_html__( 'None', 'support-ticket-system-for-woocommerce' ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $help escaped above.
 						wp_dropdown_roles( (string) $value );
 						echo '</select>';
 						break;
@@ -508,37 +634,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						WPFactory_WC_STS_Admin::get_instance()->render_user_select( $name, (int) $value, __( 'Nobody', 'support-ticket-system-for-woocommerce' ), $id );
 						break;
 					case 'roles':
-						echo '<fieldset id="' . esc_attr( $id ) . '">';
+						echo '<fieldset id="' . esc_attr( $id ) . '" class="hd-checks" aria-labelledby="' . esc_attr( $id ) . '-label">';
 						foreach ( wp_roles()->get_names() as $role => $role_name ) {
-							echo '<label style="display:block"><input type="checkbox" name="' . esc_attr( $name ) . '[]" value="' . esc_attr( $role ) . '"' . checked( in_array( $role, (array) $value, true ), true, false ) . ' /> ' . esc_html( translate_user_role( $role_name ) ) . '</label>';
+							echo '<label><input type="checkbox" name="' . esc_attr( $name ) . '[]" value="' . esc_attr( $role ) . '"' . checked( in_array( $role, (array) $value, true ), true, false ) . ' /> ' . esc_html( translate_user_role( $role_name ) ) . '</label>';
 						}
 						echo '</fieldset>';
 						break;
 					case 'select':
-						echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '">';
+						echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"' . $help . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $help escaped above.
 						foreach ( $field['options'] as $option => $label ) {
 							echo '<option value="' . esc_attr( $option ) . '"' . selected( (string) $value, (string) $option, false ) . '>' . esc_html( $label ) . '</option>';
 						}
 						echo '</select>';
 						break;
 					case 'password':
-						echo '<input type="password" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="" autocomplete="new-password" placeholder="' . esc_attr( '' !== (string) $value ? __( 'Saved. Leave empty to keep it.', 'support-ticket-system-for-woocommerce' ) : '' ) . '" />';
+						echo '<input type="password" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="" autocomplete="new-password" placeholder="' . esc_attr( '' !== (string) $value ? __( 'Saved. Leave empty to keep it.', 'support-ticket-system-for-woocommerce' ) : '' ) . '"' . $help . ' />'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $help escaped above.
 						break;
 					case 'textarea':
-						echo '<textarea class="large-text" rows="3" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '">' . esc_textarea( (string) $value ) . '</textarea>';
+						echo '<textarea rows="3" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"' . $help . '>' . esc_textarea( (string) $value ) . '</textarea>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $help escaped above.
 						break;
 					case 'html':
 						call_user_func( $field['render'] );
 						break;
 					default:
-						echo '<input type="' . esc_attr( $field['type'] ) . '" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . ( isset( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : '' ) . ( 'number' === $field['type'] ? ' min="0" step="1"' : '' ) . ' />';
+						echo '<input type="' . esc_attr( $field['type'] ) . '" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . ( isset( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : '' ) . ( 'number' === $field['type'] ? ' min="0" step="1"' : '' ) . $help . ' />'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $help escaped above.
 				}
-				if ( ! empty( $field['description'] ) ) {
-					echo '<p class="description">' . esc_html( $field['description'] ) . '</p>';
-				}
-				echo '</td></tr>';
+				echo '</div></div>';
 			}
-			echo '</tbody></table>';
 		}
 
 		/**
@@ -551,7 +673,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				return;
 			}
 			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
-				echo '<div class="notice notice-error inline"><p>' . esc_html__( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				WPFactory_WC_STS_UI::notice( __( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ), true );
 				return;
 			}
 			check_admin_referer( $this->plugin );
@@ -629,7 +751,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				update_option( WPFactory_WC_STS_Fields::OPTION, WPFactory_WC_STS_Fields::get_instance()->sanitize_fields( $_POST['wpfactory_wc_sts_custom_fields'] ), false ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized in sanitize_fields().
 			}
 
-			echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+			WPFactory_WC_STS_UI::notice( __( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) );
 		}
 	}
 

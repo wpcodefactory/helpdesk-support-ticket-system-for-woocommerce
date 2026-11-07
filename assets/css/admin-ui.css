@@ -1,0 +1,2354 @@
+/**
+ * Helpdesk Support Ticket System for WooCommerce - admin design.
+ *
+ * Every rule is scoped under .wpf-hd so nothing leaks into other wp-admin screens.
+ *
+ * @author WPFactory
+ */
+
+/* Tokens */
+.wpf-hd {
+	--hd-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--hd-font-mono: ui-monospace, Menlo, Consolas, monospace;
+	--hd-text-xs: 11px;
+	--hd-text-sm: 12px;
+	--hd-text-md: 13px;
+	--hd-text-base: 14px;
+	--hd-text-lg: 16px;
+	--hd-text-xl: 20px;
+	--hd-text-2xl: 24px;
+	--hd-bg: #f6f7f9;
+	--hd-surface: #fff;
+	--hd-surface-muted: #f9fafb;
+	--hd-surface-sunken: #fcfcfd;
+	--hd-hover: #f2f4f7;
+	--hd-border: #e4e7ec;
+	--hd-border-strong: #d0d5dd;
+	--hd-divider: #f2f4f7;
+	--hd-text: #101828;
+	--hd-text-2: #344054;
+	--hd-text-muted: #475467;
+	--hd-icon-muted: #667085;
+	--hd-accent: #3858e9;
+	--hd-accent-hover: #2a46c9;
+	--hd-accent-strong: #1d35b4;
+	--hd-accent-soft: #eef1fd;
+	--hd-accent-selected: #f5f7ff;
+	--hd-accent-border: #dbe2fb;
+	--hd-prio-high-fg: #b93815;
+	--hd-prio-high-bg: #fef3ee;
+	--hd-prio-high-dot: #e8590c;
+	--hd-prio-normal-fg: #067647;
+	--hd-prio-normal-bg: #ecfdf3;
+	--hd-prio-normal-dot: #16a34a;
+	--hd-prio-low-fg: #1d4ed8;
+	--hd-prio-low-bg: #eff4ff;
+	--hd-prio-low-dot: #2563eb;
+	--hd-note-bg: #fffaeb;
+	--hd-note-bg-2: #fffcf0;
+	--hd-note-border: #fec84b;
+	--hd-note-tag-bg: #fef0c7;
+	--hd-note-fg: #93370d;
+	--hd-warn-border: #fedf89;
+	--hd-warn-fg: #7a2e0e;
+	--hd-success-bg: #ecfdf3;
+	--hd-success-fg: #15803d;
+	--hd-danger: #b42318;
+	--hd-danger-bg: #fef3f2;
+	--hd-radius-sm: 6px;
+	--hd-radius: 8px;
+	--hd-radius-lg: 12px;
+	--hd-radius-xl: 16px;
+	--hd-radius-pill: 999px;
+	--hd-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+	--hd-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+	--hd-control-h: 40px;
+	--hd-control-h-sm: 34px;
+	--hd-gap: 16px;
+	font-family: var(--hd-font);
+	font-size: var(--hd-text-base);
+	color: var(--hd-text);
+	line-height: 1.5;
+}
+
+.wpf-hd.wrap {
+	margin: 0 0 0 -20px;
+	padding: 0;
+	background: var(--hd-bg);
+	min-height: calc(100vh - 32px);
+}
+
+body.wpf-hd-screen #wpcontent {
+	padding-left: 0;
+}
+
+body.wpf-hd-screen #wpbody-content {
+	padding-bottom: 0;
+}
+
+body.wpf-hd-screen .wpf-hd.wrap {
+	margin-left: 0;
+}
+
+.wpf-hd *,
+.wpf-hd *::before,
+.wpf-hd *::after {
+	box-sizing: border-box;
+}
+
+.wpf-hd .hd-icon {
+	flex: none;
+	vertical-align: middle;
+}
+
+.wpf-hd .hd-muted {
+	color: var(--hd-text-muted);
+}
+
+.wpf-hd .hd-help {
+	display: block;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+}
+
+.wpf-hd .hd-mono {
+	font-family: var(--hd-font-mono);
+}
+
+.wpf-hd .hd-h1 {
+	margin: 0;
+	padding: 0;
+	font-size: var(--hd-text-xl);
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--hd-text);
+}
+
+.wpf-hd .hd-h2 {
+	margin: 0;
+	padding: 0;
+	font-size: var(--hd-text-lg);
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--hd-text);
+}
+
+.wpf-hd kbd {
+	display: inline-block;
+	min-width: 20px;
+	padding: 0 5px;
+	border: 1px solid var(--hd-border-strong);
+	border-bottom-width: 2px;
+	border-radius: 4px;
+	background: var(--hd-surface);
+	font-family: var(--hd-font-mono);
+	font-size: var(--hd-text-xs);
+	line-height: 18px;
+	text-align: center;
+	color: var(--hd-text-2);
+}
+
+/* Focus */
+.wpf-hd a:focus-visible,
+.wpf-hd button:focus-visible,
+.wpf-hd input:focus-visible,
+.wpf-hd select:focus-visible,
+.wpf-hd textarea:focus-visible,
+.wpf-hd summary:focus-visible,
+.wpf-hd [tabindex]:focus-visible {
+	outline: 2px solid var(--hd-accent);
+	outline-offset: 2px;
+	box-shadow: none;
+}
+
+/* Header */
+.wpf-hd .hd-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 24px;
+	min-height: 64px;
+	padding: 0 24px;
+	background: var(--hd-surface);
+	border-bottom: 1px solid var(--hd-border);
+}
+
+.wpf-hd .hd-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.wpf-hd .hd-logo {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--hd-radius);
+	background: var(--hd-accent);
+	color: #fff;
+}
+
+.wpf-hd .hd-brand__name {
+	font-size: var(--hd-text-lg);
+	font-weight: 600;
+}
+
+.wpf-hd .hd-badge-pro {
+	padding: 1px 6px;
+	border-radius: 4px;
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+	font-size: var(--hd-text-xs);
+	font-weight: 700;
+	letter-spacing: 0.04em;
+}
+
+.wpf-hd .hd-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	align-self: stretch;
+	gap: 4px;
+}
+
+.wpf-hd .hd-tab {
+	display: flex;
+	align-items: center;
+	padding: 0 12px;
+	min-height: 44px;
+	border-bottom: 2px solid transparent;
+	color: var(--hd-text-muted);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.wpf-hd .hd-tab:hover {
+	color: var(--hd-text);
+}
+
+.wpf-hd .hd-tab[aria-current="page"] {
+	border-bottom-color: var(--hd-accent);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-header__spacer {
+	flex: 1;
+}
+
+.wpf-hd .hd-header__actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 0;
+}
+
+/* Search */
+.wpf-hd .hd-search {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.wpf-hd .hd-search > .hd-icon {
+	position: absolute;
+	left: 10px;
+	color: var(--hd-icon-muted);
+	pointer-events: none;
+}
+
+.wpf-hd .hd-search input[type="search"] {
+	width: 280px;
+	max-width: 100%;
+	height: var(--hd-control-h-sm);
+	padding: 0 34px 0 34px;
+	border: 1px solid var(--hd-border-strong);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface-muted);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-search kbd {
+	position: absolute;
+	right: 8px;
+}
+
+.wpf-hd .hd-search--block {
+	margin-bottom: 8px;
+}
+
+.wpf-hd .hd-search--block input[type="search"] {
+	width: 100%;
+}
+
+/* Buttons */
+.wpf-hd .hd-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	min-height: var(--hd-control-h-sm);
+	padding: 0 14px;
+	border: 1px solid var(--hd-border-strong);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface);
+	box-shadow: var(--hd-shadow-sm);
+	color: var(--hd-text-2);
+	font: inherit;
+	font-size: var(--hd-text-md);
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-btn:hover {
+	background: var(--hd-hover);
+	color: var(--hd-text);
+}
+
+.wpf-hd .hd-btn--primary {
+	border-color: var(--hd-accent);
+	background: var(--hd-accent);
+	color: #fff;
+}
+
+.wpf-hd .hd-btn--primary:hover {
+	border-color: var(--hd-accent-hover);
+	background: var(--hd-accent-hover);
+	color: #fff;
+}
+
+.wpf-hd .hd-btn--sm {
+	min-height: 30px;
+	padding: 0 10px;
+	font-size: var(--hd-text-sm);
+}
+
+.wpf-hd .hd-btn--ghost {
+	border-color: transparent;
+	background: transparent;
+	box-shadow: none;
+}
+
+.wpf-hd .hd-btn--danger-ghost {
+	border-color: transparent;
+	background: transparent;
+	box-shadow: none;
+	color: var(--hd-danger);
+}
+
+.wpf-hd .hd-btn--danger-ghost:hover {
+	background: var(--hd-danger-bg);
+	color: var(--hd-danger);
+}
+
+.wpf-hd .hd-icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: var(--hd-radius-sm);
+	background: transparent;
+	color: var(--hd-icon-muted);
+	cursor: pointer;
+	list-style: none;
+}
+
+.wpf-hd .hd-icon-btn::-webkit-details-marker {
+	display: none;
+}
+
+.wpf-hd .hd-icon-btn:hover {
+	background: var(--hd-hover);
+	color: var(--hd-text);
+}
+
+.wpf-hd .hd-danger:hover {
+	color: var(--hd-danger);
+}
+
+.wpf-hd .hd-linkbtn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 0;
+	border: 0;
+	background: none;
+	color: var(--hd-text-muted);
+	font: inherit;
+	font-size: var(--hd-text-md);
+	cursor: pointer;
+}
+
+.wpf-hd .hd-linkbtn:hover {
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-inline {
+	display: inline;
+	margin: 0;
+}
+
+/* Form controls */
+.wpf-hd input[type="text"],
+.wpf-hd input[type="email"],
+.wpf-hd input[type="number"],
+.wpf-hd input[type="password"],
+.wpf-hd input[type="url"],
+.wpf-hd select,
+.wpf-hd textarea {
+	max-width: 100%;
+	min-height: var(--hd-control-h-sm);
+	padding: 6px 10px;
+	border: 1px solid var(--hd-border-strong);
+	border-radius: var(--hd-radius);
+	background-color: var(--hd-surface);
+	box-shadow: var(--hd-shadow-sm);
+	color: var(--hd-text);
+	font-family: inherit;
+	font-size: var(--hd-text-base);
+}
+
+.wpf-hd select {
+	padding-right: 28px;
+}
+
+.wpf-hd textarea {
+	width: 100%;
+	line-height: 1.5;
+}
+
+.wpf-hd input:focus,
+.wpf-hd select:focus,
+.wpf-hd textarea:focus {
+	border-color: var(--hd-accent);
+	box-shadow: 0 0 0 1px var(--hd-accent);
+}
+
+.wpf-hd .hd-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0 0 16px;
+	padding: 0;
+	border: 0;
+}
+
+.wpf-hd .hd-field > label,
+.wpf-hd .hd-field > legend,
+.wpf-hd .hd-field > span:first-child {
+	font-weight: 600;
+	color: var(--hd-text-2);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-field > legend {
+	margin-bottom: 6px;
+	padding: 0;
+}
+
+.wpf-hd .hd-field input[type="text"],
+.wpf-hd .hd-field input[type="email"],
+.wpf-hd .hd-field select {
+	width: 100%;
+}
+
+.wpf-hd .hd-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+/* Toggle switch (checkbox role="switch") */
+.wpf-hd input[type="checkbox"].hd-switch {
+	position: relative;
+	flex: none;
+	width: 40px;
+	height: 22px;
+	margin: 0;
+	border: 0;
+	border-radius: var(--hd-radius-pill);
+	background: var(--hd-border-strong);
+	box-shadow: none;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	transition: background-color 0.15s;
+}
+
+.wpf-hd input[type="checkbox"].hd-switch::before {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: var(--hd-shadow);
+	transition: transform 0.15s;
+}
+
+.wpf-hd input[type="checkbox"].hd-switch:checked {
+	background: var(--hd-accent);
+}
+
+.wpf-hd input[type="checkbox"].hd-switch:checked::before {
+	transform: translateX(18px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wpf-hd input[type="checkbox"].hd-switch,
+	.wpf-hd input[type="checkbox"].hd-switch::before {
+		transition: none;
+	}
+}
+
+.wpf-hd .hd-switchrow {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 0 0 14px;
+	cursor: pointer;
+}
+
+.wpf-hd .hd-switchrow > span {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Pages and cards */
+.wpf-hd .hd-page {
+	max-width: 1280px;
+	padding: 24px;
+}
+
+.wpf-hd .hd-pagehead {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 0 0 20px;
+}
+
+.wpf-hd .hd-pagehead p {
+	margin: 4px 0 0;
+}
+
+.wpf-hd .hd-card {
+	margin: 0 0 16px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface);
+	box-shadow: var(--hd-shadow-sm);
+}
+
+.wpf-hd .hd-card--form,
+.wpf-hd .hd-card--list,
+.wpf-hd .hd-split > .hd-card {
+	padding: 20px;
+}
+
+.wpf-hd .hd-card--form .hd-h2 {
+	margin-bottom: 16px;
+}
+
+.wpf-hd .hd-card__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 16px 20px;
+	border-bottom: 1px solid var(--hd-divider);
+}
+
+.wpf-hd .hd-split > .hd-card .hd-card__head {
+	margin: -20px -20px 16px;
+}
+
+.wpf-hd .hd-card__pad {
+	padding: 16px 20px;
+}
+
+.wpf-hd .hd-split {
+	display: grid;
+	grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+	gap: 20px;
+	align-items: start;
+}
+
+.wpf-hd .hd-split--wide {
+	grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+}
+
+.wpf-hd .hd-details summary {
+	cursor: pointer;
+	color: var(--hd-text-muted);
+	font-weight: 600;
+	font-size: var(--hd-text-md);
+	margin-bottom: 12px;
+}
+
+/* Swatches */
+.wpf-hd .hd-swatches {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.wpf-hd .hd-swatch {
+	position: relative;
+	display: inline-flex;
+}
+
+.wpf-hd .hd-swatch input {
+	width: 28px;
+	height: 28px;
+	margin: 0;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: var(--hd-swatch);
+	box-shadow: 0 0 0 1px var(--hd-border-strong);
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+}
+
+.wpf-hd .hd-swatch input:checked {
+	box-shadow: 0 0 0 2px var(--hd-text);
+}
+
+.wpf-hd .hd-swatch input::before {
+	display: none;
+}
+
+/* Sortable lists */
+.wpf-hd .hd-list-head,
+.wpf-hd .hd-sortable__row {
+	display: grid;
+	grid-template-columns: 32px minmax(0, 1fr) 70px 80px;
+	align-items: center;
+	gap: 8px;
+}
+
+.wpf-hd .hd-list-head {
+	padding: 0 0 8px;
+	border-bottom: 1px solid var(--hd-divider);
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.wpf-hd .hd-sortable {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-sortable__row {
+	padding: 10px 0;
+	border-bottom: 1px solid var(--hd-divider);
+	background: var(--hd-surface);
+}
+
+.wpf-hd .hd-sortable__row.is-dragging {
+	opacity: 0.5;
+}
+
+.wpf-hd .hd-sortable__row.is-over {
+	box-shadow: inset 0 2px 0 var(--hd-accent);
+}
+
+.wpf-hd .hd-sortable__name {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.wpf-hd .hd-sortable__name .hd-muted {
+	font-size: var(--hd-text-sm);
+}
+
+.wpf-hd .hd-drag {
+	cursor: grab;
+}
+
+.wpf-hd .hd-row-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 2px;
+}
+
+.wpf-hd .hd-empty {
+	padding: 24px 0;
+	color: var(--hd-text-muted);
+	text-align: center;
+	list-style: none;
+}
+
+/* Priority chip and dots */
+.wpf-hd .hd-prio {
+	--hd-prio-fg: var(--hd-text-2);
+	--hd-prio-bg: var(--hd-hover);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 8px;
+	border-radius: var(--hd-radius-pill);
+	background: var(--hd-prio-bg);
+	color: var(--hd-prio-fg);
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-dot {
+	display: inline-block;
+	flex: none;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--hd-prio-dot, var(--hd-icon-muted));
+}
+
+.wpf-hd .hd-prio--high {
+	--hd-prio-fg: var(--hd-prio-high-fg);
+	--hd-prio-bg: var(--hd-prio-high-bg);
+	--hd-prio-dot: var(--hd-prio-high-dot);
+}
+
+.wpf-hd .hd-prio--normal {
+	--hd-prio-fg: var(--hd-prio-normal-fg);
+	--hd-prio-bg: var(--hd-prio-normal-bg);
+	--hd-prio-dot: var(--hd-prio-normal-dot);
+}
+
+.wpf-hd .hd-prio--low {
+	--hd-prio-fg: var(--hd-prio-low-fg);
+	--hd-prio-bg: var(--hd-prio-low-bg);
+	--hd-prio-dot: var(--hd-prio-low-dot);
+}
+
+/* Avatars */
+.wpf-hd .hd-avatar {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	font-size: var(--hd-text-md);
+	font-weight: 600;
+}
+
+.wpf-hd .hd-avatar--sm {
+	width: 28px;
+	height: 28px;
+	font-size: var(--hd-text-xs);
+}
+
+.wpf-hd .hd-avatar--lg {
+	width: 48px;
+	height: 48px;
+	font-size: var(--hd-text-lg);
+}
+
+.wpf-hd .hd-tone-a { background: #eef1fd; color: #1d35b4; }
+.wpf-hd .hd-tone-b { background: #ecfdf3; color: #067647; }
+.wpf-hd .hd-tone-c { background: #fef3ee; color: #b93815; }
+.wpf-hd .hd-tone-d { background: #f4f3ff; color: #5925dc; }
+.wpf-hd .hd-tone-e { background: #fdf2fa; color: #c11574; }
+.wpf-hd .hd-tone-f { background: #f0f9ff; color: #026aa2; }
+
+/* Tags and statuses */
+.wpf-hd .hd-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 1px 6px;
+	border-radius: 4px;
+	background: var(--hd-hover);
+	color: var(--hd-text-2);
+	font-size: var(--hd-text-xs);
+	font-weight: 600;
+}
+
+.wpf-hd .hd-tag--store {
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-tag--note {
+	background: var(--hd-note-tag-bg);
+	color: var(--hd-note-fg);
+}
+
+.wpf-hd .hd-status {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: var(--hd-radius-pill);
+	background: var(--hd-hover);
+	color: var(--hd-text-2);
+	font-size: var(--hd-text-xs);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-status--completed {
+	background: var(--hd-success-bg);
+	color: var(--hd-success-fg);
+}
+
+.wpf-hd .hd-status--processing {
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-status--on-hold,
+.wpf-hd .hd-status--pending {
+	background: var(--hd-note-tag-bg);
+	color: var(--hd-note-fg);
+}
+
+.wpf-hd .hd-status--cancelled,
+.wpf-hd .hd-status--failed,
+.wpf-hd .hd-status--refunded {
+	background: var(--hd-danger-bg);
+	color: var(--hd-danger);
+}
+
+/* Toasts and banners */
+.wpf-hd .hd-toast {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 16px;
+	padding: 10px 14px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface);
+	box-shadow: var(--hd-shadow);
+	font-weight: 500;
+}
+
+.wpf-hd .hd-toast.is-success {
+	border-color: #abefc6;
+	background: var(--hd-success-bg);
+	color: var(--hd-success-fg);
+}
+
+.wpf-hd .hd-toast.is-error {
+	border-color: #fecdca;
+	background: var(--hd-danger-bg);
+	color: var(--hd-danger);
+}
+
+.wpf-hd .hd-toast-region {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 100000;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.wpf-hd .hd-toast-region .hd-toast {
+	margin: 0;
+}
+
+.wpf-hd .hd-banner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 10px;
+	margin: 0 24px 12px;
+	padding: 10px 14px;
+	border: 1px solid var(--hd-warn-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-note-bg);
+	color: var(--hd-warn-fg);
+}
+
+.wpf-hd .hd-banner > span:nth-child(2) {
+	flex: 1;
+	min-width: 220px;
+}
+
+.wpf-hd .hd-banner__actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.wpf-hd .hd-banner a {
+	color: var(--hd-warn-fg);
+	font-weight: 600;
+}
+
+/* Empty states */
+.wpf-hd .hd-emptystate {
+	padding: 48px 24px;
+	text-align: center;
+}
+
+.wpf-hd .hd-emptystate__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	margin: 0 auto 12px;
+	border-radius: 50%;
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent);
+}
+
+.wpf-hd .hd-emptystate__icon.is-success {
+	background: var(--hd-success-bg);
+	color: var(--hd-success-fg);
+}
+
+.wpf-hd .hd-chips {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.wpf-hd .hd-field .hd-chips {
+	justify-content: flex-start;
+	margin-top: 0;
+}
+
+.wpf-hd .hd-chip-btn {
+	display: inline-flex;
+	align-items: center;
+	min-height: 30px;
+	padding: 0 12px;
+	border: 1px solid var(--hd-border-strong);
+	border-radius: var(--hd-radius-pill);
+	background: var(--hd-surface);
+	color: var(--hd-text-2);
+	font: inherit;
+	font-size: var(--hd-text-md);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.wpf-hd .hd-chip-btn:hover {
+	border-color: var(--hd-accent);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-blank {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 240px;
+	padding: 32px;
+	text-align: center;
+}
+
+.wpf-hd .hd-blank p {
+	margin: 0;
+}
+
+/* Pick list (saved replies) */
+.wpf-hd .hd-pick-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-pick-list a {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 10px 12px;
+	border-radius: var(--hd-radius);
+	color: var(--hd-text);
+	text-decoration: none;
+}
+
+.wpf-hd .hd-pick-list a:hover {
+	background: var(--hd-hover);
+}
+
+.wpf-hd .hd-pick-list a[aria-current="true"] {
+	background: var(--hd-accent-selected);
+	box-shadow: inset 3px 0 0 var(--hd-accent);
+}
+
+.wpf-hd .hd-pick-list .hd-muted {
+	font-size: var(--hd-text-sm);
+}
+
+/* Inbox */
+.wpf-hd .hd-inbox-wrap > .hd-toast,
+.wpf-hd .hd-inbox-wrap > .stsw-checklist {
+	margin: 16px 24px 0;
+}
+
+.wpf-hd .hd-inbox {
+	display: grid;
+	grid-template-columns: 220px minmax(300px, 380px) minmax(0, 1fr);
+	min-height: calc(100vh - 32px - 65px);
+	background: var(--hd-surface);
+}
+
+.wpf-hd .hd-rail {
+	padding: 16px 12px;
+	border-right: 1px solid var(--hd-border);
+	background: var(--hd-surface-muted);
+}
+
+.wpf-hd .hd-rail__label {
+	margin: 16px 8px 6px;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.wpf-hd .hd-rail__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-rail__list li {
+	margin: 0 0 2px;
+}
+
+.wpf-hd .hd-rail__item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 34px;
+	padding: 0 8px;
+	border-radius: var(--hd-radius-sm);
+	color: var(--hd-text-2);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.wpf-hd .hd-rail__item .hd-icon {
+	color: var(--hd-icon-muted);
+}
+
+.wpf-hd .hd-rail__item:hover {
+	background: var(--hd-hover);
+	color: var(--hd-text);
+}
+
+.wpf-hd .hd-rail__item[aria-current="page"] {
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-rail__item[aria-current="page"] .hd-icon {
+	color: var(--hd-accent);
+}
+
+.wpf-hd .hd-rail__text {
+	flex: 1;
+	min-width: 0;
+}
+
+.wpf-hd .hd-count {
+	min-width: 24px;
+	padding: 0 6px;
+	border-radius: var(--hd-radius-pill);
+	background: var(--hd-surface);
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+	text-align: center;
+}
+
+.wpf-hd .hd-rail__foot {
+	margin: 24px 8px 0;
+}
+
+.wpf-hd .hd-rail .hd-btn {
+	width: 100%;
+}
+
+.wpf-hd .hd-list {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	border-right: 1px solid var(--hd-border);
+}
+
+.wpf-hd .hd-list__head {
+	padding: 16px 16px 8px;
+}
+
+.wpf-hd .hd-filter {
+	margin: 6px 0 0;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-bulkbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 6px 16px;
+	border-top: 1px solid var(--hd-divider);
+	border-bottom: 1px solid var(--hd-border);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-bulkbar__count {
+	flex: 1;
+	color: var(--hd-text-muted);
+}
+
+.wpf-hd .hd-bulkbar.is-active {
+	background: var(--hd-accent-selected);
+}
+
+.wpf-hd .hd-bulkbar.is-active .hd-bulkbar__count {
+	color: var(--hd-accent-strong);
+	font-weight: 600;
+}
+
+.wpf-hd .hd-bulkbar__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.wpf-hd.hd-js .hd-bulkbar:not(.is-active) .hd-bulkbar__actions {
+	display: none;
+}
+
+.wpf-hd .hd-rows {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-row-t {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin: 0;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--hd-divider);
+}
+
+.wpf-hd .hd-row-t:hover {
+	background: var(--hd-surface-muted);
+}
+
+.wpf-hd .hd-row-t.is-current {
+	background: var(--hd-accent-selected);
+	box-shadow: inset 3px 0 0 var(--hd-accent);
+}
+
+.wpf-hd .hd-row-t__check {
+	margin-top: 10px !important;
+}
+
+.wpf-hd .hd-row-t__link {
+	display: flex;
+	flex: 1;
+	gap: 10px;
+	min-width: 0;
+	color: inherit;
+	text-decoration: none;
+}
+
+.wpf-hd .hd-row-t__main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.wpf-hd .hd-row-t__top {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.wpf-hd .hd-row-t__name {
+	overflow: hidden;
+	color: var(--hd-text-2);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-row-t.is-waiting .hd-row-t__name {
+	color: var(--hd-text);
+	font-weight: 700;
+}
+
+.wpf-hd .hd-unread {
+	flex: none;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--hd-accent);
+}
+
+.wpf-hd .hd-row-t__time {
+	margin-left: auto;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-row-t__subject {
+	overflow: hidden;
+	font-size: var(--hd-text-md);
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-row-t__preview {
+	display: -webkit-box;
+	overflow: hidden;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-md);
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+}
+
+.wpf-hd .hd-row-t__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 4px;
+}
+
+.wpf-hd .hd-pages {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 12px;
+}
+
+.wpf-hd .hd-detail {
+	min-width: 0;
+	background: var(--hd-surface);
+}
+
+.wpf-hd .hd-ticket__head {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 20px 24px 12px;
+}
+
+.wpf-hd .hd-ticket__titles {
+	flex: 1;
+	min-width: 0;
+}
+
+.wpf-hd .hd-ticket__kicker {
+	margin: 0 0 4px;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-back {
+	display: none;
+	align-items: center;
+	gap: 4px;
+	margin-bottom: 8px;
+	font-size: var(--hd-text-md);
+	text-decoration: none;
+}
+
+.wpf-hd .hd-menu {
+	position: relative;
+}
+
+.wpf-hd .hd-menu__panel {
+	position: absolute;
+	right: 0;
+	z-index: 20;
+	width: 300px;
+	margin-top: 6px;
+	padding: 12px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface);
+	box-shadow: 0 12px 24px rgba(16, 24, 40, 0.12);
+}
+
+.wpf-hd .hd-menu__panel details,
+.wpf-hd .hd-menu__panel form {
+	margin: 0 0 8px;
+}
+
+.wpf-hd .hd-menu__panel summary {
+	cursor: pointer;
+	padding: 4px 0;
+	font-weight: 600;
+	color: var(--hd-text-2);
+}
+
+.wpf-hd .hd-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	padding: 0 24px 16px;
+	border-bottom: 1px solid var(--hd-border);
+}
+
+.wpf-hd .hd-pillfield {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+}
+
+.wpf-hd select.hd-pill,
+.wpf-hd .hd-pillfield select {
+	min-height: 30px;
+	padding: 2px 28px 2px 12px;
+	border-radius: var(--hd-radius-pill);
+	font-size: var(--hd-text-md);
+	font-weight: 500;
+}
+
+.wpf-hd select.hd-pill--ghost {
+	box-shadow: none;
+}
+
+.wpf-hd.hd-js .hd-nojs {
+	display: none;
+}
+
+.wpf-hd:not(.hd-js) .hd-js-only {
+	display: none;
+}
+
+.wpf-hd .hd-controls .hd-help {
+	display: inline;
+}
+
+.wpf-hd .hd-controls.is-saving {
+	opacity: 0.7;
+}
+
+.wpf-hd .hd-ticket__body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 300px;
+	align-items: start;
+}
+
+.wpf-hd .hd-ticket__main {
+	min-width: 0;
+	padding: 16px 24px 24px;
+}
+
+.wpf-hd .hd-thread {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-msg {
+	display: flex;
+	gap: 10px;
+	max-width: 85%;
+	margin: 0;
+}
+
+.wpf-hd .hd-msg--store,
+.wpf-hd .hd-msg--note {
+	flex-direction: row-reverse;
+	align-self: flex-end;
+}
+
+.wpf-hd .hd-msg__bubble {
+	min-width: 0;
+	padding: 12px 14px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface);
+}
+
+.wpf-hd .hd-msg--store .hd-msg__bubble {
+	border-color: var(--hd-accent-border);
+	background: var(--hd-accent-selected);
+}
+
+.wpf-hd .hd-msg--note .hd-msg__bubble {
+	border: 1px dashed var(--hd-note-border);
+	background: var(--hd-note-bg);
+}
+
+.wpf-hd .hd-msg__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 6px;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-msg__head time {
+	font-size: var(--hd-text-sm);
+}
+
+.wpf-hd .hd-msg__body {
+	overflow-wrap: anywhere;
+}
+
+.wpf-hd .hd-msg__body p {
+	margin: 0 0 8px;
+}
+
+.wpf-hd .hd-msg__body p:last-child {
+	margin-bottom: 0;
+}
+
+.wpf-hd .hd-msg__delete {
+	margin-left: auto;
+	padding: 0 4px;
+	border: 0;
+	background: none;
+	color: var(--hd-danger);
+	font: inherit;
+	font-size: var(--hd-text-sm);
+	cursor: pointer;
+	opacity: 0;
+}
+
+.wpf-hd .hd-msg:hover .hd-msg__delete,
+.wpf-hd .hd-msg__delete:focus-visible {
+	opacity: 1;
+}
+
+@media (hover: none) {
+	.wpf-hd .hd-msg__delete {
+		opacity: 1;
+	}
+}
+
+.wpf-hd .hd-details-list {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 2px 12px;
+	margin: 10px 0 0;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-details-list dt {
+	color: var(--hd-text-muted);
+}
+
+.wpf-hd .hd-details-list dd {
+	margin: 0;
+}
+
+.wpf-hd .hd-files {
+	margin-top: 8px;
+	font-size: var(--hd-text-md);
+}
+
+/* Composer */
+.wpf-hd .hd-composer {
+	border: 1px solid var(--hd-border-strong);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface);
+	box-shadow: var(--hd-shadow-sm);
+}
+
+.wpf-hd .hd-composer__tabs {
+	display: flex;
+	gap: 4px;
+	margin: 0;
+	padding: 6px 8px 0;
+	border: 0;
+	border-bottom: 1px solid var(--hd-divider);
+}
+
+.wpf-hd .hd-composer__tab {
+	position: relative;
+	display: inline-flex;
+}
+
+.wpf-hd .hd-composer__tab input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.wpf-hd .hd-composer__tab span {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 36px;
+	padding: 0 12px;
+	border-bottom: 2px solid transparent;
+	color: var(--hd-text-muted);
+	font-weight: 600;
+	font-size: var(--hd-text-md);
+	cursor: pointer;
+}
+
+.wpf-hd .hd-composer__tab input:checked + span {
+	border-bottom-color: var(--hd-accent);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-composer__tab--note input:checked + span {
+	border-bottom-color: var(--hd-note-border);
+	color: var(--hd-note-fg);
+}
+
+.wpf-hd .hd-composer__tab input:focus-visible + span {
+	outline: 2px solid var(--hd-accent);
+	outline-offset: -2px;
+	border-radius: 4px;
+}
+
+.wpf-hd .hd-composer textarea {
+	display: block;
+	min-height: 120px;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 12px 14px;
+	resize: vertical;
+}
+
+.wpf-hd .hd-composer textarea:focus {
+	box-shadow: inset 0 0 0 2px var(--hd-accent);
+}
+
+.wpf-hd .hd-composer.is-note {
+	border-color: var(--hd-note-border);
+	background: var(--hd-note-bg-2);
+}
+
+.wpf-hd .hd-composer.is-note textarea {
+	background: var(--hd-note-bg-2);
+}
+
+.wpf-hd .hd-composer__bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 10px;
+	border-top: 1px solid var(--hd-divider);
+}
+
+.wpf-hd .hd-composer__tools,
+.wpf-hd .hd-composer__send {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.wpf-hd .hd-composer__send .hd-help {
+	display: inline;
+	margin-right: 6px;
+}
+
+.wpf-hd .hd-composer.is-note .stsw-reply-close {
+	display: none;
+}
+
+.wpf-hd .hd-composer .stsw-replybox__draft {
+	margin: 0;
+	padding: 0 14px 8px;
+}
+
+.wpf-hd .hd-composer .stsw-replybox__draft:empty {
+	display: none;
+}
+
+.wpf-hd .hd-attach {
+	position: relative;
+	overflow: hidden;
+}
+
+.wpf-hd .hd-attach__input {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.wpf-hd .hd-attach:focus-within {
+	outline: 2px solid var(--hd-accent);
+	outline-offset: 2px;
+}
+
+.wpf-hd .hd-attach__names {
+	display: inline;
+}
+
+/* Customer panel */
+.wpf-hd .hd-side {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px;
+	border-left: 1px solid var(--hd-border);
+	background: var(--hd-surface-muted);
+	min-height: 100%;
+}
+
+.wpf-hd .hd-side__card {
+	padding: 14px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface);
+}
+
+.wpf-hd .hd-side__who {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.wpf-hd .hd-side__who .hd-h2 {
+	font-size: var(--hd-text-base);
+}
+
+.wpf-hd .hd-side__email {
+	display: block;
+	overflow: hidden;
+	max-width: 190px;
+	font-size: var(--hd-text-md);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.wpf-hd .hd-tiles {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.wpf-hd .hd-tile {
+	padding: 8px 10px;
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface-muted);
+}
+
+.wpf-hd .hd-tile strong {
+	font-size: var(--hd-text-lg);
+}
+
+.wpf-hd .hd-side__title {
+	margin: 0 0 8px;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.wpf-hd .hd-side__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-side__list li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	margin: 0;
+	padding: 6px 0;
+	border-bottom: 1px solid var(--hd-divider);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-side__list li:last-child {
+	border-bottom: 0;
+}
+
+.wpf-hd .hd-side__list .hd-help {
+	display: inline;
+	flex: 1;
+}
+
+.wpf-hd .hd-side .stsw-pro-panel h3 {
+	margin: 12px 0 6px;
+	font-size: var(--hd-text-md);
+}
+
+/* Setup checklist and health */
+.wpf-hd .stsw-checklist {
+	padding: 14px 18px;
+	border: 1px solid var(--hd-accent-border);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-accent-selected);
+}
+
+.wpf-hd .stsw-checklist h2 {
+	margin: 0 0 8px;
+	font-size: var(--hd-text-base);
+}
+
+.wpf-hd .stsw-checklist ol {
+	margin: 0 0 8px 1.2em;
+}
+
+.wpf-hd .stsw-checklist li.is-done {
+	color: var(--hd-text-muted);
+}
+
+.wpf-hd .stsw-checklist .dashicons-yes-alt {
+	color: var(--hd-success-fg);
+}
+
+.wpf-hd .stsw-inline-form {
+	display: inline;
+}
+
+.wpf-hd .stsw-health li {
+	margin: 0 0 8px;
+}
+
+.wpf-hd .stsw-health .is-ok .dashicons {
+	color: var(--hd-success-fg);
+}
+
+.wpf-hd .stsw-health .is-warning .dashicons {
+	color: var(--hd-danger);
+}
+
+/* Dialog */
+.hd-dialog.wpf-hd {
+	max-width: 440px;
+	padding: 24px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-xl);
+	box-shadow: 0 24px 48px rgba(16, 24, 40, 0.18);
+}
+
+.hd-dialog.wpf-hd::backdrop {
+	background: rgba(16, 24, 40, 0.4);
+}
+
+.wpf-hd .hd-keys {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 8px 16px;
+	margin: 16px 0;
+}
+
+.wpf-hd .hd-keys dd {
+	margin: 0;
+}
+
+/* Settings */
+.wpf-hd .hd-settings {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+	padding-bottom: 80px;
+}
+
+.wpf-hd .hd-subnav {
+	position: sticky;
+	top: 48px;
+}
+
+.wpf-hd .hd-subnav__group {
+	margin: 16px 8px 6px;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.wpf-hd .hd-subnav__group:first-child {
+	margin-top: 0;
+}
+
+.wpf-hd .hd-subnav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-subnav li {
+	margin: 0 0 2px;
+}
+
+.wpf-hd .hd-subnav a {
+	display: block;
+	padding: 7px 10px;
+	border-radius: var(--hd-radius-sm);
+	color: var(--hd-text-2);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.wpf-hd .hd-subnav a:hover {
+	background: var(--hd-hover);
+}
+
+.wpf-hd .hd-subnav a[aria-current="true"] {
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-subnav__wizard {
+	display: inline-block !important;
+	margin-top: 16px;
+	color: var(--hd-accent-strong) !important;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-panel {
+	margin-bottom: 32px;
+}
+
+.wpf-hd .hd-panel > .hd-h1 {
+	margin-bottom: 4px;
+}
+
+.wpf-hd .hd-panel > .hd-muted {
+	margin: 0 0 16px;
+}
+
+.wpf-hd.hd-js .hd-panel {
+	display: none;
+}
+
+.wpf-hd.hd-js .hd-panel.is-active {
+	display: block;
+}
+
+.wpf-hd .hd-panel:focus {
+	outline: none;
+}
+
+.wpf-hd .hd-card__body {
+	padding: 0 20px;
+}
+
+.wpf-hd .hd-row {
+	display: grid;
+	grid-template-columns: minmax(200px, 1fr) minmax(0, 1.4fr);
+	gap: 8px 24px;
+	align-items: center;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--hd-divider);
+}
+
+.wpf-hd .hd-row:last-child {
+	border-bottom: 0;
+}
+
+.wpf-hd .hd-row--wide {
+	grid-template-columns: 1fr;
+}
+
+.wpf-hd .hd-row__label {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.wpf-hd .hd-row__title {
+	color: var(--hd-text);
+	font-weight: 600;
+}
+
+.wpf-hd .hd-row__control input[type="text"],
+.wpf-hd .hd-row__control input[type="email"],
+.wpf-hd .hd-row__control input[type="password"],
+.wpf-hd .hd-row__control input[type="url"],
+.wpf-hd .hd-row__control select {
+	width: 100%;
+	max-width: 420px;
+}
+
+.wpf-hd .hd-row__control input[type="number"] {
+	width: 120px;
+}
+
+.wpf-hd .hd-row__control .wp-editor-wrap {
+	max-width: 100%;
+}
+
+.wpf-hd .hd-checks label {
+	display: block;
+	margin: 0 0 4px;
+}
+
+.wpf-hd .hd-savebar {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	left: 160px;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 16px;
+	padding: 12px 24px;
+	border-top: 1px solid var(--hd-border);
+	background: var(--hd-surface);
+	box-shadow: 0 -4px 12px rgba(16, 24, 40, 0.06);
+}
+
+body.folded .wpf-hd .hd-savebar {
+	left: 36px;
+}
+
+.wpf-hd .hd-savebar__state {
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-savebar.is-dirty .hd-savebar__state {
+	color: var(--hd-note-fg);
+	font-weight: 600;
+}
+
+/* Wizard (no wp-admin styles on this page) */
+.wpf-hd-wizard .screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+	white-space: nowrap;
+}
+
+body.wpf-hd-wizard {
+	margin: 0;
+	min-height: 100vh;
+	background: var(--hd-bg);
+}
+
+.wpf-hd-wizard .hd-skip:focus {
+	position: static;
+	width: auto;
+	height: auto;
+	margin: 8px;
+	clip: auto;
+	white-space: normal;
+}
+
+.wpf-hd-wizard .hd-wizard__top {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 16px 24px;
+	background: var(--hd-surface);
+	border-bottom: 1px solid var(--hd-border);
+}
+
+.wpf-hd-wizard .hd-wizard__top a {
+	color: var(--hd-text-muted);
+}
+
+.wpf-hd-wizard .hd-stepper {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px 24px;
+	margin: 32px auto 24px;
+	padding: 0 16px;
+	list-style: none;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd-wizard .hd-stepper li {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.wpf-hd-wizard .hd-stepper__dot {
+	width: 10px;
+	height: 10px;
+	border: 2px solid var(--hd-border-strong);
+	border-radius: 50%;
+	background: var(--hd-surface);
+}
+
+.wpf-hd-wizard .hd-stepper .is-done .hd-stepper__dot {
+	border-color: var(--hd-accent);
+	background: var(--hd-accent);
+}
+
+.wpf-hd-wizard .hd-stepper .is-current {
+	color: var(--hd-text);
+	font-weight: 600;
+}
+
+.wpf-hd-wizard .hd-stepper .is-current .hd-stepper__dot {
+	border-color: var(--hd-accent);
+}
+
+.wpf-hd-wizard .hd-wizard__card {
+	max-width: 760px;
+	margin: 0 auto 48px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-xl);
+	background: var(--hd-surface);
+	box-shadow: var(--hd-shadow);
+}
+
+.wpf-hd-wizard .hd-wizard__body {
+	padding: 32px;
+}
+
+.wpf-hd-wizard .hd-wizard__body > .hd-h1 {
+	font-size: var(--hd-text-2xl);
+}
+
+.wpf-hd-wizard .hd-wizard__body > .hd-muted {
+	margin: 6px 0 24px;
+}
+
+.wpf-hd-wizard .hd-wizard__foot {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 32px;
+	border-top: 1px solid var(--hd-divider);
+}
+
+.wpf-hd-wizard .hd-features {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.wpf-hd-wizard .hd-feature {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 16px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+}
+
+.wpf-hd-wizard .hd-feature__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: var(--hd-radius);
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent);
+}
+
+.wpf-hd-wizard .hd-wizard__two {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 24px;
+}
+
+.wpf-hd-wizard .hd-wizard__two .hd-h1 {
+	font-size: var(--hd-text-2xl);
+}
+
+.wpf-hd-wizard .hd-wizard__two .hd-muted {
+	margin: 6px 0 20px;
+}
+
+.wpf-hd-wizard .hd-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface-muted);
+}
+
+.wpf-hd-wizard .hd-preview__store {
+	padding: 12px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface);
+}
+
+.wpf-hd-wizard .hd-preview__nav {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-bottom: 12px;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd-wizard .hd-preview__nav .is-on {
+	padding: 4px 8px;
+	border-radius: var(--hd-radius-sm);
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+	font-weight: 600;
+}
+
+.wpf-hd-wizard .hd-preview__order {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+	padding-top: 10px;
+	border-top: 1px solid var(--hd-divider);
+}
+
+.wpf-hd-wizard .hd-togglechips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0 0 20px;
+	padding: 0;
+	border: 0;
+}
+
+.wpf-hd-wizard .hd-togglechip {
+	position: relative;
+	display: inline-flex;
+}
+
+.wpf-hd-wizard .hd-togglechip input {
+	position: absolute;
+	opacity: 0;
+}
+
+.wpf-hd-wizard .hd-togglechip span {
+	display: inline-flex;
+	align-items: center;
+	min-height: 34px;
+	padding: 0 14px;
+	border: 1px solid var(--hd-border-strong);
+	border-radius: var(--hd-radius-pill);
+	background: var(--hd-surface);
+	cursor: pointer;
+}
+
+.wpf-hd-wizard .hd-togglechip input:checked + span {
+	border-color: var(--hd-accent);
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+	font-weight: 600;
+}
+
+.wpf-hd-wizard .hd-togglechip input:checked + span::before {
+	content: "\2713";
+	margin-right: 6px;
+}
+
+.wpf-hd-wizard .hd-togglechip input:focus-visible + span {
+	outline: 2px solid var(--hd-accent);
+	outline-offset: 2px;
+}
+
+.wpf-hd-wizard .hd-done {
+	text-align: center;
+}
+
+.wpf-hd-wizard .hd-done > .hd-muted {
+	margin: 6px 0 24px;
+}
+
+.wpf-hd-wizard .hd-nextsteps {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-align: left;
+}
+
+.wpf-hd-wizard .hd-nextsteps li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 14px 16px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+	margin-bottom: 8px;
+}
+
+.wpf-hd-wizard .hd-nextsteps li > span {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Reports (Pro) */
+.wpf-hd .hd-reports table {
+	background: var(--hd-surface);
+}
+
+/* Small screens */
+@media (max-width: 1400px) {
+	.wpf-hd .hd-ticket__body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.wpf-hd .hd-side {
+		border-top: 1px solid var(--hd-border);
+		border-left: 0;
+	}
+}
+
+@media (max-width: 1100px) {
+	.wpf-hd .hd-inbox {
+		grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+	}
+
+	.wpf-hd .hd-rail {
+		grid-column: 1 / -1;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 4px 12px;
+		border-right: 0;
+		border-bottom: 1px solid var(--hd-border);
+	}
+
+	.wpf-hd .hd-rail__label {
+		display: none;
+	}
+
+	.wpf-hd .hd-rail__list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+
+	.wpf-hd .hd-rail__foot {
+		margin: 0;
+	}
+
+	.wpf-hd .hd-rail .hd-btn {
+		width: auto;
+	}
+}
+
+@media (max-width: 960px) {
+	.wpf-hd .hd-split,
+	.wpf-hd .hd-split--wide,
+	.wpf-hd .hd-settings,
+	.wpf-hd .hd-row,
+	.wpf-hd-wizard .hd-wizard__two,
+	.wpf-hd-wizard .hd-features {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.wpf-hd .hd-subnav {
+		position: static;
+	}
+
+	.wpf-hd .hd-savebar {
+		left: 0;
+	}
+
+	.wpf-hd .hd-inbox {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.wpf-hd .hd-inbox.has-detail .hd-list {
+		display: none;
+	}
+
+	.wpf-hd .hd-inbox.has-detail .hd-back {
+		display: inline-flex;
+	}
+
+	.wpf-hd .hd-list {
+		border-right: 0;
+	}
+
+	.wpf-hd .hd-msg {
+		max-width: 100%;
+	}
+
+	.wpf-hd .hd-search input[type="search"] {
+		width: 200px;
+	}
+}
+
+@media (max-width: 782px) {
+	.wpf-hd.wrap {
+		margin-left: -10px;
+	}
+
+	.wpf-hd .hd-header {
+		padding: 0 12px;
+	}
+
+	.wpf-hd .hd-page,
+	.wpf-hd .hd-ticket__main {
+		padding: 16px 12px;
+	}
+
+	.wpf-hd .hd-ticket__head,
+	.wpf-hd .hd-controls {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	.wpf-hd .hd-banner {
+		margin: 0 12px 12px;
+	}
+
+	.wpf-hd .hd-header__actions,
+	.wpf-hd .hd-search,
+	.wpf-hd .hd-search input[type="search"] {
+		width: 100%;
+	}
+
+	.wpf-hd .hd-list-head,
+	.wpf-hd .hd-sortable__row {
+		grid-template-columns: 32px minmax(0, 1fr) 40px 72px;
+	}
+
+	.wpf-hd-wizard .hd-wizard__body,
+	.wpf-hd-wizard .hd-wizard__foot {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}

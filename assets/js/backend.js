@@ -9,13 +9,6 @@
 
 	var settings = window.WPFactory_WC_STS_Backend || {};
 
-	$(".STSWooCommerce #tabs, .STSWooCommercePro #tabs").tabs();
-
-	// The settings form posts normally (the page reloads with a "Settings saved." notice).
-	$(".STSWooCommerce form, .STSWooCommercePro form").on("submit", function () {
-		$(this).closest(".wrap").addClass("loading");
-	});
-
 	// Priority colour picker.
 	if ($.fn.wpColorPicker) {
 		$(".stsw-color-field").wpColorPicker();

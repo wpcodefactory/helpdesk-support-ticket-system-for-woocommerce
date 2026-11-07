@@ -120,24 +120,60 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 		}
 
 		/**
-		 * "Insert a saved reply" select above a reply box (the script copies the text into the box).
+		 * Placeholder values of a ticket.
 		 *
-		 * @param string $target ID of the textarea.
+		 * @param int $ticket_id Ticket ID (0: none).
+		 *
+		 * @return array placeholder => value
 		 */
-		public function render_select( $target ) {
+		public function get_placeholders( $ticket_id ) {
+			$core   = WPFactory_WC_STS_Inc::get_main_instance();
+			$values = array(
+				'{customer_first_name}' => '',
+				'{order_number}'        => '',
+				'{ticket_number}'       => $ticket_id ? (string) $ticket_id : '',
+				'{store_name}'          => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
+			);
+			if ( $ticket_id ) {
+				$contact = $core->get_ticket_contact( $ticket_id );
+				$user_id = $core->get_ticket_user_id( $ticket_id );
+				$first   = $user_id ? (string) get_user_meta( $user_id, 'first_name', true ) : '';
+				$order   = $core->get_ticket_order_id( $ticket_id ) ? wc_get_order( $core->get_ticket_order_id( $ticket_id ) ) : false;
+				if ( '' === $first && $order ) {
+					$first = $order->get_billing_first_name();
+				}
+				if ( '' === $first ) {
+					$parts = explode( ' ', trim( (string) $contact['display_name'] ) );
+					$first = $parts[0];
+				}
+				$values['{customer_first_name}'] = $first;
+				$values['{order_number}']        = $order ? (string) $order->get_order_number() : '';
+			}
+			return $values;
+		}
+
+		/**
+		 * "Saved reply" picker in a composer toolbar (the script copies the text into the box).
+		 *
+		 * @param string $target    ID of the textarea.
+		 * @param int    $ticket_id Ticket whose details fill the placeholders.
+		 */
+		public function render_select( $target, $ticket_id = 0 ) {
 			$replies = $this->get_replies();
-			$add_url = admin_url( 'post-new.php?post_type=' . self::POST_TYPE );
+			$add_url = admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=saved' );
 			if ( empty( $replies ) ) {
-				echo '<p class="description"><a href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add answers you use often, then insert them here in one click', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
+				echo '<a class="hd-btn hd-btn--sm hd-btn--ghost" href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add saved replies', 'support-ticket-system-for-woocommerce' ) . '</a>';
 				return;
 			}
-			echo '<p><label for="stsw-canned">' . esc_html__( 'Insert a saved reply', 'support-ticket-system-for-woocommerce' ) . '</label> ';
-			echo '<select id="stsw-canned" class="wpfactory-wc-sts-canned" data-target="' . esc_attr( $target ) . '"><option value="">' . esc_html__( 'Choose...', 'support-ticket-system-for-woocommerce' ) . '</option>';
+			$values = $this->get_placeholders( $ticket_id );
+			echo '<label class="screen-reader-text" for="stsw-canned">' . esc_html__( 'Insert a saved reply', 'support-ticket-system-for-woocommerce' ) . '</label>';
+			echo '<select id="stsw-canned" class="wpfactory-wc-sts-canned hd-pill hd-pill--ghost" data-target="' . esc_attr( $target ) . '"><option value="">' . esc_html__( 'Saved reply', 'support-ticket-system-for-woocommerce' ) . '</option>';
 			foreach ( $replies as $reply ) {
 				$text = trim( wp_strip_all_tags( str_replace( array( '</p>', '<br>', '<br />', '<br/>' ), "\n", (string) $reply->post_content ) ) );
-				echo '<option value="' . (int) $reply->ID . '" data-text="' . esc_attr( html_entity_decode( $text, ENT_QUOTES, 'UTF-8' ) ) . '">' . esc_html( get_the_title( $reply ) ) . '</option>';
+				$text = strtr( html_entity_decode( $text, ENT_QUOTES, 'UTF-8' ), $values );
+				echo '<option value="' . (int) $reply->ID . '" data-text="' . esc_attr( $text ) . '">' . esc_html( get_the_title( $reply ) ) . '</option>';
 			}
-			echo '</select></p>';
+			echo '</select>';
 		}
 	}
 

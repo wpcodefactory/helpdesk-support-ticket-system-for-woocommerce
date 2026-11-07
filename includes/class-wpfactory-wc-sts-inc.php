@@ -249,6 +249,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 */
 		public function on_activation() {
 			delete_option( WPFACTORY_WC_STS_VERSION_OPTION );
+			set_transient( 'wpfactory_wc_sts_activation_redirect', 1, 60 );
 			$role = get_role( 'administrator' );
 			if ( $role ) {
 				$role->add_cap( 'stsw_tickets' );
