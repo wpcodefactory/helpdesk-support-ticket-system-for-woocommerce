@@ -208,6 +208,85 @@
 		});
 	});
 
+	// "Insert article" and similar pickers add their value at the cursor.
+	document.addEventListener("change", function (event) {
+		var select = event.target;
+		if (!select.matches || !select.matches("[data-hd-insert-select]") || !select.value) {
+			return;
+		}
+		var area = document.getElementById(select.getAttribute("data-hd-insert-select"));
+		if (area) {
+			var start = area.selectionStart || area.value.length;
+			var text = (start && !/\s$/.test(area.value.slice(0, start)) ? " " : "") + select.value + " ";
+			area.value = area.value.slice(0, start) + text + area.value.slice(area.selectionEnd || start);
+			area.focus();
+			area.selectionStart = area.selectionEnd = start + text.length;
+		}
+		select.value = "";
+	});
+
+	// Importers: dry run first, then batches until nothing is left.
+	var importer = document.querySelector("[data-hd-import]");
+	if (importer && window.fetch) {
+		var call = function (source, step) {
+			var data = new window.FormData();
+			data.append("action", "wpfactory_wc_sts_import");
+			data.append("_ajax_nonce", importer.getAttribute("data-nonce"));
+			data.append("source", source);
+			data.append("step", step);
+			return window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data }).then(function (r) {
+				return r.json();
+			});
+		};
+		importer.addEventListener("click", function (event) {
+			var button = event.target.closest("[data-hd-dry], [data-hd-run]");
+			if (!button) {
+				return;
+			}
+			var row = button.closest("[data-hd-source]");
+			var source = row.getAttribute("data-hd-source");
+			var out = row.querySelector("[data-hd-result]");
+			var run = row.querySelector("[data-hd-run]");
+			button.disabled = true;
+			if (button.hasAttribute("data-hd-dry")) {
+				out.textContent = t.checking;
+				call(source, "dry").then(function (json) {
+					button.disabled = false;
+					if (!json || !json.success) {
+						out.textContent = (json && json.data && json.data.message) || t.importError;
+						return;
+					}
+					var d = json.data;
+					out.textContent = t.dryResult.replace("%1$d", d.tickets).replace("%2$d", d["new"]).replace("%3$d", d.done).replace("%4$d", d.replies).replace("%5$d", d.notes).replace("%6$d", d.files);
+					run.hidden = !d["new"];
+				});
+				return;
+			}
+			var total = 0;
+			var loop = function () {
+				call(source, "run").then(function (json) {
+					if (!json || !json.success) {
+						button.disabled = false;
+						out.textContent = (json && json.data && json.data.message) || t.importError;
+						return;
+					}
+					total += json.data.imported;
+					out.textContent = t.importing.replace("%1$d", total).replace("%2$d", json.data.left);
+					if (json.data.left > 0 && json.data.imported + json.data.skipped > 0) {
+						loop();
+					} else {
+						out.textContent = t.imported.replace("%d", total);
+						run.hidden = true;
+					}
+				}).catch(function () {
+					button.disabled = false;
+					out.textContent = t.importError;
+				});
+			};
+			loop();
+		});
+	}
+
 	// Wizard: live preview of the labels.
 	each("[data-hd-preview]", function (input) {
 		var out = document.querySelector('[data-hd-preview-out="' + input.getAttribute("data-hd-preview") + '"]');

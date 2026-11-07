@@ -130,6 +130,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					'confirmTerm'  => __( 'Delete this item? Tickets keep their other details.', 'support-ticket-system-for-woocommerce' ),
 					'confirmReply' => __( 'Delete this saved reply?', 'support-ticket-system-for-woocommerce' ),
 					'moved'        => __( 'Moved to position %d', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- position number.
+					'checking'     => __( 'Counting...', 'support-ticket-system-for-woocommerce' ),
+					/* translators: 1: tickets found, 2: new, 3: already imported, 4: replies, 5: private notes, 6: files. */
+					'dryResult'    => __( '%1$d tickets found: %2$d to import, %3$d already imported. %4$d replies, %5$d private notes, %6$d attached files (files are not copied).', 'support-ticket-system-for-woocommerce' ),
+					/* translators: 1: tickets imported so far, 2: tickets left. */
+					'importing'    => __( 'Imported %1$d so far, %2$d left...', 'support-ticket-system-for-woocommerce' ),
+					/* translators: %d: tickets imported. */
+					'imported'     => __( 'Done: %d tickets imported. They are in the inbox.', 'support-ticket-system-for-woocommerce' ),
+					'importError'  => __( 'The import stopped. Run it again to continue where it stopped.', 'support-ticket-system-for-woocommerce' ),
 				)
 			);
 		}
