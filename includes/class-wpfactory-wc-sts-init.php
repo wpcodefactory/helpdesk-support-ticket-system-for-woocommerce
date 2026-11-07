@@ -457,6 +457,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'WPFactory_WC_STS_Backend',
 				array(
 					'responseDeleteNonce' => wp_create_nonce( 'wpfactory_wc_sts_response_delete' ),
+					'confirmDelete'       => __( 'Delete this message? This cannot be undone.', 'support-ticket-system-for-woocommerce' ),
 				)
 			);
 		}
@@ -586,6 +587,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 							<?php
 							settings_fields( esc_html( $this->plugin ) . 'notifications-options' );
 							do_settings_sections( esc_html( $this->plugin ) . 'notifications-options' );
+							WPFactory_WC_STS_Inc::get_main_instance()->render_test_email_button();
 							?>
 						</div>
 						<?php
@@ -597,7 +599,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				<?php
 			} else {
 				// Display dashboard.
-				$tickets = new WPFactory_WC_STS_Inc();
+				$tickets = WPFactory_WC_STS_Inc::get_main_instance();
 				$tickets->tickets_dashboard();
 			}
 		}
@@ -668,7 +670,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'renameAccountTabLink',
-				esc_html__( 'Rename Tab Link in My Account Page for Tickets', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'My Account menu label', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'rename_account_tab_link' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -725,7 +727,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'renameOrderButtonLink',
-				esc_html__( 'Rename Button on Orders Table in My Account Page for Tickets', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Order button label', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'rename_order_button_link' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -742,7 +744,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'hideClosed',
-				esc_html__( 'Show only Open in Frontend', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Hide closed tickets from customers', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'hide_closed' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -761,7 +763,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'assignToRole',
-				"<span class='proVersion'>" . esc_html__( 'Default User Role for Ticket Assignment', 'support-ticket-system-for-woocommerce' ) . '</span>',
+				"<span class='proVersion'>" . esc_html__( 'Role that can be assigned tickets', 'support-ticket-system-for-woocommerce' ) . '</span>',
 				array( $this, 'assign_to_role' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -769,7 +771,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'assignToUser',
-				"<span class='proVersion'>" . esc_html__( 'Default Assignee', 'support-ticket-system-for-woocommerce' ) . '</span>',
+				"<span class='proVersion'>" . esc_html__( 'Default assignee', 'support-ticket-system-for-woocommerce' ) . '</span>',
 				array( $this, 'assign_to_user' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -777,7 +779,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'textforTicketSave',
-				esc_html__( 'Text to display once Ticket is saved', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Message after a customer opens a ticket', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'text_for_ticket_save' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -794,7 +796,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'textforResponseSave',
-				esc_html__( 'Text to display once Response is saved', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Message after a customer replies', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'text_for_response_save' ),
 				$this->plugin . 'general-options',
 				$this->plugin . 'general'
@@ -811,7 +813,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailToAssignee',
-				"<span class='proVersion'>" . esc_html__( 'Notify Assignee by Email', 'support-ticket-system-for-woocommerce' ) . '</span>',
+				"<span class='proVersion'>" . esc_html__( 'Email the assignee about new tickets and replies', 'support-ticket-system-for-woocommerce' ) . '</span>',
 				array( $this, 'mail_to_assignee' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -819,7 +821,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailToADmin',
-				esc_html__( 'Notify Admin by Email', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Email the store about new tickets and replies', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'mail_to_admin' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -838,7 +840,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'AdminEmailAddress',
-				esc_html__( 'Admin Address', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Store email address', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'admin_email_address' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -855,7 +857,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailToCustomer',
-				esc_html__( 'Notify Customer by Email', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Email the customer (confirmations and store replies)', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'mail_to_customer' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -874,7 +876,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailIt_subjectToAs',
-				"<span class='proVersion'>" . esc_html__( 'Email Subject sent to Assignee', 'support-ticket-system-for-woocommerce' ) . '</span>',
+				"<span class='proVersion'>" . esc_html__( 'Assignee email subject', 'support-ticket-system-for-woocommerce' ) . '</span>',
 				array( $this, 'mail_subject_to_assignee' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -882,7 +884,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailIt_contentToAs',
-				"<span class='proVersion'>" . esc_html__( 'Email Content sent to Assignee', 'support-ticket-system-for-woocommerce' ) . '</span>',
+				"<span class='proVersion'>" . esc_html__( 'Assignee email text', 'support-ticket-system-for-woocommerce' ) . '</span>',
 				array( $this, 'mail_content_to_assignee' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -890,7 +892,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailIt_subjectToCust',
-				esc_html__( 'Email Subject sent to Customer', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Customer email subject', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'mail_subject_to_customer' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -907,7 +909,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			add_settings_field(
 				'mailIt_contentToCust',
-				esc_html__( 'Email Content sent to Customer', 'support-ticket-system-for-woocommerce' ),
+				esc_html__( 'Customer email text', 'support-ticket-system-for-woocommerce' ),
 				array( $this, 'mail_content_to_customer' ),
 				$this->plugin . 'notifications-options',
 				$this->plugin . 'notifications'
@@ -942,22 +944,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @version 2.2.0
 		 */
 		public function assign_to_user() {
-			$users_query = new WP_User_Query(
-				array(
-					'fields'  => 'all_with_meta',
-					'orderby' => 'display_name',
-				)
-			);
-			$results     = $users_query->get_results();
-
+			// Pro feature preview. Before 2.2.1 this loaded every user on the site (customers included) into a disabled list.
 			?>
 			<select disabled>
-				<?php
-				foreach ( $results as $res ) {
-					$user_info = get_userdata( (int) $res->ID );
-					echo "<option value=''>" . esc_attr( $user_info->first_name ) . ' ' . esc_attr( $user_info->last_name ) . '</option>';
-				}
-				?>
+				<option value=''><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></option>
 			</select>
 			<?php
 		}
@@ -974,12 +964,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				$this->rename_account_tab_link = get_option( $this->plugin . 'renameAccountTabLink' );
 			}
 			?>
-			<input type="text" name="<?php esc_attr( print esc_html( $this->plugin ) . 'renameAccountTabLink' ); ?>" id="<?php print esc_attr( $this->plugin . 'renameAccountTabLink' ); ?>" value='
-			<?php
-			if ( $this->rename_account_tab_link ) {
-				print esc_attr( $this->rename_account_tab_link );}
-			?>
-			' />
+			<input type="text" name="<?php echo esc_attr( $this->plugin . 'renameAccountTabLink' ); ?>" id="<?php echo esc_attr( $this->plugin . 'renameAccountTabLink' ); ?>" value="<?php echo esc_attr( (string) $this->rename_account_tab_link ); ?>" placeholder="<?php esc_attr_e( 'Tickets', 'support-ticket-system-for-woocommerce' ); ?>" />
 			<?php
 		}
 
@@ -995,12 +980,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				$this->rename_order_button_link = get_option( $this->plugin . 'renameOrderButtonLink' );
 			}
 			?>
-			<input type="text" name="<?php esc_attr( print esc_html( $this->plugin ) . 'renameOrderButtonLink' ); ?>" id="<?php print esc_attr( $this->plugin . 'renameOrderButtonLink' ); ?>" value='
-			<?php
-			if ( $this->rename_order_button_link ) {
-				print esc_attr( $this->rename_order_button_link );}
-			?>
-			' />
+			<input type="text" name="<?php echo esc_attr( $this->plugin . 'renameOrderButtonLink' ); ?>" id="<?php echo esc_attr( $this->plugin . 'renameOrderButtonLink' ); ?>" value="<?php echo esc_attr( (string) $this->rename_order_button_link ); ?>" placeholder="<?php esc_attr_e( 'Get Help', 'support-ticket-system-for-woocommerce' ); ?>" />
 			<?php
 		}
 
@@ -1269,13 +1249,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @version 2.2.0
 		 */
 		public function admin_process_settings() {
-			if (
-				isset( $_SERVER['REQUEST_METHOD'] ) &&
-				'POST' === $_SERVER['REQUEST_METHOD'] &&
-				current_user_can( 'manage_options' )
-			) {
+			if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+				return;
+			}
+			// Same capability as the menu (before 2.2.1 shop managers saw the form but nothing was saved).
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+				echo '<div class="notice notice-error inline"><p>' . esc_html__( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				return;
+			}
+			if ( true ) {
 				check_admin_referer( $this->plugin );
-				check_ajax_referer( $this->plugin );
 
 				if (
 					isset( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) &&
@@ -1372,6 +1355,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) )
 					);
 				}
+
+				echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
 			}
 		}
 	}

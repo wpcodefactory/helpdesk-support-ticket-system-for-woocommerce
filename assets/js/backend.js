@@ -32,18 +32,9 @@
 		}
 	};
 
-	$(".STSWooCommerce .nav-tab-wrapper a").on("click", function (e) {
+	// Pro tabs open the Pro modal; other tabs are normal links.
+	$(".STSWooCommerce .nav-tab-wrapper a.proVersion").on("click", function (e) {
 		e.preventDefault();
-
-		if ($(this).hasClass("proVersion")) {
-			//do nothing
-		} else {
-			var url = $(this).attr("href");
-			$(".STSWooCommerce").addClass("loading");
-			$("body").load($(this).attr("href"), function () {
-				window.history.replaceState("object or string", "Title", url);
-			});
-		}
 	});
 
 	$(".stswaccordion").accordion({
@@ -54,24 +45,9 @@
 	$(".STSWooCommerce .subtabs").tabs();
 	$(".STSWooCommerce #accordion").accordion();
 
-	$(".STSWooCommerce form").on("submit", function (e) {
-		if ($(this).hasClass("STSWooCommercelicense")) {
-		} else {
-			tinyMCE.triggerSave();
-			e.preventDefault();
-			$.ajax({
-				url: window.location.href,
-				data: $(this).serialize(),
-				type: "POST",
-				beforeSend: function () {
-					$(".STSWooCommerce").addClass("loading");
-				},
-				success: function (data) {
-					$("body").html(data);
-					$("html, body").animate({ scrollTop: 0 }, "slow");
-				},
-			});
-		}
+	// The settings form posts normally (the page reloads with a "Settings saved." notice).
+	$(".STSWooCommerce form").on("submit", function () {
+		$(".STSWooCommerce").addClass("loading");
 	});
 
 	/**
@@ -81,6 +57,10 @@
 	 */
 	$(document).on("click", "#deleteResponse a", function (event) {
 		event.preventDefault();
+
+		if (!window.confirm(WPFactory_WC_STS_Backend.confirmDelete)) {
+			return;
+		}
 
 		var ajax_options = {
 			action: "wpfactory_wc_sts_response_delete",
