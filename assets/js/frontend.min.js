@@ -112,7 +112,87 @@
 		});
 	}
 
+	// File drop zones: highlight while dragging, list the chosen files.
+	function initDrop(zone) {
+		var input = zone.querySelector('input[type="file"]');
+		var text = zone.querySelector(".stsw-drop__text");
+		var empty = text ? text.textContent : "";
+		["dragenter", "dragover"].forEach(function (name) {
+			zone.addEventListener(name, function () {
+				zone.classList.add("is-over");
+			});
+		});
+		["dragleave", "drop"].forEach(function (name) {
+			zone.addEventListener(name, function () {
+				zone.classList.remove("is-over");
+			});
+		});
+		input.addEventListener("change", function () {
+			if (text) {
+				text.textContent = input.files.length ? Array.prototype.map.call(input.files, function (f) {
+					return f.name;
+				}).join(", ") : empty;
+			}
+		});
+	}
+
+	// Knowledge base articles that match what the customer types.
+	function initSuggest(box) {
+		var form = box.closest("form");
+		var list = box.querySelector("ul");
+		var live = form.querySelector("[data-stsw-suggest-live]");
+		var fields = form.querySelectorAll('[name="title"], [name="content"]');
+		var timer = null;
+		var last = "";
+		if (!texts.ajaxurl || !window.fetch) {
+			return;
+		}
+		function run() {
+			var q = Array.prototype.map.call(fields, function (f) {
+				return f.value;
+			}).join(" ").trim();
+			if (q.length < 4 || q === last) {
+				return;
+			}
+			last = q;
+			window.fetch(texts.ajaxurl + "?action=wpfactory_wc_sts_kb_suggest&q=" + encodeURIComponent(q.slice(0, 300)), { credentials: "same-origin" })
+				.then(function (r) {
+					return r.json();
+				})
+				.then(function (json) {
+					var items = json && json.success ? json.data : [];
+					list.textContent = "";
+					items.forEach(function (item) {
+						var li = document.createElement("li");
+						var a = document.createElement("a");
+						a.href = item.url;
+						a.target = "_blank";
+						a.rel = "noopener";
+						a.textContent = item.title;
+						var span = document.createElement("span");
+						span.textContent = item.excerpt;
+						li.appendChild(a);
+						li.appendChild(span);
+						list.appendChild(li);
+					});
+					box.hidden = !items.length;
+					if (live) {
+						live.textContent = items.length ? texts.suggestFound.replace("%d", items.length) : "";
+					}
+				})
+				.catch(function () {});
+		}
+		each(fields, function (field) {
+			field.addEventListener("input", function () {
+				window.clearTimeout(timer);
+				timer = window.setTimeout(run, 600);
+			});
+		});
+	}
+
 	function init() {
+		each(document.querySelectorAll(".stsw-drop__zone"), initDrop);
+		each(document.querySelectorAll("[data-stsw-suggest]"), initSuggest);
 		each(document.querySelectorAll(".stsw-ask"), initAsk);
 		each(document.querySelectorAll(".stsw form, .wpfactory-wc-sts-guest-lookup"), preventDoubleSubmit);
 		var sent = document.querySelector(".stsw-sent");

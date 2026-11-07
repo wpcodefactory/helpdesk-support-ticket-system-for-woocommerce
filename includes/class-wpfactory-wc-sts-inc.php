@@ -647,6 +647,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				);
 			}
 			$email = (string) get_post_meta( $ticket_id, self::META_GUEST_EMAIL, true );
+			$named = (string) get_post_meta( $ticket_id, '_stsw_guest_name', true );
 			$first = '';
 			$last  = '';
 			$order = $this->get_ticket_order_id( $ticket_id ) ? wc_get_order( $this->get_ticket_order_id( $ticket_id ) ) : false;
@@ -658,7 +659,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				'email'        => $email,
 				'first_name'   => $first,
 				'last_name'    => $last,
-				'display_name' => trim( $first . ' ' . $last ) ? trim( $first . ' ' . $last ) : $email,
+				'display_name' => trim( $first . ' ' . $last ) ? trim( $first . ' ' . $last ) : ( '' !== $named ? $named : $email ),
 				'user'         => false,
 			);
 		}

@@ -166,7 +166,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			wp_register_style( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/css/frontend' . $min . '.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
 			wp_register_script( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION, true );
-			wp_localize_script( 'wpfactory-wc-sts-frontend', 'WPFactory_WC_STS_Frontend', array( 'sending' => __( 'Sending...', 'support-ticket-system-for-woocommerce' ) ) );
+			wp_localize_script(
+				'wpfactory-wc-sts-frontend',
+				'WPFactory_WC_STS_Frontend',
+				array(
+					'sending'      => __( 'Sending...', 'support-ticket-system-for-woocommerce' ),
+					'ajaxurl'      => admin_url( 'admin-ajax.php' ),
+					/* translators: %d: number of articles. */
+					'suggestFound' => __( '%d help articles might answer your question. They are listed under the message.', 'support-ticket-system-for-woocommerce' ),
+				)
+			);
 
 			if ( function_exists( 'is_account_page' ) && is_account_page() ) {
 				self::enqueue_frontend_assets();

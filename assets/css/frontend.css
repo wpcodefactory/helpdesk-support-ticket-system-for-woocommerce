@@ -92,31 +92,71 @@
 	margin-top: var(--stsw-gap);
 }
 
-/* Requests list. */
+/* Ticket list. */
+.stsw-intro {
+	margin: 0.25rem 0 0;
+	opacity: 0.85;
+}
+
+.stsw-back {
+	display: inline-flex;
+	gap: 0.35rem;
+	margin: 0 0 0.5rem;
+	color: inherit;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+
+.stsw-back:hover {
+	text-decoration: underline;
+}
+
 .stsw-empty {
-	padding: 1.5rem;
+	padding: 2rem 1.5rem;
 	border: 1px dashed var(--stsw-border);
 	border-radius: var(--stsw-radius);
 	text-align: center;
 }
 
+.stsw-empty p {
+	margin: 0.25rem 0;
+}
+
 .stsw-cards {
-	display: grid;
-	gap: 0.75rem;
 	margin: 0;
 	padding: 0;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
 	list-style: none;
+	overflow: hidden;
 }
 
 .stsw-card {
 	position: relative;
-	padding: 1rem 1.1rem;
-	border: 1px solid var(--stsw-border);
-	border-radius: var(--stsw-radius);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	margin: 0;
+	padding: 0.9rem 1.1rem;
+	border-bottom: 1px solid var(--stsw-border);
+}
+
+.stsw-card:last-child {
+	border-bottom: 0;
+}
+
+.stsw-card:hover {
+	background: var(--stsw-soft);
 }
 
 .stsw-card--reply_needed {
-	border-left: 4px solid var(--stsw-accent);
+	box-shadow: inset 3px 0 0 var(--stsw-accent);
+}
+
+.stsw-card__main {
+	min-width: 0;
 }
 
 .stsw-card__link {
@@ -138,130 +178,161 @@
 .stsw-card__meta {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25rem 1rem;
-	margin: 0.35rem 0 0;
+	gap: 0.25rem 0.5rem;
+	margin: 0.25rem 0 0;
 	font-size: 0.9em;
 	opacity: 0.85;
 }
 
 .stsw-card__chips {
-	margin: 0.5rem 0 0;
+	position: relative;
+	margin: 0;
 }
 
 .stsw-chip {
 	display: inline-block;
-	padding: 0.15em 0.65em;
-	border: 1px solid var(--stsw-border);
+	padding: 0.15em 0.7em;
 	border-radius: 999px;
 	background: var(--stsw-soft);
 	font-size: 0.85em;
+	font-weight: 600;
 	line-height: 1.5;
+	white-space: nowrap;
+}
+
+/* Status colours (text 4.5:1 or better on their backgrounds). */
+.stsw-chip--reply_needed {
+	background: #eef1fd;
+	color: #1d35b4;
+}
+
+.stsw-chip--waiting {
+	background: #fef0c7;
+	color: #93370d;
 }
 
 .stsw-chip--closed {
-	opacity: 0.75;
+	background: #f2f4f7;
+	color: #344054;
 }
 
-.stsw-chip--attention {
-	border: 2px solid currentColor;
-	font-weight: 700;
+.stsw-hidden-note {
+	display: block;
+	margin-top: 0.75rem;
 }
 
-/* Ask flow. */
-.stsw-step {
+/* Ask flow and confirmation. */
+.stsw-sent {
 	margin: 0 0 var(--stsw-gap);
-	padding: 1rem;
-	border: 1px solid var(--stsw-border);
+	padding: 1rem 1.25rem;
+	border: 1px solid #abefc6;
 	border-radius: var(--stsw-radius);
+	background: #ecfdf3;
+	color: #054f31;
 }
 
-.stsw-step__title {
-	padding: 0 0.35rem;
-	font-weight: 600;
+.stsw-sent a {
+	color: inherit;
 }
 
-.stsw-js .stsw-step[hidden],
-.stsw-js .stsw-items[hidden] {
-	display: none;
+.stsw-sent p,
+.stsw-sent__text p {
+	margin: 0.25rem 0;
 }
 
-.stsw-choices {
-	display: grid;
-	gap: 0.5rem;
-}
-
-.stsw-choice {
+.stsw-drop__zone {
+	position: relative;
 	display: flex;
-	gap: 0.6rem;
-	align-items: flex-start;
-	min-height: 44px;
-	padding: 0.6rem 0.75rem;
-	border: 1px solid var(--stsw-border);
+	align-items: center;
+	justify-content: center;
+	min-height: 88px;
+	padding: 1rem;
+	border: 2px dashed var(--stsw-border);
 	border-radius: var(--stsw-radius);
-	cursor: pointer;
+	text-align: center;
 }
 
-.stsw-choice:has(input:checked) {
+.stsw-drop__zone:focus-within,
+.stsw-drop__zone.is-over {
 	border-color: var(--stsw-accent);
 	background: var(--stsw-soft);
 }
 
-.stsw-choice input {
-	margin-top: 0.25em;
-}
-
-.stsw-items {
-	margin: 0 0 var(--stsw-gap);
-	padding: 0;
-	border: 0;
-}
-
-.stsw-items legend {
-	margin-bottom: 0.5rem;
-}
-
-.stsw-field {
-	display: grid;
-	gap: 0.35rem;
-	margin: 0 0 var(--stsw-gap);
-}
-
-.stsw-field input[type="text"],
-.stsw-field input[type="email"],
-.stsw-field select,
-.stsw-field textarea {
+.stsw-drop__zone input[type="file"] {
+	position: absolute;
+	inset: 0;
 	width: 100%;
-	min-height: 44px;
-	font: inherit;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
 }
 
-.stsw-help {
-	font-size: 0.85em;
+.stsw-drop__text {
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+/* Suggested articles and help center. */
+.stsw-suggest {
+	margin: 0 0 var(--stsw-gap);
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: var(--stsw-soft);
+}
+
+.stsw-suggest__title {
+	margin: 0 0 0.4rem;
+	font-weight: 600;
+}
+
+.stsw-suggest ul,
+.stsw-kb__list {
+	display: grid;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stsw-suggest li,
+.stsw-kb__list li {
+	display: flex;
+	flex-direction: column;
+}
+
+.stsw-suggest li span,
+.stsw-kb__list li span {
+	font-size: 0.9em;
 	opacity: 0.85;
 }
 
-.stsw-js .stsw-js-only[hidden] {
-	display: none;
+.stsw-kb__search {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0 0 1.5rem;
 }
 
-.stsw-js-only {
-	display: none;
+.stsw-kb__search input[type="search"] {
+	flex: 1;
+	min-width: 220px;
+	min-height: 44px;
 }
 
-.stsw-js .stsw-js-only {
-	display: inline-flex;
+.stsw-kb__cat {
+	margin: 0 0 1.5rem;
 }
 
-/* Confirmation. */
-.stsw-sent {
-	padding: 1.25rem;
-	border: 1px solid var(--stsw-accent);
-	border-radius: var(--stsw-radius);
+/* Conversation: the customer on the right, the store on the left. */
+.stsw-head--ticket {
+	justify-content: flex-start;
+	margin-bottom: 0.25rem;
 }
 
-/* Conversation. */
 .stsw-thread {
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	gap: 0.75rem;
 	margin: var(--stsw-gap) 0;
 	padding: 0;
@@ -269,15 +340,22 @@
 }
 
 .stsw-msg {
-	max-width: 46rem;
+	max-width: min(46rem, 88%);
+	margin: 0;
 	padding: 0.85rem 1rem;
 	border: 1px solid var(--stsw-border);
-	border-radius: var(--stsw-radius);
+	border-radius: 12px;
+}
+
+.stsw-msg--customer {
+	align-self: flex-end;
+	border-color: transparent;
+	background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
 .stsw-msg--store {
-	margin-left: auto;
-	background: var(--stsw-soft);
+	align-self: flex-start;
+	background: transparent;
 }
 
 .stsw-msg__head {
@@ -338,8 +416,8 @@
 		width: 100%;
 	}
 
-	.stsw-msg--store {
-		margin-left: 0;
+	.stsw-msg {
+		max-width: 100%;
 	}
 }
 
