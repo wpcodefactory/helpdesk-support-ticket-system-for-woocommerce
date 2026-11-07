@@ -149,6 +149,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					'selectNone'    => __( 'Select tickets', 'support-ticket-system-for-woocommerce' ),
 					'saveError'     => __( 'Not saved. Check your connection and try again.', 'support-ticket-system-for-woocommerce' ),
 					'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+					'viewing'       => __( '%s is also looking at this ticket.', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- names.
+					'replying'      => __( '%s is writing a reply.', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- names.
+					'newMessage'    => __( 'A new message arrived on this ticket.', 'support-ticket-system-for-woocommerce' ),
+					'reload'        => __( 'Show it', 'support-ticket-system-for-woocommerce' ),
 					'nonce'         => wp_create_nonce( self::NONCE ),
 				)
 			);
@@ -302,20 +306,22 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		/**
 		 * Search, order and term filters from the request, as WP_Query arguments.
 		 *
+		 * @param array|null $source Filters (null: the request).
+		 *
 		 * @return array
 		 */
-		protected function get_filters() {
-			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only filters.
+		public function get_filters( $source = null ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only filters.
+			$source = null === $source ? wp_unslash( $_GET ) : $source;
 			$args   = array();
-			$search = trim( sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) ) );
-			$order  = absint( $_GET['order_id'] ?? 0 );
+			$search = trim( sanitize_text_field( $source['s'] ?? '' ) );
+			$order  = absint( $source['order_id'] ?? 0 );
 			$terms  = array(
-				'stsw_tickets_priority' => sanitize_title( wp_unslash( $_GET['prio'] ?? '' ) ),
-				'stsw_tickets_subject'  => sanitize_title( wp_unslash( $_GET['subject'] ?? '' ) ),
-				'stsw_tickets_status'   => sanitize_title( wp_unslash( $_GET['status'] ?? '' ) ),
+				'stsw_tickets_priority' => sanitize_title( $source['prio'] ?? '' ),
+				'stsw_tickets_subject'  => sanitize_title( $source['subject'] ?? '' ),
+				'stsw_tickets_status'   => sanitize_title( $source['status'] ?? '' ),
 			);
-			// phpcs:enable WordPress.Security.NonceVerification.Recommended
-			$meta = array();
+			$meta   = array();
 			if ( '' !== $search ) {
 				if ( ctype_digit( ltrim( $search, '#' ) ) ) {
 					$args['post__in'] = array( absint( ltrim( $search, '#' ) ) );
@@ -369,7 +375,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		 *
 		 * @return WP_Query
 		 */
-		protected function query_filtered( $view, $args ) {
+		public function query_filtered( $view, $args ) {
 			$views = $this->get_views();
 			$base  = isset( $views[ $view ] ) ? $views[ $view ]['args'] : array();
 			if ( ! empty( $args['stsw_extra_meta'] ) ) {
@@ -477,7 +483,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 							</li>
 						<?php endforeach; ?>
 					</ul>
-					<?php $priorities = WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_priority' ); ?>
+					<?php
+					/**
+					 * Below the views (saved views).
+					 */
+					do_action( 'wpfactory_wc_sts_inbox_rail_after_views' );
+					$priorities = WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_priority' );
+					?>
 					<?php if ( $priorities ) : ?>
 						<p class="hd-rail__label" id="hd-rail-prio"><?php esc_html_e( 'Priority', 'support-ticket-system-for-woocommerce' ); ?></p>
 						<ul class="hd-rail__list" aria-labelledby="hd-rail-prio">
@@ -595,7 +607,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			$core = $this->core();
 			?>
 			<div class="hd-list__head">
-				<h2 class="hd-h2" id="hd-list-title"><?php echo esc_html( $label ); ?> <span class="hd-muted">(<?php echo (int) $list->found_posts; ?>)</span></h2>
+				<div class="hd-list__title">
+					<h2 class="hd-h2" id="hd-list-title"><?php echo esc_html( $label ); ?> <span class="hd-muted">(<?php echo (int) $list->found_posts; ?>)</span></h2>
+					<?php
+					/**
+					 * Tools above the list (saved views, CSV export).
+					 *
+					 * @param array  $keep Current filters.
+					 * @param string $view View key.
+					 */
+					do_action( 'wpfactory_wc_sts_inbox_list_head', $keep, $view );
+					?>
+				</div>
 				<?php if ( ! empty( $keep['s'] ) ) : ?>
 					<p class="hd-filter">
 						<?php
@@ -836,6 +859,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					<span class="hd-help hd-js-only"><?php esc_html_e( 'Changes save automatically', 'support-ticket-system-for-woocommerce' ); ?></span>
 					<button type="submit" class="hd-btn hd-btn--sm hd-nojs"><?php esc_html_e( 'Save', 'support-ticket-system-for-woocommerce' ); ?></button>
 				</form>
+				<?php
+				/**
+				 * Above the thread (collision detection).
+				 *
+				 * @param int $ticket_id Ticket ID.
+				 */
+				do_action( 'wpfactory_wc_sts_inbox_ticket_top', $ticket_id );
+				?>
 				<?php if ( $duplicate ) : ?>
 					<div class="hd-banner hd-banner--warn" role="note">
 						<?php WPFactory_WC_STS_UI::e_icon( 'warn', 18 ); ?>

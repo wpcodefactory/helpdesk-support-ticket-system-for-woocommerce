@@ -210,6 +210,89 @@
 		refreshBulk();
 	}
 
+	// Collision detection: who else is on this ticket, and new messages while it is open (every 15 seconds).
+	var presence = document.querySelector("[data-hd-presence]");
+	if (presence && window.fetch) {
+		var typingSince = 0;
+		if (area) {
+			area.addEventListener("input", function () {
+				typingSince = Date.now();
+			});
+		}
+		var beat = function () {
+			var data = new window.FormData();
+			data.append("action", "wpfactory_wc_sts_presence");
+			data.append("_wpnonce", t.nonce);
+			data.append("ticket", presence.getAttribute("data-ticket"));
+			data.append("since", presence.getAttribute("data-since"));
+			data.append("typing", Date.now() - typingSince < 20000 ? "1" : "");
+			window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
+				.then(function (r) {
+					return r.json();
+				})
+				.then(function (json) {
+					if (!json || !json.success) {
+						return;
+					}
+					var lines = [];
+					var writers = json.data.others.filter(function (o) {
+						return o.typing;
+					});
+					var viewers = json.data.others.filter(function (o) {
+						return !o.typing;
+					});
+					if (writers.length) {
+						lines.push(String(t.replying).replace("%s", writers.map(function (o) {
+							return o.name;
+						}).join(", ")));
+					}
+					if (viewers.length) {
+						lines.push(String(t.viewing).replace("%s", viewers.map(function (o) {
+							return o.name;
+						}).join(", ")));
+					}
+					presence.textContent = lines.join(" ");
+					if (json.data.changed) {
+						var link = document.createElement("a");
+						link.href = window.location.href.replace(/[?&]stsw_msg=[^&]*/, "");
+						link.textContent = t.reload;
+						presence.appendChild(document.createTextNode((lines.length ? " " : "") + t.newMessage + " "));
+						presence.appendChild(link);
+					}
+					presence.hidden = !presence.textContent;
+				})
+				.catch(function () {});
+		};
+		window.setInterval(function () {
+			if (!document.hidden) {
+				beat();
+			}
+		}, 15000);
+		window.setTimeout(beat, 1500);
+	}
+
+	// Live chat availability switch, and a heartbeat so visitors see the team as online.
+	var available = document.querySelector("[data-hd-available]");
+	if (available && window.fetch) {
+		var ping = function (value) {
+			var data = new window.FormData();
+			data.append("action", "wpfactory_wc_sts_available");
+			data.append("_wpnonce", t.nonce);
+			if (undefined !== value) {
+				data.append("available", value ? "1" : "0");
+			}
+			return window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data });
+		};
+		available.addEventListener("change", function () {
+			ping(available.checked);
+		});
+		window.setInterval(function () {
+			if (!document.hidden && available.checked) {
+				ping();
+			}
+		}, 60000);
+	}
+
 	// Shortcuts help.
 	function toggleHelp() {
 		if (!dialog || !dialog.showModal) {
