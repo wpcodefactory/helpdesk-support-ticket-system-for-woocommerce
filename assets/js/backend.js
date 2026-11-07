@@ -7,69 +7,56 @@
 (function ($) {
 	"use strict";
 
-	$(
-		"#toplevel_page_support-ticket-system-woocommerce .wp-submenu > li:nth-child(4)",
-	).addClass("proVersion proSpan");
-	$(
-		"#toplevel_page_support-ticket-system-woocommerce .wp-submenu > li:nth-child(3)",
-	).addClass("proVersion proSpan");
-	$(".proVersion").click(function (e) {
-		e.preventDefault();
-		$("#STSWooCommerceModal").slideDown();
-	});
+	var settings = window.WPFactory_WC_STS_Backend || {};
 
-	$("#STSWooCommerceModal .close").click(function (e) {
-		e.preventDefault();
-		$("#STSWooCommerceModal").fadeOut();
-	});
-
-	var modal = document.getElementById("STSWooCommerceModal");
-
-	// When the user clicks anywhere outside of the modal, close it
-	window.onclick = function (event) {
-		if (event.target == modal) {
-			modal.style.display = "none";
-		}
-	};
-
-	// Pro tabs open the Pro modal; other tabs are normal links.
-	$(".STSWooCommerce .nav-tab-wrapper a.proVersion").on("click", function (e) {
-		e.preventDefault();
-	});
-
-	$(".stswaccordion").accordion({
-		collapsible: true,
-	});
-
-	$(".STSWooCommerce #tabs").tabs();
-	$(".STSWooCommerce .subtabs").tabs();
-	$(".STSWooCommerce #accordion").accordion();
+	$(".STSWooCommerce #tabs, .STSWooCommercePro #tabs").tabs();
 
 	// The settings form posts normally (the page reloads with a "Settings saved." notice).
-	$(".STSWooCommerce form").on("submit", function () {
-		$(".STSWooCommerce").addClass("loading");
+	$(".STSWooCommerce form, .STSWooCommercePro form").on("submit", function () {
+		$(this).closest(".wrap").addClass("loading");
 	});
 
-	/**
-	 * On delete button click, delete the response and clear the row from the table - via AJAX call to `response_delete()`.
-	 *
-	 * @version 2.2.0
-	 */
-	$(document).on("click", "#deleteResponse a", function (event) {
-		event.preventDefault();
+	// Priority colour picker.
+	if ($.fn.wpColorPicker) {
+		$(".stsw-color-field").wpColorPicker();
+	}
 
-		if (!window.confirm(WPFactory_WC_STS_Backend.confirmDelete)) {
+	// Delete a reply or a private note.
+	$(document).on("click", ".wpfactory-wc-sts-delete", function (event) {
+		event.preventDefault();
+		var button = $(this);
+		var isNote = "note" === button.data("type");
+		if (!window.confirm(isNote ? settings.confirmDeleteNote : settings.confirmDelete)) {
 			return;
 		}
+		$.post(
+			window.ajaxurl,
+			{
+				action: isNote ? "wpfactory_wc_sts_note_delete" : "wpfactory_wc_sts_response_delete",
+				nonce: settings.responseDeleteNonce,
+				id: button.data("id"),
+			},
+			function (response) {
+				if (response && response.success) {
+					button.closest("tr").remove();
+				}
+			}
+		);
+	});
 
-		var ajax_options = {
-			action: "wpfactory_wc_sts_response_delete",
-			nonce: WPFactory_WC_STS_Backend.responseDeleteNonce,
-			id: $(this).attr("id"),
-		};
-
-		$.post(ajaxurl, ajax_options, function (data) {
-			$("tr." + data).remove(); // remove row of the deleted item
-		});
+	// Insert a canned reply into the reply box.
+	$(document).on("change", ".wpfactory-wc-sts-canned", function () {
+		var option = $(this).find("option:selected");
+		var target = $("#" + $(this).data("target"));
+		var text = option.data("text");
+		if (!text || !target.length) {
+			return;
+		}
+		if ($.trim(target.val()) && !window.confirm(settings.confirmReplace)) {
+			$(this).val("");
+			return;
+		}
+		target.val(String(text)).trigger("focus");
+		$(this).val("");
 	});
 })(jQuery);

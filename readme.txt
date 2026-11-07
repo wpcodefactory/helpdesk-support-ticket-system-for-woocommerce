@@ -44,8 +44,8 @@ Settings Page: this is the page where you can change various setting s of the pl
 * Write different Text for Email Notification for admin and customer
 
 = FRONT END DETAILED FEATURES =
-The WordPress ticket system plugin creates  a Support Section UI in My Account Page, adding a new Tab - with customizable text for title – that leads to this section where Users can view their tickets and create new.
-A button per Order is added - with customizable text for title – that leads to the support page.
+The WordPress ticket system plugin creates  a Support Section UI in My Account Page, adding a new Tab - with customizable text for title, that leads to this section where Users can view their tickets and create new.
+A button per Order is added - with customizable text for title, that leads to the support page.
 Customers can keep track on the Tickets they opened and view any new response added from the website.
 You can also manage the tickets from the front end and provide support directly.
 Along with this integrated functionality, you can use a shortcode to add the Support System to any page you have created so that any Logged in User can view and manage.
@@ -118,6 +118,11 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 2.3.0 - Unreleased =
+* New - Every Pro feature is now in the free version: tickets linked to an order, private attachments, priorities with colours, subjects with automatic assignment, assigning tickets to staff (who can also answer from My Account), private notes and assignee emails.
+* New - Guest tickets (off by default): customers without an account enter their order number and billing email, and follow their request through a private link.
+* New - Canned replies: save answers you use often and insert them in one click.
+* New - Extra fields on the ticket form (text, dropdown, checkbox).
+* Improved - Attachment limits (number of files, size, types) are enforced, and staff can attach files to replies in wp-admin.
 * Fix - Security - Shortcodes typed by a customer in a ticket no longer run (they ran with admin rights when an admin viewed the ticket list on the site).
 * Fix - Security - Only store staff (Shop Manager, Administrator) can open tickets in wp-admin; Editors could read every ticket.
 * Fix - Store reply emails now contain the reply. With a custom subject set, the email body used to be the subject text.

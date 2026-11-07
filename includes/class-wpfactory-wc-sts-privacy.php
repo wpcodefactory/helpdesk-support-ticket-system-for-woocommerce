@@ -1,11 +1,14 @@
 <?php
 /**
- * Helpdesk Support Ticket System for WooCommerce - Privacy (personal data export and erase, policy text).
+ * Helpdesk Support Ticket System for WooCommerce - Core: privacy (personal data export and erase, policy text).
  *
- * Adds the customer's tickets and replies to Tools > Export Personal Data and Tools > Erase Personal Data.
+ * Adds the customer's tickets (account and guest tickets), replies, order, form answers and files to Tools > Export
+ * Personal Data and Tools > Erase Personal Data. Shared by the free and Pro editions.
  *
- * @version 2.2.1
+ * @version 2.3.0
  * @since   2.2.1
+ *
+ * @author WPFactory
  *
  * @package WPFactory\WC_Support_Ticket_System
  */
@@ -17,7 +20,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 	/**
 	 * WPFactory_WC_STS_Privacy class.
 	 *
-	 * @version 2.2.1
+	 * @version 2.3.0
 	 * @since   2.2.1
 	 */
 	class WPFactory_WC_STS_Privacy {
@@ -31,9 +34,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 
 		/**
 		 * Constructor.
-		 *
-		 * @version 2.2.1
-		 * @since   2.2.1
 		 */
 		public function __construct() {
 			add_filter( 'wp_privacy_personal_data_exporters', array( $this, 'register_exporter' ) );
@@ -72,7 +72,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 		}
 
 		/**
-		 * Ticket IDs opened by the user with this email address.
+		 * Tickets opened by the account with this email address, or as a guest with it.
 		 *
 		 * @param string $email Email address.
 		 * @param int    $page  Page (1-based).
@@ -80,25 +80,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 		 * @return int[]
 		 */
 		protected function get_ticket_ids( $email, $page ) {
-			$user = get_user_by( 'email', $email );
-			if ( ! $user ) {
-				return array();
-			}
-			return get_posts(
+			$meta = array(
+				'relation' => 'OR',
 				array(
-					'post_type'      => 'stsw_tickets',
-					'post_status'    => 'any',
-					'fields'         => 'ids',
-					'posts_per_page' => self::BATCH,
-					'paged'          => max( 1, (int) $page ),
-					'orderby'        => 'ID',
-					'order'          => 'ASC',
-					'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-						array(
-							'key'   => 'STSWooCommerceProticketuser',
-							'value' => (int) $user->ID,
-						),
-					),
+					'key'   => WPFactory_WC_STS_Inc::META_GUEST_EMAIL,
+					'value' => strtolower( (string) $email ),
+				),
+			);
+			$user = get_user_by( 'email', $email );
+			if ( $user ) {
+				$meta[] = array(
+					'key'   => WPFactory_WC_STS_Inc::META_USER,
+					'value' => (int) $user->ID,
+				);
+			}
+			return array_map(
+				'intval',
+				get_posts(
+					array(
+						'post_type'      => 'stsw_tickets',
+						'post_status'    => 'any',
+						'fields'         => 'ids',
+						'posts_per_page' => self::BATCH,
+						'paged'          => max( 1, (int) $page ),
+						'orderby'        => 'ID',
+						'order'          => 'ASC',
+						'meta_query'     => $meta, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					)
 				)
 			);
 		}
@@ -112,28 +120,24 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 		 * @return array
 		 */
 		public function export( $email, $page = 1 ) {
-			global $wpdb;
-
+			$core  = WPFactory_WC_STS_Inc::get_main_instance();
 			$ids   = $this->get_ticket_ids( $email, $page );
 			$items = array();
 			foreach ( $ids as $id ) {
-				$status = wp_get_object_terms( $id, 'stsw_tickets_status', array( 'fields' => 'names' ) );
-				$rows   = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-					$wpdb->prepare( 'SELECT creationdate, agent, content FROM %i WHERE post_id = %d ORDER BY creationdate ASC, id ASC', $wpdb->prefix . 'stsw_responses', $id )
-				);
-				$lines = array();
-				foreach ( (array) $rows as $row ) {
+				$status = $core->get_ticket_term( $id, 'stsw_tickets_status' );
+				$lines  = array();
+				foreach ( $core->get_replies( $id ) as $row ) {
 					$lines[] = $row->creationdate . ' UTC, ' .
 						( (int) $row->agent > 0 ? __( 'Store', 'support-ticket-system-for-woocommerce' ) : __( 'Customer', 'support-ticket-system-for-woocommerce' ) ) .
 						': ' . wp_specialchars_decode( $row->content, ENT_QUOTES );
 				}
-				$data = array(
+				$data  = array(
 					array(
 						'name'  => __( 'Ticket number', 'support-ticket-system-for-woocommerce' ),
 						'value' => (string) $id,
 					),
 					array(
-						'name'  => __( 'Subject', 'support-ticket-system-for-woocommerce' ),
+						'name'  => __( 'Title', 'support-ticket-system-for-woocommerce' ),
 						'value' => get_the_title( $id ),
 					),
 					array(
@@ -142,7 +146,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 					),
 					array(
 						'name'  => __( 'Status', 'support-ticket-system-for-woocommerce' ),
-						'value' => is_wp_error( $status ) ? '' : implode( ', ', $status ),
+						'value' => $status ? $status->name : '',
 					),
 					array(
 						'name'  => __( 'Message', 'support-ticket-system-for-woocommerce' ),
@@ -153,7 +157,39 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 						'value' => implode( "\n", $lines ),
 					),
 				);
-				$data = array_merge( $data, $this->extra_export_data( $id ) );
+				$guest = (string) get_post_meta( $id, WPFactory_WC_STS_Inc::META_GUEST_EMAIL, true );
+				if ( '' !== $guest ) {
+					$data[] = array(
+						'name'  => __( 'Email', 'support-ticket-system-for-woocommerce' ),
+						'value' => $guest,
+					);
+				}
+				$order = $core->get_ticket_order_id( $id ) ? wc_get_order( $core->get_ticket_order_id( $id ) ) : false;
+				if ( $order ) {
+					$data[] = array(
+						'name'  => __( 'Order', 'support-ticket-system-for-woocommerce' ),
+						'value' => $order->get_order_number(),
+					);
+				}
+				if ( class_exists( 'WPFactory_WC_STS_Fields' ) ) {
+					foreach ( WPFactory_WC_STS_Fields::get_instance()->get_display_values( $id ) as $label => $value ) {
+						$data[] = array(
+							'name'  => $label,
+							'value' => $value,
+						);
+					}
+				}
+				$files = array();
+				foreach ( get_attached_media( '', $id ) as $attachment ) {
+					$name    = (string) get_post_meta( $attachment->ID, '_stsw_original_name', true );
+					$files[] = '' !== $name ? $name : get_the_title( $attachment );
+				}
+				if ( $files ) {
+					$data[] = array(
+						'name'  => __( 'Attachments', 'support-ticket-system-for-woocommerce' ),
+						'value' => implode( "\n", $files ),
+					);
+				}
 
 				$items[] = array(
 					'group_id'          => 'wpfactory-wc-sts-tickets',
@@ -171,18 +207,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 		}
 
 		/**
-		 * Extra export fields (Pro adds the linked order and attachments).
-		 *
-		 * @param int $ticket_id Ticket ID.
-		 *
-		 * @return array
-		 */
-		protected function extra_export_data( $ticket_id ) {
-			return array();
-		}
-
-		/**
-		 * Eraser callback: deletes the tickets the user opened, with their replies.
+		 * Eraser callback: deletes the tickets the person opened, with replies, private notes, answers and files.
 		 *
 		 * Tickets are deleted rather than anonymised: their text is the customer's own words.
 		 * Replies the user wrote as store staff on other customers' tickets are kept.
@@ -193,15 +218,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 		 * @return array
 		 */
 		public function erase( $email, $page = 1 ) {
-			global $wpdb;
-
 			$ids = $this->get_ticket_ids( $email, 1 );
 			foreach ( $ids as $id ) {
-				$wpdb->delete( $wpdb->prefix . 'stsw_responses', array( 'post_id' => (int) $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$this->erase_extra( $id );
+				// Replies, notes and files are removed by the core on `before_delete_post`.
 				wp_delete_post( $id, true );
 			}
-
 			return array(
 				'items_removed'  => count( $ids ) > 0,
 				'items_retained' => false,
@@ -211,35 +232,15 @@ if ( ! class_exists( 'WPFactory_WC_STS_Privacy' ) ) :
 		}
 
 		/**
-		 * Extra data removed with a ticket (Pro: private notes and attachments).
-		 *
-		 * @param int $ticket_id Ticket ID.
-		 */
-		protected function erase_extra( $ticket_id ) {
-		}
-
-		/**
 		 * Suggested text for the site's privacy policy (Settings > Privacy).
-		 *
-		 * @version 2.2.1
-		 * @since   2.2.1
 		 */
 		public function add_privacy_policy_content() {
 			if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 				return;
 			}
-			$content = '<p>' . esc_html__( 'When you open a support ticket we store the subject, your message, your replies and the store\'s replies, linked to your account. We use them to answer your request and keep a record of it. We email you about your tickets if the store has turned on email notifications.', 'support-ticket-system-for-woocommerce' ) . '</p>' .
-				'<p>' . esc_html__( 'You can ask for an export or for the deletion of your tickets; deleting them removes the tickets and every reply in them.', 'support-ticket-system-for-woocommerce' ) . '</p>';
-			wp_add_privacy_policy_content( $this->policy_name(), wp_kses_post( $content ) );
-		}
-
-		/**
-		 * Name shown in the privacy policy guide.
-		 *
-		 * @return string
-		 */
-		protected function policy_name() {
-			return __( 'Helpdesk Support Ticket System for WooCommerce', 'support-ticket-system-for-woocommerce' );
+			$content = '<p>' . esc_html__( 'When you open a support ticket we store the title, your message, your answers to the form, your replies and the store\'s replies, linked to your account or, without an account, to your email address and order. We use them to answer your request and keep a record of it. Files you attach to a ticket are stored on this site with the ticket. We email you about your tickets if the store has turned on email notifications.', 'support-ticket-system-for-woocommerce' ) . '</p>' .
+				'<p>' . esc_html__( 'You can ask for an export or for the deletion of your tickets; deleting them removes the tickets, every reply in them and their files.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+			wp_add_privacy_policy_content( WPFACTORY_WC_STS_NAME, wp_kses_post( $content ) );
 		}
 	}
 

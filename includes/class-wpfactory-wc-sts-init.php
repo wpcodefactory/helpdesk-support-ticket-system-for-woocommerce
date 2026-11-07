@@ -1,8 +1,10 @@
 <?php
 /**
- * Helpdesk Support Ticket System for WooCommerce - WPFactory_WC_STS_Init Class
+ * Helpdesk Support Ticket System for WooCommerce - Core: settings screen, admin tabs and assets.
  *
- * @version 2.2.0
+ * Shared by the free and Pro editions. Settings keep their stored names (prefix + setting, e.g. `STSWooCommercehideClosed`).
+ *
+ * @version 2.3.0
  *
  * @author WPFactory
  *
@@ -16,152 +18,26 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 	/**
 	 * WPFactory_WC_STS_Init class.
 	 *
-	 * @version 2.2.0
+	 * @version 2.3.0
 	 */
 	class WPFactory_WC_STS_Init {
 
 		/**
-		 * Plugin.
+		 * Settings prefix (free `STSWooCommerce`, Pro `STSWooCommercePro`).
 		 *
 		 * @var string
 		 */
 		public $plugin = 'STSWooCommerce';
 
 		/**
-		 * Name.
-		 *
-		 * @var string
-		 */
-		public $name = 'Helpdesk Support Ticket System for WooCommerce';
-
-		/**
-		 * Pro URL.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $pro_url = 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce';
-
-		/**
-		 * Tabs.
-		 *
-		 * @var array
-		 */
-		public $tab;
-
-		/**
 		 * Active tab.
 		 *
-		 * @version 2.2.0
-		 *
 		 * @var string
 		 */
-		public $active_tab;
+		public $active_tab = '';
 
 		/**
-		 * Hide closed.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $hide_closed = '';
-
-		/**
-		 * Text for ticket save.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $text_for_ticket_save = 'Saved your ticket successfully! We will come back to you soon';
-
-		/**
-		 * Text for response save.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $text_for_response_save = 'Saved your response successfully! We will come back to you soon';
-
-		/**
-		 * Rename account tab link.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $rename_account_tab_link = '';
-
-		/**
-		 * Rename order button link.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $rename_order_button_link = '';
-
-		/**
-		 * Mail to admin.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $mail_to_admin = 'mailToADmin';
-
-		/**
-		 * Admin email address.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $admin_email_address = 'AdminEmailAddress';
-
-		/**
-		 * Mail to user.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $mail_to_user = 'mailToUser';
-
-		/**
-		 * Mail to customer.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $mail_to_customer = '';
-
-		/**
-		 * Mail content to customer.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $mail_content_to_customer = '';
-
-		/**
-		 * Mail subject to customer.
-		 *
-		 * @version 2.2.0
-		 *
-		 * @var string
-		 */
-		public $mail_subject_to_customer = '';
-
-		/**
-		 * Allowed HTML tags and attributes.
-		 *
-		 * @version 2.2.0
+		 * HTML allowed in the merchant's messages and email templates.
 		 *
 		 * @var array
 		 */
@@ -176,326 +52,140 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			'i'          => array(
 				'style' => array(),
 				'class' => array(),
-				'id'    => array(),
 			),
-			'br'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'em'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'strong'     => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'h1'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'h2'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'h3'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'h4'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'h5'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'h6'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
+			'br'         => array(),
+			'em'         => array( 'style' => array() ),
+			'strong'     => array( 'style' => array() ),
+			'h1'         => array( 'style' => array() ),
+			'h2'         => array( 'style' => array() ),
+			'h3'         => array( 'style' => array() ),
+			'h4'         => array( 'style' => array() ),
+			'h5'         => array( 'style' => array() ),
+			'h6'         => array( 'style' => array() ),
 			'p'          => array(
 				'style' => array(),
 				'class' => array(),
-				'id'    => array(),
 			),
 			'div'        => array(
 				'style' => array(),
 				'class' => array(),
-				'id'    => array(),
 			),
 			'section'    => array(
 				'style' => array(),
 				'class' => array(),
-				'id'    => array(),
 			),
-			'ul'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'li'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'ol'         => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'blockquote' => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'figure'     => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'figcaption' => array(
-				'style' => array(),
-				'class' => array(),
-				'id'    => array(),
-			),
-			'style'      => array(),
-			'iframe'     => array(
-				'height'          => array(),
-				'src'             => array(),
-				'width'           => array(),
-				'allowfullscreen' => array(),
-				'style'           => array(),
-				'class'           => array(),
-				'id'              => array(),
-			),
+			'ul'         => array( 'style' => array() ),
+			'ol'         => array( 'style' => array() ),
+			'li'         => array( 'style' => array() ),
+			'blockquote' => array( 'style' => array() ),
+			'figure'     => array( 'style' => array() ),
+			'figcaption' => array( 'style' => array() ),
 			'img'        => array(
 				'alt'   => array(),
 				'src'   => array(),
 				'title' => array(),
 				'style' => array(),
 				'class' => array(),
-				'id'    => array(),
-			),
-			'video'      => array(
-				'width'    => array(),
-				'height'   => array(),
-				'controls' => array(),
-				'style'    => array(),
-				'class'    => array(),
-				'id'       => array(),
-			),
-			'source'     => array(
-				'src'   => array(),
-				'type'  => array(),
-				'class' => array(),
-				'id'    => array(),
+				'width' => array(),
 			),
 		);
 
 		/**
 		 * Constructor.
 		 *
-		 * @version 2.2.0
+		 * @version 2.3.0
 		 */
 		public function __construct() {
 			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
-
-			add_action( 'wp_enqueue_scripts', array( $this, 'my_account_tickets_css' ) );
-
 			add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
-
-			add_filter( 'widget_text', 'do_shortcode' );
-
 			add_action( 'wpfactory_wc_sts_output_settings', array( $this, 'init' ) );
-
-			add_action( 'admin_footer', array( $this, 'pro_modal' ) );
-
-			add_action( 'admin_init', array( $this, 'admin_panels' ) );
-
 			add_action( 'all_admin_notices', array( $this, 'add_tabs_to_tickets' ) );
 		}
 
 		/**
-		 * Enqueue CSS for the My Account tickets page.
-		 *
-		 * @version 2.2.0
-		 * @since   2.2.0
-		 */
-		public function my_account_tickets_css() {
-			if (
-				! is_account_page() ||
-				null === get_query_var( 'tickets', null )
-			) {
-				return;
-			}
-
-			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-			wp_enqueue_style(
-				'wpfactory-wc-sts-tickets',
-				plugins_url( 'assets/css/my-account' . $min . '.css', WPFACTORY_WC_STS_FILE ),
-				array(),
-				WPFACTORY_WC_STS_VERSION
-			);
-		}
-
-		/**
-		 * Add tabs to tickets.
-		 *
-		 * @version 2.2.0
+		 * Plugin and Pro (or free) tabs above the plugin's list screens.
 		 */
 		public function add_tabs_to_tickets() {
-			// phpcs:disable WordPress.Security.NonceVerification.Recommended
-			if (
-				(
-					isset( $_REQUEST['post_type'] ) &&
-					'stsw_tickets' === sanitize_text_field( wp_unslash( $_REQUEST['post_type'] ) )
-				) ||
-				(
-					isset( $_REQUEST['taxonomy'] ) &&
-					'stsw_tickets_status' === sanitize_text_field( wp_unslash( $_REQUEST['taxonomy'] ) )
-				)
-			) {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( $screen && in_array( $screen->base, array( 'edit', 'edit-tags', 'term' ), true ) && ( in_array( $screen->post_type, array( 'stsw_tickets', 'stsw_canned_reply' ), true ) ) ) {
+				echo '<div class="' . esc_attr( $this->plugin ) . '">';
 				$this->admin_header();
 				$this->admin_tabs();
+				echo '</div>';
 			}
-			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		}
 
 		/**
-		 * Pro modal.
+		 * Whether the current admin screen belongs to the plugin.
 		 *
-		 * @version 2.2.0
+		 * @return bool
 		 */
-		public function pro_modal() {
-			?>
-			<div id="<?php print esc_attr( $this->plugin ) . 'Modal'; ?>">
-				<!-- Modal content -->
-				<div class="modal-content">
-					<div class='<?php print esc_attr( $this->plugin ); ?>clearfix'><span class="close">&times;</span></div>
-					<div class='<?php print esc_attr( $this->plugin ); ?>clearfix'>
-						<div class='<?php print esc_attr( $this->plugin ); ?>columns2'>
-							<center>
-								<img style='width:90%' src='<?php echo esc_url( plugins_url( 'images/support-ticket-system-woocommerce-pro.png', WPFACTORY_WC_STS_FILE ) ); ?>' style='width:100%' />
-							</center>
-						</div>
-
-						<div class='<?php print esc_attr( $this->plugin ); ?>columns2'>
-							<h3><?php esc_html_e( 'Go PRO and get more important features!', 'support-ticket-system-for-woocommerce' ); ?></h3>
-							<p>&#10003; <?php esc_html_e( 'Enable Attachments on Ticket Submission', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( 'Choose File Size, Number and Type for Upload', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( 'Enable Ticket Priorities for Better Management', 'support-ticket-system-for-woocommerce' ); ?></strong></p>
-							<p>&#10003; <?php esc_html_e( 'Assign Ticket to Different Users', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( 'Private Notes that customer cannot view ', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( 'Add Ticket Subject and Automate Ticket Assignment', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( 'Customize your Email Notifications ', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( 'Useful Placeholders for your Notification Template', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p>&#10003; <?php esc_html_e( '.. and a lot more!', 'support-ticket-system-for-woocommerce' ); ?></p>
-							<p class='bottomToUp'><center><a target='_blank' class='proUrl' href='<?php print esc_url( $this->pro_url ); ?>'><?php esc_html_e( 'GET IT HERE', 'support-ticket-system-for-woocommerce' ); ?></a></center></p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<?php
+		public static function is_plugin_screen() {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( $screen && in_array( $screen->post_type, array( 'stsw_tickets', 'stsw_canned_reply' ), true ) ) {
+				return true;
+			}
+			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return WPFACTORY_WC_STS_PAGE === $page;
 		}
 
 		/**
-		 * Backend scripts.
+		 * Admin styles and scripts, only on the plugin's own screens.
 		 *
-		 * @version 2.2.0
-		 *
-		 * @todo (v2.2.0) Check if we need all the scripts and styles being enqueued, e.g., `font-awesome`?
+		 * @version 2.3.0
 		 */
 		public function backend_scripts() {
-			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-			// Small menu script and styles everywhere (Pro menu items open the Pro modal);
-			// Font Awesome and jQuery UI styles only on the plugin's own screens (they restyled other plugins' pages).
-			$is_plugin_screen = self::is_plugin_screen();
-
-			wp_enqueue_style(
-				'wpfactory-wc-sts-backend',
-				plugins_url( 'assets/css/backend' . $min . '.css', WPFACTORY_WC_STS_FILE ),
-				array(),
-				WPFACTORY_WC_STS_VERSION
-			);
-
-			if ( $is_plugin_screen ) {
-				wp_enqueue_style(
-					'wpfactory-wc-sts-fa',
-					plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
-					array(),
-					WPFACTORY_WC_STS_VERSION
-				);
-
-				wp_enqueue_style(
-					'jquery-ui-style',
-					plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
-					array(),
-					WPFACTORY_WC_STS_VERSION
-				);
+			if ( ! self::is_plugin_screen() ) {
+				return;
 			}
-
-			wp_enqueue_script( 'jquery-ui-accordion' );
-
+			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+			wp_enqueue_style( 'wpfactory-wc-sts-backend', plugins_url( 'assets/css/backend' . $min . '.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
+			wp_enqueue_style( 'wpfactory-wc-sts-fa', plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
+			wp_enqueue_style( 'jquery-ui-style', plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
+			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_script(
 				'wpfactory-wc-sts-backend',
 				plugins_url( 'assets/js/backend' . $min . '.js', WPFACTORY_WC_STS_FILE ),
-				array( 'jquery', 'jquery-ui-tabs', 'jquery-ui-accordion' ),
+				array( 'jquery', 'jquery-ui-tabs', 'wp-color-picker' ),
 				WPFACTORY_WC_STS_VERSION,
 				true
 			);
-
 			wp_localize_script(
 				'wpfactory-wc-sts-backend',
 				'WPFactory_WC_STS_Backend',
 				array(
 					'responseDeleteNonce' => wp_create_nonce( 'wpfactory_wc_sts_response_delete' ),
 					'confirmDelete'       => __( 'Delete this message? This cannot be undone.', 'support-ticket-system-for-woocommerce' ),
+					'confirmDeleteNote'   => __( 'Delete this note? This cannot be undone.', 'support-ticket-system-for-woocommerce' ),
+					'confirmReplace'      => __( 'Replace the text you already typed?', 'support-ticket-system-for-woocommerce' ),
 				)
 			);
 		}
 
 		/**
-		 * Frontend scripts.
+		 * Registers the customer screen assets; enqueued on My Account pages and pages with the shortcode.
 		 *
-		 * @version 2.2.0
+		 * @version 2.3.0
 		 */
 		public function frontend_scripts() {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 			wp_register_style( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/css/frontend' . $min . '.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
 			wp_register_style( 'wpfactory-wc-sts-fa', plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
 			wp_register_style( 'wpfactory-wc-sts-jquery-ui', plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
 			wp_register_script( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ), array( 'jquery', 'jquery-ui-accordion' ), WPFACTORY_WC_STS_VERSION, true );
 
-			// Before 2.2.1 these loaded on every page of the store. Now: My Account pages (tickets, view order)
-			// and pages using the shortcode (see `enqueue_frontend_assets()`, also called by the shortcode).
 			if ( function_exists( 'is_account_page' ) && is_account_page() ) {
 				self::enqueue_frontend_assets();
-			} else {
-				$post = get_post();
-				if ( $post && has_shortcode( (string) $post->post_content, 'stsw_user_tickets' ) ) {
-					self::enqueue_frontend_assets();
-				}
+				return;
+			}
+			$post = get_post();
+			if ( $post && has_shortcode( (string) $post->post_content, 'stsw_user_tickets' ) ) {
+				self::enqueue_frontend_assets();
 			}
 		}
 
 		/**
-		 * Enqueues the ticket screen assets (registered in `frontend_scripts()`).
-		 *
-		 * @version 2.2.1
-		 * @since   2.2.1
+		 * Enqueues the customer screen assets (registered in `frontend_scripts()`).
 		 */
 		public static function enqueue_frontend_assets() {
 			wp_enqueue_style( 'wpfactory-wc-sts-frontend' );
@@ -505,904 +195,375 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * Whether the current admin screen belongs to the plugin.
-		 *
-		 * @version 2.2.1
-		 * @since   2.2.1
-		 *
-		 * @return bool
-		 */
-		public static function is_plugin_screen() {
-			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-			if ( $screen && ( 'stsw_tickets' === $screen->post_type || 0 === strpos( (string) $screen->taxonomy, 'stsw_tickets' ) ) ) {
-				return true;
-			}
-			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return 0 === strpos( $page, 'support-ticket-system-woocommerce' );
-		}
-
-		/**
-		 * Init.
-		 *
-		 * @version 2.2.0
+		 * Dashboard and settings page.
 		 */
 		public function init() {
-			print "<div class='" . esc_attr( $this->plugin ) . "'>";
-				$this->admin_header();
-				printf(
-					/* translators: %s: shortcode [stsw_user_tickets] */
-					esc_html__( 'Use the %s shortcode in any page you like as alternative to provide the ticketing system.', 'support-ticket-system-for-woocommerce' ),
-					'<code>[stsw_user_tickets]</code>'
-				);
-				$this->admin_settings();
-			print '</div>';
+			echo '<div class="wrap ' . esc_attr( $this->plugin ) . '">';
+			$this->admin_header();
+			$this->admin_settings();
+			echo '</div>';
 		}
 
 		/**
-		 * Admin header.
-		 *
-		 * @version 2.2.0
+		 * Page header.
 		 */
 		public function admin_header() {
-			?>
-			<h1 style='display:flex;align-items:center;' ><a target='_blank' href='<?php print esc_url( $this->pro_url ); ?>'>
-
-			<img   style='width:170px;padding-right:30px' src='<?php echo esc_url( plugins_url( 'images/extendwp.png', WPFACTORY_WC_STS_FILE ) ); ?>' alt='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' title='<?php esc_html_e( 'Get more plugins by extendWP', 'support-ticket-system-for-woocommerce' ); ?>' />
-				</a> <span style='color:#2271b1;'><?php print esc_html( $this->name ); ?></span></h1>
-
-			<?php
+			echo '<h1 class="wpfactory-wc-sts-title">' . esc_html( WPFACTORY_WC_STS_NAME ) . '</h1>';
 		}
 
 		/**
-		 * Admin settings.
-		 *
-		 * @version 2.2.0
-		 */
-		public function admin_settings() {
-			$this->admin_tabs(); // Add tabs for tickets screen.
-
-			?>
-			<?php
-
-			if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->active_tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				if ( isset( $_GET['action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					$this->active_action = sanitize_text_field( wp_unslash( $_GET['action'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				}
-			} else {
-				$this->active_tab = 'general';
-			}
-
-			if ( 'settings' === $this->active_tab ) {
-				?>
-				<form method="post" id='<?php echo esc_attr( $this->plugin ); ?>Form' >
-
-					<div class='result'><?php $this->admin_process_settings(); ?> </div>
-
-					<div id="tabs">
-						<ul>
-							<li><a href="#general"><?php esc_html_e( 'General', 'support-ticket-system-for-woocommerce' ); ?></a></li>
-							<li><a href="#notifications"><?php esc_html_e( 'Notifications', 'support-ticket-system-for-woocommerce' ); ?></a></li>
-						</ul>
-						<div id="general">
-
-						<?php
-						settings_fields( esc_html( $this->plugin ) . 'general-options' );
-						do_settings_sections( esc_html( $this->plugin ) . 'general-options' );
-
-						?>
-
-						</div>
-						<div id="notifications">
-							<h4>
-							<span class='proVersion' >
-							<?php esc_html_e( 'Available placeholders for your Emails:', 'support-ticket-system-for-woocommerce' ); ?>
-								<i> {ticketId},{responseId},{title},{content},{toEmail},{toFirstName},{toLastName} </i>
-							<?php esc_html_e( 'in PRO Version', 'support-ticket-system-for-woocommerce' ); ?>
-								</span>
-							</h4>
-							<?php
-							settings_fields( esc_html( $this->plugin ) . 'notifications-options' );
-							do_settings_sections( esc_html( $this->plugin ) . 'notifications-options' );
-							WPFactory_WC_STS_Inc::get_main_instance()->render_test_email_button();
-							?>
-						</div>
-						<?php
-						wp_nonce_field( esc_html( $this->plugin ) );
-						?>
-					<p id='save_changes' ><?php esc_html( submit_button() ); ?></p>
-
-				</form>
-				<?php
-			} else {
-				// Display dashboard.
-				$tickets = WPFactory_WC_STS_Inc::get_main_instance();
-				$tickets->tickets_dashboard();
-			}
-		}
-
-		/**
-		 * Admin tabs.
-		 *
-		 * @version 2.2.0
+		 * Tabs: Dashboard, Tickets, Priorities, Subjects, Canned replies, Settings.
 		 */
 		public function admin_tabs() {
-			// The tabs in tickets screen.
-			$this->tab = array(
-				'general'    => 'Dashboard',
-				'all'        => 'Tickets',
-				'settings'   => 'Settings',
-				'priorities' => 'Priorities',
-				'subject'    => 'Subject',
-				'more'       => 'Go PRO',
-			);
-			if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->active_tab = sanitize_text_field( wp_unslash( $_GET['tab'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif (
-				isset( $_GET['post_type'] ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'stsw_tickets' === sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			) {
-				$this->active_tab = 'all';
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			$tab    = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $screen && 'stsw_canned_reply' === $screen->post_type ) {
+				$active = 'canned';
+			} elseif ( $screen && in_array( $screen->taxonomy, array( 'stsw_tickets_priority', 'stsw_tickets_subject', 'stsw_tickets_status' ), true ) ) {
+				$active = $screen->taxonomy;
+			} elseif ( $screen && 'stsw_tickets' === $screen->post_type ) {
+				$active = 'all';
 			} else {
-				$this->active_tab = 'general';
+				$active = 'settings' === $tab ? 'settings' : 'general';
 			}
+			$this->active_tab = $active;
+			$tabs             = array(
+				'general'               => array( __( 'Dashboard', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) ),
+				'all'                   => array( __( 'Tickets', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_tickets' ) ),
+				'stsw_tickets_priority' => array( __( 'Priorities', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' ) ),
+				'stsw_tickets_subject'  => array( __( 'Subjects', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' ) ),
+				'canned'                => array( __( 'Canned replies', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_canned_reply' ) ),
+				'settings'              => array( __( 'Settings', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=settings' ) ),
+			);
+			echo '<nav class="nav-tab-wrapper" aria-label="' . esc_attr__( 'Support tickets sections', 'support-ticket-system-for-woocommerce' ) . '">';
+			foreach ( $tabs as $key => $item ) {
+				$current = $key === $active;
+				echo '<a class="nav-tab' . ( $current ? ' nav-tab-active' : '' ) . '" href="' . esc_url( $item[1] ) . '"' . ( $current ? ' aria-current="page"' : '' ) . '>' . esc_html( $item[0] ) . '</a>';
+			}
+			echo '</nav>';
+		}
 
-			echo '<h2 class="nav-tab-wrapper" >';
-			foreach ( $this->tab as $tab => $name ) {
-				$class = ( $tab === $this->active_tab ) ? ' nav-tab-active' : '';
-				if ( 'all' === $tab ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . "' href='edit.php?post_type=stsw_tickets&tab=" . esc_attr( $tab ) . "'>" . esc_html( $name ) . '</a>';
-				} elseif ( 'priorities' === $tab ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion disabled' href='#'>" . esc_html( $name ) . '</a>';
-				} elseif ( 'subject' === $tab ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion disabled' href='#'>" . esc_html( $name ) . '</a>';
-				} elseif ( 'more' === $tab ) {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " proVersion' href='#'>" . esc_html( $name ) . '</a>';
-				} else {
-					echo "<a class='nav-tab" . esc_attr( $class ) . " ' href='?page=support-ticket-system-woocommerce&tab=" . esc_attr( $tab ) . "'>" . wp_kses( $name, self::$allowed_html ) . '</a>';
+		/**
+		 * Settings form or dashboard.
+		 *
+		 * @version 2.3.0
+		 */
+		public function admin_settings() {
+			$this->admin_tabs();
+			if ( 'settings' !== $this->active_tab ) {
+				WPFactory_WC_STS_Inc::get_main_instance()->tickets_dashboard();
+				return;
+			}
+			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				echo '<div class="notice notice-error inline"><p>' . esc_html__( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				return;
+			}
+			$sections = array(
+				'general'       => __( 'General', 'support-ticket-system-for-woocommerce' ),
+				'form'          => __( 'Ticket form', 'support-ticket-system-for-woocommerce' ),
+				'assignment'    => __( 'Assignment', 'support-ticket-system-for-woocommerce' ),
+				'notifications' => __( 'Notifications', 'support-ticket-system-for-woocommerce' ),
+			);
+			?>
+			<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form">
+				<div class="result" role="status"><?php $this->admin_process_settings(); ?></div>
+				<div id="tabs">
+					<ul>
+						<?php foreach ( $sections as $id => $label ) : ?>
+							<li><a href="#<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+					<div id="general"><?php $this->render_fields( $this->get_general_fields() ); ?></div>
+					<div id="form">
+						<?php $this->render_fields( $this->get_form_fields() ); ?>
+						<h2><?php esc_html_e( 'Extra fields', 'support-ticket-system-for-woocommerce' ); ?></h2>
+						<?php WPFactory_WC_STS_Fields::get_instance()->render_settings(); ?>
+					</div>
+					<div id="assignment"><?php $this->render_fields( $this->get_assignment_fields() ); ?></div>
+					<div id="notifications">
+						<p>
+							<?php esc_html_e( 'Placeholders for subjects and texts:', 'support-ticket-system-for-woocommerce' ); ?>
+							<code>{ticketId} {responseId} {title} {content} {responseContent} {toEmail} {toFirstName} {toLastName} {ticketLink}</code>
+						</p>
+						<?php
+						$this->render_fields( $this->get_notification_fields() );
+						WPFactory_WC_STS_Emails::get_instance()->render_test_email_button();
+						?>
+					</div>
+				</div>
+				<?php wp_nonce_field( $this->plugin ); ?>
+				<p id="save_changes"><?php submit_button(); ?></p>
+			</form>
+			<?php
+		}
+
+		/**
+		 * General settings.
+		 *
+		 * @return array
+		 */
+		protected function get_general_fields() {
+			return array(
+				'renameAccountTabLink'  => array(
+					'type'        => 'text',
+					'label'       => __( 'My Account menu label', 'support-ticket-system-for-woocommerce' ),
+					'placeholder' => __( 'Tickets', 'support-ticket-system-for-woocommerce' ),
+				),
+				'renameOrderButtonLink' => array(
+					'type'        => 'text',
+					'label'       => __( 'Order button label', 'support-ticket-system-for-woocommerce' ),
+					'placeholder' => __( 'Get Help', 'support-ticket-system-for-woocommerce' ),
+				),
+				'hideClosed'            => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Hide closed tickets from customers', 'support-ticket-system-for-woocommerce' ),
+				),
+				'textforTicketSave'     => array(
+					'type'  => 'editor',
+					'label' => __( 'Message after a customer opens a ticket', 'support-ticket-system-for-woocommerce' ),
+				),
+				'textforResponseSave'   => array(
+					'type'  => 'editor',
+					'label' => __( 'Message after a customer replies', 'support-ticket-system-for-woocommerce' ),
+				),
+				'@wpfactory_wc_sts_delete_data_on_uninstall' => array(
+					'type'        => 'checkbox',
+					'label'       => __( 'Remove data on delete', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Delete all tickets, replies, canned replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets.', 'support-ticket-system-for-woocommerce' ),
+				),
+			);
+		}
+
+		/**
+		 * Ticket form settings.
+		 *
+		 * @return array
+		 */
+		protected function get_form_fields() {
+			return array(
+				'@wpfactory_wc_sts_guest_tickets' => array(
+					'type'        => 'checkbox',
+					'label'       => __( 'Guest tickets', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Customers without an account can ask for help with an order by entering the order number and billing email (on the My Account login screen and on pages with the shortcode). They follow their request through a private link sent by email.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'enablePriority'                  => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Let customers choose a priority', 'support-ticket-system-for-woocommerce' ),
+				),
+				'enableAttachments'               => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Let customers attach files', 'support-ticket-system-for-woocommerce' ),
+				),
+				'allowedExtensions'               => array(
+					'type'        => 'text',
+					'label'       => __( 'Allowed file types', 'support-ticket-system-for-woocommerce' ),
+					'placeholder' => WPFactory_WC_STS_Files::DEFAULT_EXTENSIONS,
+					'description' => __( 'Comma separated, for example jpg,png,pdf. Empty: jpg, jpeg, png, gif and pdf.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'allowedSize'                     => array(
+					'type'        => 'number',
+					'label'       => __( 'Maximum file size (MB)', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Never above the upload limit of your server.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'allowedAttachNum'                => array(
+					'type'        => 'number',
+					'label'       => __( 'Files per message', 'support-ticket-system-for-woocommerce' ),
+					'placeholder' => '5',
+				),
+			);
+		}
+
+		/**
+		 * Assignment settings.
+		 *
+		 * @return array
+		 */
+		protected function get_assignment_fields() {
+			return array(
+				'assignToRole'   => array(
+					'type'        => 'role',
+					'label'       => __( 'Role that can be assigned tickets', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Users with this role can see and answer tickets in wp-admin and, for tickets assigned to them, in My Account. Shop managers and administrators always can.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'assignToUser'   => array(
+					'type'        => 'user',
+					'label'       => __( 'Default assignee', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Handles tickets that are not assigned to anyone. Subjects can assign their own person (Support Tickets > Subjects).', 'support-ticket-system-for-woocommerce' ),
+				),
+				'mailToAssignee' => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Email the assignee about new tickets and replies', 'support-ticket-system-for-woocommerce' ),
+				),
+			);
+		}
+
+		/**
+		 * Notification settings.
+		 *
+		 * @return array
+		 */
+		protected function get_notification_fields() {
+			return array(
+				'mailToADmin'          => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Email the store about new tickets and replies', 'support-ticket-system-for-woocommerce' ),
+				),
+				'AdminEmailAddress'    => array(
+					'type'        => 'email',
+					'label'       => __( 'Store email address', 'support-ticket-system-for-woocommerce' ),
+					'placeholder' => get_bloginfo( 'admin_email' ),
+				),
+				'mailToCustomer'       => array(
+					'type'  => 'checkbox',
+					'label' => __( 'Email the customer (confirmations and store replies)', 'support-ticket-system-for-woocommerce' ),
+				),
+				'mailIt_subjectToCust' => array(
+					'type'  => 'text',
+					'label' => __( 'Customer email subject', 'support-ticket-system-for-woocommerce' ),
+				),
+				'mailIt_contentToCust' => array(
+					'type'  => 'editor',
+					'label' => __( 'Customer email text', 'support-ticket-system-for-woocommerce' ),
+				),
+				'mailIt_subjectToAs'   => array(
+					'type'        => 'text',
+					'label'       => __( 'Staff email subject', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Used for the store and assignee emails. Empty: a subject with the ticket number and title.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'mailIt_contentToAs'   => array(
+					'type'  => 'editor',
+					'label' => __( 'Staff email text', 'support-ticket-system-for-woocommerce' ),
+				),
+			);
+		}
+
+		/**
+		 * Option name of a field: the prefixed setting, or the literal name after `@` (options shared by both editions).
+		 *
+		 * @param string $key Field key.
+		 *
+		 * @return string
+		 */
+		protected function option_name( $key ) {
+			return 0 === strpos( $key, '@' ) ? substr( $key, 1 ) : $this->plugin . $key;
+		}
+
+		/**
+		 * Prints fields as a form table.
+		 *
+		 * @param array $fields Fields.
+		 */
+		protected function render_fields( $fields ) {
+			echo '<table class="form-table" role="presentation"><tbody>';
+			foreach ( $fields as $key => $field ) {
+				$name  = $this->option_name( $key );
+				$id    = sanitize_key( $name );
+				$value = get_option( $name, '' );
+				echo '<tr><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . '</label></th><td>';
+				switch ( $field['type'] ) {
+					case 'checkbox':
+						echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . checked( '1', (string) $value, false ) . ' />';
+						break;
+					case 'editor':
+						wp_editor(
+							(string) $value,
+							$id,
+							array(
+								'wpautop'       => true,
+								'textarea_name' => $name,
+								'textarea_rows' => 5,
+								'editor_height' => 140,
+								'media_buttons' => false,
+							)
+						);
+						break;
+					case 'role':
+						echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"><option value="">' . esc_html__( 'None', 'support-ticket-system-for-woocommerce' ) . '</option>';
+						wp_dropdown_roles( (string) $value );
+						echo '</select>';
+						break;
+					case 'user':
+						WPFactory_WC_STS_Admin::get_instance()->render_user_select( $name, (int) $value, __( 'Nobody', 'support-ticket-system-for-woocommerce' ), $id );
+						break;
+					default:
+						echo '<input type="' . esc_attr( $field['type'] ) . '" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . ( isset( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : '' ) . ( 'number' === $field['type'] ? ' min="0" step="1"' : '' ) . ' />';
 				}
+				if ( ! empty( $field['description'] ) ) {
+					echo '<p class="description">' . esc_html( $field['description'] ) . '</p>';
+				}
+				echo '</td></tr>';
 			}
-			echo '</h2>';
+			echo '</tbody></table>';
 		}
 
 		/**
-		 * Admin panels.
+		 * Saves the settings.
 		 *
-		 * @version 2.2.0
-		 */
-		public function admin_panels() {
-			// Add settings for ticket system.
-			add_settings_section(
-				$this->plugin . 'general',
-				'',
-				null,
-				$this->plugin . 'general-options'
-			);
-			add_settings_section(
-				$this->plugin . 'notifications',
-				'',
-				null,
-				$this->plugin . 'notifications-options'
-			);
-
-			add_settings_field(
-				'renameAccountTabLink',
-				esc_html__( 'My Account menu label', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'rename_account_tab_link' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-			register_setting(
-				$this->plugin . 'general',
-				$this->plugin . $this->rename_account_tab_link,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => '',
-				)
-			);
-
-			add_settings_field(
-				'enableAttachments',
-				"<span class='proVersion'>" . esc_html__( 'Enable Attachments to Ticket', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'enable_attachments' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'allowedExtensions',
-				"<span class='proVersion'>" . esc_html__( 'Allowed Attachments File Types', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'allowed_extensions' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'allowedSize',
-				"<span class='proVersion'>" . esc_html__( 'Max File Size ', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'allowed_size' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'allowedAttachNum',
-				"<span class='proVersion'>" . esc_html__( 'Allowed Number of Attachments ', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'allowed_attach_num' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'enablePriority',
-				"<span class='proVersion'>" . esc_html__( 'Enable Priority Field to Ticket Creation', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'enable_priority' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'renameOrderButtonLink',
-				esc_html__( 'Order button label', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'rename_order_button_link' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-			register_setting(
-				$this->plugin . 'general',
-				$this->plugin . $this->rename_order_button_link,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => '',
-				)
-			);
-
-			add_settings_field(
-				'hideClosed',
-				esc_html__( 'Hide closed tickets from customers', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'hide_closed' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-			register_setting(
-				$this->plugin . 'general',
-				$this->plugin . $this->hide_closed,
-				array(
-					'type'              => 'boolean',
-					'sanitize_callback' => function ( $value ) {
-						return (bool) $value;
-					},
-					'default'           => false,
-				)
-			);
-
-			add_settings_field(
-				'deleteDataOnUninstall',
-				esc_html__( 'Remove data on delete', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'delete_data_on_uninstall' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'assignToRole',
-				"<span class='proVersion'>" . esc_html__( 'Role that can be assigned tickets', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'assign_to_role' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'assignToUser',
-				"<span class='proVersion'>" . esc_html__( 'Default assignee', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'assign_to_user' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-
-			add_settings_field(
-				'textforTicketSave',
-				esc_html__( 'Message after a customer opens a ticket', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'text_for_ticket_save' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-			register_setting(
-				$this->plugin . 'general',
-				$this->plugin . $this->text_for_ticket_save,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'wp_kses_post',
-					'default'           => '',
-				)
-			);
-
-			add_settings_field(
-				'textforResponseSave',
-				esc_html__( 'Message after a customer replies', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'text_for_response_save' ),
-				$this->plugin . 'general-options',
-				$this->plugin . 'general'
-			);
-			register_setting(
-				$this->plugin . 'general',
-				$this->plugin . $this->text_for_response_save,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'wp_kses_post',
-					'default'           => '',
-				)
-			);
-
-			add_settings_field(
-				'mailToAssignee',
-				"<span class='proVersion'>" . esc_html__( 'Email the assignee about new tickets and replies', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'mail_to_assignee' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-
-			add_settings_field(
-				'mailToADmin',
-				esc_html__( 'Email the store about new tickets and replies', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'mail_to_admin' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-			register_setting(
-				$this->plugin . 'notifications',
-				$this->plugin . $this->mail_to_admin,
-				array(
-					'type'              => 'boolean',
-					'sanitize_callback' => function ( $value ) {
-						return (bool) $value;
-					},
-					'default'           => false,
-				)
-			);
-
-			add_settings_field(
-				'AdminEmailAddress',
-				esc_html__( 'Store email address', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'admin_email_address' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-			register_setting(
-				$this->plugin . 'notifications',
-				$this->plugin . $this->admin_email_address,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_email',
-					'default'           => '',
-				)
-			);
-
-			add_settings_field(
-				'mailToCustomer',
-				esc_html__( 'Email the customer (confirmations and store replies)', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'mail_to_customer' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-			register_setting(
-				$this->plugin . 'notifications',
-				$this->plugin . $this->mail_to_customer,
-				array(
-					'type'              => 'boolean',
-					'sanitize_callback' => function ( $value ) {
-						return (bool) $value;
-					},
-					'default'           => false,
-				)
-			);
-
-			add_settings_field(
-				'mailIt_subjectToAs',
-				"<span class='proVersion'>" . esc_html__( 'Assignee email subject', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'mail_subject_to_assignee' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-
-			add_settings_field(
-				'mailIt_contentToAs',
-				"<span class='proVersion'>" . esc_html__( 'Assignee email text', 'support-ticket-system-for-woocommerce' ) . '</span>',
-				array( $this, 'mail_content_to_assignee' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-
-			add_settings_field(
-				'mailIt_subjectToCust',
-				esc_html__( 'Customer email subject', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'mail_subject_to_customer' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-			register_setting(
-				$this->plugin . 'notifications',
-				$this->plugin . $this->mail_subject_to_customer,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'sanitize_text_field',
-					'default'           => '',
-				)
-			);
-
-			add_settings_field(
-				'mailIt_contentToCust',
-				esc_html__( 'Customer email text', 'support-ticket-system-for-woocommerce' ),
-				array( $this, 'mail_content_to_customer' ),
-				$this->plugin . 'notifications-options',
-				$this->plugin . 'notifications'
-			);
-			register_setting(
-				$this->plugin . 'notifications',
-				$this->plugin . $this->mail_content_to_customer,
-				array(
-					'type'              => 'string',
-					'sanitize_callback' => 'wp_kses_post',
-					'default'           => '',
-				)
-			);
-		}
-
-		/**
-		 * "Delete all ticket data when the plugin is deleted" checkbox (option shared by free and Pro).
-		 *
-		 * @version 2.2.1
-		 * @since   2.2.1
-		 */
-		public function delete_data_on_uninstall() {
-			$checked = '1' === (string) get_option( 'wpfactory_wc_sts_delete_data_on_uninstall' );
-			?>
-			<label>
-				<input type="checkbox" name="wpfactory_wc_sts_delete_data_on_uninstall" value="1" <?php checked( $checked ); ?> />
-				<?php esc_html_e( 'Delete all tickets, replies and these settings when the plugin is deleted', 'support-ticket-system-for-woocommerce' ); ?>
-			</label>
-			<p class="description"><?php esc_html_e( 'Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets.', 'support-ticket-system-for-woocommerce' ); ?></p>
-			<?php
-		}
-
-		/**
-		 * Assign to role.
-		 *
-		 * @version 2.2.0
-		 */
-		public function assign_to_role() {
-			?>
-			<select disabled>
-				<?php wp_dropdown_roles(); ?>
-			</select>
-			<?php
-		}
-
-		/**
-		 * Assign to user.
-		 *
-		 * @version 2.2.0
-		 */
-		public function assign_to_user() {
-			// Pro feature preview. Before 2.2.1 this loaded every user on the site (customers included) into a disabled list.
-			?>
-			<select disabled>
-				<option value=''><?php esc_html_e( 'Pro Version', 'support-ticket-system-for-woocommerce' ); ?></option>
-			</select>
-			<?php
-		}
-
-		/**
-		 * Rename account tab link.
-		 *
-		 * @version 2.2.0
-		 */
-		public function rename_account_tab_link() {
-			if ( isset( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->rename_account_tab_link = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->rename_account_tab_link = get_option( $this->plugin . 'renameAccountTabLink' );
-			}
-			?>
-			<input type="text" name="<?php echo esc_attr( $this->plugin . 'renameAccountTabLink' ); ?>" id="<?php echo esc_attr( $this->plugin . 'renameAccountTabLink' ); ?>" value="<?php echo esc_attr( (string) $this->rename_account_tab_link ); ?>" placeholder="<?php esc_attr_e( 'Tickets', 'support-ticket-system-for-woocommerce' ); ?>" />
-			<?php
-		}
-
-		/**
-		 * Rename order button link.
-		 *
-		 * @version 2.2.0
-		 */
-		public function rename_order_button_link() {
-			if ( isset( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->rename_order_button_link = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->rename_order_button_link = get_option( $this->plugin . 'renameOrderButtonLink' );
-			}
-			?>
-			<input type="text" name="<?php echo esc_attr( $this->plugin . 'renameOrderButtonLink' ); ?>" id="<?php echo esc_attr( $this->plugin . 'renameOrderButtonLink' ); ?>" value="<?php echo esc_attr( (string) $this->rename_order_button_link ); ?>" placeholder="<?php esc_attr_e( 'Get Help', 'support-ticket-system-for-woocommerce' ); ?>" />
-			<?php
-		}
-
-		/**
-		 * Hide closed.
-		 *
-		 * @version 2.2.0
-		 */
-		public function hide_closed() {
-			if ( isset( $_REQUEST[ $this->plugin . 'hideClosed' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->hide_closed = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'hideClosed' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->hide_closed = get_option( $this->plugin . 'hideClosed' );
-			}
-			?>
-			<input type="checkbox" name="<?php print esc_attr( $this->plugin . 'hideClosed' ); ?>" id="<?php print esc_attr( $this->plugin . 'hideClosed' ); ?>" value='1'
-			<?php
-			if ( '1' === $this->hide_closed ) {
-				print 'checked';
-			}
-			?>
-			/>
-			<?php
-		}
-
-		/**
-		 * Enable attachments.
-		 *
-		 * @version 2.2.0
-		 */
-		public function enable_attachments() {
-
-			?>
-			<input type="checkbox" disabled />
-			<?php
-		}
-
-		/**
-		 * Enable priority.
-		 *
-		 * @version 2.2.0
-		 */
-		public function enable_priority() {
-			?>
-			<input type="checkbox" disabled />
-			<?php
-		}
-
-		/**
-		 * Mail to assignee.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_to_assignee() {
-			?>
-			<input <input type="checkbox" class='proVersion' disabled />
-			<?php
-		}
-
-		/**
-		 * Mail to admin.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_to_admin() {
-			if ( isset( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->mail_to_admin = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->mail_to_admin = get_option( $this->plugin . 'mailToADmin' );
-			}
-			?>
-			<input type="checkbox" name="<?php echo esc_attr( $this->plugin . 'mailToADmin' ); ?>" id="<?php echo esc_attr( $this->plugin . 'mailToADmin' ); ?>" value='1'
-			<?php
-			if ( '1' === $this->mail_to_admin ) {
-				print 'checked';}
-			?>
-			/>
-			<?php
-		}
-
-		/**
-		 * Admin email address.
-		 *
-		 * @version 2.2.0
-		 */
-		public function admin_email_address() {
-			if ( isset( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->admin_email_address = sanitize_email( wp_unslash( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif ( get_option( $this->plugin . 'AdminEmailAddress' ) ) {
-				$this->admin_email_address = get_option( $this->plugin . 'AdminEmailAddress' );
-			} else {
-				$this->admin_email_address = sanitize_email( get_bloginfo( 'admin_email' ) );
-			}
-			?>
-			<input type="text"  name="<?php print esc_attr( $this->plugin . 'AdminEmailAddress' ); ?>" id="<?php print esc_attr( $this->plugin . 'AdminEmailAddress' ); ?>" placeholder='<?php print esc_html__( 'Admin Email Address', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo esc_attr( $this->admin_email_address ); ?>"  />
-			<?php
-		}
-
-		/**
-		 * Mail to customer.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_to_customer() {
-			if ( isset( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->mail_to_customer = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->mail_to_customer = get_option( $this->plugin . 'mailToCustomer' );
-			}
-			?>
-			<input type="checkbox" name="<?php print esc_attr( $this->plugin . 'mailToCustomer' ); ?>" id="<?php print esc_attr( $this->plugin . 'mailToCustomer' ); ?>" value='1'
-			<?php
-			if ( '1' === $this->mail_to_customer ) {
-				print 'checked';}
-			?>
-			/>
-			<?php
-		}
-
-		/**
-		 * Email subject sent to assignee.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_subject_to_assignee() {
-			?>
-			<input class='proVersion' disabled />
-			<?php
-		}
-
-		/**
-		 * Email content sent to assignee.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_content_to_assignee() {
-			?>
-			<textarea class='proVersion' disabled placeholder='<?php print esc_html__( 'Pro Version Only - html enabled', 'support-ticket-system-for-woocommerce' ); ?>' ></textarea>
-			<?php
-		}
-
-		/**
-		 * Text for ticket save.
-		 *
-		 * @version 2.2.0
-		 */
-		public function text_for_ticket_save() {
-			if ( isset( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->text_for_ticket_save = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ), self::$allowed_html ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif ( ! empty( get_option( $this->plugin . 'textforTicketSave' ) ) ) {
-				$this->text_for_ticket_save = get_option( $this->plugin . 'textforTicketSave' );
-			}
-
-			wp_editor(
-				apply_filters( 'wpfactory_wc_sts_ticket_save_text', $this->text_for_ticket_save ),
-				$this->plugin . 'textforTicketSave',
-				array(
-					'wpautop'       => true,
-					'textarea_name' => $this->plugin . 'textforTicketSave',
-					'textarea_rows' => '5',
-					'editor_height' => 125,
-				)
-			);
-		}
-
-		/**
-		 * Text for response save.
-		 *
-		 * @version 2.2.0
-		 */
-		public function text_for_response_save() {
-			if ( isset( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->text_for_response_save = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ), self::$allowed_html ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} elseif ( ! empty( get_option( $this->plugin . 'textforResponseSave' ) ) ) {
-				$this->text_for_response_save = get_option( $this->plugin . 'textforResponseSave' );
-			}
-
-			wp_editor(
-				apply_filters( 'wpfactory_wc_sts_response_save_text', $this->text_for_response_save ),
-				$this->plugin . 'textforResponseSave',
-				array(
-					'wpautop'       => true,
-					'textarea_name' => $this->plugin . 'textforResponseSave',
-					'textarea_rows' => '5',
-					'editor_height' => 125,
-				)
-			);
-		}
-
-		/**
-		 * Mail subject to customer.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_subject_to_customer() {
-			if ( isset( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->mail_subject_to_customer = sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->mail_subject_to_customer = get_option( $this->plugin . 'mailIt_subjectToCust' );
-			}
-			?>
-			<input type="text"  name="<?php echo esc_attr( $this->plugin . 'mailIt_subjectToCust' ); ?>" id="<?php echo esc_attr( $this->plugin . 'mailIt_subjectToCust' ); ?>" placeholder='<?php echo esc_attr__( 'Mail Subject', 'support-ticket-system-for-woocommerce' ); ?>' value="<?php echo esc_attr( $this->mail_subject_to_customer ); ?>"  />
-			<?php
-		}
-
-		/**
-		 * Allowed extensions.
-		 *
-		 * @version 2.2.0
-		 */
-		public function allowed_extensions() {
-			?>
-			<input disabled class='proVersion' placeholder='<?php print esc_html__( 'Extensions allowed - Pro Version', 'support-ticket-system-for-woocommerce' ); ?>'  />
-			<?php
-		}
-
-		/**
-		 * Allowed size.
-		 *
-		 * @version 2.2.0
-		 */
-		public function allowed_size() {
-			?>
-			<input type="text" disabled class='proVersion' placeholder='<?php print esc_html__( 'Files size - Pro Version', 'support-ticket-system-for-woocommerce' ); ?>'   />
-			<?php
-		}
-
-		/**
-		 * Allowed number of attachments.
-		 *
-		 * @version 2.2.0
-		 */
-		public function allowed_attach_num() {
-			?>
-			<input type="number" disabled class='proVersion'  placeholder='<?php print esc_html__( 'Allowed N.Files  - Pro Version ', 'support-ticket-system-for-woocommerce' ); ?>'  />
-			<?php
-		}
-
-		/**
-		 * Mail content to customer.
-		 *
-		 * @version 2.2.0
-		 */
-		public function mail_content_to_customer() {
-			if ( isset( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$this->mail_content_to_customer = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ), self::$allowed_html ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			} else {
-				$this->mail_content_to_customer = get_option( $this->plugin . 'mailIt_contentToCust' );
-			}
-
-			wp_editor(
-				apply_filters( 'wpfactory_wc_sts_customer_email_content', $this->mail_content_to_customer ),
-				$this->plugin . 'mailIt_contentToCust',
-				array(
-					'wpautop'       => true,
-					'textarea_name' => $this->plugin . 'mailIt_contentToCust',
-					'textarea_rows' => '5',
-					'editor_height' => 225,
-				)
-			);
-		}
-
-		/**
-		 * Admin process settings.
-		 *
-		 * @version 2.2.0
+		 * @version 2.3.0
 		 */
 		public function admin_process_settings() {
 			if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
 				return;
 			}
-			// Same capability as the menu (before 2.2.1 shop managers saw the form but nothing was saved).
-			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
 				echo '<div class="notice notice-error inline"><p>' . esc_html__( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
 				return;
 			}
-			if ( true ) {
-				check_admin_referer( $this->plugin );
+			check_admin_referer( $this->plugin );
 
-				if (
-					isset( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) &&
-					sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) ) === '1'
-				) {
-					update_option(
-						$this->plugin . 'mailToADmin',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToADmin' ] ) )
-					);
-				} else {
-					update_option(
-						$this->plugin . 'mailToADmin',
-						''
-					);
+			$old_role = (string) get_option( $this->plugin . 'assignToRole' );
+			$fields   = array_merge( $this->get_general_fields(), $this->get_form_fields(), $this->get_assignment_fields(), $this->get_notification_fields() );
+			foreach ( $fields as $key => $field ) {
+				$name = $this->option_name( $key );
+				$raw  = isset( $_POST[ $name ] ) ? wp_unslash( $_POST[ $name ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per type below.
+				switch ( $field['type'] ) {
+					case 'checkbox':
+						$value = '1' === (string) $raw ? '1' : '';
+						break;
+					case 'editor':
+						$value = wp_kses( (string) $raw, self::$allowed_html );
+						break;
+					case 'email':
+						$value = sanitize_email( (string) $raw );
+						break;
+					case 'number':
+						$value = '' === trim( (string) $raw ) ? '' : (string) absint( $raw );
+						break;
+					case 'role':
+						$value = sanitize_key( (string) $raw );
+						$value = ( '' === $value || get_role( $value ) ) ? $value : '';
+						break;
+					case 'user':
+						$value = absint( $raw ) ? (string) absint( $raw ) : '';
+						break;
+					default:
+						$value = sanitize_text_field( (string) $raw );
 				}
-
-				if ( isset( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) ) {
-					update_option(
-						$this->plugin . 'AdminEmailAddress',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'AdminEmailAddress' ] ) )
-					);
-				}
-
-				if (
-					isset( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) &&
-					sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) ) === '1'
-				) {
-					update_option(
-						$this->plugin . 'mailToCustomer',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailToCustomer' ] ) )
-					);
-				} else {
-					update_option(
-						$this->plugin . 'mailToCustomer',
-						''
-					);
-				}
-
-				if (
-					isset( $_REQUEST[ $this->plugin . 'hideClosed' ] ) &&
-					sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'hideClosed' ] ) ) === '1'
-				) {
-					update_option(
-						$this->plugin . 'hideClosed',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'hideClosed' ] ) )
-					);
-				} else {
-					update_option(
-						$this->plugin . 'hideClosed',
-						''
-					);
-				}
-
-				if ( isset( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ) ) {
-					$mail_content_to_customer = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_contentToCust' ] ), self::$allowed_html );
-					update_option(
-						$this->plugin . 'mailIt_contentToCust',
-						$mail_content_to_customer
-					);
-				}
-
-				if ( isset( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ) ) {
-					$text_for_ticket_save = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforTicketSave' ] ), self::$allowed_html );
-					update_option(
-						$this->plugin . 'textforTicketSave',
-						$text_for_ticket_save
-					);
-				}
-
-				if ( isset( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ) ) {
-					$text_for_response_save = wp_kses( wp_unslash( $_REQUEST[ $this->plugin . 'textforResponseSave' ] ), self::$allowed_html );
-					update_option(
-						$this->plugin . 'textforResponseSave',
-						$text_for_response_save
-					);
-				}
-
-				if ( isset( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) ) {
-					update_option(
-						$this->plugin . 'mailIt_subjectToCust',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'mailIt_subjectToCust' ] ) )
-					);
-				}
-
-				if ( isset( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) ) {
-					update_option(
-						$this->plugin . 'renameOrderButtonLink',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameOrderButtonLink' ] ) )
-					);
-				}
-				if ( isset( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) ) {
-					update_option(
-						$this->plugin . 'renameAccountTabLink',
-						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) )
-					);
-				}
-
-				// Opt-in data removal on uninstall (option shared by free and Pro).
-				update_option( 'wpfactory_wc_sts_delete_data_on_uninstall', ! empty( $_REQUEST['wpfactory_wc_sts_delete_data_on_uninstall'] ) ? '1' : '', false );
-
-				echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				$autoload = in_array( $field['type'], array( 'editor' ), true ) ? false : null;
+				update_option( $name, $value, $autoload );
 			}
+
+			// Ticket access moves with the assignment role. Administrators always keep it; missing roles are skipped.
+			$new_role = (string) get_option( $this->plugin . 'assignToRole' );
+			if ( $old_role && $old_role !== $new_role && 'administrator' !== $old_role ) {
+				$role = get_role( $old_role );
+				if ( $role ) {
+					$role->remove_cap( 'stsw_tickets' );
+				}
+			}
+			foreach ( array( $new_role, 'administrator' ) as $role_name ) {
+				$role = $role_name ? get_role( $role_name ) : null;
+				if ( $role && ! $role->has_cap( 'stsw_tickets' ) ) {
+					$role->add_cap( 'stsw_tickets' );
+				}
+			}
+
+			// Extra form fields (each value is unslashed and sanitized in `sanitize_fields()`).
+			if ( isset( $_POST['wpfactory_wc_sts_custom_fields'] ) && is_array( $_POST['wpfactory_wc_sts_custom_fields'] ) ) {
+				update_option( WPFactory_WC_STS_Fields::OPTION, WPFactory_WC_STS_Fields::get_instance()->sanitize_fields( $_POST['wpfactory_wc_sts_custom_fields'] ), false ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized in sanitize_fields().
+			}
+
+			echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
 		}
 	}
 

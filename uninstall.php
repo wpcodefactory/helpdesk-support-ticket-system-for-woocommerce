@@ -30,7 +30,7 @@ if ( ! function_exists( 'wpfactory_wc_sts_uninstall_site' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 		foreach ( array_keys( get_plugins() ) as $plugin ) {
-			if ( '/' . $other_edition_file === substr( $plugin, -strlen( '/' . $other_edition_file ) ) ) {
+			if ( substr( $plugin, -strlen( '/' . $other_edition_file ) ) === '/' . $other_edition_file ) {
 				return; // The other edition still uses this data.
 			}
 		}
@@ -38,11 +38,23 @@ if ( ! function_exists( 'wpfactory_wc_sts_uninstall_site' ) ) {
 		// Tickets, their files and meta.
 		$ticket_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'stsw_tickets'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		foreach ( $ticket_ids as $ticket_id ) {
-			$attachments = get_children( array( 'post_parent' => (int) $ticket_id, 'post_type' => 'attachment', 'fields' => 'ids' ) );
+			$attachments = get_children(
+				array(
+					'post_parent' => (int) $ticket_id,
+					'post_type'   => 'attachment',
+					'fields'      => 'ids',
+				)
+			);
 			foreach ( $attachments as $attachment_id ) {
 				wp_delete_attachment( $attachment_id, true );
 			}
 			wp_delete_post( (int) $ticket_id, true );
+		}
+
+		// Canned replies (2.3.0 / 3.1.0).
+		$canned_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'stsw_canned_reply'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		foreach ( $canned_ids as $canned_id ) {
+			wp_delete_post( (int) $canned_id, true );
 		}
 
 		// Status, priority and subject terms (taxonomies are not registered during uninstall).
@@ -84,7 +96,12 @@ if ( ! function_exists( 'wpfactory_wc_sts_uninstall_site' ) ) {
 }
 
 if ( is_multisite() ) {
-	foreach ( get_sites( array( 'fields' => 'ids', 'number' => 0 ) ) as $site_id ) {
+	foreach ( get_sites(
+		array(
+			'fields' => 'ids',
+			'number' => 0,
+		)
+	) as $site_id ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- uninstall.php runs in its own scope.
 		switch_to_blog( $site_id );
 		wpfactory_wc_sts_uninstall_site( 'support-ticket-system-woocommerce-pro.php' );
 		restore_current_blog();

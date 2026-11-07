@@ -176,7 +176,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 			add_menu_page(
 				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
 				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
 				'dashicons-tag',
@@ -187,7 +187,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				'support-ticket-system-woocommerce',
 				__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
 				__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
 			);
@@ -202,7 +202,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				$admin_menu->get_menu_slug(),
 				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
 				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
 				30

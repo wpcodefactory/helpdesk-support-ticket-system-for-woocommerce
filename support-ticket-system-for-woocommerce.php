@@ -36,6 +36,16 @@ defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.
  */
 defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ );
 
+/**
+ * Edition settings used by the shared core (Pro defines its own values).
+ *
+ * @version 2.3.0
+ * @since   2.3.0
+ */
+defined( 'WPFACTORY_WC_STS_PAGE' ) || define( 'WPFACTORY_WC_STS_PAGE', 'support-ticket-system-woocommerce' );
+defined( 'WPFACTORY_WC_STS_VERSION_OPTION' ) || define( 'WPFACTORY_WC_STS_VERSION_OPTION', 'wpfactory_wc_sts_version' );
+defined( 'WPFACTORY_WC_STS_NAME' ) || define( 'WPFACTORY_WC_STS_NAME', 'Helpdesk Support Ticket System for WooCommerce' );
+
 if ( ! function_exists( 'wpfactory_wc_sts_is_pro_active' ) ) {
 	/**
 	 * Whether the Pro plugin is active.
@@ -112,6 +122,6 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @todo (v2.2.0) Move everything to the `plugins_loaded` action.
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-init.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-inc.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-privacy.php';
+foreach ( array( 'init', 'inc', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy' ) as $wpfactory_wc_sts_part ) {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-' . $wpfactory_wc_sts_part . '.php';
+}

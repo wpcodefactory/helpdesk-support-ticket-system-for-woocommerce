@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<ruleset name="Helpdesk Support Ticket System">
+	<description>WordPress coding standards for the plugin.</description>
+	<file>.</file>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/assets/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<arg name="extensions" value="php"/>
+	<arg value="sp"/>
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="support-ticket-system-for-woocommerce"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="wpfactory_wc_sts"/>
+				<element value="WPFactory_WC_STS"/>
+				<element value="stsw"/>
+			</property>
+		</properties>
+	</rule>
+	<!-- Class files follow the plugin's naming (class-wpfactory-wc-sts-*.php). -->
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+</ruleset>
