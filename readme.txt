@@ -8,7 +8,7 @@ Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system
+Let customers open support tickets from My Account and get your answers by email, without leaving WooCommerce.
 
 == Description ==
 
@@ -84,8 +84,8 @@ Along with this integrated functionality, you can use a shortcode to add the Sup
 
 == Frequently Asked Questions ==
 
-= I don't see the tickets dashboard in My Account Page - what to do? =
-In this case just flush your permalinks, go to Settings/Permalinks and press Save Changes.
+= I don't see the tickets page in My Account - what to do? =
+Since version 2.3.0 the page is set up automatically. If it still does not show, go to Settings > Permalinks and press Save Changes once.
 
 = How to use the WordPress ticket system? =
 Use the shortcode [stsw_user_tickets] in any page you built or guide the users to their account tab
@@ -116,6 +116,30 @@ Please report security bugs found in the source code of the plugin through the [
 4. Frontend use Support Ticket System for WooCommerce from My Account section - respond to ticket
 
 == Changelog ==
+
+= 2.3.0 - Unreleased =
+* Fix - Security - Shortcodes typed by a customer in a ticket no longer run (they ran with admin rights when an admin viewed the ticket list on the site).
+* Fix - Security - Only store staff (Shop Manager, Administrator) can open tickets in wp-admin; Editors could read every ticket.
+* Fix - Store reply emails now contain the reply. With a custom subject set, the email body used to be the subject text.
+* Fix - Replying to a notification email now reaches the right person (it went back to the sender's own address).
+* Fix - Customers with any account role (subscribers, wholesale roles) now see their own tickets.
+* Fix - My Account > Tickets works right after install or update, no permalink flush needed.
+* Fix - The "Get Help" button and email links work with plain permalinks.
+* Fix - Shop managers can save the settings (the page opened but nothing was saved).
+* Fix - Store replies were labelled as the customer's own messages; line breaks and apostrophes now display correctly.
+* Fix - Running the free and Pro versions together created every ticket and email twice; the free version now pauses when Pro is active.
+* New - Dashboard shows tickets waiting for your reply, a warning when email alerts are off and quick links.
+* New - Close a ticket with your reply; a customer reply reopens a closed ticket; your reply moves an open ticket to In Progress.
+* New - "Send test email" button in Settings > Notifications.
+* New - "Get Help" on an order pre-fills the order number in the new ticket.
+* New - Tickets are included in Tools > Export Personal Data and Erase Personal Data; suggested privacy policy text.
+* New - Optional "Remove data on delete" setting (off by default).
+* Improved - Tickets read as a conversation with names and dates; the tickets list shows who wrote last.
+* Improved - Forms save without replacing the whole page, show a clear message and do not resubmit on refresh.
+* Improved - The [stsw_user_tickets] shortcode shows where it is placed on the page.
+* Improved - Plugin styles and scripts load only on the ticket pages instead of every page of the store.
+* Improved - Clearer setting names.
+* Dev - Settings, tickets, statuses and replies are kept on update; one-time update step runs once per version.
 
 = 2.2.0 - 25/09/2026 =
 * Fix - "Delete response" user verification fixed.
