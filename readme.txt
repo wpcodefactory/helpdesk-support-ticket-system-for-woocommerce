@@ -118,6 +118,11 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 2.3.0 - Unreleased =
+* New - Help tab in My Account: requests as cards with their status and a "Your reply needed" badge, a three step Ask for help flow (order, items and reason, message), a confirmation with the request number, and close or reopen. Blocks for the help center, the form and one request.
+* New - Staff inbox: views with counts, the ticket list and the conversation on one screen, private notes in the thread, canned replies, drafts, bulk actions and keyboard shortcuts. The old ticket screens open the inbox.
+* New - Tickets box on the order screen and a Tickets column on the orders list.
+* New - Setup checklist and Email health check.
+* Improved - Customer screens follow the theme's fonts, colours and buttons and work on phones; jQuery UI and Font Awesome are no longer loaded for customers.
 * New - Every Pro feature is now in the free version: tickets linked to an order, private attachments, priorities with colours, subjects with automatic assignment, assigning tickets to staff (who can also answer from My Account), private notes and assignee emails.
 * New - Guest tickets (off by default): customers without an account enter their order number and billing email, and follow their request through a private link.
 * New - Canned replies: save answers you use often and insert them in one click.

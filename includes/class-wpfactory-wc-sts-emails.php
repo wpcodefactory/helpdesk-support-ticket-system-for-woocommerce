@@ -202,7 +202,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
 					: '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
 				$body = $this->with_guest_link( $ticket_id, $body, $values );
-				$this->notify_users( $contact['email'], $subject, $body );
+				$this->notify_users( $contact['email'], $subject, $body, '', $ticket_id );
 			}
 		}
 
@@ -222,7 +222,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
 			$subject = sprintf( __( 'A message from %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $values['plain']['{title}'] );
 			$body    = $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
-			$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ) );
+			$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
 		}
 
 		/**
@@ -256,7 +256,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 						// Templates without {responseContent} get the reply after the merchant's text (as before 2.3.0).
 						$body = $this->fill_body( $template, $values ) . '<br/>' . $values['html']['{responseContent}'] . '<br/>' . $values['html']['{ticketLink}'];
 					}
-					$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ) );
+					$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
 				}
 
 				// Assignee, when someone else answered.
@@ -285,7 +285,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				$body = '' !== $this->text( 'mailIt_contentToCust' )
 					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
 					: $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
-				$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ) );
+				$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
 			}
 		}
 
@@ -318,7 +318,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$subject = '' !== $this->text( 'mailIt_subjectToAs' ) ? $this->fill_subject( $this->text( 'mailIt_subjectToAs' ), $values ) : $default_subject;
 			$body    = '' !== $this->text( 'mailIt_contentToAs' ) ? $this->fill_body( $this->text( 'mailIt_contentToAs' ), $values ) : $default_body;
 			if ( $this->is_on( 'mailToADmin' ) ) {
-				$this->notify_users( $this->get_store_email(), $subject, $body, $reply_to );
+				$this->notify_users( $this->get_store_email(), $subject, $body, $reply_to, $ticket_id );
 			}
 			if ( $this->is_on( 'mailToAssignee' ) ) {
 				$this->send_assignee( $ticket_id, $values, $default_subject, $default_body );
@@ -343,7 +343,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			}
 			$subject = '' !== $this->text( 'mailIt_subjectToAs' ) ? $this->fill_subject( $this->text( 'mailIt_subjectToAs' ), $values ) : $default_subject;
 			$body    = '' !== $this->text( 'mailIt_contentToAs' ) ? $this->fill_body( $this->text( 'mailIt_contentToAs' ), $values ) : $default_body;
-			$this->notify_users( $assignee->user_email, $subject, $body );
+			$this->notify_users( $assignee->user_email, $subject, $body, '', $ticket_id );
 		}
 
 		/**
@@ -376,11 +376,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		 * @param string $to       Recipient.
 		 * @param string $subject  Subject.
 		 * @param string $message  HTML body.
-		 * @param string $reply_to Reply-To address.
+		 * @param string $reply_to  Reply-To address.
+		 * @param int    $ticket_id Ticket the email is about (0: none).
 		 *
 		 * @return bool
 		 */
-		public function notify_users( $to, $subject, $message, $reply_to = '' ) {
+		public function notify_users( $to, $subject, $message, $reply_to = '', $ticket_id = 0 ) {
 			$store    = $this->get_store_email();
 			$reply_to = sanitize_email( $reply_to );
 			if ( ! $reply_to || sanitize_email( $to ) === $reply_to ) {
@@ -396,17 +397,28 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			/**
 			 * Headers of ticket emails (Pro: email piping adds Reply-To and loop guards).
 			 *
-			 * @param array  $headers Headers.
-			 * @param string $to      Recipient.
-			 * @param string $subject Subject.
+			 * @param array  $headers   Headers.
+			 * @param string $to        Recipient.
+			 * @param string $subject   Subject.
+			 * @param int    $ticket_id Ticket ID (0: none).
 			 */
-			$headers = (array) apply_filters( 'wpfactory_wc_sts_email_headers', $headers, $to, $subject );
+			$headers = (array) apply_filters( 'wpfactory_wc_sts_email_headers', $headers, $to, $subject, (int) $ticket_id );
 			/**
 			 * Subject of ticket emails (Pro: email piping adds the ticket tag).
 			 *
-			 * @param string $subject Subject.
+			 * @param string $subject   Subject.
+			 * @param int    $ticket_id Ticket ID (0: none).
+			 * @param string $to        Recipient.
 			 */
-			$subject = (string) apply_filters( 'wpfactory_wc_sts_email_subject', $subject );
+			$subject = (string) apply_filters( 'wpfactory_wc_sts_email_subject', $subject, (int) $ticket_id, $to );
+			/**
+			 * Body of ticket emails (Pro: email piping adds the reply line).
+			 *
+			 * @param string $message   HTML body.
+			 * @param int    $ticket_id Ticket ID (0: none).
+			 * @param string $to        Recipient.
+			 */
+			$message = (string) apply_filters( 'wpfactory_wc_sts_email_message', $message, (int) $ticket_id, $to );
 			add_action( 'wp_mail_failed', array( $this, 'record_failure' ) );
 			$sent = (bool) wp_mail( $to, $subject, $message, $headers );
 			remove_action( 'wp_mail_failed', array( $this, 'record_failure' ) );
