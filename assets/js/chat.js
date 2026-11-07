@@ -10,7 +10,7 @@
 (function () {
 	"use strict";
 
-	var t = window.WPFactory_WC_STS_Chat || {};
+	var t = window.WPFactory_WC_STS_Chat || window.WPFactory_WC_STS_Pro_Chat || {};
 	var root = document.querySelector("[data-stsw-chat]");
 	if (!root || !window.fetch) {
 		return;

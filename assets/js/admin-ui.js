@@ -10,7 +10,7 @@
 (function () {
 	"use strict";
 
-	var t = window.WPFactory_WC_STS_UI || {};
+	var t = window.WPFactory_WC_STS_UI || window.WPFactory_WC_STS_Pro_UI || {};
 	var each = function (selector, fn, root) {
 		Array.prototype.forEach.call((root || document).querySelectorAll(selector), fn);
 	};
@@ -32,6 +32,18 @@
 		if (search) {
 			event.preventDefault();
 			search.focus();
+		}
+	});
+
+	// Menus built on <details>: Escape closes them and returns focus to their button.
+	document.addEventListener("keydown", function (event) {
+		if ("Escape" !== event.key) {
+			return;
+		}
+		var open = event.target.closest ? event.target.closest("details.hd-menu[open]") : null;
+		if (open) {
+			open.open = false;
+			open.querySelector("summary").focus();
 		}
 	});
 

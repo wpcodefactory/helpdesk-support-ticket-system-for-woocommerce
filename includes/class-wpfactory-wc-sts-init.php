@@ -614,7 +614,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				$help_id = $id . '-help';
 				$help    = ! empty( $field['description'] ) ? ' aria-describedby="' . esc_attr( $help_id ) . '"' : '';
 				$wide    = in_array( $field['type'], array( 'editor', 'html', 'textarea', 'roles' ), true );
-				$group   = in_array( $field['type'], array( 'roles' ), true );
+				$group   = in_array( $field['type'], array( 'roles', 'html' ), true );
 				echo '<div class="hd-row' . ( $wide ? ' hd-row--wide' : '' ) . '"><div class="hd-row__label">';
 				if ( $group ) {
 					echo '<span class="hd-row__title" id="' . esc_attr( $id ) . '-label">' . esc_html( $field['label'] ) . '</span>';

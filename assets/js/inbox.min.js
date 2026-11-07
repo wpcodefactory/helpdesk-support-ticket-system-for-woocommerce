@@ -11,7 +11,7 @@
 (function () {
 	"use strict";
 
-	var t = window.WPFactory_WC_STS_Inbox || {};
+	var t = window.WPFactory_WC_STS_Inbox || window.WPFactory_WC_STS_Pro_Inbox || {};
 	var box = document.querySelector(".stsw-replybox");
 	var area = document.getElementById("stsw-inbox-reply");
 	var dialog = document.querySelector(".stsw-shortcuts");
@@ -158,8 +158,13 @@
 	if (controls) {
 		Array.prototype.forEach.call(controls.querySelectorAll("select, input[name=stsw_tags]"), function (select) {
 			select.setAttribute("data-saved", select.value);
+			// Arrow keys on a closed select change it at every step: wait until the choice settles.
+			var wait = null;
 			select.addEventListener("change", function () {
-				autosave(select);
+				window.clearTimeout(wait);
+				wait = window.setTimeout(function () {
+					autosave(select);
+				}, "SELECT" === select.tagName ? 700 : 0);
 			});
 		});
 	}
