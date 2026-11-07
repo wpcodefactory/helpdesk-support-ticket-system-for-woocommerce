@@ -238,6 +238,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			// The `tickets` endpoint is registered by now, so customers do not get a 404 on My Account > Tickets.
 			flush_rewrite_rules( false );
 
+			// Long texts are read only when a ticket is saved or an email is sent: do not load them on every page (values unchanged).
+			if ( function_exists( 'wp_set_option_autoload_values' ) ) {
+				wp_set_option_autoload_values(
+					array(
+						$this->plugin . 'mailIt_contentToCust' => false,
+						$this->plugin . 'textforTicketSave'    => false,
+						$this->plugin . 'textforResponseSave'  => false,
+					)
+				);
+			}
+
 			update_option( 'wpfactory_wc_sts_version', WPFACTORY_WC_STS_VERSION, false );
 		}
 
@@ -280,6 +291,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * @return string
 		 */
 		public function shortcode_output() {
+			if ( class_exists( 'WPFactory_WC_STS_Init' ) ) {
+				WPFactory_WC_STS_Init::enqueue_frontend_assets(); // Covers shortcodes in widgets and page builders.
+			}
 			ob_start();
 			$this->stswpro_my_account_endpoint_content();
 			return ob_get_clean();

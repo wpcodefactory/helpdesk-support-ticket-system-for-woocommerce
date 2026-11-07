@@ -114,3 +114,4 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  */
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-init.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-inc.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-privacy.php';

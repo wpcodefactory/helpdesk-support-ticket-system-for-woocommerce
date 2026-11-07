@@ -419,6 +419,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		public function backend_scripts() {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
+			// Small menu script and styles everywhere (Pro menu items open the Pro modal);
+			// Font Awesome and jQuery UI styles only on the plugin's own screens (they restyled other plugins' pages).
+			$is_plugin_screen = self::is_plugin_screen();
+
 			wp_enqueue_style(
 				'wpfactory-wc-sts-backend',
 				plugins_url( 'assets/css/backend' . $min . '.css', WPFACTORY_WC_STS_FILE ),
@@ -426,21 +430,21 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				WPFACTORY_WC_STS_VERSION
 			);
 
-			if ( ! wp_script_is( 'wpfactory-wc-sts-fa', 'enqueued' ) ) {
+			if ( $is_plugin_screen ) {
 				wp_enqueue_style(
 					'wpfactory-wc-sts-fa',
 					plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
 					array(),
 					WPFACTORY_WC_STS_VERSION
 				);
-			}
 
-			wp_enqueue_style(
-				'jquery-ui-style',
-				plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
-				array(),
-				WPFACTORY_WC_STS_VERSION
-			);
+				wp_enqueue_style(
+					'jquery-ui-style',
+					plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
+					array(),
+					WPFACTORY_WC_STS_VERSION
+				);
+			}
 
 			wp_enqueue_script( 'jquery-ui-accordion' );
 
@@ -470,38 +474,51 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		public function frontend_scripts() {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-			wp_enqueue_style(
-				'wpfactory-wc-sts-frontend',
-				plugins_url( 'assets/css/frontend' . $min . '.css', WPFACTORY_WC_STS_FILE ),
-				array(),
-				WPFACTORY_WC_STS_VERSION
-			);
+			wp_register_style( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/css/frontend' . $min . '.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
+			wp_register_style( 'wpfactory-wc-sts-fa', plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
+			wp_register_style( 'wpfactory-wc-sts-jquery-ui', plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION );
+			wp_register_script( 'wpfactory-wc-sts-frontend', plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ), array( 'jquery', 'jquery-ui-accordion' ), WPFACTORY_WC_STS_VERSION, true );
 
-			if ( ! wp_script_is( 'wpfactory-wc-sts-fa', 'enqueued' ) ) {
-				wp_enqueue_style(
-					'wpfactory-wc-sts-fa',
-					plugins_url( 'assets/css/font-awesome.min.css', WPFACTORY_WC_STS_FILE ),
-					array(),
-					WPFACTORY_WC_STS_VERSION
-				);
+			// Before 2.2.1 these loaded on every page of the store. Now: My Account pages (tickets, view order)
+			// and pages using the shortcode (see `enqueue_frontend_assets()`, also called by the shortcode).
+			if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+				self::enqueue_frontend_assets();
+			} else {
+				$post = get_post();
+				if ( $post && has_shortcode( (string) $post->post_content, 'stsw_user_tickets' ) ) {
+					self::enqueue_frontend_assets();
+				}
 			}
+		}
 
-			wp_enqueue_style(
-				'jquery-ui-style',
-				plugins_url( 'assets/css/jquery-ui.css', WPFACTORY_WC_STS_FILE ),
-				array(),
-				WPFACTORY_WC_STS_VERSION
-			);
+		/**
+		 * Enqueues the ticket screen assets (registered in `frontend_scripts()`).
+		 *
+		 * @version 2.2.1
+		 * @since   2.2.1
+		 */
+		public static function enqueue_frontend_assets() {
+			wp_enqueue_style( 'wpfactory-wc-sts-frontend' );
+			wp_enqueue_style( 'wpfactory-wc-sts-fa' );
+			wp_enqueue_style( 'wpfactory-wc-sts-jquery-ui' );
+			wp_enqueue_script( 'wpfactory-wc-sts-frontend' );
+		}
 
-			wp_enqueue_script( 'jquery-ui-accordion' );
-
-			wp_enqueue_script(
-				'wpfactory-wc-sts-frontend',
-				plugins_url( 'assets/js/frontend' . $min . '.js', WPFACTORY_WC_STS_FILE ),
-				array( 'jquery' ),
-				WPFACTORY_WC_STS_VERSION,
-				true
-			);
+		/**
+		 * Whether the current admin screen belongs to the plugin.
+		 *
+		 * @version 2.2.1
+		 * @since   2.2.1
+		 *
+		 * @return bool
+		 */
+		public static function is_plugin_screen() {
+			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if ( $screen && ( 'stsw_tickets' === $screen->post_type || 0 === strpos( (string) $screen->taxonomy, 'stsw_tickets' ) ) ) {
+				return true;
+			}
+			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return 0 === strpos( $page, 'support-ticket-system-woocommerce' );
 		}
 
 		/**
@@ -762,6 +779,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			);
 
 			add_settings_field(
+				'deleteDataOnUninstall',
+				esc_html__( 'Remove data on delete', 'support-ticket-system-for-woocommerce' ),
+				array( $this, 'delete_data_on_uninstall' ),
+				$this->plugin . 'general-options',
+				$this->plugin . 'general'
+			);
+
+			add_settings_field(
 				'assignToRole',
 				"<span class='proVersion'>" . esc_html__( 'Role that can be assigned tickets', 'support-ticket-system-for-woocommerce' ) . '</span>',
 				array( $this, 'assign_to_role' ),
@@ -923,6 +948,23 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					'default'           => '',
 				)
 			);
+		}
+
+		/**
+		 * "Delete all ticket data when the plugin is deleted" checkbox (option shared by free and Pro).
+		 *
+		 * @version 2.2.1
+		 * @since   2.2.1
+		 */
+		public function delete_data_on_uninstall() {
+			$checked = '1' === (string) get_option( 'wpfactory_wc_sts_delete_data_on_uninstall' );
+			?>
+			<label>
+				<input type="checkbox" name="wpfactory_wc_sts_delete_data_on_uninstall" value="1" <?php checked( $checked ); ?> />
+				<?php esc_html_e( 'Delete all tickets, replies and these settings when the plugin is deleted', 'support-ticket-system-for-woocommerce' ); ?>
+			</label>
+			<p class="description"><?php esc_html_e( 'Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets.', 'support-ticket-system-for-woocommerce' ); ?></p>
+			<?php
 		}
 
 		/**
@@ -1355,6 +1397,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						sanitize_text_field( wp_unslash( $_REQUEST[ $this->plugin . 'renameAccountTabLink' ] ) )
 					);
 				}
+
+				// Opt-in data removal on uninstall (option shared by free and Pro).
+				update_option( 'wpfactory_wc_sts_delete_data_on_uninstall', ! empty( $_REQUEST['wpfactory_wc_sts_delete_data_on_uninstall'] ) ? '1' : '', false );
 
 				echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
 			}
