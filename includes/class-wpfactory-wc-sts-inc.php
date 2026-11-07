@@ -1273,7 +1273,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 */
 		public function menu_page() {
 			$items = array(
-				'edit.php?post_type=stsw_tickets'      => __( 'Tickets', 'support-ticket-system-for-woocommerce' ),
 				'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' => __( 'Priorities', 'support-ticket-system-for-woocommerce' ),
 				'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' => __( 'Subjects', 'support-ticket-system-for-woocommerce' ),
 				'edit.php?post_type=stsw_canned_reply' => __( 'Canned replies', 'support-ticket-system-for-woocommerce' ),

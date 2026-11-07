@@ -218,15 +218,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				$active = 'canned';
 			} elseif ( $screen && in_array( $screen->taxonomy, array( 'stsw_tickets_priority', 'stsw_tickets_subject', 'stsw_tickets_status' ), true ) ) {
 				$active = $screen->taxonomy;
-			} elseif ( $screen && 'stsw_tickets' === $screen->post_type ) {
-				$active = 'all';
 			} else {
 				$active = 'settings' === $tab ? 'settings' : 'general';
 			}
 			$this->active_tab = $active;
 			$tabs             = array(
-				'general'               => array( __( 'Dashboard', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) ),
-				'all'                   => array( __( 'Tickets', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_tickets' ) ),
+				'general'               => array( __( 'Inbox', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) ),
 				'stsw_tickets_priority' => array( __( 'Priorities', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' ) ),
 				'stsw_tickets_subject'  => array( __( 'Subjects', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' ) ),
 				'canned'                => array( __( 'Canned replies', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_canned_reply' ) ),
@@ -248,7 +245,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		public function admin_settings() {
 			$this->admin_tabs();
 			if ( 'settings' !== $this->active_tab ) {
-				WPFactory_WC_STS_Inc::get_main_instance()->tickets_dashboard();
+				WPFactory_WC_STS_Inbox::get_instance()->render();
 				return;
 			}
 			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
@@ -285,6 +282,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						<?php
 						$this->render_fields( $this->get_notification_fields() );
 						WPFactory_WC_STS_Emails::get_instance()->render_test_email_button();
+						WPFactory_WC_STS_Emails::get_instance()->render_email_health();
 						?>
 					</div>
 				</div>

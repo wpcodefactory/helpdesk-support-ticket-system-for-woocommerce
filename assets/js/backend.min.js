@@ -38,7 +38,7 @@
 			},
 			function (response) {
 				if (response && response.success) {
-					button.closest("tr").remove();
+					button.closest("tr, li").remove();
 				}
 			}
 		);

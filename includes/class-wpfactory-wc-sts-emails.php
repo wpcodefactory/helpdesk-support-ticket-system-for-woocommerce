@@ -168,7 +168,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		 * @return string
 		 */
 		protected function admin_link( $ticket_id ) {
-			return '<a href="' . esc_url( admin_url( 'post.php?post=' . (int) $ticket_id . '&action=edit' ) ) . '">' . esc_html__( 'Open the ticket', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			return '<a href="' . esc_url( admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&ticket=' . (int) $ticket_id ) ) . '">' . esc_html__( 'Open the ticket', 'support-ticket-system-for-woocommerce' ) . '</a>';
 		}
 
 		/**
@@ -370,7 +370,112 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			if ( sanitize_email( $to ) !== $reply_to ) {
 				$headers[] = 'Reply-To: ' . $reply_to;
 			}
-			return (bool) wp_mail( $to, $subject, $message, $headers );
+			/**
+			 * Headers of ticket emails (Pro: email piping adds Reply-To and loop guards).
+			 *
+			 * @param array  $headers Headers.
+			 * @param string $to      Recipient.
+			 * @param string $subject Subject.
+			 */
+			$headers = (array) apply_filters( 'wpfactory_wc_sts_email_headers', $headers, $to, $subject );
+			/**
+			 * Subject of ticket emails (Pro: email piping adds the ticket tag).
+			 *
+			 * @param string $subject Subject.
+			 */
+			$subject = (string) apply_filters( 'wpfactory_wc_sts_email_subject', $subject );
+			add_action( 'wp_mail_failed', array( $this, 'record_failure' ) );
+			$sent = (bool) wp_mail( $to, $subject, $message, $headers );
+			remove_action( 'wp_mail_failed', array( $this, 'record_failure' ) );
+			return $sent;
+		}
+
+		/**
+		 * Remembers the last error WordPress reported for a ticket email (shown in Email health).
+		 *
+		 * @param WP_Error $error Error.
+		 */
+		public function record_failure( $error ) {
+			update_option(
+				'wpfactory_wc_sts_mail_error',
+				array(
+					'time'    => time(),
+					'message' => is_wp_error( $error ) ? $error->get_error_message() : '',
+				),
+				false
+			);
+		}
+
+		/**
+		 * Email health: checks that store emails can leave the site and reach inboxes.
+		 *
+		 * @return array List of { ok: bool, label: string, fix: string }.
+		 */
+		public function get_email_health() {
+			$store  = $this->get_store_email();
+			$domain = strtolower( (string) substr( strrchr( $store, '@' ), 1 ) );
+			$site   = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+			$site   = preg_replace( '/^www\./', '', $site );
+			$free   = array( 'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com', 'aol.com', 'icloud.com', 'gmx.com', 'gmx.de', 'yandex.com', 'proton.me', 'protonmail.com' );
+			$smtp   = has_action( 'phpmailer_init' ) || has_filter( 'pre_wp_mail' );
+			$test   = (array) get_option( 'wpfactory_wc_sts_email_test', array() );
+			$error  = (array) get_option( 'wpfactory_wc_sts_mail_error', array() );
+			$checks = array(
+				array(
+					'ok'    => $this->is_on( 'mailToADmin' ) && $this->is_on( 'mailToCustomer' ),
+					'label' => __( 'Store and customer emails are on', 'support-ticket-system-for-woocommerce' ),
+					'fix'   => __( 'Turn on both email settings above, or customers and staff miss replies.', 'support-ticket-system-for-woocommerce' ),
+				),
+				array(
+					'ok'    => (bool) is_email( $store ),
+					/* translators: %s: email address. */
+					'label' => sprintf( __( 'Sender address: %s', 'support-ticket-system-for-woocommerce' ), $store ),
+					'fix'   => __( 'Enter a valid store email address.', 'support-ticket-system-for-woocommerce' ),
+				),
+				array(
+					'ok'    => '' !== $domain && ! in_array( $domain, $free, true ) && ( $domain === $site || str_ends_with( $site, '.' . $domain ) || str_ends_with( $domain, '.' . $site ) || 'localhost' === $site || preg_match( '/^[0-9.]+$/', $site ) ),
+					'label' => __( 'Sender address uses your shop domain', 'support-ticket-system-for-woocommerce' ),
+					'fix'   => __( 'Emails sent from a free mailbox or another domain often land in spam. Use an address on your shop domain.', 'support-ticket-system-for-woocommerce' ),
+				),
+				array(
+					'ok'    => (bool) $smtp,
+					'label' => __( 'An email sending plugin (SMTP) is active', 'support-ticket-system-for-woocommerce' ),
+					'fix'   => __( 'Without one, many hosts drop or delay email. Install an SMTP plugin and connect it to your mail provider.', 'support-ticket-system-for-woocommerce' ),
+				),
+				array(
+					'ok'    => ! empty( $test['ok'] ),
+					'label' => empty( $test['time'] )
+						? __( 'Test email not sent yet', 'support-ticket-system-for-woocommerce' )
+						/* translators: %s: time since the test, e.g. "2 hours". */
+						: sprintf( __( 'Last test email: %s ago', 'support-ticket-system-for-woocommerce' ), human_time_diff( (int) $test['time'] ) ),
+					'fix'   => __( 'Send a test email and check it arrives (also in the spam folder).', 'support-ticket-system-for-woocommerce' ),
+				),
+			);
+			if ( ! empty( $error['time'] ) && ( empty( $test['time'] ) || (int) $error['time'] > (int) $test['time'] ) ) {
+				$checks[] = array(
+					'ok'    => false,
+					/* translators: 1: time since the error, 2: error message. */
+					'label' => sprintf( __( 'A ticket email failed %1$s ago: %2$s', 'support-ticket-system-for-woocommerce' ), human_time_diff( (int) $error['time'] ), $error['message'] ),
+					'fix'   => __( 'Check your SMTP plugin\'s log, then send a test email.', 'support-ticket-system-for-woocommerce' ),
+				);
+			}
+			return $checks;
+		}
+
+		/**
+		 * Email health box (Settings > Notifications).
+		 */
+		public function render_email_health() {
+			echo '<h2 id="stsw-email-health">' . esc_html__( 'Email health', 'support-ticket-system-for-woocommerce' ) . '</h2><ul class="stsw-health">';
+			foreach ( $this->get_email_health() as $check ) {
+				echo '<li class="' . ( $check['ok'] ? 'is-ok' : 'is-warning' ) . '"><span class="dashicons ' . ( $check['ok'] ? 'dashicons-yes-alt' : 'dashicons-warning' ) . '" aria-hidden="true"></span> ';
+				echo '<strong>' . esc_html( $check['ok'] ? __( 'OK', 'support-ticket-system-for-woocommerce' ) : __( 'Check', 'support-ticket-system-for-woocommerce' ) ) . ':</strong> ' . esc_html( $check['label'] );
+				if ( ! $check['ok'] ) {
+					echo '<br/><span class="description">' . esc_html( $check['fix'] ) . '</span>';
+				}
+				echo '</li>';
+			}
+			echo '</ul>';
 		}
 
 		/**
@@ -387,6 +492,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				/* translators: %s: store name. */
 				sprintf( __( 'Test email from %s support tickets', 'support-ticket-system-for-woocommerce' ), $site ),
 				esc_html__( 'This is a test. If you received it, ticket notifications from your store can reach this address.', 'support-ticket-system-for-woocommerce' )
+			);
+			update_option(
+				'wpfactory_wc_sts_email_test',
+				array(
+					'time' => time(),
+					'ok'   => $sent,
+				),
+				false
 			);
 			wp_safe_redirect(
 				add_query_arg(

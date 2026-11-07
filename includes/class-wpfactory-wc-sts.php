@@ -185,8 +185,8 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 
 			add_submenu_page(
 				'support-ticket-system-woocommerce',
-				__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
-				__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
+				__( 'Inbox', 'support-ticket-system-for-woocommerce' ),
+				__( 'Inbox', 'support-ticket-system-for-woocommerce' ),
 				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
