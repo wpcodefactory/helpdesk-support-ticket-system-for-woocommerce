@@ -63,6 +63,17 @@ if ( ! function_exists( 'wpfactory_wc_sts_uninstall_site' ) ) {
 		// Settings of both editions.
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'STSWooCommerce%' OR option_name LIKE 'stswpro\\_%' OR option_name LIKE 'wpfactory\\_wc\\_sts\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
+		// Protected ticket files folder (Pro 3.0.5+): uploads/stsw-tickets.
+		$uploads = wp_upload_dir( null, false );
+		$folder  = trailingslashit( $uploads['basedir'] ) . 'stsw-tickets';
+		if ( is_dir( $folder ) && 'stsw-tickets' === basename( $folder ) ) {
+			$items = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $folder, FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
+			foreach ( $items as $item ) {
+				$item->isDir() ? @rmdir( $item->getPathname() ) : @unlink( $item->getPathname() ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_rmdir, WordPress.WP.AlternativeFunctions.unlink_unlink
+			}
+			@rmdir( $folder ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+		}
+
 		// Ticket capability.
 		foreach ( wp_roles()->role_objects as $role ) {
 			$role->remove_cap( 'stsw_tickets' );
