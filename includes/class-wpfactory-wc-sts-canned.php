@@ -1,6 +1,6 @@
 <?php
 /**
- * Helpdesk Support Ticket System for WooCommerce - Core: canned replies.
+ * Helpdesk Support Ticket System for WooCommerce - Core: saved replies.
  *
  * Saved answers (private post type `stsw_canned_reply`) that staff insert into the reply box with one click.
  * Shared by the free and Pro editions.
@@ -66,13 +66,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 				self::POST_TYPE,
 				array(
 					'labels'              => array(
-						'name'          => __( 'Canned replies', 'support-ticket-system-for-woocommerce' ),
-						'singular_name' => __( 'Canned reply', 'support-ticket-system-for-woocommerce' ),
-						'add_new'       => __( 'Add canned reply', 'support-ticket-system-for-woocommerce' ),
-						'add_new_item'  => __( 'Add canned reply', 'support-ticket-system-for-woocommerce' ),
-						'edit_item'     => __( 'Edit canned reply', 'support-ticket-system-for-woocommerce' ),
-						'not_found'     => __( 'No canned replies yet.', 'support-ticket-system-for-woocommerce' ),
-						'search_items'  => __( 'Search canned replies', 'support-ticket-system-for-woocommerce' ),
+						'name'          => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
+						'singular_name' => __( 'Saved reply', 'support-ticket-system-for-woocommerce' ),
+						'add_new'       => __( 'Add saved reply', 'support-ticket-system-for-woocommerce' ),
+						'add_new_item'  => __( 'Add saved reply', 'support-ticket-system-for-woocommerce' ),
+						'edit_item'     => __( 'Edit saved reply', 'support-ticket-system-for-woocommerce' ),
+						'not_found'     => __( 'No saved replies yet.', 'support-ticket-system-for-woocommerce' ),
+						'search_items'  => __( 'Search saved replies', 'support-ticket-system-for-woocommerce' ),
 					),
 					'public'              => false,
 					'publicly_queryable'  => false,
@@ -91,7 +91,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 		}
 
 		/**
-		 * Keeps the Support Tickets menu open on the canned replies screens.
+		 * Keeps the Support Tickets menu open on the saved replies screens.
 		 *
 		 * @param string $parent_file Parent menu file.
 		 *
@@ -103,7 +103,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 		}
 
 		/**
-		 * Canned replies, by title.
+		 * Saved replies, by title.
 		 *
 		 * @return WP_Post[]
 		 */
@@ -120,7 +120,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 		}
 
 		/**
-		 * "Insert a canned reply" select above a reply box (the script copies the text into the box).
+		 * "Insert a saved reply" select above a reply box (the script copies the text into the box).
 		 *
 		 * @param string $target ID of the textarea.
 		 */
@@ -128,10 +128,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 			$replies = $this->get_replies();
 			$add_url = admin_url( 'post-new.php?post_type=' . self::POST_TYPE );
 			if ( empty( $replies ) ) {
-				echo '<p class="description"><a href="' . esc_url( $add_url ) . '">' . esc_html__( 'Save answers you use often as canned replies', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
+				echo '<p class="description"><a href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add answers you use often, then insert them here in one click', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
 				return;
 			}
-			echo '<p><label for="stsw-canned">' . esc_html__( 'Insert a canned reply', 'support-ticket-system-for-woocommerce' ) . '</label> ';
+			echo '<p><label for="stsw-canned">' . esc_html__( 'Insert a saved reply', 'support-ticket-system-for-woocommerce' ) . '</label> ';
 			echo '<select id="stsw-canned" class="wpfactory-wc-sts-canned" data-target="' . esc_attr( $target ) . '"><option value="">' . esc_html__( 'Choose...', 'support-ticket-system-for-woocommerce' ) . '</option>';
 			foreach ( $replies as $reply ) {
 				$text = trim( wp_strip_all_tags( str_replace( array( '</p>', '<br>', '<br />', '<br/>' ), "\n", (string) $reply->post_content ) ) );

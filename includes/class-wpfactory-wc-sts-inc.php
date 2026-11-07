@@ -1275,7 +1275,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			$items = array(
 				'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' => __( 'Priorities', 'support-ticket-system-for-woocommerce' ),
 				'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' => __( 'Subjects', 'support-ticket-system-for-woocommerce' ),
-				'edit.php?post_type=stsw_canned_reply' => __( 'Canned replies', 'support-ticket-system-for-woocommerce' ),
+				'edit.php?post_type=stsw_canned_reply' => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
 			);
 			foreach ( $items as $slug => $title ) {
 				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'stsw_tickets', $slug, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown

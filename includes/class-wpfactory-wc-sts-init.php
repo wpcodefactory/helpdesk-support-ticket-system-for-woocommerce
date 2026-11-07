@@ -209,7 +209,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		}
 
 		/**
-		 * Tabs: Dashboard, Tickets, Priorities, Subjects, Canned replies, Settings.
+		 * Tabs: Dashboard, Tickets, Priorities, Subjects, Saved replies, Settings.
 		 */
 		public function admin_tabs() {
 			$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
@@ -226,7 +226,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'general'               => array( __( 'Inbox', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) ),
 				'stsw_tickets_priority' => array( __( 'Priorities', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' ) ),
 				'stsw_tickets_subject'  => array( __( 'Subjects', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' ) ),
-				'canned'                => array( __( 'Canned replies', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_canned_reply' ) ),
+				'canned'                => array( __( 'Saved replies', 'support-ticket-system-for-woocommerce' ), admin_url( 'edit.php?post_type=stsw_canned_reply' ) ),
 				'settings'              => array( __( 'Settings', 'support-ticket-system-for-woocommerce' ), admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=settings' ) ),
 			);
 			echo '<nav class="nav-tab-wrapper" aria-label="' . esc_attr__( 'Support tickets sections', 'support-ticket-system-for-woocommerce' ) . '">';
@@ -351,7 +351,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'@wpfactory_wc_sts_delete_data_on_uninstall' => array(
 					'type'        => 'checkbox',
 					'label'       => __( 'Remove data on delete', 'support-ticket-system-for-woocommerce' ),
-					'description' => __( 'Delete all tickets, replies, canned replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets.', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Delete all tickets, replies, saved replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets.', 'support-ticket-system-for-woocommerce' ),
 				),
 			);
 		}

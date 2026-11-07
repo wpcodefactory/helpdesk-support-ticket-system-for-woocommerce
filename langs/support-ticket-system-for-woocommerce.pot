@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-07T20:29:34+00:00\n"
+"POT-Creation-Date: 2026-11-07T20:55:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: support-ticket-system-for-woocommerce\n"
@@ -220,36 +220,36 @@ msgstr ""
 #: includes/class-wpfactory-wc-sts-canned.php:69
 #: includes/class-wpfactory-wc-sts-inc.php:1278
 #: includes/class-wpfactory-wc-sts-init.php:229
-msgid "Canned replies"
+msgid "Saved replies"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:70
-msgid "Canned reply"
+msgid "Saved reply"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:71
 #: includes/class-wpfactory-wc-sts-canned.php:72
-msgid "Add canned reply"
+msgid "Add saved reply"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:73
-msgid "Edit canned reply"
+msgid "Edit saved reply"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:74
-msgid "No canned replies yet."
+msgid "No saved replies yet."
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:75
-msgid "Search canned replies"
+msgid "Search saved replies"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:131
-msgid "Save answers you use often as canned replies"
+msgid "Add answers you use often, then insert them here in one click"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:134
-msgid "Insert a canned reply"
+msgid "Insert a saved reply"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-canned.php:135
@@ -1383,7 +1383,7 @@ msgid "Remove data on delete"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-init.php:354
-msgid "Delete all tickets, replies, canned replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets."
+msgid "Delete all tickets, replies, saved replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets."
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-init.php:368

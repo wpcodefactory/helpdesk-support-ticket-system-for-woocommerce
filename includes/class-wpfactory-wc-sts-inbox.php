@@ -774,7 +774,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		}
 
 		/**
-		 * Reply box: reply or private note, canned replies, files, send or send and close. Drafts are kept on this computer.
+		 * Reply box: reply or private note, saved replies, files, send or send and close. Drafts are kept on this computer.
 		 *
 		 * @param int    $ticket_id Ticket ID.
 		 * @param string $back      JSON of the inbox query args.
