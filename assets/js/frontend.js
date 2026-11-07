@@ -17,33 +17,10 @@
 		collapsible: true,
 	});
 
-	$(".STSWooCommercenew_response").on("submit", function (e) {
-		e.preventDefault();
-		$.ajax({
-			url: window.location.href,
-			data: $(this).serialize(),
-			type: "POST",
-			beforeSend: function () {
-				$(".stswproaccordion").addClass("loading");
-			},
-			success: function (data) {
-				$("body").html(data);
-			},
-		});
-	});
-
-	$(".STSWooCommercenew_ticket").on("submit", function (e) {
-		e.preventDefault();
-		$.ajax({
-			url: window.location.href,
-			data: $(this).serialize(),
-			type: "POST",
-			beforeSend: function () {
-				$(".stswproaccordion").addClass("loading");
-			},
-			success: function (data) {
-				$("body").html(data);
-			},
-		});
+	// Forms post normally; the server saves, then redirects back with a notice.
+	// Only prevent double submits here.
+	$(".STSWooCommercenew_response, .STSWooCommercenew_ticket").on("submit", function () {
+		$(this).find('[type="submit"]').prop("disabled", true);
+		$(".stswproaccordion").addClass("loading");
 	});
 })(jQuery);

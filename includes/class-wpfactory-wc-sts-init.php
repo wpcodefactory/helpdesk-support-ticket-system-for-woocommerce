@@ -544,8 +544,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			$this->admin_tabs(); // Add tabs for tickets screen.
 
 			?>
-			<p><b><?php esc_html_e( 'Use Ticket System in any page with the shortcode [stsw_user_tickets]', 'support-ticket-system-for-woocommerce' ); ?></b>
-			<br/><i><?php esc_html_e( "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend", 'support-ticket-system-for-woocommerce' ); ?></i></p>
 			<?php
 
 			if ( isset( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
