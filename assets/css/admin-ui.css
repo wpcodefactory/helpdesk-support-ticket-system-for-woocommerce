@@ -2352,3 +2352,118 @@ body.wpf-hd-wizard {
 		padding-right: 16px;
 	}
 }
+
+/* Phase 6 additions */
+.wpf-hd .hd-list__title {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.wpf-hd .hd-listtools {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.wpf-hd .hd-listtools .hd-menu__panel {
+	width: 260px;
+}
+
+.wpf-hd .hd-saveview summary {
+	list-style: none;
+}
+
+.wpf-hd .hd-saveview summary::-webkit-details-marker {
+	display: none;
+}
+
+.wpf-hd .hd-rail__saved {
+	display: flex;
+	align-items: center;
+}
+
+.wpf-hd .hd-rail__saved .hd-rail__item {
+	flex: 1;
+	min-width: 0;
+}
+
+.wpf-hd .hd-rail__remove {
+	width: 28px;
+	height: 28px;
+	opacity: 0;
+}
+
+.wpf-hd .hd-rail__saved:hover .hd-rail__remove,
+.wpf-hd .hd-rail__remove:focus-visible {
+	opacity: 1;
+}
+
+.wpf-hd .hd-available {
+	margin: 0 0 12px;
+	padding: 10px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-banner--info {
+	border-color: var(--hd-accent-border);
+	background: var(--hd-accent-selected);
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-banner--info a {
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-table th {
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--hd-border);
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+	text-align: left;
+}
+
+.wpf-hd .hd-table td {
+	padding: 10px;
+	border-bottom: 1px solid var(--hd-divider);
+	vertical-align: top;
+}
+
+.wpf-hd .hd-inline-link {
+	display: inline;
+	margin-left: 6px;
+}
+
+@media (max-width: 782px) {
+	.wpf-hd .hd-table thead {
+		display: none;
+	}
+
+	.wpf-hd .hd-table td {
+		display: block;
+		padding: 4px 0;
+		border: 0;
+	}
+
+	.wpf-hd .hd-table tr {
+		display: block;
+		padding: 10px 0;
+		border-bottom: 1px solid var(--hd-divider);
+	}
+
+	.wpf-hd .hd-rail__remove {
+		opacity: 1;
+	}
+}

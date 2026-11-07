@@ -380,6 +380,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					$fields = $this->get_general_fields();
 					$this->render_card( __( 'Customer access', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'renameAccountTabLink', 'renameOrderButtonLink', 'hideClosed' ) ) ) );
 					$this->render_card( __( 'Messages', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'textforTicketSave', 'textforResponseSave' ) ) ) );
+					$known = array( 'renameAccountTabLink', 'renameOrderButtonLink', 'hideClosed', 'textforTicketSave', 'textforResponseSave', '@wpfactory_wc_sts_delete_data_on_uninstall' );
+					$this->render_card( __( 'Help center and live chat', 'support-ticket-system-for-woocommerce' ), array_diff_key( $fields, array_flip( $known ) ) );
 					$this->render_card( __( 'Data', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( '@wpfactory_wc_sts_delete_data_on_uninstall' ) ) ) );
 					break;
 				case 'form':
@@ -448,7 +450,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @return array
 		 */
 		protected function get_general_fields() {
-			return array(
+			$fields = array(
 				'renameAccountTabLink'  => array(
 					'type'        => 'text',
 					'label'       => __( 'My Account menu label', 'support-ticket-system-for-woocommerce' ),
@@ -477,6 +479,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					'description' => __( 'Delete all tickets, replies, saved replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets.', 'support-ticket-system-for-woocommerce' ),
 				),
 			);
+			/**
+			 * General settings (the knowledge base and live chat add theirs).
+			 *
+			 * @param array $fields Fields.
+			 */
+			return (array) apply_filters( 'wpfactory_wc_sts_settings_general', $fields );
 		}
 
 		/**
@@ -602,7 +610,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			foreach ( $fields as $key => $field ) {
 				$name    = $this->option_name( $key );
 				$id      = sanitize_key( $name );
-				$value   = get_option( $name, '' );
+				$value   = get_option( $name, $field['default'] ?? '' );
 				$help_id = $id . '-help';
 				$help    = ! empty( $field['description'] ) ? ' aria-describedby="' . esc_attr( $help_id ) . '"' : '';
 				$wide    = in_array( $field['type'], array( 'editor', 'html', 'textarea', 'roles' ), true );

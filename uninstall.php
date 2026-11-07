@@ -51,14 +51,14 @@ if ( ! function_exists( 'wpfactory_wc_sts_uninstall_site' ) ) {
 			wp_delete_post( (int) $ticket_id, true );
 		}
 
-		// Canned replies (2.3.0 / 3.1.0).
-		$canned_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'stsw_canned_reply'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// Saved replies and knowledge base articles (2.3.0 / 3.1.0).
+		$canned_ids = $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type IN ('stsw_canned_reply', 'stsw_kb_article')" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		foreach ( $canned_ids as $canned_id ) {
 			wp_delete_post( (int) $canned_id, true );
 		}
 
 		// Status, priority and subject terms (taxonomies are not registered during uninstall).
-		$taxonomies = array( 'stsw_tickets_status', 'stsw_tickets_priority', 'stsw_tickets_subject' );
+		$taxonomies = array( 'stsw_tickets_status', 'stsw_tickets_priority', 'stsw_tickets_subject', 'stsw_tickets_tag', 'stsw_kb_category' );
 		$term_ids   = $wpdb->get_col( "SELECT term_id FROM {$wpdb->term_taxonomy} WHERE taxonomy IN ('" . implode( "','", $taxonomies ) . "')" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$wpdb->query( "DELETE FROM {$wpdb->term_taxonomy} WHERE taxonomy IN ('" . implode( "','", $taxonomies ) . "')" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		foreach ( $term_ids as $term_id ) {
@@ -71,6 +71,9 @@ if ( ! function_exists( 'wpfactory_wc_sts_uninstall_site' ) ) {
 
 		// Replies and private notes.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}stsw_responses, {$wpdb->prefix}stsw_priv_responses" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange
+
+		// Saved views and chat availability of team members.
+		$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key IN ('_stsw_saved_views', '_stsw_available', '_stsw_last_seen', '_stsw_ticket_credits', '_stsw_priority_until')" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		// Settings of both editions.
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'STSWooCommerce%' OR option_name LIKE 'stswpro\\_%' OR option_name LIKE 'wpfactory\\_wc\\_sts\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
