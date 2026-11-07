@@ -156,7 +156,7 @@
 		return true;
 	}
 	if (controls) {
-		Array.prototype.forEach.call(controls.querySelectorAll("select"), function (select) {
+		Array.prototype.forEach.call(controls.querySelectorAll("select, input[name=stsw_tags]"), function (select) {
 			select.setAttribute("data-saved", select.value);
 			select.addEventListener("change", function () {
 				autosave(select);

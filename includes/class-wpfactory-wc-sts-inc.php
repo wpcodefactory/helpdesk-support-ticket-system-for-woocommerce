@@ -484,6 +484,28 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					)
 				);
 			}
+			// Tags (2.3.0): set from the ticket header or by Pro workflow rules. Staff only.
+			register_taxonomy(
+				'stsw_tickets_tag',
+				array( 'stsw_tickets' ),
+				array(
+					'hierarchical' => false,
+					'public'       => false,
+					'show_ui'      => false,
+					'query_var'    => false,
+					'rewrite'      => false,
+					'labels'       => array(
+						'name'          => __( 'Tags', 'support-ticket-system-for-woocommerce' ),
+						'singular_name' => __( 'Tag', 'support-ticket-system-for-woocommerce' ),
+					),
+					'capabilities' => array(
+						'manage_terms' => 'stsw_tickets',
+						'edit_terms'   => 'stsw_tickets',
+						'delete_terms' => 'stsw_tickets',
+						'assign_terms' => 'stsw_tickets',
+					),
+				)
+			);
 		}
 
 		/**
@@ -549,9 +571,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			if ( ! $user_id || 'stsw_tickets' !== get_post_type( $ticket_id ) ) {
 				return false;
 			}
-			return $this->can_manage_tickets( $user_id ) ||
+			$allowed = $this->can_manage_tickets( $user_id ) ||
 				$this->get_ticket_user_id( $ticket_id ) === $user_id ||
 				$this->get_ticket_agent_id( $ticket_id ) === $user_id;
+			/**
+			 * Whether a user may see and answer a ticket on the customer side (Pro: colleagues of the same company).
+			 *
+			 * @param bool $allowed   Allowed.
+			 * @param int  $ticket_id Ticket ID.
+			 * @param int  $user_id   User ID.
+			 */
+			return (bool) apply_filters( 'wpfactory_wc_sts_user_can_access_ticket', $allowed, (int) $ticket_id, $user_id );
 		}
 
 		/**
@@ -949,6 +979,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *     @type string $priority    Priority term name.
 		 *     @type array  $fields      Custom field values.
 		 *     @type string $files_field `$_FILES` key holding attachments.
+		 *     @type string $channel     Where it came from: '' (web), `chat` or `email`.
 		 * }
 		 *
 		 * @return int|WP_Error Ticket ID.
@@ -969,6 +1000,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'items'       => array(),
 					'reason'      => '',
 					'started_by'  => 0,
+					'channel'     => '',
 				)
 			);
 
@@ -1022,6 +1054,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			}
 			if ( $args['started_by'] ) {
 				update_post_meta( $ticket_id, self::META_STARTED_BY, (int) $args['started_by'] );
+			}
+			if ( '' !== $args['channel'] ) {
+				update_post_meta( $ticket_id, '_stsw_channel', sanitize_key( $args['channel'] ) );
 			}
 			$this->touch_activity( $ticket_id, $args['started_by'] ? 'store' : 'customer' );
 
@@ -1977,17 +2012,22 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'operator' => 'NOT IN',
 				);
 			}
-			return new WP_Query(
-				array(
-					'post_type'      => 'stsw_tickets',
-					'post_status'    => 'publish',
-					'posts_per_page' => 100,
-					'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					'tax_query'      => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-					'orderby'        => 'modified',
-					'order'          => 'DESC',
-				)
+			$args = array(
+				'post_type'      => 'stsw_tickets',
+				'post_status'    => 'publish',
+				'posts_per_page' => 100,
+				'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'tax_query'      => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				'orderby'        => 'modified',
+				'order'          => 'DESC',
 			);
+			/**
+			 * Tickets listed in My Account (Pro: adds the company's shared tickets).
+			 *
+			 * @param array $args    WP_Query arguments.
+			 * @param int   $user_id User ID.
+			 */
+			return new WP_Query( (array) apply_filters( 'wpfactory_wc_sts_customer_tickets_args', $args, (int) $user->ID ) );
 		}
 
 		/**

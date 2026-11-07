@@ -768,6 +768,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				update_option( WPFactory_WC_STS_Fields::OPTION, WPFactory_WC_STS_Fields::get_instance()->sanitize_fields( $_POST['wpfactory_wc_sts_custom_fields'] ), false ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized in sanitize_fields().
 			}
 
+			/**
+			 * Settings were saved (the nonce is checked). Pro saves its lists here (mailboxes, rules, companies).
+			 */
+			do_action( 'wpfactory_wc_sts_settings_saved' );
+
 			WPFactory_WC_STS_UI::notice( __( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) );
 		}
 	}

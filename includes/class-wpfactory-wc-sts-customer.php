@@ -313,6 +313,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 				<a class="stsw-button stsw-button--primary button wp-element-button" href="<?php echo esc_url( $this->get_view_url( 'new' ) ); ?>"><?php esc_html_e( 'Open a ticket', 'support-ticket-system-for-woocommerce' ); ?></a>
 			</div>
 			<?php
+			/**
+			 * Above the ticket list (Pro: support credits and priority support).
+			 *
+			 * @param int $user User ID.
+			 */
+			do_action( 'wpfactory_wc_sts_customer_list_top', $user );
 			if ( ! $query->have_posts() ) {
 				echo '<div class="stsw-empty"><p><strong>' . esc_html__( 'You have no tickets yet.', 'support-ticket-system-for-woocommerce' ) . '</strong></p><p>' . esc_html__( 'Choose "Open a ticket" and we will reply here and by email.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
 			} else {
@@ -334,8 +340,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 					echo '<a class="stsw-card__link" href="' . esc_url( $this->get_view_url( 'ticket', array( 'ticket' => $id ) ) ) . '">' . esc_html( get_the_title( $id ) ) . '</a>';
 					echo '<p class="stsw-card__meta">' . esc_html( implode( ' · ', $meta ) ) . '</p></div><p class="stsw-card__chips">';
 					echo $this->status_chip( $id, $is_agent ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in status_chip().
-					if ( $is_agent ) {
+					if ( $is_agent && $core->can_manage_tickets( $user ) ) {
 						echo ' <span class="stsw-chip">' . esc_html__( 'Assigned to you', 'support-ticket-system-for-woocommerce' ) . '</span>';
+					} elseif ( $is_agent ) {
+						echo ' <span class="stsw-chip">' . esc_html( sprintf( /* translators: %s: name. */ __( 'Opened by %s', 'support-ticket-system-for-woocommerce' ), $core->get_ticket_contact( $id )['display_name'] ) ) . '</span>';
 					}
 					echo '</p></li>';
 				}

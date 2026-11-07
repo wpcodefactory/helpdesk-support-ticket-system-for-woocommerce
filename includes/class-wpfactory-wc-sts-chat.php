@@ -182,7 +182,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 		 * @return bool
 		 */
 		public function is_online() {
-			return (bool) $this->get_online_agents();
+			/**
+			 * Whether visitors can chat now (Pro: the AI assistant keeps the chat open).
+			 *
+			 * @param bool $online A team member is available.
+			 */
+			return (bool) apply_filters( 'wpfactory_wc_sts_chat_online', (bool) $this->get_online_agents() );
 		}
 
 		/**
@@ -465,13 +470,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 					'user_id'     => $user->exists() ? (int) $user->ID : 0,
 					'guest_email' => $user->exists() ? '' : $email,
 					'reason'      => 'other',
+					'channel'     => 'chat',
 				)
 			);
 			if ( is_wp_error( $ticket ) ) {
 				wp_send_json_error( array( 'message' => __( 'Your message was not sent. Please try again.', 'support-ticket-system-for-woocommerce' ) ), 500 );
 			}
 			$key = wp_generate_password( 32, false );
-			update_post_meta( $ticket, self::META_CHANNEL, 'chat' );
 			update_post_meta( $ticket, self::META_KEY, $key );
 			if ( '' !== $name && ! $user->exists() ) {
 				update_post_meta( $ticket, '_stsw_guest_name', $name );

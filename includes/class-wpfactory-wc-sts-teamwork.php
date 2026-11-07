@@ -173,7 +173,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 		 * @return string[]
 		 */
 		protected function keys() {
-			return array( 'view', 's', 'order_id', 'prio', 'subject', 'status' );
+			return array( 'view', 's', 'order_id', 'prio', 'subject', 'status', 'tag' );
 		}
 
 		/**

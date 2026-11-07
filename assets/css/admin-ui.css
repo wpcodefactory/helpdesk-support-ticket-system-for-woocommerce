@@ -2467,3 +2467,65 @@ body.wpf-hd-wizard {
 		opacity: 1;
 	}
 }
+
+/* Pro lists inside settings: mailboxes and workflow rules */
+.wpf-hd .hd-mailbox,
+.wpf-hd .hd-rule {
+	margin: 0 0 12px;
+	padding: 12px 14px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface-muted);
+}
+
+.wpf-hd .hd-mailbox legend,
+.wpf-hd .hd-rule legend {
+	padding: 0 6px;
+}
+
+.wpf-hd .hd-rule--builtin {
+	background: var(--hd-accent-selected);
+	border-color: var(--hd-accent-border);
+}
+
+.wpf-hd .hd-rule--builtin p {
+	margin: 0;
+}
+
+.wpf-hd .hd-mailbox__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 10px 12px;
+}
+
+.wpf-hd .hd-mailbox__grid label {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+	color: var(--hd-text-2);
+}
+
+.wpf-hd .hd-mailbox__grid input,
+.wpf-hd .hd-mailbox__grid select {
+	width: 100%;
+}
+
+.wpf-hd .hd-rule__lines {
+	margin-top: 10px;
+}
+
+.wpf-hd .hd-rule__line {
+	display: grid;
+	grid-template-columns: minmax(180px, 1fr) minmax(140px, 1fr);
+	gap: 8px;
+	margin: 0 0 6px;
+}
+
+.wpf-hd .hd-checks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 16px;
+	margin: 10px 0 0;
+}

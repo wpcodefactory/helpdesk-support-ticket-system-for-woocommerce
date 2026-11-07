@@ -320,6 +320,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				'stsw_tickets_priority' => sanitize_title( $source['prio'] ?? '' ),
 				'stsw_tickets_subject'  => sanitize_title( $source['subject'] ?? '' ),
 				'stsw_tickets_status'   => sanitize_title( $source['status'] ?? '' ),
+				'stsw_tickets_tag'      => sanitize_title( $source['tag'] ?? '' ),
 			);
 			$meta   = array();
 			if ( '' !== $search ) {
@@ -456,6 +457,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					'prio'     => $prio,
 					'subject'  => $subject,
 					'status'   => $status,
+					'tag'      => sanitize_title( wp_unslash( $_GET['tag'] ?? '' ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- navigation only.
 					'paged'    => $paged > 1 ? $paged : 0,
 				)
 			);
@@ -693,6 +695,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 									<span class="hd-row-t__meta stsw-row__meta">
 										<?php echo WPFactory_WC_STS_UI::priority_chip( $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in priority_chip(). ?>
 										<?php
+										$row_tags = wp_get_object_terms( $id, 'stsw_tickets_tag', array( 'fields' => 'names' ) );
+										foreach ( is_wp_error( $row_tags ) ? array() : array_slice( $row_tags, 0, 3 ) as $row_tag ) {
+											echo '<span class="hd-tag">' . esc_html( $row_tag ) . '</span>';
+										}
+										?>
+										<?php
 										/**
 										 * Extra badges on a list row (Pro: due time).
 										 *
@@ -856,6 +864,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					<label class="hd-pillfield"><span><?php esc_html_e( 'Assignee', 'support-ticket-system-for-woocommerce' ); ?></span>
 						<?php WPFactory_WC_STS_Admin::get_instance()->render_user_select( 'stsw_agent', $core->get_ticket_agent_id( $ticket_id ), __( 'Nobody', 'support-ticket-system-for-woocommerce' ), 'stsw-agent' ); ?>
 					</label>
+					<?php $tags = wp_get_object_terms( $ticket_id, 'stsw_tickets_tag', array( 'fields' => 'names' ) ); ?>
+					<label class="hd-pillfield"><span><?php esc_html_e( 'Tags', 'support-ticket-system-for-woocommerce' ); ?></span>
+						<input type="text" name="stsw_tags" class="hd-pill hd-tags-input" value="<?php echo esc_attr( is_wp_error( $tags ) ? '' : implode( ', ', $tags ) ); ?>" placeholder="<?php esc_attr_e( 'vip, refund', 'support-ticket-system-for-woocommerce' ); ?>" aria-describedby="hd-tags-help" />
+					</label>
+					<span class="screen-reader-text" id="hd-tags-help"><?php esc_html_e( 'Separate tags with commas.', 'support-ticket-system-for-woocommerce' ); ?></span>
 					<span class="hd-help hd-js-only"><?php esc_html_e( 'Changes save automatically', 'support-ticket-system-for-woocommerce' ); ?></span>
 					<button type="submit" class="hd-btn hd-btn--sm hd-nojs"><?php esc_html_e( 'Save', 'support-ticket-system-for-woocommerce' ); ?></button>
 				</form>
@@ -1340,6 +1353,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						absint( $_POST['stsw_priority'] ?? 0 ),
 						isset( $_POST['stsw_agent'] ) ? absint( $_POST['stsw_agent'] ) : null
 					);
+					if ( isset( $_POST['stsw_tags'] ) ) {
+						$this->set_tags( $ticket_id, sanitize_text_field( wp_unslash( $_POST['stsw_tags'] ) ) );
+					}
 					$message = 'updated';
 					break;
 
@@ -1421,10 +1437,25 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					$this->update_ticket( $ticket_id, '', 0, absint( $value ) );
 					$text = __( 'Assignee saved', 'support-ticket-system-for-woocommerce' );
 					break;
+				case 'stsw_tags':
+					$this->set_tags( $ticket_id, $value );
+					$text = __( 'Tags saved', 'support-ticket-system-for-woocommerce' );
+					break;
 				default:
 					wp_send_json_error( array( 'message' => __( 'That did not work. Please try again.', 'support-ticket-system-for-woocommerce' ) ), 400 );
 			}
 			wp_send_json_success( array( 'message' => $text ) );
+		}
+
+		/**
+		 * Replaces the tags of a ticket.
+		 *
+		 * @param int    $ticket_id Ticket ID.
+		 * @param string $list      Comma separated names.
+		 */
+		public function set_tags( $ticket_id, $list ) {
+			$names = array_values( array_unique( array_filter( array_map( 'trim', explode( ',', sanitize_text_field( $list ) ) ) ) ) );
+			wp_set_object_terms( $ticket_id, array_slice( $names, 0, 20 ), 'stsw_tickets_tag' );
 		}
 
 		/**
