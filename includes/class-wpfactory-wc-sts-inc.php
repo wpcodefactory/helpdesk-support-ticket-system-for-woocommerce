@@ -181,6 +181,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'supports'            => array( 'title' ),
 					'show_in_rest'        => false,
 					'capability_type'     => 'page',
+					// Tickets hold customer personal data: only store staff may read or edit them (not every role with `edit_pages`).
+					'capabilities'        => $this->get_ticket_capabilities( 'manage_woocommerce' ),
+					'map_meta_cap'        => true,
 					'hierarchical'        => false,
 					'menu_position'       => null,
 					'public'              => false, // it's not public, it shouldn't have it's own permalink, and so on.
@@ -221,6 +224,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'query_var'         => true,
 					'rewrite'           => array( 'slug' => 'stsw_tickets_status' ),
 				)
+			);
+		}
+
+		/**
+		 * Primitive capabilities for the `stsw_tickets` post type, all mapped to one capability.
+		 *
+		 * @version 2.2.1
+		 * @since   2.2.1
+		 *
+		 * @param string $cap Capability required for every ticket action.
+		 *
+		 * @return array
+		 */
+		public function get_ticket_capabilities( $cap ) {
+			return array(
+				'edit_posts'             => $cap,
+				'edit_others_posts'      => $cap,
+				'edit_private_posts'     => $cap,
+				'edit_published_posts'   => $cap,
+				'publish_posts'          => $cap,
+				'read_private_posts'     => $cap,
+				'delete_posts'           => $cap,
+				'delete_others_posts'    => $cap,
+				'delete_private_posts'   => $cap,
+				'delete_published_posts' => $cap,
+				'create_posts'           => $cap,
+				'read'                   => 'read',
 			);
 		}
 
@@ -475,8 +505,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @version 2.2.0
 		 */
-		public function save_fields() {
-			if ( empty( $_POST[ $this->plugin . 'response' ] ) ) {
+		public function save_fields( $post_id = 0 ) {
+			if (
+				empty( $_POST[ $this->plugin . 'response' ] ) ||
+				! $post_id ||
+				'stsw_tickets' !== get_post_type( $post_id ) ||
+				wp_is_post_revision( $post_id ) ||
+				! current_user_can( 'edit_post', $post_id )
+			) {
 				return;
 			}
 
@@ -495,7 +531,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				return;
 			}
 
-			global $post, $wpdb;
+			global $wpdb;
+			$post = get_post( $post_id );
 
 			$user         = $this->get_ticket_user_id( $post->ID );
 			$current_user = wp_get_current_user();
@@ -968,7 +1005,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 									</thead>
 									<tbody>
 										<tr>
-											<th><?php the_content(); ?></th>
+											<th><?php echo wp_kses_post( wpautop( esc_html( get_post_field( 'post_content', get_the_ID(), 'raw' ) ) ) ); // Customer text: escaped, shortcodes never run. ?></th>
 										</tr>
 									</tbody>
 								</table>
@@ -1373,7 +1410,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 
 					$msg = esc_html( sanitize_text_field( wp_unslash( $_POST['title'] ) ) ) . '<br/>' . esc_html( sanitize_text_field( wp_unslash( $_POST['content'] ?? '' ) ) ) . "<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
 
-					$this->notify_users( $admin_email, $sub, $msg );
+					$this->notify_users( $admin_email, $sub, $msg, $to_email );
 				}
 
 				// Send email to user.
@@ -1415,7 +1452,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					$msg = esc_html( sanitize_text_field( wp_unslash( $_POST['response_content'] ) ) ) . "
 					<br/><a href='" . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . "/tickets'>" . esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) . '</a>';
 
-					$this->notify_users( $admin_email, $sub, $msg );
+					$this->notify_users( $admin_email, $sub, $msg, $to_email );
 				}
 
 				// Send email to user.
@@ -1449,16 +1486,26 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * @param string $subject The subject of the email.
 		 * @param string $message The message content of the email.
 		 */
-		public function notify_users( $to, $subject, $message ) {
+		public function notify_users( $to, $subject, $message, $reply_to = '' ) {
 			if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
 				$admin_email = sanitize_email( get_option( $this->plugin . 'AdminEmailAddress' ) );
 			} else {
 				$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
 			}
 
+			// Reply-To: the customer on store notifications, the store on customer notifications
+			// (before 2.2.1 it was the recipient's own address, so replies went nowhere).
+			$reply_to = sanitize_email( $reply_to );
+			if ( ! $reply_to || $reply_to === sanitize_email( $to ) ) {
+				$reply_to = $admin_email;
+			}
+
+			$headers   = array();
 			$headers[] = 'Content-Type: text/html; charset=UTF-8';
-			$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . esc_html( $admin_email ) . '>';
-			$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
+			$headers[] = 'From: ' . wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) . ' <' . $admin_email . '>';
+			if ( $reply_to !== sanitize_email( $to ) ) {
+				$headers[] = 'Reply-To: ' . $reply_to;
+			}
 
 			wp_mail( $to, $subject, $message, $headers );
 		}
@@ -1486,11 +1533,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				$user_id          = $this->get_ticket_user_id( $post_id );
 				$user             = get_user_by( 'id', $user_id );
 				$title            = get_the_title( $post_id );
-				$content          = get_the_content( $post_id );
+				$content          = get_post_field( 'post_content', $post_id, 'raw' );
 
-				if ( $user ) {
-					$to = sanitize_email( $user->user_email );
+				if ( ! $user ) {
+					return;
 				}
+				$to = sanitize_email( $user->user_email );
 
 				if (
 					get_option( $this->plugin . 'mailIt_subjectToCust' ) &&
@@ -1505,37 +1553,26 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					);
 				}
 
-				if (
-					get_option( $this->plugin . 'mailIt_contentToCust' ) &&
-					! empty( get_option( $this->plugin . 'mailIt_contentToCust' ) )
-				) {
-					$msg = esc_html( get_option( $this->plugin . 'mailIt_contentToCust' ) );
-				} else {
+				// Body: the merchant's content template followed by the reply, or the default text.
+				// (Before 2.2.1 the body was replaced by the subject text when a custom subject was set.)
+				$custom_content = get_option( $this->plugin . 'mailIt_contentToCust' );
+				if ( ! empty( $custom_content ) ) {
 					$msg = (
-						esc_html( $response_content ) .
-						'
-						<br/><a href="' . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . '/tickets">' .
+						wp_kses( $custom_content, WPFactory_WC_STS_Init::$allowed_html ) .
+						'<br/>' .
+						nl2br( esc_html( $response_content ) ) .
+						'<br/><a href="' . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . '/tickets">' .
 							esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) .
 						'</a>'
-					);
-				}
-
-				if (
-					get_option( $this->plugin . 'mailIt_subjectToCust' ) &&
-					! empty( get_option( $this->plugin . 'mailIt_subjectToCust' ) )
-				) {
-					$msg = wp_kses(
-						get_option( $this->plugin . 'mailIt_subjectToCust' ),
-						WPFactory_WC_STS_Init::$allowed_html
 					);
 				} else {
 					$msg = (
 						esc_html( $title ) .
 						'<br/>' .
-						esc_html( $content ) .
-						'<br/>
-						Last Response: ' .
-						esc_html( $response_content ) .
+						nl2br( esc_html( $content ) ) .
+						'<br/>' .
+						esc_html__( 'Last Response:', 'support-ticket-system-for-woocommerce' ) . ' ' .
+						nl2br( esc_html( $response_content ) ) .
 						'<br/>
 						<a href="' . esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) . '/tickets">' .
 							esc_html__( 'Check it Here', 'support-ticket-system-for-woocommerce' ) .
@@ -1543,17 +1580,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					);
 				}
 
-				if ( ! empty( get_option( $this->plugin . 'AdminEmailAddress' ) ) ) {
-					$admin_email = esc_html( get_option( $this->plugin . 'AdminEmailAddress' ) );
-				} else {
-					$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
-				}
-
-				$headers[] = 'Content-Type: text/html; charset=UTF-8';
-				$headers[] = 'From: ' . esc_html( get_bloginfo( 'name' ) ) . ' <' . $admin_email . '>';
-				$headers[] = 'Reply-To: ' . $to . ' <' . $to . '>';
-
-				wp_mail( $to, $sub, $msg, $headers );
+				// Store reply to the customer: replies go back to the store.
+				$this->notify_users( $to, $sub, $msg );
 			}
 		}
 
