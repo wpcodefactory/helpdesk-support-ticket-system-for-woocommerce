@@ -187,13 +187,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$site    = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 			$title   = $values['plain']['{title}'];
 			$fields  = $this->custom_fields_html( $ticket_id );
+			$inside  = (bool) get_post_meta( $ticket_id, '_stsw_internal', true );
 
 			/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
 			$staff_subject = sprintf( __( 'New ticket on %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $title );
 			$staff_body    = '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{content}'] . $fields . '<br/><br/>' . $this->admin_link( $ticket_id );
 			$this->send_staff( $ticket_id, $values, $staff_subject, $staff_body, $contact['email'] );
 
-			if ( $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
+			if ( ! $inside && $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
 				$subject = '' !== $this->text( 'mailIt_subjectToCust' )
 					? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
 					/* translators: 1: store name, 2: ticket ID, 3: ticket title. */

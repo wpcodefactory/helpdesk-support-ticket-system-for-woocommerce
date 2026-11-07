@@ -467,6 +467,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 						</select>
 					</div>
 					<?php
+					/**
+					 * After the reason in the ticket form (Pro: return or exchange choice).
+					 */
+					do_action( 'wpfactory_wc_sts_ask_after_reason' );
 					$this->render_term_select( 'stsw_tickets_subject', __( 'Topic', 'support-ticket-system-for-woocommerce' ), 'term_id' );
 					if ( '1' === (string) get_option( $core->plugin . 'enablePriority' ) ) {
 						$this->render_term_select( 'stsw_tickets_priority', __( 'How urgent is it?', 'support-ticket-system-for-woocommerce' ), 'name' );
@@ -481,6 +485,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 						echo esc_html( sprintf( __( 'Step %1$d of %2$d: tell us more', 'support-ticket-system-for-woocommerce' ), $step, $steps ) );
 						?>
 					</legend>
+					<?php
+					/**
+					 * Top of the message step (order tracking for "Where is my order?").
+					 *
+					 * @param WC_Order[] $orders Orders offered.
+					 */
+					do_action( 'wpfactory_wc_sts_ask_before_message', $orders );
+					?>
 					<div class="stsw-field">
 						<label for="stsw-ticket-title"><?php esc_html_e( 'Short summary (optional)', 'support-ticket-system-for-woocommerce' ); ?></label>
 						<input type="text" id="stsw-ticket-title" name="title" maxlength="150" value="<?php echo esc_attr( $draft['title'] ?? '' ); ?>" />

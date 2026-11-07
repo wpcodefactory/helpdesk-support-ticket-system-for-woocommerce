@@ -190,7 +190,44 @@
 		});
 	}
 
+	// "Where is my order?": show what the store knows about the chosen order before the message.
+	function initTrack(form) {
+		var panels = form.querySelectorAll("[data-stsw-track]");
+		var reason = form.querySelector('[name="stsw_reason"]');
+		if (!panels.length || !reason) {
+			return;
+		}
+		function sync() {
+			var checked = form.querySelector('input[name="ticketorder"]:checked');
+			var fixed = form.querySelector('input[type="hidden"][name="ticketorder"]');
+			var order = checked ? checked.value : fixed ? fixed.value : "";
+			each(panels, function (panel) {
+				panel.hidden = !("where" === reason.value && panel.getAttribute("data-stsw-track") === order);
+			});
+		}
+		form.addEventListener("change", sync);
+		sync();
+	}
+
+	// Fields that belong to one reason (Pro: return or exchange choice).
+	function initReasonFields(form) {
+		var reason = form.querySelector('[name="stsw_reason"]');
+		var fields = form.querySelectorAll("[data-stsw-for-reason]");
+		if (!reason || !fields.length) {
+			return;
+		}
+		function sync() {
+			each(fields, function (field) {
+				field.hidden = field.getAttribute("data-stsw-for-reason") !== reason.value;
+			});
+		}
+		reason.addEventListener("change", sync);
+		sync();
+	}
+
 	function init() {
+		each(document.querySelectorAll(".stsw-ask"), initTrack);
+		each(document.querySelectorAll(".stsw-ask"), initReasonFields);
 		each(document.querySelectorAll(".stsw-drop__zone"), initDrop);
 		each(document.querySelectorAll("[data-stsw-suggest]"), initSuggest);
 		each(document.querySelectorAll(".stsw-ask"), initAsk);

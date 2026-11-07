@@ -572,7 +572,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				return false;
 			}
 			$allowed = $this->can_manage_tickets( $user_id ) ||
-				$this->get_ticket_user_id( $ticket_id ) === $user_id ||
+				( ! get_post_meta( $ticket_id, '_stsw_internal', true ) && $this->get_ticket_user_id( $ticket_id ) === $user_id ) ||
 				$this->get_ticket_agent_id( $ticket_id ) === $user_id;
 			/**
 			 * Whether a user may see and answer a ticket on the customer side (Pro: colleagues of the same company).
@@ -980,6 +980,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *     @type array  $fields      Custom field values.
 		 *     @type string $files_field `$_FILES` key holding attachments.
 		 *     @type string $channel     Where it came from: '' (web), `chat` or `email`.
+		 *     @type bool   $internal    For the team only until a team member replies (no customer email).
 		 * }
 		 *
 		 * @return int|WP_Error Ticket ID.
@@ -1001,6 +1002,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'reason'      => '',
 					'started_by'  => 0,
 					'channel'     => '',
+					'internal'    => false,
 				)
 			);
 
@@ -1057,6 +1059,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			}
 			if ( '' !== $args['channel'] ) {
 				update_post_meta( $ticket_id, '_stsw_channel', sanitize_key( $args['channel'] ) );
+			}
+			if ( $args['internal'] ) {
+				update_post_meta( $ticket_id, '_stsw_internal', '1' );
 			}
 			$this->touch_activity( $ticket_id, $args['started_by'] ? 'store' : 'customer' );
 
@@ -1136,6 +1141,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			}
 
 			$this->touch_activity( $ticket_id, $by_staff ? 'store' : 'customer' );
+			if ( $by_staff ) {
+				delete_post_meta( $ticket_id, '_stsw_internal' );
+			}
 			if ( $by_staff && '' === (string) get_post_meta( $ticket_id, self::META_FIRST_REPLY, true ) ) {
 				update_post_meta( $ticket_id, self::META_FIRST_REPLY, current_time( 'mysql', 1 ) );
 			}
@@ -2010,6 +2018,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					'field'    => 'slug',
 					'terms'    => 'closed',
 					'operator' => 'NOT IN',
+				);
+			}
+			if ( ! $this->can_manage_tickets( (int) $user->ID ) ) {
+				$meta_query[] = array(
+					'key'     => '_stsw_internal',
+					'compare' => 'NOT EXISTS',
 				);
 			}
 			$args = array(

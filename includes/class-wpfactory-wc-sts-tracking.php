@@ -1,0 +1,207 @@
+<?php
+/**
+ * Helpdesk Support Ticket System for WooCommerce - Core: "Where is my order?" step.
+ *
+ * When a customer picks "Where is my order?", the message step first shows what the store already knows: tracking
+ * from WooCommerce Shipment Tracking or Advanced Shipment Tracking (`_wc_shipment_tracking_items`), anything another
+ * plugin adds with the `wpfactory_wc_sts_order_tracking` filter, or otherwise a plain order status timeline.
+ * The team sees the same tracking next to the ticket. Shared by both editions.
+ *
+ * @version 2.3.0
+ * @since   2.3.0
+ *
+ * @author WPFactory
+ *
+ * @package WPFactory\WC_Support_Ticket_System
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+if ( ! class_exists( 'WPFactory_WC_STS_Tracking' ) ) :
+
+	/**
+	 * WPFactory_WC_STS_Tracking class.
+	 */
+	class WPFactory_WC_STS_Tracking {
+
+		/**
+		 * Loaded instance.
+		 *
+		 * @var WPFactory_WC_STS_Tracking|null
+		 */
+		protected static $instance = null;
+
+		/**
+		 * Returns the loaded instance.
+		 *
+		 * @return WPFactory_WC_STS_Tracking
+		 */
+		public static function get_instance() {
+			if ( null === self::$instance ) {
+				self::$instance = new self();
+			}
+			return self::$instance;
+		}
+
+		/**
+		 * Constructor.
+		 */
+		public function __construct() {
+			self::$instance = $this;
+			add_action( 'wpfactory_wc_sts_ask_before_message', array( $this, 'render_step' ) );
+			add_action( 'wpfactory_wc_sts_inbox_side', array( $this, 'render_side' ), 4 );
+		}
+
+		/**
+		 * Shipments of an order.
+		 *
+		 * @param WC_Order $order Order.
+		 *
+		 * @return array[] { provider, number, url, date }
+		 */
+		public function get_tracking( $order ) {
+			$items = array();
+			foreach ( (array) $order->get_meta( '_wc_shipment_tracking_items' ) as $row ) {
+				if ( ! is_array( $row ) || '' === (string) ( $row['tracking_number'] ?? '' ) ) {
+					continue;
+				}
+				$provider = (string) ( $row['formatted_tracking_provider'] ?? '' );
+				$provider = '' !== $provider ? $provider : (string) ( '' !== (string) ( $row['custom_tracking_provider'] ?? '' ) ? $row['custom_tracking_provider'] : ( $row['tracking_provider'] ?? '' ) );
+				$url      = (string) ( $row['formatted_tracking_link'] ?? '' );
+				$url      = '' !== $url ? $url : (string) ( $row['custom_tracking_link'] ?? '' );
+				$date     = $row['date_shipped'] ?? '';
+				$items[]  = array(
+					'provider' => $provider,
+					'number'   => (string) $row['tracking_number'],
+					'url'      => $url,
+					'date'     => is_numeric( $date ) ? wp_date( get_option( 'date_format' ), (int) $date ) : (string) $date,
+				);
+			}
+			/**
+			 * Shipments of an order, for tracking plugins that store them elsewhere.
+			 *
+			 * @param array[]  $items { provider, number, url, date }.
+			 * @param WC_Order $order Order.
+			 */
+			return (array) apply_filters( 'wpfactory_wc_sts_order_tracking', $items, $order );
+		}
+
+		/**
+		 * Status timeline: placed, paid, shipped or completed, with dates when known.
+		 *
+		 * @param WC_Order $order Order.
+		 *
+		 * @return array[] { label, date, done }
+		 */
+		public function get_timeline( $order ) {
+			$status = $order->get_status();
+			$format = get_option( 'date_format' );
+			$date   = function ( $d ) use ( $format ) {
+				return $d ? wc_format_datetime( $d, $format ) : '';
+			};
+			$steps  = array(
+				array(
+					'label' => __( 'Order placed', 'support-ticket-system-for-woocommerce' ),
+					'date'  => $date( $order->get_date_created() ),
+					'done'  => true,
+				),
+				array(
+					'label' => __( 'Payment received', 'support-ticket-system-for-woocommerce' ),
+					'date'  => $date( $order->get_date_paid() ),
+					'done'  => (bool) $order->get_date_paid() || $order->is_paid(),
+				),
+				array(
+					'label' => __( 'Being prepared', 'support-ticket-system-for-woocommerce' ),
+					'date'  => '',
+					'done'  => in_array( $status, array( 'processing', 'completed' ), true ),
+				),
+				array(
+					'label' => __( 'Completed', 'support-ticket-system-for-woocommerce' ),
+					'date'  => $date( $order->get_date_completed() ),
+					'done'  => 'completed' === $status,
+				),
+			);
+			if ( in_array( $status, array( 'cancelled', 'refunded', 'failed', 'on-hold' ), true ) ) {
+				$steps[] = array(
+					'label' => wc_get_order_status_name( $status ),
+					'date'  => $date( $order->get_date_modified() ),
+					'done'  => true,
+				);
+			}
+			return $steps;
+		}
+
+		/**
+		 * Tracking or timeline for one order.
+		 *
+		 * @param WC_Order $order Order.
+		 */
+		public function render_order( $order ) {
+			$tracking = $this->get_tracking( $order );
+			echo '<p class="stsw-track__status"><strong>' . esc_html( sprintf( /* translators: %s: order number. */ __( 'Order #%s', 'support-ticket-system-for-woocommerce' ), $order->get_order_number() ) ) . '</strong> <span class="stsw-chip">' . esc_html( wc_get_order_status_name( $order->get_status() ) ) . '</span></p>';
+			if ( $tracking ) {
+				echo '<ul class="stsw-track__list">';
+				foreach ( $tracking as $item ) {
+					$label = trim( $item['provider'] . ' ' . $item['number'] );
+					echo '<li>' . ( '' !== $item['url'] ? '<a href="' . esc_url( $item['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $label ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ) . '</span></a>' : esc_html( $label ) );
+					if ( '' !== $item['date'] ) {
+						/* translators: %s: date. */
+						echo ' <span class="stsw-help">' . esc_html( sprintf( __( 'shipped %s', 'support-ticket-system-for-woocommerce' ), $item['date'] ) ) . '</span>';
+					}
+					echo '</li>';
+				}
+				echo '</ul>';
+				return;
+			}
+			echo '<ol class="stsw-track__timeline">';
+			foreach ( $this->get_timeline( $order ) as $step ) {
+				echo '<li class="' . ( $step['done'] ? 'is-done' : '' ) . '"><span>' . esc_html( $step['label'] ) . '</span>' . ( '' !== $step['date'] ? ' <span class="stsw-help">' . esc_html( $step['date'] ) . '</span>' : '' ) . '<span class="screen-reader-text"> ' . esc_html( $step['done'] ? __( '(done)', 'support-ticket-system-for-woocommerce' ) : __( '(not yet)', 'support-ticket-system-for-woocommerce' ) ) . '</span></li>';
+			}
+			echo '</ol>';
+		}
+
+		/**
+		 * One panel per order at the top of the message step; the script shows the chosen order's panel when the
+		 * reason is "Where is my order?".
+		 *
+		 * @param WC_Order[] $orders Orders offered in the form.
+		 */
+		public function render_step( $orders ) {
+			foreach ( (array) $orders as $order ) {
+				if ( ! $order instanceof WC_Order ) {
+					continue;
+				}
+				echo '<section class="stsw-track" data-stsw-track="' . (int) $order->get_id() . '" aria-labelledby="stsw-track-' . (int) $order->get_id() . '" hidden>';
+				echo '<h3 class="stsw-track__title" id="stsw-track-' . (int) $order->get_id() . '">' . esc_html__( 'Here is what we know about your order', 'support-ticket-system-for-woocommerce' ) . '</h3>';
+				$this->render_order( $order );
+				echo '<p class="stsw-help">' . esc_html__( 'Still need help? Write to us below.', 'support-ticket-system-for-woocommerce' ) . '</p></section>';
+			}
+		}
+
+		/**
+		 * Tracking next to the ticket in the inbox.
+		 *
+		 * @param int $ticket_id Ticket ID.
+		 */
+		public function render_side( $ticket_id ) {
+			$core  = WPFactory_WC_STS_Inc::get_main_instance();
+			$order = $core->get_ticket_order_id( $ticket_id ) ? wc_get_order( $core->get_ticket_order_id( $ticket_id ) ) : false;
+			if ( ! $order ) {
+				return;
+			}
+			$tracking = $this->get_tracking( $order );
+			if ( ! $tracking ) {
+				return;
+			}
+			echo '<section class="hd-side__card" aria-labelledby="hd-side-tracking"><h3 class="hd-side__title" id="hd-side-tracking">' . esc_html__( 'Tracking', 'support-ticket-system-for-woocommerce' ) . '</h3><ul class="hd-side__list">';
+			foreach ( $tracking as $item ) {
+				$label = trim( $item['provider'] . ' ' . $item['number'] );
+				echo '<li>' . ( '' !== $item['url'] ? '<a href="' . esc_url( $item['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $label ) . '</a>' : esc_html( $label ) ) . ( '' !== $item['date'] ? ' <span class="hd-help">' . esc_html( $item['date'] ) . '</span>' : '' ) . '</li>';
+			}
+			echo '</ul></section>';
+		}
+	}
+
+endif;
+
+return WPFactory_WC_STS_Tracking::get_instance();
