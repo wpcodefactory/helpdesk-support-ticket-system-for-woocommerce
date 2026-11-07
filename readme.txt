@@ -1,6 +1,6 @@
-=== Helpdesk Support Ticket System for WooCommerce ===
+=== Customer Support Helpdesk & Tickets for WooCommerce ===
 Contributors: wpcodefactory
-Tags: support ticket, helpdesk, ticket system, support, helpdesk plugin
+Tags: helpdesk, support ticket, customer support, live chat, knowledge base
 Requires at least: 6.2
 Requires PHP: 7.4
 Tested up to: 7.1
@@ -8,148 +8,134 @@ Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Let customers open support tickets from My Account and get your answers by email, without leaving WooCommerce.
+Customer support for WooCommerce: tickets from My Account and orders, a team inbox with order details, help center and self-hosted live chat.
 
 == Description ==
 
-= Support ticket system for WooCommerce is WordPress ticket system that integrates with your eShop adding a helpdesk trouble ticketing system in your WordPress website. Your support will be well organized, better, faster and will look way more professional. =
+Customer Support Helpdesk & Tickets for WooCommerce gives your store a support desk that knows your orders. Customers ask for help from My Account or straight from an order. Your team answers from one inbox in wp-admin, with the order and the customer's history next to every conversation. Everything runs on your own site: no outside service, no per-agent fees.
 
-The WordPress ticket system Plugin extends WooCommerce and creates a Tab and a new Page in My Account Section where Customers can ask for Support in General or Per Order (**[PRO Version](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")**) . Customers will be able to track their issue from this screen but will also be notified once a response is sent. Moreover, the plugin provides a **shortcode [stsw_user_tickets]** where you can use in any custom page you would like to build, where Logged in users will be able to use . **Ajax Ticket submission for nice UI interaction**
+= For your customers =
 
-= How I can benefit from it  =
+* **Help in My Account.** A Support tab lists their tickets with a clear status ("New reply", "Waiting for us", "Closed"). A short form asks which order, which items, the reason and the message.
+* **Get Help on every order.** The order is already filled in.
+* **Where is my order?** Before writing, customers see the order status and tracking (WooCommerce Shipment Tracking and Advanced Shipment Tracking are read automatically), or a simple status timeline.
+* **Help articles while they type.** Matching knowledge base articles appear under the message, so many questions answer themselves.
+* **Live chat (optional).** A chat button on your store while a team member is available; otherwise visitors leave a message. Every chat is a ticket, so nothing gets lost.
+* **Guest tickets (optional).** Customers without an account use their order number and billing email, and follow the ticket through a private link.
+* **Files.** Customers attach photos and documents (types, size and number are up to you). Files are stored privately.
+* Follows your theme's fonts, colours and buttons, works on phones, and is built for keyboard and screen reader users.
 
-Provide Better and Faster Support to your Customers, Keep Track and increase your Revenue
+= For your team =
 
-* Gain **trust** and look more **professional** to your customers adding an easy to use support ticket system
-* Provide better and **faster Support by Automating** the process - auto assign tickets in different users
-* Never lose track as **notifications via email** are also included for customer, assignee(**[PRO Version](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")**) and eShop admin
-* **Stay organized** in your support as you keep track in wordpress backend and front end  - Handle Tickets from the frontend for Better  Management
+* **One inbox.** Views with counts (Needs reply, Mine, Unassigned, Waiting on customer, Live chats, Closed), priority filters, search by name, email or ticket number, and your own saved views.
+* **Everything on one screen.** The conversation, private notes, the customer's lifetime value, orders and other tickets.
+* **Fast answers.** Saved replies with placeholders (customer name, order number), links to help articles, drafts kept on your computer, keyboard shortcuts and Ctrl+Enter to send.
+* **No double answers.** You see when a colleague is viewing or writing a reply on the same ticket, and when a new message arrives.
+* **Organised.** Priorities with colours, subjects that assign tickets to a person, statuses, tags, assignees, bulk actions and duplicate warnings.
+* **Status, priority and assignee save as you change them.**
+* **Knowledge base.** Articles in categories, edited with the block editor, and a searchable help center with the [stsw_knowledge_base] shortcode.
+* **Move in without losing history.** Import tickets, replies and notes from SupportCandy, Fluent Support, Awesome Support and JS Help Desk. A check shows the counts first, and the other plugin's data is never changed.
+* **CSV export** of any view.
+* **Emails** to the store, the assignee and the customer, with your own texts, a test button and an email health check.
+* **Setup wizard** on first activation, and privacy tools (personal data export and erase).
 
-= EXAMPLES USE AREAS =
-* Helpdesk
-* Technical Support
-* Trouble Ticket
-* Customer Relations
+= Pro =
 
-**[GET Support Ticket System for WooCommerce PRO to allow Ticket Per Order, Assign to different Users and Automate the Process](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")**
+[Customer Support Helpdesk & Tickets for WooCommerce Pro](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce) adds tools that act on orders and automate the desk:
 
-= BACKEND DETAILED FEATURES  =
-The WordPress ticket system plugin creates a post type for managing your customers issues. The tickets list columns are customized to include important information such as Ticket Status, Last Response Date, plus that the Tickets list can be Easily Filtered per status.
-Settings Page: this is the page where you can change various setting s of the plugin
-* Define a Name for the Support Tab in My Account Page
-* Define a Name for the button displayed in the Orders Table in my account
-* Decide whether to display only Open tickets to the frontend
-* Ability to define a default Assignee for all tickets
-* Choose whether to notify Assignee, Admin, Customer via Email once a ticket opens  or a new response is added
-* Write different Text for Email Notification for admin and customer
-
-= FRONT END DETAILED FEATURES =
-The WordPress ticket system plugin creates  a Support Section UI in My Account Page, adding a new Tab - with customizable text for title, that leads to this section where Users can view their tickets and create new.
-A button per Order is added - with customizable text for title, that leads to the support page.
-Customers can keep track on the Tickets they opened and view any new response added from the website.
-You can also manage the tickets from the front end and provide support directly.
-Along with this integrated functionality, you can use a shortcode to add the Support System to any page you have created so that any Logged in User can view and manage.
-
-**[GET PRO VERSION HERE](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")**
-
-[youtube https://www.youtube.com/watch?v=cI7T3cN-kH0&rel=0]
-
-= PRO WordPress ticket system Plugin Features =
-
-* Allow Users to submit **tickets for Specific Orders**
-* **Files can be attached** during the ticket or response to ticket submission
-* Tickets Priorities:  Predefine **ticket priorities** according to your business needs and manage better the Troubleshooting Process. By default once you install the plugin you get Low, Normal and High with specified color  - visible on ticket list. You can add as many as you want and define a color as well to be noticeable.
-* **Private Notes** that site users can exchange - hidden by the customers.
-* **Tickets can be assigned to other Users in various ways**
-* Tickets Subject: Pre Define  subjects for the tickets to categorize tickets and manage them better
-* **Auto Assign** tickets to specific User based on the selected Subject
-* **Manage Support directly from the frontend for the assignees** - Users that are assigned a specific ticket and are other than Administrators, do not access backend for Ticket Management but directly via My account section, or from a dedicated page that admin can build using the shortcode [stsw_user_tickets]
-* Administrator can define a **default Assignee** for all tickets
-* Choose whether to also notify Assignee via Email once a ticket opens  or a new response is added
-* Write different Text for Email Notification for assignee and customer. This can work as a template as various placeholders can be added
-* You can enable Attachments on ticket and response submission
-* You can define **Attachments Allowed Max size** and **File Extension**
-* You can define Define **number of Attachments** Allowed to be submitted with a ticket or response
-* You can enable Priority to be chosen By User or not
-* In the Backend Tickets table list is filled with various important information such as, assignee name, priority, subject, Order number (if ticket refers to order)
-* Take advantage of **various ticket specific placeholders** on your Email Template to customer or assignee for your notification system
-
-**[GET PRO VERSION HERE](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")**
+* Order panel in the ticket with refunds, store credit, coupons, free replacement orders, returns and exchanges, payment links, status changes and resent emails. Every money action is off until you turn it on, limited to the roles you choose, confirmed with the exact amount and recorded on the ticket.
+* Workflow rules, automatic closing, reply targets with an Overdue view, proactive tickets (failed payment, stuck orders, refund requests).
+* Email piping with several mailboxes (brands), satisfaction ratings and reports.
+* AI with your own key: reply drafts, summaries, a chat assistant that answers from your help articles, and suggested resolutions. Nothing is sent to customers without a person.
+* Companies with shared tickets, paid or priority support sold as products, tickets opened by your team, merging.
+* REST API, signed webhooks and an MCP server for AI assistants.
 
 == Installation ==
 
-1. Upload the WordPress ticket system plugin files to the `/wp-content/plugins` directory and unzip, or install the plugin through the WordPress plugins screen directly.
-2. Activate the WordPress ticket system plugin through the 'Plugins' screen in WordPress
-3. Use the Tickets wp menu tab
+1. Install the plugin from Plugins > Add New, or upload it to `/wp-content/plugins`.
+2. Activate it. WooCommerce must be active.
+3. The setup wizard opens once: choose the My Account labels, your ticket subjects and who gets alerts. You can run it again from Settings.
+4. Find everything under Helpdesk in the admin menu.
 
 == Frequently Asked Questions ==
 
-= I don't see the tickets page in My Account - what to do? =
-Since version 2.3.0 the page is set up automatically. If it still does not show, go to Settings > Permalinks and press Save Changes once.
+= Where do customers open tickets? =
+In My Account > Support (you can rename it), with the Get Help button on each order, or on any page with the [stsw_user_tickets] shortcode. Guests can use their order number and billing email when guest tickets are on.
 
-= How to use the WordPress ticket system? =
-Use the shortcode [stsw_user_tickets] in any page you built or guide the users to their account tab
+= Does it need an outside service or an account somewhere? =
+No. Tickets, chats, articles and files stay in your WordPress database and uploads folder.
 
-= Can I receive Email notification when a ticket is submitted? =
-Yes of course, you just need to enable it in the plugin's settings page.
+= How does the live chat know if someone is online? =
+A team member turns on "Available for chat" in the inbox. Visitors can chat while someone is available and active in the last 5 minutes; otherwise they get a short form that opens a ticket.
 
-= Will the customer receive Email notification when a ticket is submitted? =
-Yes of course, you just need to enable it in the plugin's settings page.
+= Can I move my tickets from another helpdesk plugin? =
+Yes, from SupportCandy, Fluent Support, Awesome Support and JS Help Desk (Helpdesk > Import and export). Run the check first; nothing in the other plugin is changed and tickets already imported are skipped. Attached files stay in the old plugin.
 
-= Can I assign the ticket to other User ? =
-This is available in the [PRO Version](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")
+= How many agents can I have? =
+As many as you like. Shop managers and administrators can always answer; you can also give one role access.
 
-= Can the user send me attachments for the issue? =
-This is available in the [PRO Version](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")
+= Does it work with HPOS? =
+Yes, it uses the WooCommerce order API and works with High-Performance Order Storage.
 
-= Can I exchange PRIVATE notes? =
-This is available in the [PRO Version](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce "Support Ticket System for WooCommerce PRO")
+= Is it accessible? =
+The customer and inbox screens are built for keyboard use and screen readers, with visible focus, labelled controls and announced updates.
+
+= I don't see the Support page in My Account. =
+It is set up automatically. If it still does not show, go to Settings > Permalinks and press Save Changes once.
+
+= What does Pro add? =
+Order actions (refunds, credit, replacements, returns), automation, email piping, AI, ratings, companies, paid support and the API. See the Pro section above.
 
 = Where do I report security bugs found in this plugin? =
 Please report security bugs found in the source code of the plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/b7fe7602-463e-4f5a-bf83-ed6fa9065b00). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Screenshots ==
 
-1. Backend Settings Page
-2. Backend Ticket Edit Screen
-3. Frontend use Support Ticket System for WooCommerce from My Account section - add a ticket
-4. Frontend use Support Ticket System for WooCommerce from My Account section - respond to ticket
+1. The inbox: views, ticket list, conversation and customer panel.
+2. My Account > Support for the customer.
+3. Opening a ticket, with help articles suggested.
+4. Settings.
+5. The setup wizard.
 
 == Changelog ==
 
 = 2.3.0 - Unreleased =
-* New - Help tab in My Account: requests as cards with their status and a "Your reply needed" badge, a three step Ask for help flow (order, items and reason, message), a confirmation with the request number, and close or reopen. Blocks for the help center, the form and one request.
-* New - Staff inbox: views with counts, the ticket list and the conversation on one screen, private notes in the thread, saved replies, drafts, bulk actions and keyboard shortcuts. The old ticket screens open the inbox.
+* New - Display name: Customer Support Helpdesk & Tickets for WooCommerce. The admin menu is now Helpdesk.
+* New - Redesigned admin: header with tabs, three-pane inbox with auto-saving status, priority and assignee, duplicate warning, bulk bar, reply or private note tabs, customer panel; new Priorities, Subjects, Statuses and Saved replies screens with drag ordering; settings with grouped sections and switches.
+* New - Setup wizard on first activation.
+* New - Redesigned My Account > Support: friendly statuses, confirmation banner, chat-style conversation, file drop zone.
+* New - Knowledge base with help center, suggested articles in the ticket form and Insert article in replies.
+* New - Self-hosted live chat with an Available switch for the team.
+* New - Collision detection, saved views with counts, ticket tags and CSV export.
+* New - Importers from SupportCandy, Fluent Support, Awesome Support and JS Help Desk.
+* New - "Where is my order?" step with tracking or a status timeline.
+* New - Help tab in My Account with a three step form (order, items and reason, message), confirmation, close and reopen. Blocks for the help center, the form and one ticket.
+* New - Staff inbox with views, private notes, saved replies, drafts, bulk actions and keyboard shortcuts. The old ticket screens open the inbox.
 * New - Tickets box on the order screen and a Tickets column on the orders list.
 * New - Setup checklist and Email health check.
 * Improved - Customer screens follow the theme's fonts, colours and buttons and work on phones; jQuery UI and Font Awesome are no longer loaded for customers.
-* New - Every Pro feature is now in the free version: tickets linked to an order, private attachments, priorities with colours, subjects with automatic assignment, assigning tickets to staff (who can also answer from My Account), private notes and assignee emails.
-* New - Guest tickets (off by default): customers without an account enter their order number and billing email, and follow their request through a private link.
-* New - Saved replies: save answers you use often and insert them in one click.
+* New - Tickets linked to an order, private attachments, priorities with colours, subjects with automatic assignment, assigning tickets to staff, private notes and assignee emails.
+* New - Guest tickets (off by default).
+* New - Saved replies.
 * New - Extra fields on the ticket form (text, dropdown, checkbox).
-* Improved - Attachment limits (number of files, size, types) are enforced, and staff can attach files to replies in wp-admin.
-* Fix - Security - Shortcodes typed by a customer in a ticket no longer run (they ran with admin rights when an admin viewed the ticket list on the site).
+* Improved - Attachment limits (number of files, size, types) are enforced, and staff can attach files to replies.
+* Fix - Security - Shortcodes typed by a customer in a ticket no longer run.
 * Fix - Security - Only store staff (Shop Manager, Administrator) can open tickets in wp-admin; Editors could read every ticket.
-* Fix - Store reply emails now contain the reply. With a custom subject set, the email body used to be the subject text.
-* Fix - Replying to a notification email now reaches the right person (it went back to the sender's own address).
-* Fix - Customers with any account role (subscribers, wholesale roles) now see their own tickets.
+* Fix - Store reply emails now contain the reply.
+* Fix - Replying to a notification email now reaches the right person.
+* Fix - Customers with any account role now see their own tickets.
 * Fix - My Account > Tickets works right after install or update, no permalink flush needed.
 * Fix - The "Get Help" button and email links work with plain permalinks.
-* Fix - Shop managers can save the settings (the page opened but nothing was saved).
+* Fix - Shop managers can save the settings.
 * Fix - Store replies were labelled as the customer's own messages; line breaks and apostrophes now display correctly.
 * Fix - Running the free and Pro versions together created every ticket and email twice; the free version now pauses when Pro is active.
-* New - Dashboard shows tickets waiting for your reply, a warning when email alerts are off and quick links.
 * New - Close a ticket with your reply; a customer reply reopens a closed ticket; your reply moves an open ticket to In Progress.
 * New - "Send test email" button in Settings > Notifications.
-* New - "Get Help" on an order pre-fills the order number in the new ticket.
 * New - Tickets are included in Tools > Export Personal Data and Erase Personal Data; suggested privacy policy text.
 * New - Optional "Remove data on delete" setting (off by default).
-* Improved - Tickets read as a conversation with names and dates; the tickets list shows who wrote last.
-* Improved - Forms save without replacing the whole page, show a clear message and do not resubmit on refresh.
-* Improved - The [stsw_user_tickets] shortcode shows where it is placed on the page.
-* Improved - Plugin styles and scripts load only on the ticket pages instead of every page of the store.
-* Improved - Clearer setting names.
+* Improved - Plugin styles and scripts load only where they are needed.
 * Dev - Settings, tickets, statuses and replies are kept on update; one-time update step runs once per version.
+
 
 = 2.2.0 - 25/09/2026 =
 * Fix - "Delete response" user verification fixed.

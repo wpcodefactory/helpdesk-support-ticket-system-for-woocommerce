@@ -178,12 +178,12 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 		 */
 		public function add_settings() {
 			add_menu_page(
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
 				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
-				'dashicons-tag',
+				'dashicons-format-chat',
 				50
 			);
 
@@ -204,8 +204,8 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 
 			add_submenu_page(
 				$admin_menu->get_menu_slug(),
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
 				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),

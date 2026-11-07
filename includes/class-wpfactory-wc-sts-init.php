@@ -541,7 +541,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'assignToUser'   => array(
 					'type'        => 'user',
 					'label'       => __( 'Default assignee', 'support-ticket-system-for-woocommerce' ),
-					'description' => __( 'Handles tickets that are not assigned to anyone. Subjects can assign their own person (Support Tickets > Subjects).', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Handles tickets that are not assigned to anyone. Subjects can assign their own person (Helpdesk > Subjects).', 'support-ticket-system-for-woocommerce' ),
 				),
 				'mailToAssignee' => array(
 					'type'  => 'checkbox',
