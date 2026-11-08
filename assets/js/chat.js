@@ -35,6 +35,42 @@
 		session = JSON.parse(window.localStorage.getItem(STORE) || "null");
 	} catch (e) {}
 
+	// The button takes the theme's accent colour. Pick the text colour with the higher contrast (WCAG 2.2 AA: 4.5:1),
+	// and add an edge and a dark focus ring when the accent is too light against the page (3:1 for controls).
+	function luminance(rgb) {
+		var m = String(rgb).match(/[\d.]+/g);
+		if (!m || m.length < 3) {
+			return null;
+		}
+		var c = m.slice(0, 3).map(function (v) {
+			v = Number(v) / 255;
+			return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+		});
+		return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+	}
+	function contrast(a, b) {
+		return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+	}
+	function fitColours() {
+		var accent = luminance(window.getComputedStyle(launcher).backgroundColor);
+		if (null === accent) {
+			return;
+		}
+		var dark = "#101828";
+		var darkLum = luminance("rgb(16, 24, 40)");
+		var onAccent = contrast(accent, 1) >= contrast(accent, darkLum) ? "#fff" : dark;
+		if (Math.max(contrast(accent, 1), contrast(accent, darkLum)) < 4.5) {
+			// Mid tones: pure black or white always reaches 4.5:1.
+			onAccent = contrast(accent, 1) >= contrast(accent, 0) ? "#fff" : "#000";
+		}
+		root.style.setProperty("--stsw-chat-on-accent", onAccent);
+		if (contrast(accent, 1) < 3) {
+			root.style.setProperty("--stsw-chat-edge", dark);
+			root.style.setProperty("--stsw-chat-focus", dark);
+		}
+	}
+	fitColours();
+
 	function post(action, data) {
 		var body = new window.FormData();
 		body.append("action", "wpfactory_wc_sts_chat_" + action);

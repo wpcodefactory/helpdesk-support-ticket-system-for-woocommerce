@@ -36,11 +36,11 @@
 	gap: 8px;
 	min-height: 48px;
 	padding: 0 18px;
-	border: 0;
+	border: 2px solid var(--stsw-chat-edge, transparent);
 	border-radius: 999px;
 	background: var(--stsw-chat-accent);
 	box-shadow: 0 8px 24px rgba(16, 24, 40, 0.18);
-	color: #fff;
+	color: var(--stsw-chat-on-accent, #fff);
 	font: inherit;
 	font-weight: 600;
 	cursor: pointer;
@@ -65,7 +65,7 @@
 	position: relative;
 	padding: 14px 48px 10px 16px;
 	background: var(--stsw-chat-accent);
-	color: #fff;
+	color: var(--stsw-chat-on-accent, #fff);
 }
 
 .stsw-chat__title {
@@ -201,12 +201,12 @@
 .stsw-chat button:focus-visible,
 .stsw-chat input:focus-visible,
 .stsw-chat textarea:focus-visible {
-	outline: 3px solid var(--stsw-chat-accent);
+	outline: 3px solid var(--stsw-chat-focus, var(--stsw-chat-accent));
 	outline-offset: 2px;
 }
 
 .stsw-chat__head button:focus-visible {
-	outline-color: #fff;
+	outline-color: var(--stsw-chat-on-accent, #fff);
 }
 
 @media (max-width: 480px) {
