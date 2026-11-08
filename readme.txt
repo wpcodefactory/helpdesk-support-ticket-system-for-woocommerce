@@ -131,7 +131,7 @@ Please report security bugs found in the source code of the plugin through the [
 * Fix - Security - Guest tickets and guest replies are rate limited.
 * Fix - Security - Password-protected help articles no longer appear in search and suggestions.
 * Fix - Security - A text answer could show the file name of another ticket's attachment.
-* Dev - Only one dismissible note about Pro remains (the "Go Pro" link and the recommendations page are removed).
+* Dev - The "Go Pro" plugin link is removed; one dismissible note about Pro remains.
 * Dev - WC tested up to: 11.2.
 
 = 2.3.0 - Not released on its own (part of 3.0.0) =

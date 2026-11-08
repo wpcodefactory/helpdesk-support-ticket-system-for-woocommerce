@@ -118,7 +118,8 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				array( $this, 'action_links' )
 			);
 
-			// The only note about Pro is the dismissible notice below (no "Go Pro" link, no recommendations page).
+			// "Recommendations" page (WPFactory menu).
+			add_action( 'init', array( $this, 'add_cross_selling_library' ) );
 
 			// Settings.
 			add_action( 'admin_menu', array( $this, 'add_settings' ), 11 );
