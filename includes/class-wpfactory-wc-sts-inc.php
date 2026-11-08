@@ -332,7 +332,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				usort(
 					$terms,
 					function ( $a, $b ) {
-						return $b->count <=> $a->count ?: $a->term_id <=> $b->term_id;
+						return $b->count !== $a->count ? $b->count <=> $a->count : $a->term_id <=> $b->term_id;
 					}
 				);
 				$keep = array_shift( $terms );
