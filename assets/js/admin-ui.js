@@ -209,7 +209,44 @@
 				panel.focus();
 			}
 		};
-		show(window.location.hash.replace("#", ""), false);
+		// Anchors that are not a panel id: a short name (#ratings, #emails), or an element inside a panel.
+		var resolve = function (id) {
+			id = decodeURIComponent(String(id || "")).toLowerCase();
+			if (!id) {
+				return { panel: "" };
+			}
+			var el = document.getElementById(id);
+			if (el && el.classList.contains("hd-panel")) {
+				return { panel: id };
+			}
+			if (el && el.closest(".hd-panel")) {
+				return { panel: el.closest(".hd-panel").id, target: el };
+			}
+			var found = "";
+			Array.prototype.forEach.call(links, function (link) {
+				var pid = link.getAttribute("data-hd-panel");
+				var name = link.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+				if (!found && (pid.replace(/^pro_/, "") === id || name === id || 0 === name.indexOf(id + "-"))) {
+					found = pid;
+				}
+			});
+			return { panel: found || id };
+		};
+		var open = function (hash, focus) {
+			var where = resolve(hash);
+			show(where.panel, focus && !where.target);
+			if (where.target) {
+				where.target.scrollIntoView();
+				if (where.target.focus) {
+					where.target.setAttribute("tabindex", where.target.getAttribute("tabindex") || "-1");
+					where.target.focus({ preventScroll: true });
+				}
+			}
+		};
+		open(window.location.hash.replace("#", ""), false);
+		window.addEventListener("hashchange", function () {
+			open(window.location.hash.replace("#", ""), true);
+		});
 		settings.addEventListener("click", function (event) {
 			var link = event.target.closest("[data-hd-panel]");
 			if (!link) {
@@ -226,7 +263,8 @@
 		var state = settings.querySelector("[data-hd-state]");
 		var dirty = false;
 		var markDirty = function (event) {
-			if (dirty || (event && false === event.isTrusted)) {
+			// Fields of other small forms on the page (the test email) are not settings.
+			if (dirty || (event && false === event.isTrusted) || (event && event.target && event.target.form && event.target.form !== settings)) {
 				return;
 			}
 			dirty = true;

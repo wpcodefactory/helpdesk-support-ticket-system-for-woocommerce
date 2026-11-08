@@ -122,7 +122,10 @@
 		var form = controls();
 		if (form) {
 			Array.prototype.forEach.call(form.querySelectorAll("select, input[name=stsw_tags]"), function (el) {
-				el.setAttribute("data-saved", el.value);
+				// Only fields shown for the first time: a refresh must not mark a pending change as saved.
+				if (!el.hasAttribute("data-saved")) {
+					el.setAttribute("data-saved", el.value);
+				}
 			});
 		}
 		refreshBulk();
