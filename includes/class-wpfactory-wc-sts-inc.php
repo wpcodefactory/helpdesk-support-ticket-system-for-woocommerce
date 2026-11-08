@@ -1461,7 +1461,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			foreach ( $waiting as $row ) {
 				$contact = $this->get_ticket_contact( $row['id'] );
 				echo '<tr>' .
-					'<td><a href="' . esc_url( get_edit_post_link( $row['id'] ) ) . '">#' . (int) $row['id'] . ' ' . esc_html( get_the_title( $row['id'] ) ) . '</a></td>' .
+					'<td><a href="' . esc_url( get_edit_post_link( $row['id'] ) ) . '">#' . esc_html( $this->get_ticket_number( $row['id'] ) ) . ' ' . esc_html( get_the_title( $row['id'] ) ) . '</a></td>' .
 					'<td>' . esc_html( $contact['display_name'] ) . '</td>' .
 					'<td>' . esc_html( $this->get_user_name( $this->get_ticket_assignee_id( $row['id'] ) ) ) . '</td>' .
 					'<td>' . esc_html(
@@ -1673,7 +1673,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					echo '<ul>';
 					foreach ( $ids as $id ) {
 						$status = $this->get_ticket_term( $id, 'stsw_tickets_status' );
-						echo '<li><a href="' . esc_url( $this->get_ticket_customer_url( $id ) ) . '">#' . (int) $id . ' ' . esc_html( get_the_title( $id ) ) . '</a>' . ( $status ? ' (' . esc_html( $status->name ) . ')' : '' ) . '</li>';
+						echo '<li><a href="' . esc_url( $this->get_ticket_customer_url( $id ) ) . '">#' . esc_html( $this->get_ticket_number( $id ) ) . ' ' . esc_html( get_the_title( $id ) ) . '</a>' . ( $status ? ' (' . esc_html( $status->name ) . ')' : '' ) . '</li>';
 					}
 					echo '</ul>';
 				} else {
@@ -1894,6 +1894,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			$order    = $order_id ? wc_get_order( $order_id ) : false;
 			if ( $order_id && ( ! $order || ( (int) $order->get_customer_id() !== $user_id && ! $this->can_manage_tickets( $user_id ) ) ) ) {
 				return __( 'Wrong order.', 'support-ticket-system-for-woocommerce' );
+			}
+			/**
+			 * Error message to refuse a sender, or an empty string (blocked senders).
+			 *
+			 * @param string $error  Error.
+			 * @param string $email  Email.
+			 * @param string $source Where: `account`, `guest`, `chat`, `otp` or `email`.
+			 */
+			$blocked = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', wp_get_current_user()->user_email, 'account' );
+			if ( '' !== $blocked ) {
+				return $blocked;
 			}
 			$request = $this->get_posted_request( $order );
 			if ( ! is_array( $request ) ) {

@@ -324,7 +324,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			);
 			$meta   = array();
 			if ( '' !== $search ) {
-				if ( ctype_digit( ltrim( $search, '#' ) ) ) {
+				/**
+				 * Ticket with a public number (ticket numbers setting), or 0.
+				 *
+				 * @param int    $found  Ticket found.
+				 * @param string $search Number as typed.
+				 */
+				$by_number = (int) apply_filters( 'wpfactory_wc_sts_find_ticket_by_number', 0, $search );
+				if ( $by_number ) {
+					$args['post__in'] = array( $by_number );
+				} elseif ( ctype_digit( ltrim( $search, '#' ) ) ) {
 					$args['post__in'] = array( absint( ltrim( $search, '#' ) ) );
 				} elseif ( is_email( $search ) ) {
 					$user   = get_user_by( 'email', $search );
@@ -690,7 +699,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 										<?php endif; ?>
 										<span class="hd-row-t__time stsw-row__age"><?php echo esc_html( $activity['at'] ? human_time_diff( strtotime( $activity['at'] . ' UTC' ) ) : '' ); ?></span>
 									</span>
-									<span class="hd-row-t__subject stsw-row__subject"><span class="hd-muted">#<?php echo (int) $id; ?></span> <?php echo esc_html( get_the_title( $id ) ); ?></span>
+									<span class="hd-row-t__subject stsw-row__subject"><span class="hd-muted">#<?php echo esc_html( $core->get_ticket_number( $id ) ); ?></span> <?php echo esc_html( get_the_title( $id ) ); ?></span>
 									<span class="hd-row-t__preview"><?php echo esc_html( $this->get_preview( $id ) ); ?></span>
 									<span class="hd-row-t__meta stsw-row__meta">
 										<?php echo WPFactory_WC_STS_UI::priority_chip( $priority ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in priority_chip(). ?>
@@ -829,7 +838,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						<p class="hd-muted hd-ticket__kicker">
 							<?php
 							/* translators: 1: ticket number, 2: time ago. */
-							echo esc_html( sprintf( __( 'Ticket #%1$d · opened %2$s ago', 'support-ticket-system-for-woocommerce' ), $ticket_id, human_time_diff( $opened ) ) );
+							echo esc_html( sprintf( __( 'Ticket #%1$s · opened %2$s ago', 'support-ticket-system-for-woocommerce' ), $this->core()->get_ticket_number( $ticket_id ), human_time_diff( $opened ) ) );
 							?>
 						</p>
 						<h2 class="hd-h1 stsw-ticket__title" id="hd-ticket-title"><?php echo esc_html( get_the_title( $ticket_id ) ); ?></h2>
@@ -885,12 +894,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						<?php WPFactory_WC_STS_UI::e_icon( 'warn', 18 ); ?>
 						<span>
 							<?php
-							/* translators: %d: ticket number. */
-							echo esc_html( sprintf( __( 'Possible duplicate: this customer has another open ticket with the same subject (#%d).', 'support-ticket-system-for-woocommerce' ), $duplicate ) );
+							/* translators: %s: ticket number. */
+							echo esc_html( sprintf( __( 'Possible duplicate: this customer has another open ticket with the same subject (#%s).', 'support-ticket-system-for-woocommerce' ), $this->core()->get_ticket_number( $duplicate ) ) );
 							?>
 						</span>
 						<span class="hd-banner__actions">
-							<a href="<?php echo esc_url( $this->url( array_merge( $keep, array( 'ticket' => $duplicate ) ) ) ); ?>"><?php echo esc_html( sprintf( /* translators: %d: ticket number. */ __( 'Open #%d', 'support-ticket-system-for-woocommerce' ), $duplicate ) ); ?></a>
+							<a href="<?php echo esc_url( $this->url( array_merge( $keep, array( 'ticket' => $duplicate ) ) ) ); ?>"><?php echo esc_html( sprintf( /* translators: %s: ticket number. */ __( 'Open #%s', 'support-ticket-system-for-woocommerce' ), $this->core()->get_ticket_number( $duplicate ) ) ); ?></a>
 							<?php
 							/**
 							 * Actions on the duplicate banner (Pro: Merge tickets).
@@ -1175,7 +1184,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				echo '<section class="hd-side__card" aria-labelledby="hd-side-tickets"><h3 class="hd-side__title" id="hd-side-tickets">' . esc_html__( 'Other tickets', 'support-ticket-system-for-woocommerce' ) . '</h3><ul class="hd-side__list">';
 				foreach ( $others as $other ) {
 					$st = $core->get_ticket_term( $other->ID, 'stsw_tickets_status' );
-					echo '<li><a href="' . esc_url( $this->url( array( 'ticket' => $other->ID ) ) ) . '">#' . (int) $other->ID . ' ' . esc_html( get_the_title( $other ) ) . '</a>' . ( $st ? ' <span class="hd-status">' . esc_html( $st->name ) . '</span>' : '' ) . '</li>';
+					echo '<li><a href="' . esc_url( $this->url( array( 'ticket' => $other->ID ) ) ) . '">#' . esc_html( $core->get_ticket_number( $other->ID ) ) . ' ' . esc_html( get_the_title( $other ) ) . '</a>' . ( $st ? ' <span class="hd-status">' . esc_html( $st->name ) . '</span>' : '' ) . '</li>';
 				}
 				echo '</ul></section>';
 			}
@@ -1515,7 +1524,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				echo '<ul>';
 				foreach ( $ids as $id ) {
 					$status = $this->core()->get_ticket_term( $id, 'stsw_tickets_status' );
-					echo '<li><a href="' . esc_url( $this->url( array( 'ticket' => $id ) ) ) . '">#' . (int) $id . ' ' . esc_html( get_the_title( $id ) ) . '</a>' . ( $status ? ' <span class="description">(' . esc_html( $status->name ) . ')</span>' : '' ) . '</li>';
+					echo '<li><a href="' . esc_url( $this->url( array( 'ticket' => $id ) ) ) . '">#' . esc_html( $this->core()->get_ticket_number( $id ) ) . ' ' . esc_html( get_the_title( $id ) ) . '</a>' . ( $status ? ' <span class="description">(' . esc_html( $status->name ) . ')</span>' : '' ) . '</li>';
 				}
 				echo '</ul>';
 			}

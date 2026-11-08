@@ -426,7 +426,15 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 			if ( $this->limited( 'start', 5 ) ) {
 				wp_send_json_error( array( 'message' => __( 'Too many chats from your connection. Please try again in a few minutes.', 'support-ticket-system-for-woocommerce' ) ), 429 );
 			}
+			$blocked = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', $email, 'chat' );
+			if ( '' !== $blocked ) {
+				wp_send_json_error( array( 'message' => $blocked ), 403 );
+			}
 			$online = $this->is_online();
+			$guard  = class_exists( 'WPFactory_WC_STS_Guard' ) ? WPFactory_WC_STS_Guard::get_instance() : null;
+			if ( ! $online && $guard && ! $guard->verify_captcha() ) {
+				wp_send_json_error( array( 'message' => $guard->captcha_error() ), 400 );
+			}
 			$title  = wp_html_excerpt( preg_replace( '/\s+/', ' ', $message ), 60, '...' );
 			$ticket = $this->core()->create_ticket(
 				array(

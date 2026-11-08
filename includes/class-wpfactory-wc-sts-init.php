@@ -377,15 +377,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		protected function render_section( $id ) {
 			switch ( $id ) {
 				case 'general':
-					$fields = $this->get_general_fields();
+					$all    = $this->get_general_fields();
+					$carded = $this->fields_by_card( $all );
+					$fields = $carded[''] ?? array();
 					$this->render_card( __( 'Customer access', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'renameAccountTabLink', 'renameOrderButtonLink', 'hideClosed' ) ) ) );
 					$this->render_card( __( 'Messages', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'textforTicketSave', 'textforResponseSave' ) ) ) );
+					$this->render_card( __( 'Ticket numbers', 'support-ticket-system-for-woocommerce' ), $carded['numbers'] ?? array() );
 					$known = array( 'renameAccountTabLink', 'renameOrderButtonLink', 'hideClosed', 'textforTicketSave', 'textforResponseSave', '@wpfactory_wc_sts_delete_data_on_uninstall' );
 					$this->render_card( __( 'Help center and live chat', 'support-ticket-system-for-woocommerce' ), array_diff_key( $fields, array_flip( $known ) ) );
-					$this->render_card( __( 'Data', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( '@wpfactory_wc_sts_delete_data_on_uninstall' ) ) ) );
+					$this->render_card( __( 'Data', 'support-ticket-system-for-woocommerce' ), array_merge( array_intersect_key( $fields, array_flip( array( '@wpfactory_wc_sts_delete_data_on_uninstall' ) ) ), $carded['data'] ?? array() ) );
 					break;
 				case 'form':
-					$this->render_card( __( 'Form options', 'support-ticket-system-for-woocommerce' ), $this->get_form_fields() );
+					$carded = $this->fields_by_card( $this->get_form_fields() );
+					$this->render_card( __( 'Form options', 'support-ticket-system-for-woocommerce' ), $carded[''] ?? array() );
+					$this->render_card( __( 'Spam protection', 'support-ticket-system-for-woocommerce' ), $carded['spam'] ?? array() );
 					echo '<div class="hd-card"><div class="hd-card__head"><h3 class="hd-h2">' . esc_html__( 'Extra fields', 'support-ticket-system-for-woocommerce' ) . '</h3></div><div class="hd-card__body">';
 					WPFactory_WC_STS_Fields::get_instance()->render_settings();
 					echo '</div></div>';
@@ -412,6 +417,21 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						$this->render_card( $extra[ $id ]['card'] ?? $extra[ $id ]['label'], $extra[ $id ]['fields'] );
 					}
 			}
+		}
+
+		/**
+		 * Fields grouped by their `card` key ('' for fields without one).
+		 *
+		 * @param array $fields Fields.
+		 *
+		 * @return array card => fields
+		 */
+		protected function fields_by_card( $fields ) {
+			$cards = array();
+			foreach ( $fields as $key => $field ) {
+				$cards[ (string) ( $field['card'] ?? '' ) ][ $key ] = $field;
+			}
+			return $cards;
 		}
 
 		/**
@@ -493,36 +513,50 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * @return array
 		 */
 		protected function get_form_fields() {
-			return array(
-				'@wpfactory_wc_sts_guest_tickets' => array(
-					'type'        => 'checkbox',
-					'label'       => __( 'Guest tickets', 'support-ticket-system-for-woocommerce' ),
-					'description' => __( 'Customers without an account can ask for help with an order by entering the order number and billing email (on the My Account login screen and on pages with the shortcode). They follow their request through a private link sent by email.', 'support-ticket-system-for-woocommerce' ),
-				),
-				'enablePriority'                  => array(
-					'type'  => 'checkbox',
-					'label' => __( 'Let customers choose a priority', 'support-ticket-system-for-woocommerce' ),
-				),
-				'enableAttachments'               => array(
-					'type'  => 'checkbox',
-					'label' => __( 'Let customers attach files', 'support-ticket-system-for-woocommerce' ),
-				),
-				'allowedExtensions'               => array(
-					'type'        => 'text',
-					'label'       => __( 'Allowed file types', 'support-ticket-system-for-woocommerce' ),
-					'placeholder' => WPFactory_WC_STS_Files::DEFAULT_EXTENSIONS,
-					'description' => __( 'Comma separated, for example jpg,png,pdf. Empty: jpg, jpeg, png, gif and pdf.', 'support-ticket-system-for-woocommerce' ),
-				),
-				'allowedSize'                     => array(
-					'type'        => 'number',
-					'label'       => __( 'Maximum file size (MB)', 'support-ticket-system-for-woocommerce' ),
-					'description' => __( 'Never above the upload limit of your server.', 'support-ticket-system-for-woocommerce' ),
-				),
-				'allowedAttachNum'                => array(
-					'type'        => 'number',
-					'label'       => __( 'Files per message', 'support-ticket-system-for-woocommerce' ),
-					'placeholder' => '5',
-				),
+			/**
+			 * Ticket form settings (spam protection adds its own).
+			 *
+			 * @param array $fields Fields.
+			 */
+			return (array) apply_filters(
+				'wpfactory_wc_sts_settings_form',
+				array(
+					'@wpfactory_wc_sts_guest_tickets' => array(
+						'type'        => 'checkbox',
+						'label'       => __( 'Guest tickets', 'support-ticket-system-for-woocommerce' ),
+						'description' => __( 'Customers without an account can ask for help with an order by entering the order number and billing email (on the My Account login screen and on pages with the shortcode). They follow their request through a private link sent by email.', 'support-ticket-system-for-woocommerce' ),
+					),
+					'@wpfactory_wc_sts_guest_otp'     => array(
+						'type'        => 'checkbox',
+						'default'     => '1',
+						'label'       => __( 'Guests can see all their tickets', 'support-ticket-system-for-woocommerce' ),
+						'description' => __( 'With guest tickets on, a guest can ask for a one-time code by email and then see every ticket of that email address.', 'support-ticket-system-for-woocommerce' ),
+					),
+					'enablePriority'                  => array(
+						'type'  => 'checkbox',
+						'label' => __( 'Let customers choose a priority', 'support-ticket-system-for-woocommerce' ),
+					),
+					'enableAttachments'               => array(
+						'type'  => 'checkbox',
+						'label' => __( 'Let customers attach files', 'support-ticket-system-for-woocommerce' ),
+					),
+					'allowedExtensions'               => array(
+						'type'        => 'text',
+						'label'       => __( 'Allowed file types', 'support-ticket-system-for-woocommerce' ),
+						'placeholder' => WPFactory_WC_STS_Files::DEFAULT_EXTENSIONS,
+						'description' => __( 'Comma separated, for example jpg,png,pdf. Empty: jpg, jpeg, png, gif and pdf.', 'support-ticket-system-for-woocommerce' ),
+					),
+					'allowedSize'                     => array(
+						'type'        => 'number',
+						'label'       => __( 'Maximum file size (MB)', 'support-ticket-system-for-woocommerce' ),
+						'description' => __( 'Never above the upload limit of your server.', 'support-ticket-system-for-woocommerce' ),
+					),
+					'allowedAttachNum'                => array(
+						'type'        => 'number',
+						'label'       => __( 'Files per message', 'support-ticket-system-for-woocommerce' ),
+						'placeholder' => '5',
+					),
+				)
 			);
 		}
 

@@ -23,6 +23,7 @@
 	var state = root.querySelector("[data-stsw-chat-state]");
 	var offlineNote = root.querySelector("[data-stsw-chat-offline]");
 	var errorBox = root.querySelector("[data-stsw-chat-error]");
+	var captcha = root.querySelector("[data-stsw-chat-captcha]");
 	var STORE = "stsw_chat_session";
 	var session = null;
 	var nonce = "";
@@ -118,6 +119,9 @@
 			if (json && json.success) {
 				nonce = json.data.nonce;
 				offlineNote.hidden = json.data.online;
+				if (captcha) {
+					captcha.hidden = json.data.online;
+				}
 				state.textContent = "";
 			}
 		});
@@ -178,6 +182,12 @@
 			message: start.querySelector('[name="message"]').value,
 			website: start.querySelector('[name="website"]').value
 		};
+		["cf-turnstile-response", "g-recaptcha-response"].forEach(function (field) {
+			var input = start.querySelector('[name="' + field + '"]');
+			if (input) {
+				data[field] = input.value;
+			}
+		});
 		var button = start.querySelector('[type="submit"]');
 		button.disabled = true;
 		post("start", data)

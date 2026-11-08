@@ -189,16 +189,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$fields  = $this->custom_fields_html( $ticket_id );
 			$inside  = (bool) get_post_meta( $ticket_id, '_stsw_internal', true );
 
-			/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
-			$staff_subject = sprintf( __( 'New ticket on %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $title );
+			/* translators: 1: store name, 2: ticket number, 3: ticket title. */
+			$staff_subject = sprintf( __( 'New ticket on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );
 			$staff_body    = '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{content}'] . $fields . '<br/><br/>' . $this->admin_link( $ticket_id );
 			$this->send_staff( $ticket_id, $values, $staff_subject, $staff_body, $contact['email'] );
 
 			if ( ! $inside && $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
 				$subject = '' !== $this->text( 'mailIt_subjectToCust' )
 					? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
-					/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
-					: sprintf( __( 'We received your request on %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $title );
+					/* translators: 1: store name, 2: ticket number, 3: ticket title. */
+					: sprintf( __( 'We received your request on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );
 				$body = '' !== $this->text( 'mailIt_contentToCust' )
 					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
 					: '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
@@ -220,8 +220,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$content = (string) get_post_field( 'post_content', $ticket_id, 'raw' );
 			$values  = $this->placeholders( $ticket_id, 0, $content, $content );
 			$site    = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
-			/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
-			$subject = sprintf( __( 'A message from %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $values['plain']['{title}'] );
+			/* translators: 1: store name, 2: ticket number, 3: ticket title. */
+			$subject = sprintf( __( 'A message from %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $values['plain']['{title}'] );
 			$body    = $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
 			$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
 		}
@@ -246,8 +246,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				if ( $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
 					$subject = '' !== $this->text( 'mailIt_subjectToCust' )
 						? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
-						/* translators: 1: ticket ID, 2: ticket title. */
-						: sprintf( __( 'New reply on your request #%1$d %2$s', 'support-ticket-system-for-woocommerce' ), (int) $ticket_id, $title );
+						/* translators: 1: ticket number, 2: ticket title. */
+						: sprintf( __( 'New reply on your request #%1$s %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
 					$template = $this->text( 'mailIt_contentToCust' );
 					if ( '' === $template ) {
 						$body = '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{responseContent}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
@@ -263,8 +263,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				// Assignee, when someone else answered.
 				$assignee = $this->core->get_ticket_assignee_id( $ticket_id );
 				if ( $this->is_on( 'mailToAssignee' ) && $assignee && get_current_user_id() !== $assignee ) {
-					/* translators: 1: store name, 2: ticket ID, 3: ticket title. */
-					$subject = sprintf( __( 'Ticket updated on %1$s - #%2$d %3$s', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id, $title );
+					/* translators: 1: store name, 2: ticket number, 3: ticket title. */
+					$subject = sprintf( __( 'Ticket updated on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );
 					$body    = $values['html']['{responseContent}'] . '<br/><br/>' . $this->admin_link( $ticket_id );
 					$this->send_assignee( $ticket_id, $values, $subject, $body );
 				}
@@ -273,16 +273,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 
 			// Customer reply.
 			$values = $this->placeholders( $ticket_id, $reply_id, $reply, $reply );
-			/* translators: 1: ticket ID, 2: ticket title. */
-			$staff_subject = sprintf( __( 'New reply on ticket #%1$d %2$s', 'support-ticket-system-for-woocommerce' ), (int) $ticket_id, $title );
+			/* translators: 1: ticket number, 2: ticket title. */
+			$staff_subject = sprintf( __( 'New reply on ticket #%1$s %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
 			$staff_body    = $values['html']['{content}'] . '<br/><br/>' . $this->admin_link( $ticket_id );
 			$this->send_staff( $ticket_id, $values, $staff_subject, $staff_body, $contact['email'] );
 
 			if ( $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
 				$subject = '' !== $this->text( 'mailIt_subjectToCust' )
 					? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
-					/* translators: 1: store name, 2: ticket ID. */
-					: sprintf( __( '%1$s received your reply on ticket #%2$d', 'support-ticket-system-for-woocommerce' ), $site, (int) $ticket_id );
+					/* translators: 1: store name, 2: ticket number. */
+					: sprintf( __( '%1$s received your reply on ticket #%2$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ) );
 				$body = '' !== $this->text( 'mailIt_contentToCust' )
 					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
 					: $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];

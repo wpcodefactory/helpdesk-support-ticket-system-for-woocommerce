@@ -258,6 +258,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 					$this->lookup = array( 'error' => __( 'Too many attempts. Please wait a few minutes and try again.', 'support-ticket-system-for-woocommerce' ) );
 					return;
 				}
+				$guard = class_exists( 'WPFactory_WC_STS_Guard' ) ? WPFactory_WC_STS_Guard::get_instance() : null;
+				if ( $guard && ! $guard->verify_captcha() ) {
+					$this->lookup = array( 'error' => $guard->captcha_error() );
+					return;
+				}
+				$blocked = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', sanitize_email( wp_unslash( $_POST['stsw_email'] ?? '' ) ), 'guest' );
+				if ( '' !== $blocked ) {
+					$this->lookup = array( 'error' => $blocked );
+					return;
+				}
 				$order        = $this->find_order( sanitize_text_field( wp_unslash( $_POST['stsw_order_number'] ?? '' ) ), sanitize_email( wp_unslash( $_POST['stsw_email'] ?? '' ) ) );
 				$this->lookup = $order
 					? array(
@@ -275,7 +285,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 					return;
 				}
 				$this->lookup = $checked;
-				$error        = $this->create_from_post( $checked );
+				$blocked      = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', $checked['email'], 'guest' );
+				if ( '' !== $blocked ) {
+					$this->lookup['error'] = $blocked;
+					return;
+				}
+				$error = $this->create_from_post( $checked );
 				if ( is_int( $error ) ) {
 					wp_safe_redirect( add_query_arg( 'stsw_notice', 'created', $this->get_ticket_link( $error ) ) );
 					exit;
@@ -377,6 +392,27 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 				$this->render_new_ticket_form();
 				return;
 			}
+			$otp = class_exists( 'WPFactory_WC_STS_OTP' ) ? WPFactory_WC_STS_OTP::get_instance()->get_view_data() : array();
+			if ( ! empty( $otp['enabled'] ) && 'verify' === ( $otp['state']['step'] ?? '' ) ) {
+				WPFactory_WC_STS_Templates::render(
+					'guest-code',
+					array(
+						'otp'   => $otp,
+						'nonce' => self::NONCE,
+					)
+				);
+				return;
+			}
+			if ( ! empty( $otp['enabled'] ) && '' !== $otp['email'] ) {
+				WPFactory_WC_STS_Templates::render(
+					'guest-tickets',
+					array(
+						'otp'   => $otp,
+						'nonce' => self::NONCE,
+					)
+				);
+				return;
+			}
 			$this->render_lookup_form();
 		}
 
@@ -441,8 +477,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 			);
 			$notice = sanitize_key( wp_unslash( $_GET['stsw_notice'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 			$texts  = array(
-				/* translators: %d: request number. */
-				'created'  => sprintf( __( 'Thanks, we received your request #%d. We will reply by email. Keep the link we sent you to follow this request.', 'support-ticket-system-for-woocommerce' ), $ticket_id ),
+				/* translators: %s: request number. */
+				'created'  => sprintf( __( 'Thanks, we received your request #%s. We will reply by email. Keep the link we sent you to follow this request.', 'support-ticket-system-for-woocommerce' ), $this->core()->get_ticket_number( $ticket_id ) ),
 				'replied'  => __( 'Thanks, your message was sent. We will reply by email.', 'support-ticket-system-for-woocommerce' ),
 				'closed'   => __( 'Your request is closed. You can reopen it at any time.', 'support-ticket-system-for-woocommerce' ),
 				'reopened' => __( 'Your request is open again. Add a reply to tell us what you still need.', 'support-ticket-system-for-woocommerce' ),
