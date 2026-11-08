@@ -132,6 +132,7 @@ Please report security bugs found in the source code of the plugin through the [
 * Fix - Security - Password-protected help articles no longer appear in search and suggestions.
 * Fix - Security - A text answer could show the file name of another ticket's attachment.
 * Dev - Only one dismissible note about Pro remains (the "Go Pro" link and the recommendations page are removed).
+* Dev - WC tested up to: 11.2.
 
 = 2.3.0 - Not released on its own (part of 3.0.0) =
 * New - Display name: Customer Support Helpdesk & Tickets for WooCommerce. The admin menu is now Helpdesk.
