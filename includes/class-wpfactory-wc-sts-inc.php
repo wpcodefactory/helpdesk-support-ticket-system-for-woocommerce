@@ -113,7 +113,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 *
 		 * @var string
 		 */
-		public $stswpro_table_db_version = '1.8';
+		public $stswpro_table_db_version = '1.9';
 
 		/**
 		 * Whether the last front-end form submission saved something.
@@ -213,7 +213,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				agent int(11) NOT NULL,
 				content longtext NOT NULL,
 				attachments longtext NOT NULL,
-				PRIMARY KEY  (id)
+				PRIMARY KEY  (id),
+				KEY post_id (post_id)
 				) ' . $charset . ';'
 			);
 			dbDelta(
@@ -224,7 +225,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				creationdate DATETIME NULL,
 				agent int(11) NOT NULL,
 				content longtext NOT NULL,
-				PRIMARY KEY  (id)
+				PRIMARY KEY  (id),
+				KEY post_id (post_id)
 				) ' . $charset . ';'
 			);
 

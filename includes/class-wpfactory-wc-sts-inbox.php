@@ -137,6 +137,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				'WPFactory_WC_STS_Inbox',
 				array(
 					'confirmClose'  => __( 'Close this ticket?', 'support-ticket-system-for-woocommerce' ),
+					'edit'          => __( 'Edit message', 'support-ticket-system-for-woocommerce' ),
+					'save'          => __( 'Save changes', 'support-ticket-system-for-woocommerce' ),
+					'cancel'        => __( 'Cancel', 'support-ticket-system-for-woocommerce' ),
 					'confirmSend'   => __( 'Send this reply to the customer? They will see it.', 'support-ticket-system-for-woocommerce' ),
 					'confirmNote'   => __( 'Add this private note? Only your team will see it.', 'support-ticket-system-for-woocommerce' ),
 					'confirmBulk'   => __( 'Apply this change to the selected tickets?', 'support-ticket-system-for-woocommerce' ),
@@ -958,6 +961,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			}
 			echo ' <time class="hd-muted">' . esc_html( $when ) . '</time>';
 			if ( $row_id ) {
+				echo ' <button type="button" class="hd-msg__edit" data-hd-edit="' . ( 'note' === $type ? 'note' : 'reply' ) . '" data-id="' . (int) $row_id . '">' . esc_html__( 'Edit', 'support-ticket-system-for-woocommerce' ) . '</button>';
 				echo ' <button type="button" class="hd-msg__delete wpfactory-wc-sts-delete" data-type="' . ( 'note' === $type ? 'note' : 'response' ) . '" data-id="' . (int) $row_id . '">' . esc_html__( 'Delete', 'support-ticket-system-for-woocommerce' ) . '</button>';
 			}
 			echo '</p><div class="stsw-msg__body hd-msg__body">' . $body . '</div>' . $extra . '</div></li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped by the caller.
@@ -1034,6 +1038,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						$files->print_attachment_link( (int) $attachment_id );
 					}
 					$extra = '<div class="hd-files">' . ob_get_clean() . '</div>';
+				}
+				if ( class_exists( 'WPFactory_WC_STS_History' ) ) {
+					$extra .= WPFactory_WC_STS_History::get_instance()->render_versions( $ticket_id, 'note' === $item['type'] ? 'note' : 'reply', (int) $row->id );
 				}
 				$this->render_message( $item['type'], $who, $core->format_response_date( $row->creationdate ), $core->format_message( $row->content ), (int) $row->id, $extra );
 			}

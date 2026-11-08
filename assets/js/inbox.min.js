@@ -78,6 +78,84 @@
 		});
 	}
 
+	// Edit a reply or note: the earlier text is kept (shown under the message).
+	document.addEventListener("click", function (event) {
+		var button = event.target.closest ? event.target.closest("[data-hd-edit]") : null;
+		if (!button || !window.fetch) {
+			return;
+		}
+		var msg = button.closest(".hd-msg");
+		var body = msg ? msg.querySelector(".hd-msg__body") : null;
+		if (!body || msg.querySelector(".hd-msg__editor")) {
+			return;
+		}
+		var editor = document.createElement("div");
+		editor.className = "hd-msg__editor";
+		var label = document.createElement("label");
+		label.className = "screen-reader-text";
+		label.setAttribute("for", "hd-edit-" + button.getAttribute("data-id"));
+		label.textContent = t.edit;
+		var text = document.createElement("textarea");
+		text.id = "hd-edit-" + button.getAttribute("data-id");
+		text.rows = 4;
+		text.value = body.innerText;
+		var save = document.createElement("button");
+		save.type = "button";
+		save.className = "hd-btn hd-btn--primary hd-btn--sm";
+		save.textContent = t.save;
+		var cancel = document.createElement("button");
+		cancel.type = "button";
+		cancel.className = "hd-btn hd-btn--sm";
+		cancel.textContent = t.cancel;
+		editor.appendChild(label);
+		editor.appendChild(text);
+		editor.appendChild(save);
+		editor.appendChild(cancel);
+		body.hidden = true;
+		body.parentNode.insertBefore(editor, body.nextSibling);
+		text.focus();
+		cancel.addEventListener("click", function () {
+			editor.remove();
+			body.hidden = false;
+			button.focus();
+		});
+		save.addEventListener("click", function () {
+			var data = new window.FormData();
+			data.append("action", "wpfactory_wc_sts_message_edit");
+			data.append("_ajax_nonce", t.nonce);
+			data.append("type", button.getAttribute("data-hd-edit"));
+			data.append("id", button.getAttribute("data-id"));
+			data.append("content", text.value);
+			save.disabled = true;
+			window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
+				.then(function (r) {
+					return r.json();
+				})
+				.then(function (json) {
+					save.disabled = false;
+					if (!json || !json.success) {
+						window.alert((json && json.data && json.data.message) || t.saveError);
+						return;
+					}
+					body.innerHTML = json.data.html;
+					var old = msg.querySelector(".hd-history");
+					if (old) {
+						old.remove();
+					}
+					if (json.data.history) {
+						body.insertAdjacentHTML("afterend", json.data.history);
+					}
+					editor.remove();
+					body.hidden = false;
+					button.focus();
+				})
+				.catch(function () {
+					save.disabled = false;
+					window.alert(t.saveError);
+				});
+		});
+	});
+
 	// Optional check before sending, so a private note never goes to the customer by mistake.
 	if (box && "1" === box.getAttribute("data-hd-confirm-send")) {
 		box.addEventListener("submit", function (event) {

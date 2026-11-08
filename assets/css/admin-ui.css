@@ -2529,3 +2529,58 @@ body.wpf-hd-wizard {
 	gap: 6px 16px;
 	margin: 10px 0 0;
 }
+
+/* Edit history (3.0.0). */
+.wpf-hd .hd-msg__edit {
+	margin-left: auto;
+	padding: 0 4px;
+	border: 0;
+	background: none;
+	color: var(--hd-accent, #2271b1);
+	font: inherit;
+	font-size: var(--hd-text-sm);
+	cursor: pointer;
+	opacity: 0;
+}
+
+.wpf-hd .hd-msg__edit + .hd-msg__delete {
+	margin-left: 0;
+}
+
+.wpf-hd .hd-msg:hover .hd-msg__edit,
+.wpf-hd .hd-msg__edit:focus-visible,
+.wpf-hd .hd-msg:focus-within .hd-msg__edit,
+.wpf-hd .hd-msg:focus-within .hd-msg__delete {
+	opacity: 1;
+}
+
+@media (hover: none) {
+	.wpf-hd .hd-msg__edit {
+		opacity: 1;
+	}
+}
+
+.wpf-hd .hd-msg__editor textarea {
+	width: 100%;
+	margin: 8px 0;
+}
+
+.wpf-hd .hd-msg__editor .hd-btn + .hd-btn {
+	margin-left: 6px;
+}
+
+.wpf-hd .hd-history {
+	margin-top: 8px;
+	font-size: var(--hd-text-sm);
+}
+
+.wpf-hd .hd-history__list {
+	margin: 6px 0 0;
+	padding-left: 18px;
+}
+
+.wpf-hd .hd-history__text {
+	padding: 6px 8px;
+	border-left: 3px solid var(--hd-border, #dcdcde);
+	white-space: normal;
+}
