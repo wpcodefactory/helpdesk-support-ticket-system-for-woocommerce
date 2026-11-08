@@ -136,29 +136,38 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				'wpfactory-wc-sts-inbox',
 				'WPFactory_WC_STS_Inbox',
 				array(
-					'confirmClose'  => __( 'Close this ticket?', 'support-ticket-system-for-woocommerce' ),
-					'edit'          => __( 'Edit message', 'support-ticket-system-for-woocommerce' ),
-					'save'          => __( 'Save changes', 'support-ticket-system-for-woocommerce' ),
-					'cancel'        => __( 'Cancel', 'support-ticket-system-for-woocommerce' ),
-					'confirmSend'   => __( 'Send this reply to the customer? They will see it.', 'support-ticket-system-for-woocommerce' ),
-					'confirmNote'   => __( 'Add this private note? Only your team will see it.', 'support-ticket-system-for-woocommerce' ),
-					'confirmBulk'   => __( 'Apply this change to the selected tickets?', 'support-ticket-system-for-woocommerce' ),
-					'confirmCanned' => __( 'Replace the text you already typed?', 'support-ticket-system-for-woocommerce' ),
-					'draftSaved'    => __( 'Draft saved on this computer', 'support-ticket-system-for-woocommerce' ),
-					'noteMode'      => __( 'Private note: only staff will see it', 'support-ticket-system-for-woocommerce' ),
-					'replyMode'     => __( 'Reply: the customer will see it', 'support-ticket-system-for-woocommerce' ),
-					'replyHolder'   => __( 'Write your reply...', 'support-ticket-system-for-woocommerce' ),
-					'noteHolder'    => __( 'Only your team can see this note.', 'support-ticket-system-for-woocommerce' ),
-					'confirmDelete' => __( 'Move the selected tickets to the trash?', 'support-ticket-system-for-woocommerce' ),
-					'selected'      => __( '%d selected', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- number of tickets.
-					'selectNone'    => __( 'Select tickets', 'support-ticket-system-for-woocommerce' ),
-					'saveError'     => __( 'Not saved. Check your connection and try again.', 'support-ticket-system-for-woocommerce' ),
-					'ajaxurl'       => admin_url( 'admin-ajax.php' ),
-					'viewing'       => __( '%s is also looking at this ticket.', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- names.
-					'replying'      => __( '%s is writing a reply.', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- names.
-					'newMessage'    => __( 'A new message arrived on this ticket.', 'support-ticket-system-for-woocommerce' ),
-					'reload'        => __( 'Show it', 'support-ticket-system-for-woocommerce' ),
-					'nonce'         => wp_create_nonce( self::NONCE ),
+					'confirmClose'   => __( 'Close this ticket?', 'support-ticket-system-for-woocommerce' ),
+					'edit'           => __( 'Edit message', 'support-ticket-system-for-woocommerce' ),
+					'save'           => __( 'Save changes', 'support-ticket-system-for-woocommerce' ),
+					'cancel'         => __( 'Cancel', 'support-ticket-system-for-woocommerce' ),
+					'confirmSend'    => __( 'Send this reply to the customer? They will see it.', 'support-ticket-system-for-woocommerce' ),
+					'confirmNote'    => __( 'Add this private note? Only your team will see it.', 'support-ticket-system-for-woocommerce' ),
+					'confirmBulk'    => __( 'Apply this change to the selected tickets?', 'support-ticket-system-for-woocommerce' ),
+					'confirmCanned'  => __( 'Replace the text you already typed?', 'support-ticket-system-for-woocommerce' ),
+					'draftSaved'     => __( 'Draft saved on this computer', 'support-ticket-system-for-woocommerce' ),
+					'noteMode'       => __( 'Private note: only staff will see it', 'support-ticket-system-for-woocommerce' ),
+					'replyMode'      => __( 'Reply: the customer will see it', 'support-ticket-system-for-woocommerce' ),
+					'replyHolder'    => __( 'Write your reply...', 'support-ticket-system-for-woocommerce' ),
+					'noteHolder'     => __( 'Only your team can see this note.', 'support-ticket-system-for-woocommerce' ),
+					'confirmDelete'  => __( 'Move the selected tickets to the trash?', 'support-ticket-system-for-woocommerce' ),
+					'selected'       => __( '%d selected', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- number of tickets.
+					'selectNone'     => __( 'Select tickets', 'support-ticket-system-for-woocommerce' ),
+					'saveError'      => __( 'Not saved. Check your connection and try again.', 'support-ticket-system-for-woocommerce' ),
+					'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+					'viewing'        => __( '%s is also looking at this ticket.', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- names.
+					'replying'       => __( '%s is writing a reply.', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- names.
+					'newMessage'     => __( 'New activity on this ticket.', 'support-ticket-system-for-woocommerce' ),
+					'reload'         => __( 'Show it', 'support-ticket-system-for-woocommerce' ),
+					'sendReply'      => __( 'Send reply', 'support-ticket-system-for-woocommerce' ),
+					'addNote'        => __( 'Add note', 'support-ticket-system-for-woocommerce' ),
+					'closeYes'       => __( 'Close ticket', 'support-ticket-system-for-woocommerce' ),
+					'applyYes'       => __( 'Apply', 'support-ticket-system-for-woocommerce' ),
+					'trashYes'       => __( 'Move to trash', 'support-ticket-system-for-woocommerce' ),
+					/* translators: %d: number of tickets. */
+					'confirmDeleteN' => __( 'Move %d selected tickets to the trash?', 'support-ticket-system-for-woocommerce' ),
+					/* translators: 1: action, such as Close or Assign, 2: number of tickets. */
+					'confirmBulkN'   => __( '%1$s: apply to %2$d selected tickets?', 'support-ticket-system-for-woocommerce' ),
+					'nonce'          => wp_create_nonce( self::NONCE ),
 				)
 			);
 		}
