@@ -131,6 +131,7 @@ Please report security bugs found in the source code of the plugin through the [
 * Fix - Security - Guest tickets and guest replies are rate limited.
 * Fix - Security - Password-protected help articles no longer appear in search and suggestions.
 * Fix - Security - A text answer could show the file name of another ticket's attachment.
+* Fix - My Account orders column uses the current WooCommerce hook (no deprecation notice).
 * Dev - The "Go Pro" plugin link is plain text now (no colour); one dismissible note about Pro.
 * Dev - WC tested up to: 11.2.
 
