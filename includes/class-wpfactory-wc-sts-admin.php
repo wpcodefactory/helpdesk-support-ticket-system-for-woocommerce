@@ -99,6 +99,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Admin' ) ) :
 			if ( '' !== $role ) {
 				$roles[] = $role;
 			}
+			/**
+			 * Roles whose users can be assigned tickets (Pro adds the Support agent role).
+			 *
+			 * @param string[] $roles Roles.
+			 */
+			$roles = (array) apply_filters( 'wpfactory_wc_sts_assignable_roles', $roles );
 			return get_users(
 				array(
 					'role__in' => array_unique( $roles ),

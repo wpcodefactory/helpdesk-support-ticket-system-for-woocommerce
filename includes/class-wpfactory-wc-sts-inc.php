@@ -587,6 +587,30 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
+		 * Whether a team member may do an action on a ticket in the inbox: view, reply (and notes), assign, close or
+		 * delete. Store staff may by default; Pro limits it with permission scopes per role.
+		 *
+		 * @param string $action    Action.
+		 * @param int    $ticket_id Ticket ID.
+		 * @param int    $user_id   User ID, current user when empty.
+		 *
+		 * @return bool
+		 */
+		public function user_can_ticket( $action, $ticket_id, $user_id = 0 ) {
+			$user_id = $user_id ? (int) $user_id : get_current_user_id();
+			$allowed = 'stsw_tickets' === get_post_type( $ticket_id ) && $this->can_manage_tickets( $user_id ) && user_can( $user_id, 'delete' === $action ? 'delete_post' : 'edit_post', (int) $ticket_id );
+			/**
+			 * Whether a team member may do an action on a ticket (Pro: permission scopes).
+			 *
+			 * @param bool   $allowed   Allowed.
+			 * @param string $action    view, reply, assign, close or delete.
+			 * @param int    $ticket_id Ticket ID.
+			 * @param int    $user_id   User ID.
+			 */
+			return (bool) apply_filters( 'wpfactory_wc_sts_user_can_ticket', $allowed, (string) $action, (int) $ticket_id, $user_id );
+		}
+
+		/**
 		 * Public number of a ticket, without "#": the ticket ID unless ticket numbers are set up.
 		 *
 		 * @param int $ticket_id Ticket ID.

@@ -274,20 +274,25 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		public function query( $view, $extra = array() ) {
 			$views = $this->get_views();
 			$args  = isset( $views[ $view ] ) ? $views[ $view ]['args'] : array();
-			return new WP_Query(
-				array_merge(
-					array(
-						'post_type'      => 'stsw_tickets',
-						'post_status'    => 'publish',
-						'posts_per_page' => self::PER_PAGE,
-						'orderby'        => 'modified',
-						'order'          => 'DESC',
-						'no_found_rows'  => false,
-					),
-					$args,
-					$extra
-				)
+			$args  = array_merge(
+				array(
+					'post_type'      => 'stsw_tickets',
+					'post_status'    => 'publish',
+					'posts_per_page' => self::PER_PAGE,
+					'orderby'        => 'modified',
+					'order'          => 'DESC',
+					'no_found_rows'  => false,
+				),
+				$args,
+				$extra
 			);
+			/**
+			 * Query of an inbox list or count (Pro: permission scopes limit what a role sees).
+			 *
+			 * @param array  $args WP_Query arguments.
+			 * @param string $view View key.
+			 */
+			return new WP_Query( (array) apply_filters( 'wpfactory_wc_sts_inbox_query_args', $args, $view ) );
 		}
 
 		/**
@@ -459,6 +464,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			if ( $ticket_id && 'stsw_tickets' !== get_post_type( $ticket_id ) ) {
 				$ticket_id = 0;
 			}
+			if ( $ticket_id && ! $core->user_can_ticket( 'view', $ticket_id ) ) {
+				$ticket_id = 0;
+				$message   = 'forbidden';
+			}
 
 			$filters          = $this->get_filters();
 			$filters['paged'] = $paged;
@@ -572,15 +581,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		 */
 		protected function render_notice( $message ) {
 			$texts = array(
-				'sent'    => __( 'Reply sent.', 'support-ticket-system-for-woocommerce' ),
-				'noted'   => __( 'Private note added.', 'support-ticket-system-for-woocommerce' ),
-				'updated' => __( 'Ticket updated.', 'support-ticket-system-for-woocommerce' ),
-				'bulk'    => __( 'Selected tickets updated.', 'support-ticket-system-for-woocommerce' ),
-				'deleted' => __( 'Selected tickets moved to the trash.', 'support-ticket-system-for-woocommerce' ),
-				'test'    => __( 'Test ticket created. Open it below, reply, and check that the emails arrive.', 'support-ticket-system-for-woocommerce' ),
-				'empty'   => __( 'Write a message first.', 'support-ticket-system-for-woocommerce' ),
-				'none'    => __( 'Select at least one ticket.', 'support-ticket-system-for-woocommerce' ),
-				'error'   => __( 'That did not work. Please try again.', 'support-ticket-system-for-woocommerce' ),
+				'sent'      => __( 'Reply sent.', 'support-ticket-system-for-woocommerce' ),
+				'noted'     => __( 'Private note added.', 'support-ticket-system-for-woocommerce' ),
+				'updated'   => __( 'Ticket updated.', 'support-ticket-system-for-woocommerce' ),
+				'bulk'      => __( 'Selected tickets updated.', 'support-ticket-system-for-woocommerce' ),
+				'deleted'   => __( 'Selected tickets moved to the trash.', 'support-ticket-system-for-woocommerce' ),
+				'test'      => __( 'Test ticket created. Open it below, reply, and check that the emails arrive.', 'support-ticket-system-for-woocommerce' ),
+				'empty'     => __( 'Write a message first.', 'support-ticket-system-for-woocommerce' ),
+				'none'      => __( 'Select at least one ticket.', 'support-ticket-system-for-woocommerce' ),
+				'error'     => __( 'That did not work. Please try again.', 'support-ticket-system-for-woocommerce' ),
+				'forbidden' => __( 'Your role does not allow this on this ticket.', 'support-ticket-system-for-woocommerce' ),
 			);
 			/**
 			 * Inbox result messages (Pro adds its own).
@@ -589,7 +599,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			 */
 			$texts = (array) apply_filters( 'wpfactory_wc_sts_inbox_messages', $texts );
 			if ( isset( $texts[ $message ] ) ) {
-				$error = in_array( $message, array( 'empty', 'none', 'error' ), true ) || 0 === strpos( $message, 'error_' );
+				$error = in_array( $message, array( 'empty', 'none', 'error', 'forbidden' ), true ) || 0 === strpos( $message, 'error_' );
 				WPFactory_WC_STS_UI::notice( $texts[ $message ], $error );
 			}
 		}
@@ -1346,9 +1356,26 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						$message = 'empty';
 						break;
 					}
+					if ( ! $core->user_can_ticket( 'reply', $ticket_id ) || ( ! empty( $_POST['stsw_close'] ) && ! $core->user_can_ticket( 'close', $ticket_id ) ) ) {
+						$message = 'forbidden';
+						break;
+					}
 					if ( 'note' === sanitize_key( wp_unslash( $_POST['stsw_mode'] ?? 'reply' ) ) ) {
 						$core->add_note( $ticket_id, $content, get_current_user_id() );
 						$message = 'noted';
+						break;
+					}
+					/**
+					 * Whether to hold a staff reply instead of sending it (Pro: draft then approve).
+					 *
+					 * @param bool   $held      Held.
+					 * @param int    $ticket_id Ticket ID.
+					 * @param string $content   Reply.
+					 * @param int    $user_id   Author.
+					 * @param bool   $close     Close after sending.
+					 */
+					if ( apply_filters( 'wpfactory_wc_sts_hold_reply', false, $ticket_id, $content, get_current_user_id(), ! empty( $_POST['stsw_close'] ) ) ) {
+						$message = 'held';
 						break;
 					}
 					$core->add_reply(
@@ -1365,6 +1392,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					break;
 
 				case 'update':
+					if ( ! $this->may_update( $ticket_id, sanitize_key( wp_unslash( $_POST['stsw_status'] ?? '' ) ), isset( $_POST['stsw_agent'] ) ) ) {
+						$message = 'forbidden';
+						break;
+					}
 					$this->update_ticket(
 						$ticket_id,
 						sanitize_key( wp_unslash( $_POST['stsw_status'] ?? '' ) ),
@@ -1390,6 +1421,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					}
 					foreach ( $ids as $id ) {
 						if ( 'stsw_tickets' !== get_post_type( $id ) || ! current_user_can( 'edit_post', $id ) ) {
+							continue;
+						}
+						if ( ! $this->may_update( $id, 'status' === $bulk[0] ? sanitize_key( $bulk[1] ) : '', 'assign' === $bulk[0] ) || ( 'delete' === $bulk[0] && ! $core->user_can_ticket( 'delete', $id ) ) ) {
 							continue;
 						}
 						if ( 'status' === $bulk[0] ) {
@@ -1439,6 +1473,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			if ( ! $this->core()->can_manage_tickets() || 'stsw_tickets' !== get_post_type( $ticket_id ) || ! current_user_can( 'edit_post', $ticket_id ) ) {
 				wp_send_json_error( array( 'message' => __( 'You are not allowed to do this.', 'support-ticket-system-for-woocommerce' ) ), 403 );
 			}
+			if ( ! $this->may_update( $ticket_id, 'stsw_status' === $field ? sanitize_key( $value ) : '', 'stsw_agent' === $field ) ) {
+				wp_send_json_error( array( 'message' => __( 'Your role does not allow this on this ticket.', 'support-ticket-system-for-woocommerce' ) ), 403 );
+			}
 			switch ( $field ) {
 				case 'stsw_status':
 					if ( ! get_term_by( 'slug', $value, 'stsw_tickets_status' ) ) {
@@ -1463,6 +1500,27 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					wp_send_json_error( array( 'message' => __( 'That did not work. Please try again.', 'support-ticket-system-for-woocommerce' ) ), 400 );
 			}
 			wp_send_json_success( array( 'message' => $text ) );
+		}
+
+		/**
+		 * Whether the current user may change a ticket: closing needs the close permission, assigning the assign
+		 * permission, other changes the reply permission.
+		 *
+		 * @param int    $ticket_id Ticket ID.
+		 * @param string $status    New status slug ('' when unchanged).
+		 * @param bool   $assign    The assignee changes.
+		 *
+		 * @return bool
+		 */
+		public function may_update( $ticket_id, $status, $assign ) {
+			$core = $this->core();
+			if ( 'closed' === $status && ! $core->user_can_ticket( 'close', $ticket_id ) ) {
+				return false;
+			}
+			if ( $assign && ! $core->user_can_ticket( 'assign', $ticket_id ) ) {
+				return false;
+			}
+			return $core->user_can_ticket( 'reply', $ticket_id ) || ( $assign && '' === $status );
 		}
 
 		/**
