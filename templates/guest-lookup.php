@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 <form method="post" class="wpfactory-wc-sts-guest-lookup">
 	<p>
 		<label for="stsw-guest-order"><?php esc_html_e( 'Order number', 'support-ticket-system-for-woocommerce' ); ?></label><br />
-		<input type="text" id="stsw-guest-order" name="stsw_order_number" required autocomplete="off" />
+		<input type="text" id="stsw-guest-order" name="stsw_order_number" required autocomplete="off" value="<?php echo esc_attr( $order_number ?? '' ); ?>" />
 	</p>
 	<p>
 		<label for="stsw-guest-email"><?php esc_html_e( 'Billing email', 'support-ticket-system-for-woocommerce' ); ?></label><br />

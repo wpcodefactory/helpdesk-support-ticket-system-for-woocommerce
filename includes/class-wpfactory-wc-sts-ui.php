@@ -1035,7 +1035,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 							</div>
 							<div class="hd-field">
 								<label for="hd-w-order"><?php esc_html_e( 'Button on each order', 'support-ticket-system-for-woocommerce' ); ?></label>
-								<input type="text" id="hd-w-order" name="order" value="<?php echo esc_attr( '' !== $order ? $order : __( 'Get Help', 'support-ticket-system-for-woocommerce' ) ); ?>" data-hd-preview="order" />
+								<input type="text" id="hd-w-order" name="order" value="<?php echo esc_attr( '' !== $order ? $order : __( 'Get help', 'support-ticket-system-for-woocommerce' ) ); ?>" data-hd-preview="order" />
 							</div>
 							<label class="hd-switchrow">
 								<input type="checkbox" role="switch" class="hd-switch" name="hide" value="1" <?php checked( '1', (string) get_option( $p . 'hideClosed' ) ); ?> />
@@ -1046,7 +1046,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 							<span class="hd-help"><?php esc_html_e( 'Preview: your store', 'support-ticket-system-for-woocommerce' ); ?></span>
 							<div class="hd-preview__store">
 								<div class="hd-preview__nav"><span><?php esc_html_e( 'Dashboard', 'support-ticket-system-for-woocommerce' ); ?></span><span><?php esc_html_e( 'Orders', 'support-ticket-system-for-woocommerce' ); ?></span><span class="is-on" data-hd-preview-out="menu"><?php echo esc_html( '' !== $menu ? $menu : __( 'Help', 'support-ticket-system-for-woocommerce' ) ); ?></span><span><?php esc_html_e( 'Account details', 'support-ticket-system-for-woocommerce' ); ?></span></div>
-								<div class="hd-preview__order"><span><?php esc_html_e( 'Order #1042', 'support-ticket-system-for-woocommerce' ); ?></span><span class="hd-help"><?php esc_html_e( '2 items, Completed', 'support-ticket-system-for-woocommerce' ); ?></span><span class="hd-btn hd-btn--sm" data-hd-preview-out="order"><?php echo esc_html( '' !== $order ? $order : __( 'Get Help', 'support-ticket-system-for-woocommerce' ) ); ?></span></div>
+								<div class="hd-preview__order"><span><?php esc_html_e( 'Order #1042', 'support-ticket-system-for-woocommerce' ); ?></span><span class="hd-help"><?php esc_html_e( '2 items, Completed', 'support-ticket-system-for-woocommerce' ); ?></span><span class="hd-btn hd-btn--sm" data-hd-preview-out="order"><?php echo esc_html( '' !== $order ? $order : __( 'Get help', 'support-ticket-system-for-woocommerce' ) ); ?></span></div>
 							</div>
 							<span class="hd-help"><?php esc_html_e( 'Your theme\'s colors and fonts apply on the live store.', 'support-ticket-system-for-woocommerce' ); ?></span>
 						</div>

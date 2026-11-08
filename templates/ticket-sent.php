@@ -15,9 +15,11 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="stsw-sent" role="status" tabindex="-1">
-	<p class="stsw-sent__title"><strong><?php esc_html_e( 'Thanks, we received your request', 'support-ticket-system-for-woocommerce' ); ?></strong></p>
 	<?php if ( '' !== trim( wp_strip_all_tags( (string) $message ) ) ) : ?>
-		<div class="stsw-sent__text"><?php echo wp_kses_post( $message ); ?></div>
+		<?php // The store's own thank you text replaces the default one (no second "Thanks"). ?>
+		<div class="stsw-sent__text stsw-sent__title"><?php echo wp_kses_post( $message ); ?></div>
+	<?php else : ?>
+		<p class="stsw-sent__title"><strong><?php esc_html_e( 'Thanks, we received your request', 'support-ticket-system-for-woocommerce' ); ?></strong></p>
 	<?php endif; ?>
 	<p>
 		<?php

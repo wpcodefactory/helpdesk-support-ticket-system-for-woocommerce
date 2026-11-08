@@ -467,9 +467,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 			WPFactory_WC_STS_Templates::render(
 				'guest-lookup',
 				array(
-					'error' => (string) ( $this->lookup['error'] ?? '' ),
-					'nonce' => self::NONCE,
-					'otp'   => class_exists( 'WPFactory_WC_STS_OTP' ) ? WPFactory_WC_STS_OTP::get_instance()->get_view_data() : array(),
+					// "Get help" on an order page fills in the order number.
+					'order_number' => preg_replace( '/[^A-Za-z0-9_-]/', '', sanitize_text_field( wp_unslash( $_GET['order'] ?? '' ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- pre-fill only.
+					'error'        => (string) ( $this->lookup['error'] ?? '' ),
+					'nonce'        => self::NONCE,
+					'otp'          => class_exists( 'WPFactory_WC_STS_OTP' ) ? WPFactory_WC_STS_OTP::get_instance()->get_view_data() : array(),
 				)
 			);
 		}

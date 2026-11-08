@@ -24,10 +24,9 @@ defined( 'ABSPATH' ) || exit;
 			<button type="button" class="stsw-chat__close" data-stsw-chat-close aria-label="<?php esc_attr_e( 'Close the chat window', 'support-ticket-system-for-woocommerce' ); ?>">&times;</button>
 		</header>
 		<ol class="stsw-chat__log" data-stsw-chat-log aria-live="polite" aria-label="<?php esc_attr_e( 'Messages', 'support-ticket-system-for-woocommerce' ); ?>">
-			<li class="stsw-chat__msg stsw-chat__msg--store"><?php echo esc_html( $greeting ); ?></li>
+			<li class="stsw-chat__msg stsw-chat__msg--store" data-stsw-chat-greeting><?php echo esc_html( $greeting ); ?></li>
 		</ol>
 		<form class="stsw-chat__start" data-stsw-chat-start novalidate>
-			<p class="stsw-chat__offline" data-stsw-chat-offline hidden><?php esc_html_e( 'We are not online right now. Leave a message and we will reply by email.', 'support-ticket-system-for-woocommerce' ); ?></p>
 			<label for="stsw-chat-name"><?php esc_html_e( 'Your name', 'support-ticket-system-for-woocommerce' ); ?></label>
 			<input type="text" id="stsw-chat-name" name="name" autocomplete="name" required />
 			<label for="stsw-chat-email"><?php esc_html_e( 'Email', 'support-ticket-system-for-woocommerce' ); ?></label>
@@ -42,7 +41,7 @@ defined( 'ABSPATH' ) || exit;
 			do_action( 'wpfactory_wc_sts_chat_form_fields' );
 			?>
 			<p class="stsw-chat__error" role="alert" data-stsw-chat-error></p>
-			<button type="submit" class="button wp-element-button"><?php esc_html_e( 'Start chat', 'support-ticket-system-for-woocommerce' ); ?></button>
+			<button type="submit" class="button wp-element-button" data-stsw-chat-start-button><?php esc_html_e( 'Start chat', 'support-ticket-system-for-woocommerce' ); ?></button>
 		</form>
 		<form class="stsw-chat__send" data-stsw-chat-send hidden>
 			<label for="stsw-chat-message" class="screen-reader-text"><?php esc_html_e( 'Your message', 'support-ticket-system-for-woocommerce' ); ?></label>

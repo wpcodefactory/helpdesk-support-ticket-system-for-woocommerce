@@ -20,7 +20,8 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <div class="stsw-head">
 	<div>
-		<h2 class="stsw-title" id="stsw-list-title"><?php esc_html_e( 'Support', 'support-ticket-system-for-woocommerce' ); ?></h2>
+		<?php // My Account already shows the page title: no second "Support" heading there. ?>
+		<h2 class="stsw-title<?php echo function_exists( 'is_account_page' ) && is_account_page() ? ' screen-reader-text' : ''; ?>" id="stsw-list-title"><?php esc_html_e( 'Support', 'support-ticket-system-for-woocommerce' ); ?></h2>
 		<p class="stsw-intro"><?php esc_html_e( 'Questions about an order or a product? Open a ticket and follow the answers here.', 'support-ticket-system-for-woocommerce' ); ?></p>
 	</div>
 	<a class="stsw-button stsw-button--primary button wp-element-button" href="<?php echo esc_url( $view->get_view_url( 'new' ) ); ?>"><?php esc_html_e( 'Open a ticket', 'support-ticket-system-for-woocommerce' ); ?></a>
@@ -35,7 +36,7 @@ do_action( 'wpfactory_wc_sts_customer_list_top', $user );
 
 if ( ! $query->have_posts() ) :
 	?>
-	<div class="stsw-empty"><p><strong><?php esc_html_e( 'You have no tickets yet.', 'support-ticket-system-for-woocommerce' ); ?></strong></p><p><?php esc_html_e( 'Choose "Open a ticket" and we will reply here and by email.', 'support-ticket-system-for-woocommerce' ); ?></p></div>
+	<div class="stsw-empty"><p><strong><?php esc_html_e( 'You have no tickets yet.', 'support-ticket-system-for-woocommerce' ); ?></strong></p><p><?php esc_html_e( 'Questions about an order or a product? We reply here and by email.', 'support-ticket-system-for-woocommerce' ); ?></p><p><a class="stsw-button stsw-button--primary button wp-element-button" href="<?php echo esc_url( $view->get_view_url( 'new' ) ); ?>"><?php esc_html_e( 'Ask for help', 'support-ticket-system-for-woocommerce' ); ?></a></p></div>
 	<?php
 else :
 	echo '<ul class="stsw-cards" aria-labelledby="stsw-list-title">';
