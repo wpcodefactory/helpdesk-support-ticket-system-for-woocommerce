@@ -167,6 +167,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_action( 'woocommerce_my_account_my_orders_column_order-tickets', array( $this, 'render_my_account_orders_column' ) );
 			add_action( 'woocommerce_account_tickets_endpoint', array( $this, 'stswpro_my_account_endpoint_content' ) );
 			add_action( 'woocommerce_view_order', array( $this, 'stswpro_view_order' ), 20 );
+			add_action( 'woocommerce_thankyou', array( $this, 'guest_order_help' ), 20 );
 			add_shortcode( 'stsw_user_tickets', array( $this, 'shortcode_output' ) );
 
 			// My Account endpoint registered with WooCommerce (title, `is_wc_endpoint_url()`).
@@ -1631,7 +1632,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
-		 * "Get Help" button on each order in My Account > Orders.
+		 * "Get help" button on each order in My Account > Orders.
 		 *
 		 * @param array    $actions Order actions.
 		 * @param WC_Order $order   Order.
@@ -1639,12 +1640,35 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * @return array
 		 */
 		public function stswpro_add_my_account_order_actions( $actions, $order = null ) {
-			$label           = get_option( $this->plugin . 'renameOrderButtonLink' );
 			$actions['help'] = array(
 				'url'  => add_query_arg( 'order', $order ? $order->get_order_number() : '', $this->get_customer_tickets_url() ),
-				'name' => ! empty( $label ) ? $label : __( 'Get Help', 'support-ticket-system-for-woocommerce' ),
+				'name' => $this->order_button_label(),
 			);
 			return $actions;
+		}
+
+		/**
+		 * Order received page of a guest order: a "Get help" button that opens the guest form with the order filled in.
+		 *
+		 * @param int $order_id Order ID.
+		 */
+		public function guest_order_help( $order_id ) {
+			$order = $order_id ? wc_get_order( $order_id ) : false;
+			if ( ! $order || $order->get_customer_id() || is_user_logged_in() || ! class_exists( 'WPFactory_WC_STS_Guest' ) || ! WPFactory_WC_STS_Guest::get_instance()->is_enabled() ) {
+				return;
+			}
+			$url = add_query_arg( 'order', $order->get_order_number(), wc_get_page_permalink( 'myaccount' ) );
+			echo '<section class="wpfactory-wc-sts-order-help"><h2>' . esc_html__( 'Need help with this order?', 'support-ticket-system-for-woocommerce' ) . '</h2><p><a class="button wp-element-button" href="' . esc_url( $url ) . '">' . esc_html( $this->order_button_label() ) . '</a></p></section>';
+		}
+
+		/**
+		 * Text of the order help buttons: the saved setting exactly, or "Get help".
+		 *
+		 * @return string
+		 */
+		public function order_button_label() {
+			$label = trim( (string) get_option( $this->plugin . 'renameOrderButtonLink' ) );
+			return '' !== $label ? $label : __( 'Get help', 'support-ticket-system-for-woocommerce' );
 		}
 
 		/**
@@ -1747,7 +1771,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 					echo '<p>' . esc_html__( 'A problem with this order? Send us a message and we will reply by email.', 'support-ticket-system-for-woocommerce' ) . '</p>';
 				}
 				?>
-				<p><a class="button" href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Get help with this order', 'support-ticket-system-for-woocommerce' ); ?></a></p>
+				<p><a class="button wp-element-button" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $this->order_button_label() ); ?></a></p>
 			</section>
 			<?php
 		}
@@ -1903,6 +1927,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			$subject  = absint( $_POST['stsw_tickets_subject'] ?? 0 );
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
 
+			if ( $order && '' === $reason && $reasons ) {
+				return __( 'Please choose what your message is about.', 'support-ticket-system-for-woocommerce' );
+			}
+			$topics = WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_subject' );
+			if ( ! $order && ! $subject && $topics ) {
+				return __( 'Please choose a topic.', 'support-ticket-system-for-woocommerce' );
+			}
+			if ( $order && ! $subject && '' !== $reason ) {
+				// Each reason can file the ticket under a topic (Settings > Ticket form > Reasons).
+				$subject = absint( get_option( 'wpfactory_wc_sts_reason_subject_' . $reason ) );
+			}
+			if ( $subject && ! term_exists( $subject, 'stsw_tickets_subject' ) ) {
+				$subject = 0;
+			}
 			if ( '' === trim( $content ) ) {
 				return __( 'Please write a message.', 'support-ticket-system-for-woocommerce' );
 			}
@@ -1916,8 +1954,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			}
 			$fields = array();
 			if ( class_exists( 'WPFactory_WC_STS_Fields' ) ) {
-				$fields = WPFactory_WC_STS_Fields::get_instance()->get_posted_values();
-				$error  = WPFactory_WC_STS_Fields::get_instance()->validate( $fields );
+				$context = WPFactory_WC_STS_Fields::get_instance()->context( $order, $items, $subject, $reason );
+				$fields  = WPFactory_WC_STS_Fields::get_instance()->get_posted_values( $context );
+				$error   = WPFactory_WC_STS_Fields::get_instance()->validate( $fields, $context );
 				if ( '' !== $error ) {
 					return $error;
 				}
@@ -2058,7 +2097,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
-		 * Order ID the customer came from: the View Order page, or `?order=<number>` from the Get Help button.
+		 * Order ID the customer came from: the View Order page, or `?order=<number>` from the Get help button.
 		 *
 		 * @return int Order ID owned by the current user, or 0.
 		 */

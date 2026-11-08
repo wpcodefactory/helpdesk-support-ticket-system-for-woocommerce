@@ -120,69 +120,203 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				if ( in_array( $type, array( 'select', 'multiselect' ), true ) ) {
 					$options = array_values( array_filter( array_map( 'sanitize_text_field', array_map( 'trim', explode( ',', wp_unslash( (string) ( $row['options'] ?? '' ) ) ) ) ) ) );
 				}
+				$show = array(
+					'products'   => array(),
+					'categories' => array_values( array_filter( array_map( 'absint', (array) ( $row['show']['categories'] ?? array() ) ) ) ),
+					'subjects'   => array_values( array_filter( array_map( 'absint', (array) ( $row['show']['subjects'] ?? array() ) ) ) ),
+					'reasons'    => array_values( array_filter( array_map( 'sanitize_key', (array) ( $row['show']['reasons'] ?? array() ) ) ) ),
+				);
+				// Products: IDs or SKUs, comma separated.
+				foreach ( array_filter( array_map( 'trim', explode( ',', sanitize_text_field( wp_unslash( (string) ( $row['show']['products'] ?? '' ) ) ) ) ) ) as $ref ) {
+					$id = ctype_digit( $ref ) ? (int) $ref : (int) wc_get_product_id_by_sku( $ref );
+					if ( $id && wc_get_product( $id ) ) {
+						$show['products'][] = $id;
+					}
+				}
 				$clean[] = array(
 					'key'      => $key,
 					'label'    => $label,
 					'type'     => $type,
 					'options'  => $options,
 					'required' => ! empty( $row['required'] ),
+					'show'     => $show,
 				);
 			}
 			return $clean;
 		}
 
 		/**
-		 * Inputs on the new ticket forms.
+		 * What an order item matches in field conditions: "p<product id>" and "c<category id>" tokens.
+		 *
+		 * @param WC_Order_Item_Product $item Item.
+		 *
+		 * @return string[]
+		 */
+		public function item_match( $item ) {
+			$out = array();
+			if ( ! is_callable( array( $item, 'get_product_id' ) ) ) {
+				return $out;
+			}
+			foreach ( array_filter( array( (int) $item->get_product_id(), (int) $item->get_variation_id() ) ) as $id ) {
+				$out[] = 'p' . $id;
+			}
+			$cats = wc_get_product_term_ids( (int) $item->get_product_id(), 'product_cat' );
+			foreach ( $cats as $cat ) {
+				$out[] = 'c' . (int) $cat;
+				foreach ( get_ancestors( (int) $cat, 'product_cat', 'taxonomy' ) as $parent ) {
+					$out[] = 'c' . (int) $parent;
+				}
+			}
+			return array_values( array_unique( $out ) );
+		}
+
+		/**
+		 * What a new ticket is about, for field conditions.
+		 *
+		 * @param WC_Order|false $order   Order.
+		 * @param int[]          $items   Chosen item IDs (none: all items of the order).
+		 * @param int            $subject Topic term ID.
+		 * @param string         $reason  Reason slug.
+		 *
+		 * @return array { match: string[], subject: int, reason: string }
+		 */
+		public function context( $order, $items, $subject, $reason ) {
+			$match = array();
+			if ( $order ) {
+				foreach ( $order->get_items() as $item_id => $item ) {
+					if ( ! $items || in_array( (int) $item_id, array_map( 'intval', (array) $items ), true ) ) {
+						$match = array_merge( $match, $this->item_match( $item ) );
+					}
+				}
+			}
+			return array(
+				'match'   => array_values( array_unique( $match ) ),
+				'subject' => (int) $subject,
+				'reason'  => (string) $reason,
+			);
+		}
+
+		/**
+		 * Whether a field is asked for this ticket. Each condition set must match (any of its values); no conditions:
+		 * always asked.
+		 *
+		 * @param array      $field   Field.
+		 * @param array|null $context Context from context() (null: always asked).
+		 *
+		 * @return bool
+		 */
+		public function applies( $field, $context ) {
+			$show = (array) ( $field['show'] ?? array() );
+			if ( null === $context ) {
+				return true;
+			}
+			$things = array();
+			foreach ( (array) ( $show['products'] ?? array() ) as $id ) {
+				$things[] = 'p' . (int) $id;
+			}
+			foreach ( (array) ( $show['categories'] ?? array() ) as $id ) {
+				$things[] = 'c' . (int) $id;
+			}
+			if ( $things && ! array_intersect( $things, $context['match'] ) ) {
+				return false;
+			}
+			if ( ! empty( $show['subjects'] ) && ! in_array( (int) $context['subject'], array_map( 'intval', $show['subjects'] ), true ) ) {
+				return false;
+			}
+			if ( ! empty( $show['reasons'] ) && ! in_array( (string) $context['reason'], (array) $show['reasons'], true ) ) {
+				return false;
+			}
+			return true;
+		}
+
+		/**
+		 * Conditions of a field for the form script, as data attributes.
+		 *
+		 * @param array $field Field.
+		 *
+		 * @return string
+		 */
+		protected function condition_attributes( $field ) {
+			$show   = (array) ( $field['show'] ?? array() );
+			$things = array();
+			foreach ( (array) ( $show['products'] ?? array() ) as $id ) {
+				$things[] = 'p' . (int) $id;
+			}
+			foreach ( (array) ( $show['categories'] ?? array() ) as $id ) {
+				$things[] = 'c' . (int) $id;
+			}
+			$out = '';
+			if ( $things ) {
+				$out .= ' data-stsw-if-items="' . esc_attr( implode( ' ', $things ) ) . '"';
+			}
+			if ( ! empty( $show['subjects'] ) ) {
+				$out .= ' data-stsw-if-subject="' . esc_attr( implode( ' ', array_map( 'intval', $show['subjects'] ) ) ) . '"';
+			}
+			if ( ! empty( $show['reasons'] ) ) {
+				$out .= ' data-stsw-if-reason="' . esc_attr( implode( ' ', $show['reasons'] ) ) . '"';
+			}
+			return $out;
+		}
+
+		/**
+		 * Inputs on the new ticket forms. Fields with conditions show only when they match (the script hides the others;
+		 * the server checks them again).
 		 */
 		public function render_inputs() {
 			foreach ( $this->get_fields() as $field ) {
+				$if       = $this->condition_attributes( $field );
 				$id       = 'stsw-field-' . $field['key'];
 				$name     = 'stsw_fields[' . $field['key'] . ']';
 				$required = $field['required'] ? ' required' : '';
 				$mark     = $field['required'] ? ' <span class="required" aria-hidden="true">*</span>' : '';
 				if ( 'multiselect' === $field['type'] ) {
-					echo '<fieldset class="stsw-field stsw-field--multi"><legend>' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</legend>';
+					echo '<fieldset class="stsw-field stsw-field--multi"' . $if . '><legend>' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $if escaped in condition_attributes().
 					foreach ( $field['options'] as $option ) {
-						echo '<label><input type="checkbox" name="' . esc_attr( $name ) . '[]" value="' . esc_attr( $option ) . '" /> ' . esc_html( $option ) . '</label> ';
+						echo '<label class="stsw-choice"><input type="checkbox" name="' . esc_attr( $name ) . '[]" value="' . esc_attr( $option ) . '" /> <span>' . esc_html( $option ) . '</span></label>';
 					}
 					echo '</fieldset>';
 					continue;
 				}
-				echo '<p>';
+				echo '<div class="stsw-field"' . $if . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in condition_attributes().
 				if ( 'file' === $field['type'] ) {
 					$files = WPFactory_WC_STS_Files::get_instance();
-					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label><br />';
+					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label>';
 					echo '<input type="file" id="' . esc_attr( $id ) . '" name="' . esc_attr( self::FILE_PREFIX . $field['key'] ) . '" accept="' . esc_attr( $files->get_accept_attribute() ) . '"' . esc_attr( $required ) . ' aria-describedby="' . esc_attr( $id ) . '-help" />';
-					echo '<br /><small class="stsw-help" id="' . esc_attr( $id ) . '-help">' . esc_html( $files->get_rules_text() ) . '</small>';
+					echo '<small class="stsw-help" id="' . esc_attr( $id ) . '-help">' . esc_html( $files->get_rules_text() ) . '</small>';
 				} elseif ( in_array( $field['type'], array( 'date', 'number' ), true ) ) {
-					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label><br />';
+					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label>';
 					echo '<input type="' . esc_attr( $field['type'] ) . '" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"' . ( 'number' === $field['type'] ? ' step="any"' : '' ) . esc_attr( $required ) . ' />';
 				} elseif ( 'checkbox' === $field['type'] ) {
-					echo '<label for="' . esc_attr( $id ) . '"><input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . esc_attr( $required ) . ' /> ' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label>';
+					echo '<label class="stsw-choice" for="' . esc_attr( $id ) . '"><input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . esc_attr( $required ) . ' /> <span>' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</span></label>';
 				} elseif ( 'select' === $field['type'] ) {
-					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label><br />';
+					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label>';
 					echo '<select id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"' . esc_attr( $required ) . '><option value="">' . esc_html__( 'Choose...', 'support-ticket-system-for-woocommerce' ) . '</option>';
 					foreach ( $field['options'] as $option ) {
 						echo '<option value="' . esc_attr( $option ) . '">' . esc_html( $option ) . '</option>';
 					}
 					echo '</select>';
 				} else {
-					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label><br />';
+					echo '<label for="' . esc_attr( $id ) . '">' . esc_html( $field['label'] ) . wp_kses_post( $mark ) . '</label>';
 					echo '<input type="text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '"' . esc_attr( $required ) . ' />';
 				}
-				echo '</p>';
+				echo '</div>';
 			}
 		}
 
 		/**
 		 * Answers posted with a ticket form (the form's nonce is verified by the caller).
 		 *
+		 * @param array|null $context Ticket context (see context()); null: every field is asked.
+		 *
 		 * @return array key => value
 		 */
-		public function get_posted_values() {
+		public function get_posted_values( $context = null ) {
 			$posted = isset( $_POST['stsw_fields'] ) && is_array( $_POST['stsw_fields'] ) ? wp_unslash( $_POST['stsw_fields'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each value is sanitized below.
 			$values = array();
 			foreach ( $this->get_fields() as $field ) {
+				if ( ! $this->applies( $field, $context ) ) {
+					continue; // Not asked for this ticket.
+				}
 				if ( 'multiselect' === $field['type'] ) {
 					$chosen                  = isset( $posted[ $field['key'] ] ) ? array_map( 'sanitize_text_field', array_map( 'strval', (array) $posted[ $field['key'] ] ) ) : array();
 					$values[ $field['key'] ] = implode( ', ', array_values( array_intersect( $field['options'], $chosen ) ) );
@@ -212,13 +346,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 		/**
 		 * Message for the first required field left empty, or an empty string.
 		 *
-		 * @param array $values Posted values.
+		 * @param array      $values  Posted values.
+		 * @param array|null $context Ticket context (see context()); null: every field is asked.
 		 *
 		 * @return string
 		 */
-		public function validate( $values ) {
+		public function validate( $values, $context = null ) {
 			foreach ( $this->get_fields() as $field ) {
-				if ( $field['required'] && '' === ( $values[ $field['key'] ] ?? '' ) ) {
+				if ( $field['required'] && $this->applies( $field, $context ) && '' === ( $values[ $field['key'] ] ?? '' ) ) {
 					/* translators: %s: field label. */
 					return sprintf( __( 'Please fill in "%s".', 'support-ticket-system-for-woocommerce' ), $field['label'] );
 				}
@@ -329,7 +464,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				'type'     => 'text',
 				'options'  => array(),
 				'required' => false,
+				'show'     => array(),
 			);
+			$cats     = get_terms(
+				array(
+					'taxonomy'   => 'product_cat',
+					'hide_empty' => false,
+				)
+			);
+			$cats     = is_wp_error( $cats ) ? array() : $cats;
+			$topics   = WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_subject' );
+			$reasons  = WPFactory_WC_STS_Inc::get_main_instance()->get_reasons();
 			$types    = array(
 				'text'        => __( 'Text', 'support-ticket-system-for-woocommerce' ),
 				'select'      => __( 'Dropdown', 'support-ticket-system-for-woocommerce' ),
@@ -344,7 +489,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				'<th scope="col">' . esc_html__( 'Label', 'support-ticket-system-for-woocommerce' ) . '</th>' .
 				'<th scope="col">' . esc_html__( 'Type', 'support-ticket-system-for-woocommerce' ) . '</th>' .
 				'<th scope="col">' . esc_html__( 'Choices (dropdown and several choices, comma separated)', 'support-ticket-system-for-woocommerce' ) . '</th>' .
-				'<th scope="col">' . esc_html__( 'Required', 'support-ticket-system-for-woocommerce' ) . '</th></tr></thead><tbody>';
+				'<th scope="col">' . esc_html__( 'Required', 'support-ticket-system-for-woocommerce' ) . '</th>' .
+				'<th scope="col">' . esc_html__( 'Ask only for', 'support-ticket-system-for-woocommerce' ) . '</th></tr></thead><tbody>';
 			foreach ( $fields as $i => $field ) {
 				$name = 'wpfactory_wc_sts_custom_fields[' . (int) $i . ']';
 				echo '<tr>';
@@ -359,10 +505,45 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				echo '</select></td>';
 				echo '<td><label class="screen-reader-text" for="stsw-cf-options-' . (int) $i . '">' . esc_html__( 'Choices', 'support-ticket-system-for-woocommerce' ) . '</label><input type="text" id="stsw-cf-options-' . (int) $i . '" name="' . esc_attr( $name . '[options]' ) . '" value="' . esc_attr( implode( ', ', (array) $field['options'] ) ) . '" /></td>';
 				echo '<td><label><input type="checkbox" name="' . esc_attr( $name . '[required]' ) . '" value="1"' . checked( ! empty( $field['required'] ), true, false ) . ' /> <span class="screen-reader-text">' . esc_html__( 'Required', 'support-ticket-system-for-woocommerce' ) . '</span></label></td>';
+				$show  = (array) ( $field['show'] ?? array() );
+				$count = count( (array) ( $show['products'] ?? array() ) ) + count( (array) ( $show['categories'] ?? array() ) ) + count( (array) ( $show['subjects'] ?? array() ) ) + count( (array) ( $show['reasons'] ?? array() ) );
+				echo '<td><details class="stsw-cf-show"><summary>' . esc_html( $count ? __( 'Some tickets', 'support-ticket-system-for-woocommerce' ) : __( 'Every ticket', 'support-ticket-system-for-woocommerce' ) ) . '</summary>';
+				echo '<p class="description">' . esc_html__( 'Leave all empty to ask on every ticket. When you fill more than one, all must match.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+				$skus = array();
+				foreach ( (array) ( $show['products'] ?? array() ) as $pid ) {
+					$product = wc_get_product( $pid );
+					$skus[]  = $product && $product->get_sku() ? $product->get_sku() : (string) (int) $pid;
+				}
+				echo '<p><label for="stsw-cf-products-' . (int) $i . '">' . esc_html__( 'Products in the order (IDs or SKUs, comma separated)', 'support-ticket-system-for-woocommerce' ) . '</label><br/><input type="text" class="regular-text" id="stsw-cf-products-' . (int) $i . '" name="' . esc_attr( $name . '[show][products]' ) . '" value="' . esc_attr( implode( ', ', $skus ) ) . '" /></p>';
+				$this->render_multi( $name . '[show][categories][]', 'stsw-cf-cats-' . (int) $i, __( 'Product categories', 'support-ticket-system-for-woocommerce' ), wp_list_pluck( $cats, 'name', 'term_id' ), (array) ( $show['categories'] ?? array() ) );
+				$this->render_multi( $name . '[show][subjects][]', 'stsw-cf-topics-' . (int) $i, __( 'Topics', 'support-ticket-system-for-woocommerce' ), wp_list_pluck( $topics, 'name', 'term_id' ), (array) ( $show['subjects'] ?? array() ) );
+				$this->render_multi( $name . '[show][reasons][]', 'stsw-cf-reasons-' . (int) $i, __( 'Reasons', 'support-ticket-system-for-woocommerce' ), $reasons, (array) ( $show['reasons'] ?? array() ) );
+				echo '</details></td>';
 				echo '</tr>';
 			}
 			echo '</tbody></table>';
 			echo '<p class="description">' . esc_html__( 'Save to get another empty row.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+		}
+
+		/**
+		 * A list of checkboxes (keyboard friendly in place of a multiple select).
+		 *
+		 * @param string $name    Input name.
+		 * @param string $id      ID prefix.
+		 * @param string $label   Group label.
+		 * @param array  $choices value => label.
+		 * @param array  $chosen  Chosen values.
+		 */
+		protected function render_multi( $name, $id, $label, $choices, $chosen ) {
+			if ( ! $choices ) {
+				return;
+			}
+			$chosen = array_map( 'strval', $chosen );
+			echo '<fieldset id="' . esc_attr( $id ) . '" class="hd-checks"><legend>' . esc_html( $label ) . '</legend>';
+			foreach ( $choices as $value => $text ) {
+				echo '<label><input type="checkbox" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . checked( in_array( (string) $value, $chosen, true ), true, false ) . ' /> ' . esc_html( $text ) . '</label> ';
+			}
+			echo '</fieldset>';
 		}
 	}
 
