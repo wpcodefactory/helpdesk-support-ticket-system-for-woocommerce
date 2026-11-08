@@ -163,13 +163,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 			if ( '' !== $this->fresh_email ) {
 				return $this->fresh_email;
 			}
-			$raw   = isset( $_COOKIE[ self::COOKIE ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ self::COOKIE ] ) ) : '';
-			$parts = explode( '|', $raw );
-			if ( 3 !== count( $parts ) ) {
+			// The value is email|expires|signature. Read it as it is: sanitize_text_field() would strip parts of it.
+			$raw = isset( $_COOKIE[ self::COOKIE ] ) ? (string) wp_unslash( $_COOKIE[ self::COOKIE ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each part is validated below and the signature is checked.
+			if ( ! preg_match( '/^([^|\s]{3,254})\|(\d{9,11})\|([a-f0-9]{64})$/', $raw, $m ) ) {
 				return '';
 			}
-			list( $email, $expires, $key ) = $parts;
-			$email                         = strtolower( sanitize_email( rawurldecode( $email ) ) );
+			list( , $email, $expires, $key ) = $m;
+			$email                          = strtolower( sanitize_email( $email ) );
 			if ( ! is_email( $email ) || (int) $expires < time() || ! hash_equals( $this->sign( 'session|' . $email . '|' . (int) $expires ), $key ) ) {
 				return '';
 			}
@@ -183,7 +183,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 		 */
 		protected function set_session( $email ) {
 			$expires = time() + self::SESSION_LIFETIME;
-			$value   = '' === $email ? '' : rawurlencode( $email ) . '|' . $expires . '|' . $this->sign( 'session|' . $email . '|' . $expires );
+			$value   = '' === $email ? '' : $email . '|' . $expires . '|' . $this->sign( 'session|' . $email . '|' . $expires );
 			if ( ! headers_sent() ) {
 				setcookie(
 					self::COOKIE,
@@ -279,27 +279,39 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 		 * @param string $email Email.
 		 * @param string $code  Code.
 		 *
-		 * @return bool
+		 * @return string `ok`, `wrong` (tries left), `locked` (too many wrong codes) or `expired` (no code waiting).
 		 */
-		public function check_code( $email, $code ) {
+		public function code_status( $email, $code ) {
 			$email  = strtolower( sanitize_email( $email ) );
 			$key    = 'wpfactory_wc_sts_otp_code_' . md5( $email );
 			$stored = get_transient( $key );
 			$code   = preg_replace( '/\D/', '', (string) $code );
-			if ( ! is_array( $stored ) || 6 !== strlen( $code ) ) {
-				return false;
+			if ( ! is_array( $stored ) ) {
+				return 'expired';
 			}
-			if ( hash_equals( (string) $stored['hash'], $this->sign( 'code|' . $email . '|' . $code ) ) ) {
+			if ( 6 === strlen( $code ) && hash_equals( (string) $stored['hash'], $this->sign( 'code|' . $email . '|' . $code ) ) ) {
 				delete_transient( $key );
-				return true;
+				return 'ok';
 			}
 			++$stored['tries'];
 			if ( $stored['tries'] >= self::MAX_TRIES ) {
 				delete_transient( $key );
-			} else {
-				set_transient( $key, $stored, self::CODE_LIFETIME );
+				return 'locked';
 			}
-			return false;
+			set_transient( $key, $stored, self::CODE_LIFETIME );
+			return 'wrong';
+		}
+
+		/**
+		 * Whether a code is right (kept for add-ons; see code_status()).
+		 *
+		 * @param string $email Email.
+		 * @param string $code  Code.
+		 *
+		 * @return bool
+		 */
+		public function check_code( $email, $code ) {
+			return 'ok' === $this->code_status( $email, $code );
 		}
 
 		/**
@@ -357,16 +369,22 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 					);
 					return;
 				}
-				if ( $this->check_code( $email, sanitize_text_field( wp_unslash( $_POST['stsw_otp_code'] ?? '' ) ) ) ) {
+				$status = $this->code_status( $email, sanitize_text_field( wp_unslash( $_POST['stsw_otp_code'] ?? '' ) ) );
+				if ( 'ok' === $status ) {
 					$this->set_session( $email );
 					$this->state = array();
 					wp_safe_redirect( remove_query_arg( array( 'stsw_ticket', 'stsw_key', 'stsw_expires', 'stsw_notice' ) ) );
 					exit;
 				}
+				$errors      = array(
+					'wrong'   => __( 'This code is not right. Check the six digits in the email and try again.', 'support-ticket-system-for-woocommerce' ),
+					'locked'  => __( 'Too many wrong codes. Ask for a new code below.', 'support-ticket-system-for-woocommerce' ),
+					'expired' => __( 'This code has expired or was already used. Ask for a new code below.', 'support-ticket-system-for-woocommerce' ),
+				);
 				$this->state = array(
 					'step'  => 'verify',
 					'email' => $email,
-					'error' => __( 'This code is not right or has expired. Check the email or ask for a new code.', 'support-ticket-system-for-woocommerce' ),
+					'error' => $errors[ $status ],
 				);
 			}
 		}
