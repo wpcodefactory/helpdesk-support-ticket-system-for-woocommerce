@@ -285,6 +285,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				foreach ( $defaults as $key => $value ) {
 					add_option( $this->plugin . $key, $value );
 				}
+				// Customers hear when the team changes the status or closes the request, and are asked for a rating.
+				foreach ( array( 'wpfactory_wc_sts_mail_status', 'wpfactory_wc_sts_mail_closed', 'wpfactory_wc_sts_pro_ratings' ) as $name ) {
+					add_option( $name, '1' );
+				}
 			}
 
 			// The `tickets` endpoint is registered by now, so customers do not get a 404 on My Account > Tickets.
@@ -1463,7 +1467,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			if ( '1' !== (string) get_option( $this->plugin . 'mailToADmin' ) ) {
 				echo '<div class="notice notice-warning inline"><p>' .
 					esc_html__( 'Email alerts are off: you will not be told when a customer opens or replies to a ticket.', 'support-ticket-system-for-woocommerce' ) .
-					' <a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Turn them on in Settings > Notifications', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
+					' <a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Turn them on in Settings > Emails', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
 			}
 
 			echo '<p>' .

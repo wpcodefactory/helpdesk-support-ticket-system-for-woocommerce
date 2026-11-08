@@ -310,7 +310,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					'intro' => __( 'Who answers tickets and who gets new ones.', 'support-ticket-system-for-woocommerce' ),
 				),
 				'notifications' => array(
-					'label' => __( 'Notifications', 'support-ticket-system-for-woocommerce' ),
+					'label' => __( 'Emails', 'support-ticket-system-for-woocommerce' ),
 					'group' => 'basics',
 					'intro' => __( 'Emails to your team and to customers.', 'support-ticket-system-for-woocommerce' ),
 				),
@@ -402,11 +402,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					break;
 				case 'notifications':
 					$fields = $this->get_notification_fields();
-					$this->render_card( __( 'Alerts', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'mailToADmin', 'AdminEmailAddress', 'mailToCustomer' ) ) ) );
+					$this->render_card( __( 'Alerts', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( 'mailToADmin', 'AdminEmailAddress', 'mailToCustomer', '@wpfactory_wc_sts_mail_reply_received' ) ) ) );
 					$codes = __( 'Placeholders:', 'support-ticket-system-for-woocommerce' ) . ' {ticket_number} {ticket_title} {ticket_status} {customer_first_name} {customer_last_name} {customer_email} {order_number} {store_name} {content} {responseContent} {ticket_url} {ticket_url_plain} ' . __( 'Add a fallback after a bar: {customer_first_name|there}. Older names such as {ticketId} and {ticketLink} still work.', 'support-ticket-system-for-woocommerce' );
 					$this->render_card(
 						__( 'Email templates', 'support-ticket-system-for-woocommerce' ),
-						array_diff_key( $fields, array_flip( array( 'mailToADmin', 'AdminEmailAddress', 'mailToCustomer', '@wpfactory_wc_sts_mail_closed', '@wpfactory_wc_sts_mail_closed_subject', '@wpfactory_wc_sts_mail_closed_body', '@wpfactory_wc_sts_mail_status', '@wpfactory_wc_sts_mail_status_subject', '@wpfactory_wc_sts_mail_status_body' ) ) ),
+						array_diff_key( $fields, array_flip( array( 'mailToADmin', 'AdminEmailAddress', 'mailToCustomer', '@wpfactory_wc_sts_mail_reply_received', '@wpfactory_wc_sts_mail_closed', '@wpfactory_wc_sts_mail_closed_subject', '@wpfactory_wc_sts_mail_closed_body', '@wpfactory_wc_sts_mail_status', '@wpfactory_wc_sts_mail_status_subject', '@wpfactory_wc_sts_mail_status_body' ) ) ),
 						$codes
 					);
 					$this->render_card( __( 'Closed and status emails', 'support-ticket-system-for-woocommerce' ), array_intersect_key( $fields, array_flip( array( '@wpfactory_wc_sts_mail_closed', '@wpfactory_wc_sts_mail_closed_subject', '@wpfactory_wc_sts_mail_closed_body', '@wpfactory_wc_sts_mail_status', '@wpfactory_wc_sts_mail_status_subject', '@wpfactory_wc_sts_mail_status_body' ) ) ), $codes );
@@ -618,6 +618,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'mailToCustomer'                        => array(
 					'type'  => 'checkbox',
 					'label' => __( 'Email the customer (confirmations and store replies)', 'support-ticket-system-for-woocommerce' ),
+				),
+				'@wpfactory_wc_sts_mail_reply_received' => array(
+					'type'        => 'checkbox',
+					'label'       => __( 'Email customers "We received your reply" when they reply', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'Off: customer replies only notify your team.', 'support-ticket-system-for-woocommerce' ),
 				),
 				'mailIt_subjectToCust'                  => array(
 					'type'  => 'text',

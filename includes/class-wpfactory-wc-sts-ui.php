@@ -1089,7 +1089,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					</div>
 					<label class="hd-switchrow">
 						<input type="checkbox" role="switch" class="hd-switch" name="alerts" value="1" <?php checked( '1' === (string) get_option( $p . 'mailToADmin' ) || false === get_option( $p . 'mailToADmin' ) ); ?> />
-						<span><strong><?php esc_html_e( 'Email me about new tickets and customer replies', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'More options under Settings, Notifications.', 'support-ticket-system-for-woocommerce' ); ?></span></span>
+						<span><strong><?php esc_html_e( 'Email me about new tickets and customer replies', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'More options under Settings, Emails.', 'support-ticket-system-for-woocommerce' ); ?></span></span>
 					</label>
 					<label class="hd-switchrow">
 						<input type="checkbox" role="switch" class="hd-switch" name="customer" value="1" <?php checked( '1' === (string) get_option( $p . 'mailToCustomer' ) || false === get_option( $p . 'mailToCustomer' ) ); ?> />

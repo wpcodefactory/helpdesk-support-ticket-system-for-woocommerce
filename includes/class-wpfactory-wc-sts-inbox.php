@@ -1272,7 +1272,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					'label'      => __( 'Store email address set and email alerts on', 'support-ticket-system-for-woocommerce' ),
 					'done'       => (bool) $email && $alerts,
 					'link'       => admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=settings#notifications' ),
-					'link_label' => __( 'Open Notifications', 'support-ticket-system-for-woocommerce' ),
+					'link_label' => __( 'Open Emails', 'support-ticket-system-for-woocommerce' ),
 				),
 				'test'   => array(
 					'label'      => __( 'Send yourself a test ticket', 'support-ticket-system-for-woocommerce' ),
