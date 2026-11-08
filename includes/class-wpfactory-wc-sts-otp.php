@@ -359,6 +359,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 				}
 				if ( $this->check_code( $email, sanitize_text_field( wp_unslash( $_POST['stsw_otp_code'] ?? '' ) ) ) ) {
 					$this->set_session( $email );
+					$this->state = array();
 					wp_safe_redirect( remove_query_arg( array( 'stsw_ticket', 'stsw_key', 'stsw_expires', 'stsw_notice' ) ) );
 					exit;
 				}
