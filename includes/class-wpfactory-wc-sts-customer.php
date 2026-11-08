@@ -56,6 +56,45 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		public function __construct() {
 			self::$instance = $this;
 			add_action( 'init', array( $this, 'register_blocks' ) );
+			add_action( 'woocommerce_before_customer_login_form', array( $this, 'login_back_notice' ) );
+			add_action( 'woocommerce_login_form_end', array( $this, 'login_back_field' ) );
+		}
+
+		/**
+		 * Ticket a logged-out customer tried to open from an email link (it belongs to a registered customer).
+		 *
+		 * @return int Ticket ID or 0.
+		 */
+		protected function ticket_after_login() {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- navigation only.
+			$ticket_id = absint( $_GET['ticket'] ?? 0 );
+			$view      = sanitize_key( wp_unslash( $_GET['stsw_view'] ?? '' ) );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			if ( is_user_logged_in() || ! $ticket_id || 'ticket' !== $view || 'stsw_tickets' !== get_post_type( $ticket_id ) || ! $this->core()->get_ticket_user_id( $ticket_id ) ) {
+				return 0;
+			}
+			return $ticket_id;
+		}
+
+		/**
+		 * "Log in to see your request" above the login form.
+		 */
+		public function login_back_notice() {
+			$ticket_id = $this->ticket_after_login();
+			if ( $ticket_id ) {
+				/* translators: %s: ticket number. */
+				echo '<p class="stsw-notice stsw-login-back" role="status">' . esc_html( sprintf( __( 'Log in to see your request #%s. You will go straight back to it.', 'support-ticket-system-for-woocommerce' ), $this->core()->get_ticket_number( $ticket_id ) ) ) . '</p>';
+			}
+		}
+
+		/**
+		 * After logging in, back to the ticket the email linked to.
+		 */
+		public function login_back_field() {
+			$ticket_id = $this->ticket_after_login();
+			if ( $ticket_id ) {
+				echo '<input type="hidden" name="redirect" value="' . esc_url( $this->core()->get_ticket_customer_url( $ticket_id ) ) . '" />';
+			}
 		}
 
 		/**
