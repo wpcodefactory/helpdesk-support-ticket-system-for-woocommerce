@@ -224,10 +224,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 			}
 			$id = $this->ensure_page();
 			if ( $id ) {
-				// The page may take the archive's address: rebuild the addresses now, and do not let browsers keep this.
-				update_option( 'wpfactory_wc_sts_kb_rules', $this->get_slug() . '|page', false );
-				$this->register();
-				flush_rewrite_rules( false );
+				// ensure_page() cleared the stored addresses: the next request rebuilds them without the archive, so the
+				// page answers at this address. A temporary redirect, so browsers do not keep it.
 				wp_safe_redirect( get_permalink( $id ), 302 );
 				exit;
 			}
