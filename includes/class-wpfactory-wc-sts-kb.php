@@ -368,16 +368,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 		 */
 		public function shortcode() {
 			WPFactory_WC_STS_Init::enqueue_frontend_assets();
-			$query = sanitize_text_field( wp_unslash( $_GET['kb'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- public search.
-			ob_start();
-			echo '<div class="stsw stsw-kb">';
-			echo '<form class="stsw-kb__search" role="search" method="get"><label for="stsw-kb-q" class="screen-reader-text">' . esc_html__( 'Search help articles', 'support-ticket-system-for-woocommerce' ) . '</label>';
-			echo '<input type="search" id="stsw-kb-q" name="kb" value="' . esc_attr( $query ) . '" placeholder="' . esc_attr__( 'Search help articles', 'support-ticket-system-for-woocommerce' ) . '" /> <button type="submit" class="stsw-button button wp-element-button">' . esc_html__( 'Search', 'support-ticket-system-for-woocommerce' ) . '</button></form>';
+			$query    = sanitize_text_field( wp_unslash( $_GET['kb'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- public search.
+			$results  = array();
+			$sections = array();
+			$articles = array();
 			if ( '' !== $query ) {
-				$posts = $this->search( $query, 20 );
-				/* translators: %s: search words. */
-				echo '<h2 class="stsw-title">' . esc_html( sprintf( __( 'Results for "%s"', 'support-ticket-system-for-woocommerce' ), $query ) ) . '</h2>';
-				$this->print_list( $posts, __( 'No articles match. Try other words, or open a ticket.', 'support-ticket-system-for-woocommerce' ) );
+				$results = array_map( array( $this, 'to_array' ), $this->search( $query, 20 ) );
 			} else {
 				$cats = get_terms(
 					array(
@@ -388,63 +384,50 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 				);
 				if ( $cats && ! is_wp_error( $cats ) ) {
 					foreach ( $cats as $cat ) {
-						echo '<section class="stsw-kb__cat"><h2 class="stsw-title"><a href="' . esc_url( (string) get_term_link( $cat ) ) . '">' . esc_html( $cat->name ) . '</a></h2>';
-						$this->print_list(
-							get_posts(
-								array(
-									'post_type'      => self::POST_TYPE,
-									'post_status'    => 'publish',
-									'posts_per_page' => 6,
-									'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-										array(
-											'taxonomy' => self::TAXONOMY,
-											'terms'    => $cat->term_id,
+						$sections[] = array(
+							'name'     => $cat->name,
+							'url'      => (string) get_term_link( $cat ),
+							'articles' => array_map(
+								array( $this, 'to_array' ),
+								get_posts(
+									array(
+										'post_type'      => self::POST_TYPE,
+										'post_status'    => 'publish',
+										'posts_per_page' => 6,
+										'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+											array(
+												'taxonomy' => self::TAXONOMY,
+												'terms'    => $cat->term_id,
+											),
 										),
-									),
+									)
 								)
 							),
-							''
 						);
-						echo '</section>';
 					}
 				} else {
-					$this->print_list(
+					$articles = array_map(
+						array( $this, 'to_array' ),
 						get_posts(
 							array(
 								'post_type'      => self::POST_TYPE,
 								'post_status'    => 'publish',
 								'posts_per_page' => 20,
 							)
-						),
-						__( 'No articles yet.', 'support-ticket-system-for-woocommerce' )
+						)
 					);
 				}
 			}
-			$tickets = WPFactory_WC_STS_Inc::get_main_instance()->get_customer_tickets_url();
-			echo '<p class="stsw-kb__more">' . esc_html__( 'Still need help?', 'support-ticket-system-for-woocommerce' ) . ' <a href="' . esc_url( add_query_arg( 'stsw_view', 'new', $tickets ) ) . '">' . esc_html__( 'Open a ticket', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
-			echo '</div>';
-			return (string) ob_get_clean();
-		}
-
-		/**
-		 * Article links.
-		 *
-		 * @param WP_Post[] $posts Articles.
-		 * @param string    $empty Text when there are none.
-		 */
-		protected function print_list( $posts, $empty ) {
-			if ( ! $posts ) {
-				if ( '' !== $empty ) {
-					echo '<p class="stsw-empty">' . esc_html( $empty ) . '</p>';
-				}
-				return;
-			}
-			echo '<ul class="stsw-kb__list">';
-			foreach ( $posts as $post ) {
-				$item = $this->to_array( $post );
-				echo '<li><a href="' . esc_url( $item['url'] ) . '">' . esc_html( $item['title'] ) . '</a><span>' . esc_html( $item['excerpt'] ) . '</span></li>';
-			}
-			echo '</ul>';
+			return WPFactory_WC_STS_Templates::get(
+				'help-center',
+				array(
+					'query'      => $query,
+					'results'    => $results,
+					'sections'   => $sections,
+					'articles'   => $articles,
+					'ticket_url' => add_query_arg( 'stsw_view', 'new', WPFactory_WC_STS_Inc::get_main_instance()->get_customer_tickets_url() ),
+				)
+			);
 		}
 	}
 

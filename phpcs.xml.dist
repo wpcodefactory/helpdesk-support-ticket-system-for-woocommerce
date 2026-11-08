@@ -28,4 +28,8 @@
 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
+	<!-- Theme-overridable templates use plain variable names, as WooCommerce templates do. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>/templates/*</exclude-pattern>
+	</rule>
 </ruleset>

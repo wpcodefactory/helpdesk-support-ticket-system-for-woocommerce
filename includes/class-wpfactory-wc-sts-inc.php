@@ -585,6 +585,23 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		}
 
 		/**
+		 * Public number of a ticket, without "#": the ticket ID unless ticket numbers are set up.
+		 *
+		 * @param int $ticket_id Ticket ID.
+		 *
+		 * @return string
+		 */
+		public function get_ticket_number( $ticket_id ) {
+			/**
+			 * Public number of a ticket (the ticket numbers setting stores its own).
+			 *
+			 * @param string $number    Number (the ticket ID by default).
+			 * @param int    $ticket_id Ticket ID.
+			 */
+			return (string) apply_filters( 'wpfactory_wc_sts_ticket_number', (string) (int) $ticket_id, (int) $ticket_id );
+		}
+
+		/**
 		 * Kept for add-ons written against 2.2: whether the current user is the ticket's customer or staff.
 		 *
 		 * @param int $ticket_id Ticket ID.
@@ -1986,10 +2003,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * (administrators see all).
 		 *
 		 * @param int $order_id Only tickets linked to this order (0: all).
+		 * @param int $page     Page (20 tickets a page); 0: up to 100 without pages.
 		 *
 		 * @return WP_Query
 		 */
-		public function query_customer_tickets( $order_id = 0 ) {
+		public function query_customer_tickets( $order_id = 0, $page = 0 ) {
 			$user       = wp_get_current_user();
 			$meta_query = array();
 			if ( ! in_array( 'administrator', (array) $user->roles, true ) ) {
@@ -2029,7 +2047,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			$args = array(
 				'post_type'      => 'stsw_tickets',
 				'post_status'    => 'publish',
-				'posts_per_page' => 100,
+				'posts_per_page' => $page ? 20 : 100,
+				'paged'          => max( 1, (int) $page ),
 				'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				'tax_query'      => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 				'orderby'        => 'modified',

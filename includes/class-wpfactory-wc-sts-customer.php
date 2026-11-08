@@ -289,7 +289,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 *
 		 * @return string
 		 */
-		protected function ago( $gmt ) {
+		public function ago( $gmt ) {
 			if ( empty( $gmt ) ) {
 				return '';
 			}
@@ -302,56 +302,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 */
 		public function render_list() {
 			$core  = $this->core();
-			$query = $core->query_customer_tickets( 0 );
-			$user  = get_current_user_id();
-			?>
-			<div class="stsw-head">
-				<div>
-					<h2 class="stsw-title" id="stsw-list-title"><?php esc_html_e( 'Support', 'support-ticket-system-for-woocommerce' ); ?></h2>
-					<p class="stsw-intro"><?php esc_html_e( 'Questions about an order or a product? Open a ticket and follow the answers here.', 'support-ticket-system-for-woocommerce' ); ?></p>
-				</div>
-				<a class="stsw-button stsw-button--primary button wp-element-button" href="<?php echo esc_url( $this->get_view_url( 'new' ) ); ?>"><?php esc_html_e( 'Open a ticket', 'support-ticket-system-for-woocommerce' ); ?></a>
-			</div>
-			<?php
-			/**
-			 * Above the ticket list (Pro: support credits and priority support).
-			 *
-			 * @param int $user User ID.
-			 */
-			do_action( 'wpfactory_wc_sts_customer_list_top', $user );
-			if ( ! $query->have_posts() ) {
-				echo '<div class="stsw-empty"><p><strong>' . esc_html__( 'You have no tickets yet.', 'support-ticket-system-for-woocommerce' ) . '</strong></p><p>' . esc_html__( 'Choose "Open a ticket" and we will reply here and by email.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
-			} else {
-				echo '<ul class="stsw-cards" aria-labelledby="stsw-list-title">';
-				foreach ( $query->posts as $post ) {
-					$id       = (int) $post->ID;
-					$state    = $this->get_state( $id );
-					$activity = $core->get_activity( $id );
-					$order    = $core->get_ticket_order_id( $id ) ? wc_get_order( $core->get_ticket_order_id( $id ) ) : false;
-					$is_agent = $core->get_ticket_user_id( $id ) !== $user;
-					$meta     = array( sprintf( /* translators: %d: ticket number. */ __( 'Ticket #%d', 'support-ticket-system-for-woocommerce' ), $id ) );
-					if ( $order ) {
-						/* translators: %s: order number. */
-						$meta[] = sprintf( __( 'Order #%s', 'support-ticket-system-for-woocommerce' ), $order->get_order_number() );
-					}
-					/* translators: %s: time since the last message, e.g. "2 hours ago". */
-					$meta[] = sprintf( __( 'updated %s', 'support-ticket-system-for-woocommerce' ), $this->ago( $activity['at'] ) );
-					echo '<li class="stsw-card stsw-card--' . esc_attr( $state ) . '"><div class="stsw-card__main">';
-					echo '<a class="stsw-card__link" href="' . esc_url( $this->get_view_url( 'ticket', array( 'ticket' => $id ) ) ) . '">' . esc_html( get_the_title( $id ) ) . '</a>';
-					echo '<p class="stsw-card__meta">' . esc_html( implode( ' · ', $meta ) ) . '</p></div><p class="stsw-card__chips">';
-					echo $this->status_chip( $id, $is_agent ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in status_chip().
-					if ( $is_agent && $core->can_manage_tickets( $user ) ) {
-						echo ' <span class="stsw-chip">' . esc_html__( 'Assigned to you', 'support-ticket-system-for-woocommerce' ) . '</span>';
-					} elseif ( $is_agent ) {
-						echo ' <span class="stsw-chip">' . esc_html( sprintf( /* translators: %s: name. */ __( 'Opened by %s', 'support-ticket-system-for-woocommerce' ), $core->get_ticket_contact( $id )['display_name'] ) ) . '</span>';
-					}
-					echo '</p></li>';
-				}
-				echo '</ul>';
-			}
-			if ( '1' === (string) get_option( $core->plugin . 'hideClosed' ) ) {
-				echo '<p class="stsw-help stsw-hidden-note">' . esc_html__( 'Closed tickets are not shown here.', 'support-ticket-system-for-woocommerce' ) . '</p>';
-			}
+			$page  = max( 1, absint( $_GET['stsw_page'] ?? 1 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- navigation only.
+			$query = $core->query_customer_tickets( 0, $page );
+			WPFactory_WC_STS_Templates::render(
+				'ticket-list',
+				array(
+					'view'          => $this,
+					'core'          => $core,
+					'query'         => $query,
+					'user'          => get_current_user_id(),
+					'page'          => $page,
+					'pages'         => (int) $query->max_num_pages,
+					'closed_hidden' => '1' === (string) get_option( $core->plugin . 'hideClosed' ),
+				)
+			);
 		}
 
 		/*
@@ -386,7 +350,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 *
 		 * @return string
 		 */
-		protected function order_label( $order ) {
+		public function order_label( $order ) {
 			return sprintf(
 				/* translators: 1: order number, 2: date, 3: number of items, 4: order total. */
 				_n( 'Order #%1$s, %2$s, %3$d item, %4$s', 'Order #%1$s, %2$s, %3$d items, %4$s', $order->get_item_count(), 'support-ticket-system-for-woocommerce' ),
@@ -411,128 +375,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 				delete_transient( 'wpfactory_wc_sts_draft_' . get_current_user_id() );
 				$order_id = ! empty( $draft['order'] ) ? (int) $draft['order'] : $order_id;
 			}
-			$steps = $guest ? 2 : 3;
-			$step  = 0;
-			?>
-			<div class="stsw-head">
-				<div>
-					<?php if ( ! $guest ) : ?>
-						<a class="stsw-back" href="<?php echo esc_url( $this->get_view_url() ); ?>"><span aria-hidden="true">&larr;</span> <?php esc_html_e( 'Back to support', 'support-ticket-system-for-woocommerce' ); ?></a>
-					<?php endif; ?>
-					<h2 class="stsw-title" id="stsw-ask-title"><?php esc_html_e( 'Open a ticket', 'support-ticket-system-for-woocommerce' ); ?></h2>
-				</div>
-			</div>
-			<form class="stsw-ask <?php echo esc_attr( $core->plugin ); ?>new_ticket" method="post" enctype="multipart/form-data" aria-labelledby="stsw-ask-title" data-stsw-steps="<?php echo (int) $steps; ?>">
-				<p class="screen-reader-text stsw-live" aria-live="polite"></p>
-
-				<?php if ( ! $guest ) : ?>
-					<fieldset class="stsw-step" data-step="<?php echo (int) ++$step; ?>">
-						<legend class="stsw-step__title">
-							<?php
-							/* translators: 1: step number, 2: number of steps. */
-							echo esc_html( sprintf( __( 'Step %1$d of %2$d: which order is it about?', 'support-ticket-system-for-woocommerce' ), $step, $steps ) );
-							?>
-						</legend>
-						<div class="stsw-choices">
-							<?php foreach ( $orders as $order ) : ?>
-								<label class="stsw-choice">
-									<input type="radio" name="ticketorder" value="<?php echo (int) $order->get_id(); ?>" <?php checked( (int) $order_id, (int) $order->get_id() ); ?> />
-									<span><?php echo esc_html( $this->order_label( $order ) ); ?></span>
-								</label>
-							<?php endforeach; ?>
-							<label class="stsw-choice">
-								<input type="radio" name="ticketorder" value="" <?php checked( ! $order_id ); ?> />
-								<span><?php esc_html_e( 'Not about an order', 'support-ticket-system-for-woocommerce' ); ?></span>
-							</label>
-						</div>
-					</fieldset>
-				<?php else : ?>
-					<input type="hidden" name="ticketorder" value="<?php echo (int) $order_id; ?>" />
-				<?php endif; ?>
-
-				<fieldset class="stsw-step" data-step="<?php echo (int) ++$step; ?>">
-					<legend class="stsw-step__title">
-						<?php
-						/* translators: 1: step number, 2: number of steps. */
-						echo esc_html( sprintf( __( 'Step %1$d of %2$d: what is it about?', 'support-ticket-system-for-woocommerce' ), $step, $steps ) );
-						?>
-					</legend>
-					<?php $this->render_items( $orders ); ?>
-					<div class="stsw-field">
-						<label for="stsw-reason"><?php esc_html_e( 'Reason', 'support-ticket-system-for-woocommerce' ); ?></label>
-						<select id="stsw-reason" name="stsw_reason">
-							<?php foreach ( $core->get_reasons() as $slug => $label ) : ?>
-								<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $draft['reason'] ?? '', $slug ); ?>><?php echo esc_html( $label ); ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-					<?php
-					/**
-					 * After the reason in the ticket form (Pro: return or exchange choice).
-					 */
-					do_action( 'wpfactory_wc_sts_ask_after_reason' );
-					$this->render_term_select( 'stsw_tickets_subject', __( 'Topic', 'support-ticket-system-for-woocommerce' ), 'term_id' );
-					if ( '1' === (string) get_option( $core->plugin . 'enablePriority' ) ) {
-						$this->render_term_select( 'stsw_tickets_priority', __( 'How urgent is it?', 'support-ticket-system-for-woocommerce' ), 'name' );
-					}
-					?>
-				</fieldset>
-
-				<fieldset class="stsw-step" data-step="<?php echo (int) ++$step; ?>">
-					<legend class="stsw-step__title">
-						<?php
-						/* translators: 1: step number, 2: number of steps. */
-						echo esc_html( sprintf( __( 'Step %1$d of %2$d: tell us more', 'support-ticket-system-for-woocommerce' ), $step, $steps ) );
-						?>
-					</legend>
-					<?php
-					/**
-					 * Top of the message step (order tracking for "Where is my order?").
-					 *
-					 * @param WC_Order[] $orders Orders offered.
-					 */
-					do_action( 'wpfactory_wc_sts_ask_before_message', $orders );
-					?>
-					<div class="stsw-field">
-						<label for="stsw-ticket-title"><?php esc_html_e( 'Short summary (optional)', 'support-ticket-system-for-woocommerce' ); ?></label>
-						<input type="text" id="stsw-ticket-title" name="title" maxlength="150" value="<?php echo esc_attr( $draft['title'] ?? '' ); ?>" />
-					</div>
-					<?php
-					if ( class_exists( 'WPFactory_WC_STS_Fields' ) ) {
-						WPFactory_WC_STS_Fields::get_instance()->render_inputs();
-					}
-					?>
-					<div class="stsw-field">
-						<label for="stsw-ticket-content"><?php esc_html_e( 'Message', 'support-ticket-system-for-woocommerce' ); ?> <span aria-hidden="true">*</span></label>
-						<textarea id="stsw-ticket-content" name="content" rows="6" required><?php echo esc_textarea( $draft['content'] ?? '' ); ?></textarea>
-					</div>
-					<?php
-					/**
-					 * After the message field of the ticket form (knowledge base suggestions).
-					 */
-					do_action( 'wpfactory_wc_sts_ask_after_message' );
-					?>
-					<?php $this->render_file_input( 'stsw-ticket-files' ); ?>
-				</fieldset>
-
-				<?php
-				foreach ( ( $guest['hidden'] ?? array() ) as $name => $value ) {
-					echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" />';
-				}
-				if ( $guest ) {
-					wp_nonce_field( $guest['nonce'], $guest['nonce'] );
-				} else {
-					wp_nonce_field( 'stswticketfrontend', 'stswticketfrontend' );
-					echo '<input type="hidden" name="stsw_return" value="' . esc_attr( $this->get_view_url() ) . '" />';
-				}
-				?>
-				<div class="stsw-actions">
-					<button type="button" class="stsw-button stsw-js-only" data-stsw-back hidden><?php esc_html_e( 'Back', 'support-ticket-system-for-woocommerce' ); ?></button>
-					<button type="button" class="stsw-button stsw-button--primary button wp-element-button stsw-js-only" data-stsw-next hidden><?php esc_html_e( 'Next', 'support-ticket-system-for-woocommerce' ); ?></button>
-					<button type="submit" class="stsw-button stsw-button--primary button wp-element-button" data-stsw-submit><?php esc_html_e( 'Send', 'support-ticket-system-for-woocommerce' ); ?></button>
-				</div>
-			</form>
-			<?php
+			WPFactory_WC_STS_Templates::render(
+				'ticket-new',
+				array(
+					'view'     => $this,
+					'core'     => $core,
+					'order_id' => (int) $order_id,
+					'guest'    => $guest,
+					'draft'    => $draft,
+					'orders'   => $orders,
+					'steps'    => $guest ? 2 : 3,
+				)
+			);
 		}
 
 		/**
@@ -540,7 +394,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 *
 		 * @param WC_Order[] $orders Orders.
 		 */
-		protected function render_items( $orders ) {
+		public function render_items( $orders ) {
 			foreach ( $orders as $order ) {
 				$items = $order->get_items();
 				if ( ! $items ) {
@@ -620,22 +474,15 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 * @param int $ticket_id Ticket ID.
 		 */
 		public function render_sent( $ticket_id ) {
-			$message = $this->core()->get_saved_message( 'textforTicketSave' );
-			?>
-			<div class="stsw-sent" role="status" tabindex="-1">
-				<p class="stsw-sent__title"><strong><?php esc_html_e( 'Thanks, we received your request', 'support-ticket-system-for-woocommerce' ); ?></strong></p>
-				<?php if ( '' !== trim( wp_strip_all_tags( (string) $message ) ) ) : ?>
-					<div class="stsw-sent__text"><?php echo wp_kses_post( $message ); ?></div>
-				<?php endif; ?>
-				<p>
-					<?php
-					/* translators: %d: ticket number. */
-					echo esc_html( sprintf( __( 'Your ticket number is #%d.', 'support-ticket-system-for-woocommerce' ), $ticket_id ) );
-					?>
-					<a href="<?php echo esc_url( $this->get_view_url( 'ticket', array( 'ticket' => $ticket_id ) ) ); ?>"><?php esc_html_e( 'View your ticket', 'support-ticket-system-for-woocommerce' ); ?></a>
-				</p>
-			</div>
-			<?php
+			WPFactory_WC_STS_Templates::render(
+				'ticket-sent',
+				array(
+					'view'      => $this,
+					'core'      => $this->core(),
+					'ticket_id' => (int) $ticket_id,
+					'message'   => $this->core()->get_saved_message( 'textforTicketSave' ),
+				)
+			);
 			$this->render_list();
 		}
 
@@ -653,70 +500,19 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 */
 		public function render_ticket( $ticket_id, $guest = array() ) {
 			$core     = $this->core();
-			$viewer   = $guest ? 0 : get_current_user_id();
 			$order_id = $core->get_ticket_order_id( $ticket_id );
-			$order    = $order_id ? wc_get_order( $order_id ) : false;
-			$closed   = 'closed' === $core->get_ticket_status_slug( $ticket_id );
-			?>
-			<?php if ( ! $guest ) : ?>
-				<a class="stsw-back" href="<?php echo esc_url( $this->get_view_url() ); ?>"><span aria-hidden="true">&larr;</span> <?php esc_html_e( 'Back to support', 'support-ticket-system-for-woocommerce' ); ?></a>
-			<?php endif; ?>
-			<div class="stsw-head stsw-head--ticket">
-				<h2 class="stsw-title"><?php echo esc_html( get_the_title( $ticket_id ) ); ?></h2>
-				<?php echo $this->status_chip( $ticket_id, $viewer && $core->get_ticket_user_id( $ticket_id ) !== $viewer ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in status_chip(). ?>
-			</div>
-			<p class="stsw-card__meta">
-				<?php
-				/* translators: %d: ticket number. */
-				echo '<span>' . esc_html( sprintf( __( 'Ticket #%d', 'support-ticket-system-for-woocommerce' ), $ticket_id ) ) . '</span>';
-				if ( $order ) {
-					$url = ( $viewer && (int) $order->get_customer_id() === $viewer ) ? $order->get_view_order_url() : '';
-					/* translators: %s: order number. */
-					$text = sprintf( __( 'About order #%s', 'support-ticket-system-for-woocommerce' ), $order->get_order_number() );
-					echo ' · <span>' . ( $url ? '<a href="' . esc_url( $url ) . '">' . esc_html( $text ) . '</a>' : esc_html( $text ) ) . '</span>';
-				}
-				?>
-			</p>
-			<?php $this->render_thread( $ticket_id, $viewer, $guest['file_args'] ?? array() ); ?>
-			<?php
-			/**
-			 * After the conversation on the customer screen (Pro: satisfaction rating).
-			 *
-			 * @param int   $ticket_id Ticket ID.
-			 * @param array $guest     Guest context.
-			 */
-			do_action( 'wpfactory_wc_sts_customer_ticket_after_thread', $ticket_id, $guest );
-			$hidden = array_merge( array( 'post_id' => $ticket_id ), $guest['hidden'] ?? array() );
-			$nonce  = $guest['nonce'] ?? 'stswresponsefrontend';
-			if ( ! $guest ) {
-				$hidden['stsw_return'] = $this->get_view_url( 'ticket', array( 'ticket' => $ticket_id ) );
-			}
-			if ( $closed ) {
-				?>
-				<form class="stsw-reopen" method="post">
-					<p><?php esc_html_e( 'This ticket is closed. Reopen it if you still need help.', 'support-ticket-system-for-woocommerce' ); ?></p>
-					<?php $this->hidden_fields( $hidden ); ?>
-					<?php wp_nonce_field( $nonce, $nonce ); ?>
-					<button type="submit" class="stsw-button" name="stsw_ticket_action" value="reopen"><?php esc_html_e( 'Reopen ticket', 'support-ticket-system-for-woocommerce' ); ?></button>
-				</form>
-				<?php
-				return;
-			}
-			?>
-			<form class="stsw-reply <?php echo esc_attr( $core->plugin ); ?>new_response" method="post" enctype="multipart/form-data">
-				<div class="stsw-field">
-					<label for="stsw-reply-<?php echo (int) $ticket_id; ?>"><?php esc_html_e( 'Your reply', 'support-ticket-system-for-woocommerce' ); ?></label>
-					<textarea id="stsw-reply-<?php echo (int) $ticket_id; ?>" name="response_content" rows="5" required></textarea>
-				</div>
-				<?php $this->render_file_input( 'stsw-reply-files-' . (int) $ticket_id ); ?>
-				<?php $this->hidden_fields( $hidden ); ?>
-				<?php wp_nonce_field( $nonce, $nonce ); ?>
-				<div class="stsw-actions">
-					<button type="submit" class="stsw-button stsw-button--primary button wp-element-button" name="stsw_ticket_action" value="reply"><?php esc_html_e( 'Send reply', 'support-ticket-system-for-woocommerce' ); ?></button>
-					<button type="submit" class="stsw-button" name="stsw_ticket_action" value="close" formnovalidate><?php esc_html_e( 'Close ticket', 'support-ticket-system-for-woocommerce' ); ?></button>
-				</div>
-			</form>
-			<?php
+			WPFactory_WC_STS_Templates::render(
+				'ticket-view',
+				array(
+					'view'      => $this,
+					'core'      => $core,
+					'ticket_id' => (int) $ticket_id,
+					'guest'     => $guest,
+					'viewer'    => $guest ? 0 : get_current_user_id(),
+					'order'     => $order_id ? wc_get_order( $order_id ) : false,
+					'closed'    => 'closed' === $core->get_ticket_status_slug( $ticket_id ),
+				)
+			);
 		}
 
 		/**
@@ -724,7 +520,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 *
 		 * @param array $fields name => value.
 		 */
-		protected function hidden_fields( $fields ) {
+		public function hidden_fields( $fields ) {
 			foreach ( $fields as $name => $value ) {
 				echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" />';
 			}
@@ -738,60 +534,23 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 * @param array $file_args Extra query args for file links (guest access).
 		 */
 		public function render_thread( $ticket_id, $viewer_id, $file_args = array() ) {
-			$core  = $this->core();
-			$owner = $core->get_ticket_user_id( $ticket_id );
-			$staff = $viewer_id && $core->can_manage_tickets( $viewer_id );
-			$you   = __( 'You', 'support-ticket-system-for-woocommerce' );
-			/* translators: %s: store name. */
-			$store = sprintf( __( '%s Support', 'support-ticket-system-for-woocommerce' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) );
-			$files = class_exists( 'WPFactory_WC_STS_Files' ) ? WPFactory_WC_STS_Files::get_instance() : null;
-
-			echo '<ol class="stsw-thread">';
-			// First message.
-			$started  = (int) get_post_meta( $ticket_id, WPFactory_WC_STS_Inc::META_STARTED_BY, true );
-			$first_by = ( ! $viewer_id || $viewer_id === $owner ) ? $you : $core->get_ticket_contact( $ticket_id )['display_name'];
-			if ( $started ) {
-				$first_by = $staff ? $core->get_user_name( $started ) : $store;
-			}
-			echo '<li class="stsw-msg stsw-msg--' . ( $started ? 'store' : 'customer' ) . '"><p class="stsw-msg__head"><strong>' . esc_html( $first_by ) . '</strong> <time datetime="' . esc_attr( get_post_time( 'c', true, $ticket_id ) ) . '">' . esc_html( $core->format_response_date( get_post_field( 'post_date_gmt', $ticket_id ) ) ) . '</time></p>';
-			echo '<div class="stsw-msg__body">' . $core->format_message( get_post_field( 'post_content', $ticket_id, 'raw' ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in format_message().
-			$details = $this->get_ticket_details( $ticket_id );
-			if ( $details ) {
-				echo '<dl class="stsw-details">';
-				foreach ( $details as $label => $value ) {
-					echo '<dt>' . esc_html( $label ) . '</dt><dd>' . esc_html( $value ) . '</dd>';
-				}
-				echo '</dl>';
-			}
-			$ticket_files = (string) get_post_meta( $ticket_id, WPFactory_WC_STS_Inc::META_FILES, true );
-			if ( '' !== $ticket_files && $files ) {
-				echo '<div class="stsw-files">';
-				foreach ( explode( ',', $ticket_files ) as $url ) {
-					$files->print_ticket_file_link( $url, $file_args );
-				}
-				echo '</div>';
-			}
-			echo '</li>';
-
-			foreach ( $core->get_replies( $ticket_id ) as $res ) {
-				$by_store = (int) $res->agent > 0;
-				if ( $by_store ) {
-					$who = $staff ? $core->get_response_author_label( $res ) : $store;
-				} else {
-					$who = ( ! $viewer_id || $viewer_id === $owner ) ? $you : $core->get_ticket_contact( $ticket_id )['display_name'];
-				}
-				echo '<li class="stsw-msg stsw-msg--' . ( $by_store ? 'store' : 'customer' ) . '"><p class="stsw-msg__head"><strong>' . esc_html( $who ) . '</strong> <time datetime="' . esc_attr( mysql2date( 'c', $res->creationdate . ' +0000' ) ) . '">' . esc_html( $core->format_response_date( $res->creationdate ) ) . '</time></p>';
-				echo '<div class="stsw-msg__body">' . $core->format_message( $res->content ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in format_message().
-				if ( ! empty( $res->attachments ) && $files ) {
-					echo '<div class="stsw-files">';
-					foreach ( explode( ',', (string) $res->attachments ) as $attachment_id ) {
-						$files->print_attachment_link( (int) $attachment_id, $file_args );
-					}
-					echo '</div>';
-				}
-				echo '</li>';
-			}
-			echo '</ol>';
+			$core = $this->core();
+			WPFactory_WC_STS_Templates::render(
+				'ticket-thread',
+				array(
+					'view'      => $this,
+					'core'      => $core,
+					'ticket_id' => (int) $ticket_id,
+					'viewer_id' => (int) $viewer_id,
+					'owner'     => $core->get_ticket_user_id( $ticket_id ),
+					'staff'     => $viewer_id && $core->can_manage_tickets( $viewer_id ),
+					'you'       => __( 'You', 'support-ticket-system-for-woocommerce' ),
+					/* translators: %s: store name. */
+					'store'     => sprintf( __( '%s Support', 'support-ticket-system-for-woocommerce' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ),
+					'files'     => class_exists( 'WPFactory_WC_STS_Files' ) ? WPFactory_WC_STS_Files::get_instance() : null,
+					'file_args' => $file_args,
+				)
+			);
 		}
 
 		/**

@@ -393,24 +393,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 		 * Order number and email form.
 		 */
 		protected function render_lookup_form() {
-			?>
-			<h2 id="stsw-guest-title"><?php esc_html_e( 'Need help with an order?', 'support-ticket-system-for-woocommerce' ); ?></h2>
-			<p><?php esc_html_e( 'No account needed: enter your order number and the email address used for the order.', 'support-ticket-system-for-woocommerce' ); ?></p>
-			<?php $this->render_error(); ?>
-			<form method="post" class="wpfactory-wc-sts-guest-lookup">
-				<p>
-					<label for="stsw-guest-order"><?php esc_html_e( 'Order number', 'support-ticket-system-for-woocommerce' ); ?></label><br />
-					<input type="text" id="stsw-guest-order" name="stsw_order_number" required autocomplete="off" />
-				</p>
-				<p>
-					<label for="stsw-guest-email"><?php esc_html_e( 'Billing email', 'support-ticket-system-for-woocommerce' ); ?></label><br />
-					<input type="email" id="stsw-guest-email" name="stsw_email" required autocomplete="email" />
-				</p>
-				<input type="hidden" name="stsw_guest_action" value="lookup" />
-				<?php wp_nonce_field( self::NONCE, self::NONCE ); ?>
-				<p><button type="submit" class="button"><?php esc_html_e( 'Continue', 'support-ticket-system-for-woocommerce' ); ?></button></p>
-			</form>
-			<?php
+			WPFactory_WC_STS_Templates::render(
+				'guest-lookup',
+				array(
+					'error' => (string) ( $this->lookup['error'] ?? '' ),
+					'nonce' => self::NONCE,
+					'otp'   => array(),
+				)
+			);
 		}
 
 		/**

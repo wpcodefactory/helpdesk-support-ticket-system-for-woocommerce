@@ -495,3 +495,17 @@
 .stsw-track__timeline li.is-done::before {
 	background: currentColor;
 }
+
+/* Ticket list pages (3.0.0). */
+.stsw .stsw-pages {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin: 1rem 0;
+}
+
+.stsw .stsw-pages__current {
+	color: inherit;
+}

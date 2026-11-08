@@ -138,26 +138,14 @@ if ( ! class_exists( 'WPFactory_WC_STS_Tracking' ) ) :
 		 */
 		public function render_order( $order ) {
 			$tracking = $this->get_tracking( $order );
-			echo '<p class="stsw-track__status"><strong>' . esc_html( sprintf( /* translators: %s: order number. */ __( 'Order #%s', 'support-ticket-system-for-woocommerce' ), $order->get_order_number() ) ) . '</strong> <span class="stsw-chip">' . esc_html( wc_get_order_status_name( $order->get_status() ) ) . '</span></p>';
-			if ( $tracking ) {
-				echo '<ul class="stsw-track__list">';
-				foreach ( $tracking as $item ) {
-					$label = trim( $item['provider'] . ' ' . $item['number'] );
-					echo '<li>' . ( '' !== $item['url'] ? '<a href="' . esc_url( $item['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $label ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ) . '</span></a>' : esc_html( $label ) );
-					if ( '' !== $item['date'] ) {
-						/* translators: %s: date. */
-						echo ' <span class="stsw-help">' . esc_html( sprintf( __( 'shipped %s', 'support-ticket-system-for-woocommerce' ), $item['date'] ) ) . '</span>';
-					}
-					echo '</li>';
-				}
-				echo '</ul>';
-				return;
-			}
-			echo '<ol class="stsw-track__timeline">';
-			foreach ( $this->get_timeline( $order ) as $step ) {
-				echo '<li class="' . ( $step['done'] ? 'is-done' : '' ) . '"><span>' . esc_html( $step['label'] ) . '</span>' . ( '' !== $step['date'] ? ' <span class="stsw-help">' . esc_html( $step['date'] ) . '</span>' : '' ) . '<span class="screen-reader-text"> ' . esc_html( $step['done'] ? __( '(done)', 'support-ticket-system-for-woocommerce' ) : __( '(not yet)', 'support-ticket-system-for-woocommerce' ) ) . '</span></li>';
-			}
-			echo '</ol>';
+			WPFactory_WC_STS_Templates::render(
+				'order-tracking',
+				array(
+					'order'    => $order,
+					'tracking' => $tracking,
+					'timeline' => $tracking ? array() : $this->get_timeline( $order ),
+				)
+			);
 		}
 
 		/**
