@@ -146,6 +146,10 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				__( 'Settings', 'support-ticket-system-for-woocommerce' ) .
 			'</a>';
 
+			$custom_links[] = '<a href="' . esc_url( 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce' ) . '" target="_blank" rel="noopener">' .
+				__( 'Go Pro', 'support-ticket-system-for-woocommerce' ) .
+			'</a>';
+
 			return array_merge( $custom_links, $links );
 		}
 
