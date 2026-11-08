@@ -66,6 +66,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 			add_filter( 'wp_get_attachment_url', array( $this, 'protected_attachment_url' ), 10, 2 );
 			add_filter( 'ajax_query_attachments_args', array( $this, 'hide_protected_from_media_modal' ) );
 			add_action( 'pre_get_posts', array( $this, 'hide_protected_from_media_list' ) );
+			add_action( 'admin_init', array( $this, 'maybe_mark_old_ticket_files' ) );
+			add_filter( 'wpfactory_wc_sts_settings_general', array( $this, 'settings' ), 31 );
 		}
 
 		/**
@@ -234,6 +236,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 				}
 				// No thumbnails: they would be extra public copies. The file is only served through the download link.
 				update_post_meta( $id, '_stsw_protected', 1 );
+				update_post_meta( $id, '_stsw_ticket_file', 1 );
 				update_post_meta( $id, '_stsw_original_name', $name );
 				$result[] = 'urls' === $format ? $this->get_protected_download_url( $id ) : (int) $id;
 				++$count;
@@ -387,12 +390,61 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 		 * @return array
 		 */
 		public function hide_protected_from_media_modal( $query ) {
-			$query['meta_query']   = isset( $query['meta_query'] ) ? (array) $query['meta_query'] : array(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-			$query['meta_query'][] = array(
-				'key'     => '_stsw_protected',
-				'compare' => 'NOT EXISTS',
-			);
+			$query['meta_query'] = isset( $query['meta_query'] ) ? (array) $query['meta_query'] : array(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			foreach ( $this->hidden_keys() as $key ) {
+				$query['meta_query'][] = array(
+					'key'     => $key,
+					'compare' => 'NOT EXISTS',
+				);
+			}
 			return $query;
+		}
+
+		/**
+		 * Meta keys of files kept out of the Media Library: protected files always, older ticket files when the setting
+		 * is on (default).
+		 *
+		 * @return string[]
+		 */
+		protected function hidden_keys() {
+			return '1' === (string) get_option( 'wpfactory_wc_sts_hide_media', '1' ) ? array( '_stsw_protected', '_stsw_ticket_file' ) : array( '_stsw_protected' );
+		}
+
+		/**
+		 * Setting row (General > Data).
+		 *
+		 * @param array $fields Fields.
+		 *
+		 * @return array
+		 */
+		public function settings( $fields ) {
+			$fields['@wpfactory_wc_sts_hide_media'] = array(
+				'type'        => 'checkbox',
+				'card'        => 'data',
+				'default'     => '1',
+				'label'       => __( 'Hide ticket files from the Media Library', 'support-ticket-system-for-woocommerce' ),
+				'description' => __( 'Files customers attach never show in Media. This also hides files from tickets created before version 2.3, which were stored as normal media.', 'support-ticket-system-for-woocommerce' ),
+			);
+			return $fields;
+		}
+
+		/**
+		 * Marks files attached to tickets before 2.3 once (they sit in the normal uploads folder).
+		 */
+		public function maybe_mark_old_ticket_files() {
+			global $wpdb;
+			if ( 'done' === get_option( 'wpfactory_wc_sts_ticket_files_marked' ) ) {
+				return;
+			}
+			$ids = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				"SELECT a.ID FROM {$wpdb->posts} a INNER JOIN {$wpdb->posts} t ON t.ID = a.post_parent AND t.post_type = 'stsw_tickets' LEFT JOIN {$wpdb->postmeta} m ON m.post_id = a.ID AND m.meta_key = '_stsw_ticket_file' WHERE a.post_type = 'attachment' AND m.meta_id IS NULL LIMIT 500"
+			);
+			foreach ( $ids as $id ) {
+				update_post_meta( (int) $id, '_stsw_ticket_file', 1 );
+			}
+			if ( count( $ids ) < 500 ) {
+				update_option( 'wpfactory_wc_sts_ticket_files_marked', 'done', false );
+			}
 		}
 
 		/**
@@ -408,11 +460,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 			if ( ! $screen || 'upload' !== $screen->id ) {
 				return;
 			}
-			$meta_query   = (array) $query->get( 'meta_query' );
-			$meta_query[] = array(
-				'key'     => '_stsw_protected',
-				'compare' => 'NOT EXISTS',
-			);
+			$meta_query = (array) $query->get( 'meta_query' );
+			foreach ( $this->hidden_keys() as $key ) {
+				$meta_query[] = array(
+					'key'     => $key,
+					'compare' => 'NOT EXISTS',
+				);
+			}
 			$query->set( 'meta_query', $meta_query );
 		}
 	}
