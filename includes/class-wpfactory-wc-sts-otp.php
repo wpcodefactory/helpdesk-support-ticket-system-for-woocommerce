@@ -169,7 +169,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 				return '';
 			}
 			list( , $email, $expires, $key ) = $m;
-			$email                          = strtolower( sanitize_email( $email ) );
+			$email                           = strtolower( sanitize_email( $email ) );
 			if ( ! is_email( $email ) || (int) $expires < time() || ! hash_equals( $this->sign( 'session|' . $email . '|' . (int) $expires ), $key ) ) {
 				return '';
 			}
