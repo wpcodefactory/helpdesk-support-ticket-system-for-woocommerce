@@ -48,7 +48,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Tracking' ) ) :
 		 */
 		public function __construct() {
 			self::$instance = $this;
-			add_action( 'wpfactory_wc_sts_ask_before_message', array( $this, 'render_step' ) );
+			// Right under the reason, so it shows as soon as "Where is my order?" is chosen.
+			add_action( 'wpfactory_wc_sts_ask_after_reason', array( $this, 'render_step' ) );
 			add_action( 'wpfactory_wc_sts_inbox_side', array( $this, 'render_side' ), 4 );
 		}
 
@@ -152,10 +153,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Tracking' ) ) :
 		 * One panel per order at the top of the message step; the script shows the chosen order's panel when the
 		 * reason is "Where is my order?".
 		 *
-		 * @param WC_Order[] $orders Orders offered in the form.
+		 * @param WC_Order[]|WC_Order $orders Orders offered in the form (one order arrives as the order).
 		 */
 		public function render_step( $orders ) {
-			foreach ( (array) $orders as $order ) {
+			// do_action() passes a list holding one order as the order itself (guests always have one order).
+			$orders = $orders instanceof WC_Order ? array( $orders ) : (array) $orders;
+			foreach ( $orders as $order ) {
 				if ( ! $order instanceof WC_Order ) {
 					continue;
 				}

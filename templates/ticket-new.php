@@ -73,9 +73,11 @@ $step = 0;
 		</div>
 		<?php
 		/**
-		 * After the reason in the ticket form (Pro: return or exchange choice).
+		 * After the reason in the ticket form ("Where is my order?" panel; Pro: return or exchange choice).
+		 *
+		 * @param WC_Order[] $orders Orders offered.
 		 */
-		do_action( 'wpfactory_wc_sts_ask_after_reason' );
+		do_action( 'wpfactory_wc_sts_ask_after_reason', $orders );
 		$view->render_term_select( 'stsw_tickets_subject', __( 'Topic', 'support-ticket-system-for-woocommerce' ), 'term_id' );
 		if ( '1' === (string) get_option( $core->plugin . 'enablePriority' ) ) {
 			$view->render_term_select( 'stsw_tickets_priority', __( 'How urgent is it?', 'support-ticket-system-for-woocommerce' ), 'name' );
