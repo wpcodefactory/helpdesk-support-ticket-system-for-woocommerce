@@ -163,7 +163,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_filter( 'woocommerce_account_menu_items', array( $this, 'tickets_link' ) );
 			add_action( 'init', array( $this, 'stswpro_add_endpoint' ) );
 			add_filter( 'woocommerce_my_account_my_orders_actions', array( $this, 'stswpro_add_my_account_order_actions' ), 10, 2 );
-			add_filter( 'woocommerce_my_account_my_orders_columns', array( $this, 'add_my_account_orders_column' ) );
+			add_filter( 'woocommerce_account_orders_columns', array( $this, 'add_my_account_orders_column' ) );
 			add_action( 'woocommerce_my_account_my_orders_column_order-tickets', array( $this, 'render_my_account_orders_column' ) );
 			add_action( 'woocommerce_account_tickets_endpoint', array( $this, 'stswpro_my_account_endpoint_content' ) );
 			add_action( 'woocommerce_view_order', array( $this, 'stswpro_view_order' ), 20 );
