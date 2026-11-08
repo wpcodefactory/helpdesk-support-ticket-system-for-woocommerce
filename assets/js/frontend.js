@@ -225,16 +225,119 @@
 		sync();
 	}
 
+	/*
+	 * Order or general question: an order asks the reason, a general question the topic. Extra fields with conditions
+	 * show only when the chosen order, items, topic or reason match. Hidden fields are switched off (not required,
+	 * not sent).
+	 */
+	function initWhen(form) {
+		var reason = form.querySelector('[name="stsw_reason"]');
+		var topic = form.querySelector('[name="stsw_tickets_subject"]');
+		function order() {
+			var checked = form.querySelector('input[name="ticketorder"]:checked');
+			var fixed = form.querySelector('input[type="hidden"][name="ticketorder"]');
+			return checked ? checked.value : fixed ? fixed.value : "";
+		}
+		function toggle(box, on) {
+			box.hidden = !on;
+			each(box.querySelectorAll("input, select, textarea"), function (field) {
+				field.disabled = !on;
+			});
+		}
+		function sync() {
+			var isOrder = "" !== order() && "0" !== order();
+			each(form.querySelectorAll("[data-stsw-when]"), function (box) {
+				toggle(box, (box.getAttribute("data-stsw-when") === "order") === isOrder);
+			});
+			// What the chosen items (or, with none ticked, all items of the order) are.
+			var group = form.querySelector('.stsw-items[data-order="' + order() + '"]');
+			var boxes = group ? group.querySelectorAll('input[name="stsw_items[]"]') : [];
+			var ticked = group ? group.querySelectorAll('input[name="stsw_items[]"]:checked') : [];
+			var match = [];
+			each(ticked.length ? ticked : boxes, function (input) {
+				match = match.concat((input.getAttribute("data-stsw-match") || "").split(" "));
+			});
+			each(form.querySelectorAll("[data-stsw-if-items], [data-stsw-if-subject], [data-stsw-if-reason]"), function (box) {
+				var on = true;
+				var items = box.getAttribute("data-stsw-if-items");
+				var subjects = box.getAttribute("data-stsw-if-subject");
+				var reasons = box.getAttribute("data-stsw-if-reason");
+				if (items) {
+					on = on && items.split(" ").some(function (token) {
+						return match.indexOf(token) > -1;
+					});
+				}
+				if (subjects) {
+					on = on && !!topic && !topic.disabled && subjects.split(" ").indexOf(topic.value) > -1;
+				}
+				if (reasons) {
+					on = on && !!reason && !reason.disabled && reasons.split(" ").indexOf(reason.value) > -1;
+				}
+				toggle(box, on);
+			});
+		}
+		form.addEventListener("change", sync);
+		sync();
+	}
+
+	/*
+	 * Small screens: themes such as Storefront fix a bar to the bottom of the screen. While the form is on screen,
+	 * its buttons sit just above that bar, on the page's own background colour.
+	 */
+	function initBottomBar(form) {
+		function background(el) {
+			for (; el && el !== document.documentElement; el = el.parentElement) {
+				var c = window.getComputedStyle(el).backgroundColor;
+				if (c && "transparent" !== c && !/rgba\(.*,\s*0\)$/.test(c)) {
+					return c;
+				}
+			}
+			return window.getComputedStyle(document.body).backgroundColor || "#fff";
+		}
+		function measure() {
+			var bar = 0;
+			each(document.querySelectorAll("body *"), function (el) {
+				if (el.offsetParent === null && "fixed" !== window.getComputedStyle(el).position) {
+					return;
+				}
+				var style = window.getComputedStyle(el);
+				if ("fixed" !== style.position || "none" === style.display || "hidden" === style.visibility || form.contains(el) || el.contains(form)) {
+					return;
+				}
+				var r = el.getBoundingClientRect();
+				if (r.height > 0 && r.height < window.innerHeight / 3 && r.bottom >= window.innerHeight - 2 && r.width > window.innerWidth / 2) {
+					bar = Math.max(bar, window.innerHeight - r.top);
+				}
+			});
+			form.style.setProperty("--stsw-bar", bar + "px");
+			form.style.setProperty("--stsw-bg", background(form));
+			form.classList.toggle("stsw-ask--barred", bar > 0);
+		}
+		measure();
+		window.addEventListener("resize", measure);
+		if (window.IntersectionObserver) {
+			new window.IntersectionObserver(function (entries) {
+				form.classList.toggle("stsw-ask--onscreen", entries[0].isIntersecting);
+			}).observe(form);
+		} else {
+			form.classList.add("stsw-ask--onscreen");
+		}
+	}
+
 	function init() {
+		each(document.querySelectorAll(".stsw-ask"), initBottomBar);
+		each(document.querySelectorAll(".stsw-ask"), initWhen);
 		each(document.querySelectorAll(".stsw-ask"), initTrack);
 		each(document.querySelectorAll(".stsw-ask"), initReasonFields);
 		each(document.querySelectorAll(".stsw-drop__zone"), initDrop);
 		each(document.querySelectorAll("[data-stsw-suggest]"), initSuggest);
 		each(document.querySelectorAll(".stsw-ask"), initAsk);
 		each(document.querySelectorAll(".stsw form, .wpfactory-wc-sts-guest-lookup"), preventDoubleSubmit);
+		// After sending: the confirmation is scrolled into view and gets the focus (also on small screens).
 		var sent = document.querySelector(".stsw-sent");
 		if (sent) {
-			sent.focus();
+			sent.scrollIntoView({ block: "center" });
+			sent.focus({ preventScroll: true });
 		}
 	}
 

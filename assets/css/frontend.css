@@ -92,6 +92,96 @@
 	margin-top: var(--stsw-gap);
 }
 
+/* Ticket form: fields inherit the theme's fonts and colours, with even spacing. */
+.stsw-ask fieldset.stsw-step,
+.stsw-ask .stsw-items {
+	min-width: 0;
+	margin: 0 0 calc(var(--stsw-gap) * 1.25);
+	padding: 0;
+	border: 0;
+}
+
+.stsw-ask legend,
+.stsw-step__title {
+	margin: 0 0 0.75rem;
+	padding: 0;
+	font-weight: 600;
+}
+
+.stsw-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin: 0 0 var(--stsw-gap);
+}
+
+.stsw-field > label,
+.stsw-field > legend {
+	font-weight: 600;
+}
+
+.stsw input[type="text"],
+.stsw input[type="email"],
+.stsw input[type="number"],
+.stsw input[type="date"],
+.stsw input[type="search"],
+.stsw select,
+.stsw textarea {
+	width: 100%;
+	max-width: 100%;
+	min-height: 44px;
+	padding: 0.55em 0.75em;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.stsw select option {
+	color: initial;
+}
+
+.stsw textarea {
+	min-height: 8em;
+	resize: vertical;
+}
+
+.stsw-help {
+	opacity: 1;
+	font-size: 0.875em;
+}
+
+/* Choices: the whole row is the click target. */
+.stsw-choices {
+	display: grid;
+	gap: 0.5rem;
+}
+
+.stsw-choice {
+	display: flex;
+	gap: 0.65rem;
+	align-items: center;
+	width: 100%;
+	min-height: 44px;
+	padding: 0.6rem 0.85rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	cursor: pointer;
+}
+
+.stsw-choice:hover,
+.stsw-choice:has(input:checked) {
+	background: var(--stsw-soft);
+}
+
+.stsw-choice input {
+	flex: none;
+	width: 1.15em;
+	height: 1.15em;
+	margin: 0;
+}
+
 /* Ticket list. */
 .stsw-plan {
 	display: flex;
@@ -406,6 +496,34 @@
 /* Guest box on the login screen. */
 .wpfactory-wc-sts-guest {
 	margin: 0 0 2rem;
+}
+
+@media (max-width: 768px) {
+	/* Themes with a fixed bar at the bottom of small screens (Storefront and others): the buttons stay above it. */
+	.stsw-ask--barred {
+		padding-bottom: calc(var(--stsw-bar, 0px) + 5rem);
+	}
+
+	.stsw-ask--barred.stsw-ask--onscreen .stsw-actions {
+		position: fixed;
+		right: 0;
+		bottom: var(--stsw-bar, 0px);
+		left: 0;
+		z-index: 9990;
+		margin: 0;
+		padding: 0.6rem 1rem;
+		border-top: 1px solid var(--stsw-border);
+		background: var(--stsw-bg, #fff);
+	}
+
+	.stsw-ask--barred.stsw-ask--onscreen .stsw-actions .stsw-button {
+		width: auto;
+		flex: 1;
+	}
+
+	.stsw-sent {
+		scroll-margin: 96px 0;
+	}
 }
 
 @media (max-width: 600px) {
