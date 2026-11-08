@@ -218,6 +218,133 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		}
 
 		/**
+		 * One look for every ticket email: greeting, request number and title, a short line, the message, a button and
+		 * a footer. Values in `intro`, `message` and `after` must already be safe HTML.
+		 *
+		 * @param int   $ticket_id Ticket ID (0: no ticket heading).
+		 * @param array $args {
+		 *     @type string|null $greet   First name for "Hi name," ('' gives "Hi there,"; null: no greeting).
+		 *     @type string      $intro   Line under the title.
+		 *     @type string      $message Message, shown in a box.
+		 *     @type string      $url     Button link.
+		 *     @type string      $button  Button text.
+		 *     @type string      $after   HTML after the button.
+		 *     @type bool        $staff   An email for the team (Ticket #, no greeting).
+		 * }
+		 *
+		 * @return string
+		 */
+		public function layout( $ticket_id, $args ) {
+			$args  = wp_parse_args(
+				$args,
+				array(
+					'greet'   => '',
+					'intro'   => '',
+					'message' => '',
+					'url'     => '',
+					'button'  => '',
+					'after'   => '',
+					'staff'   => false,
+				)
+			);
+			$muted = 'color:#50575e;font-size:13px;';
+			$html  = '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;max-width:600px;margin:0 auto;color:#1d2327;font-size:15px;line-height:1.6">';
+			if ( null !== $args['greet'] && ! $args['staff'] ) {
+				/* translators: %s: first name, or "there". */
+				$html .= '<p style="margin:0 0 16px">' . esc_html( sprintf( __( 'Hi %s,', 'support-ticket-system-for-woocommerce' ), '' !== trim( (string) $args['greet'] ) ? trim( (string) $args['greet'] ) : __( 'there', 'support-ticket-system-for-woocommerce' ) ) ) . '</p>';
+			}
+			if ( $ticket_id ) {
+				$number = $this->core->get_ticket_number( $ticket_id );
+				$html  .= '<p style="margin:0;' . $muted . '">' . esc_html(
+					$args['staff']
+						/* translators: %s: ticket number. */
+						? sprintf( __( 'Ticket #%s', 'support-ticket-system-for-woocommerce' ), $number )
+						/* translators: %s: ticket number. */
+						: sprintf( __( 'Request #%s', 'support-ticket-system-for-woocommerce' ), $number )
+				) . '</p>';
+				$html .= '<p style="margin:0 0 16px;font-size:18px;font-weight:600;line-height:1.4">' . esc_html( wp_specialchars_decode( get_the_title( $ticket_id ), ENT_QUOTES ) ) . '</p>';
+			}
+			if ( '' !== $args['intro'] ) {
+				$html .= '<p style="margin:0 0 16px">' . $args['intro'] . '</p>';
+			}
+			if ( '' !== trim( wp_strip_all_tags( (string) $args['message'] ) ) ) {
+				$html .= '<div style="margin:0 0 20px;padding:12px 16px;background:#f6f7f7;border-radius:6px">' . $args['message'] . '</div>';
+			}
+			if ( '' !== $args['url'] && '' !== $args['button'] ) {
+				$html .= '<p style="margin:0 0 20px"><a href="' . esc_url( $args['url'] ) . '" style="display:inline-block;padding:10px 18px;background:#2271b1;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600">' . esc_html( $args['button'] ) . '</a></p>';
+			}
+			$html .= $args['after'];
+			$html .= '<p style="margin:24px 0 0;padding-top:12px;border-top:1px solid #dcdcde;' . $muted . '">' . esc_html( wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ) . '</p>';
+			return $html . '</div>';
+		}
+
+		/**
+		 * Whether a message already starts with a greeting ("Hi Omar,"), so the email does not add a second one.
+		 *
+		 * @param string $text Plain text.
+		 *
+		 * @return bool
+		 */
+		protected function has_greeting( $text ) {
+			return (bool) preg_match( '/^\s*(hi|hello|hey|dear|good (morning|afternoon|evening))\b/i', wp_strip_all_tags( (string) $text ) );
+		}
+
+		/**
+		 * Whether customers can answer ticket emails by replying (Pro email piping on).
+		 *
+		 * @param int $ticket_id Ticket ID.
+		 *
+		 * @return bool
+		 */
+		protected function reply_by_email( $ticket_id ) {
+			/**
+			 * Whether a reply to a ticket email reaches the ticket (Pro: email piping).
+			 *
+			 * @param bool $on        Default false.
+			 * @param int  $ticket_id Ticket ID.
+			 */
+			return (bool) apply_filters( 'wpfactory_wc_sts_reply_by_email', false, (int) $ticket_id );
+		}
+
+		/**
+		 * Subject and button for the next store reply email (Pro: store credit and payment links have their own).
+		 *
+		 * @var array
+		 */
+		protected $next_reply = array();
+
+		/**
+		 * Gives the next store reply email its own subject, line and button.
+		 *
+		 * @param array $args { subject, intro, url, button }.
+		 */
+		public function set_next_reply( $args ) {
+			$this->next_reply = (array) $args;
+		}
+
+		/**
+		 * Plain words for a status, for customers.
+		 *
+		 * @param int $ticket_id Ticket ID.
+		 *
+		 * @return string HTML.
+		 */
+		protected function status_words( $ticket_id ) {
+			$slug = $this->core->get_ticket_status_slug( $ticket_id );
+			$term = $this->core->get_ticket_term( $ticket_id, 'stsw_tickets_status' );
+			$map  = array(
+				'open'        => __( 'Your request is open again and waiting for our team.', 'support-ticket-system-for-woocommerce' ),
+				'in-progress' => __( 'We are working on your request.', 'support-ticket-system-for-woocommerce' ),
+				'closed'      => __( 'Your request is closed.', 'support-ticket-system-for-woocommerce' ),
+			);
+			if ( isset( $map[ $slug ] ) ) {
+				return esc_html( $map[ $slug ] );
+			}
+			/* translators: %s: status name. */
+			return esc_html( sprintf( __( 'Your request is now: %s.', 'support-ticket-system-for-woocommerce' ), $term ? $term->name : $slug ) );
+		}
+
+		/**
 		 * Emails for a new ticket: store, assignee, customer.
 		 *
 		 * @param int $ticket_id Ticket ID.
@@ -239,19 +366,44 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				$inside = true;
 			}
 
-			/* translators: 1: store name, 2: ticket number, 3: ticket title. */
-			$staff_subject = sprintf( __( 'New ticket on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );
-			$staff_body    = '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{content}'] . $fields . '<br/><br/>' . $this->admin_link( $ticket_id );
+			/* translators: 1: ticket number, 2: ticket title. */
+			$staff_subject = sprintf( __( 'New ticket #%1$s: %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
+			$staff_body    = $this->layout(
+				$ticket_id,
+				array(
+					'staff'   => true,
+					'intro'   => $this->staff_facts( $ticket_id, $contact ),
+					'message' => $values['html']['{content}'] . $fields,
+					'url'     => admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&ticket=' . (int) $ticket_id ),
+					'button'  => __( 'Open the ticket', 'support-ticket-system-for-woocommerce' ),
+				)
+			);
 			$this->send_staff( $ticket_id, $values, $staff_subject, $staff_body, $contact['email'] );
 
 			if ( ! $inside && $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
 				$subject = '' !== $this->text( 'mailIt_subjectToCust' )
 					? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
-					/* translators: 1: store name, 2: ticket number, 3: ticket title. */
-					: sprintf( __( 'We received your request on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );
+					/* translators: 1: ticket number, 2: ticket title. */
+					: sprintf( __( 'We received your request #%1$s: %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
 				$body = '' !== $this->text( 'mailIt_contentToCust' )
-					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
-					: '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
+					? $this->layout(
+						0,
+						array(
+							'greet' => null,
+							'after' => $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values ),
+						)
+					)
+					: $this->layout(
+						$ticket_id,
+						array(
+							'greet'   => $contact['first_name'],
+							/* translators: %s: store name. */
+							'intro'   => esc_html( sprintf( __( 'Thank you for contacting %s. We received your request and will reply by email.', 'support-ticket-system-for-woocommerce' ), $site ) ),
+							'message' => $values['html']['{content}'],
+							'url'     => $values['plain']['{ticketLink}'],
+							'button'  => __( 'View your request', 'support-ticket-system-for-woocommerce' ),
+						)
+					);
 				$body = $this->with_guest_link( $ticket_id, $body, $values );
 				$this->notify_users( $contact['email'], $subject, $body, '', $ticket_id );
 			}
@@ -272,8 +424,43 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$site    = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 			/* translators: 1: store name, 2: ticket number, 3: ticket title. */
 			$subject = sprintf( __( 'A message from %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $values['plain']['{title}'] );
-			$body    = $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
+			$body    = $this->layout(
+				$ticket_id,
+				array(
+					'greet'   => $this->has_greeting( $content ) ? null : $contact['first_name'],
+					/* translators: %s: store name. */
+					'intro'   => esc_html( sprintf( __( '%s sent you a message about your request.', 'support-ticket-system-for-woocommerce' ), $site ) ),
+					'message' => $values['html']['{content}'],
+					'url'     => $values['plain']['{ticketLink}'],
+					'button'  => __( 'View your request', 'support-ticket-system-for-woocommerce' ),
+				)
+			);
 			$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
+		}
+
+		/**
+		 * Who asked and about what, for the team: name, email, order, subject, attachments.
+		 *
+		 * @param int   $ticket_id Ticket ID.
+		 * @param array $contact   Ticket contact.
+		 *
+		 * @return string HTML.
+		 */
+		protected function staff_facts( $ticket_id, $contact ) {
+			$lines    = array();
+			$lines[]  = '<strong>' . esc_html__( 'From:', 'support-ticket-system-for-woocommerce' ) . '</strong> ' . esc_html( trim( $contact['display_name'] ) ) . ( is_email( $contact['email'] ) ? ' &lt;<a href="mailto:' . esc_attr( $contact['email'] ) . '">' . esc_html( $contact['email'] ) . '</a>&gt;' : '' );
+			$order_id = $this->core->get_ticket_order_id( $ticket_id );
+			$order    = $order_id ? wc_get_order( $order_id ) : false;
+			if ( $order ) {
+				$lines[] = '<strong>' . esc_html__( 'Order:', 'support-ticket-system-for-woocommerce' ) . '</strong> <a href="' . esc_url( $order->get_edit_order_url() ) . '">#' . esc_html( $order->get_order_number() ) . '</a>';
+			}
+			$subject = $this->core->get_ticket_term( $ticket_id, 'stsw_tickets_subject' );
+			if ( $subject ) {
+				$lines[] = '<strong>' . esc_html__( 'Subject:', 'support-ticket-system-for-woocommerce' ) . '</strong> ' . esc_html( $subject->name );
+			}
+			$files   = array_filter( explode( ',', (string) get_post_meta( $ticket_id, WPFactory_WC_STS_Inc::META_FILES, true ) ) );
+			$lines[] = '<strong>' . esc_html__( 'Attachments:', 'support-ticket-system-for-woocommerce' ) . '</strong> ' . (int) count( $files );
+			return implode( '<br/>', $lines );
 		}
 
 		/**
@@ -293,19 +480,43 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			if ( $by_staff ) {
 				$values = $this->placeholders( $ticket_id, $reply_id, (string) get_post_field( 'post_content', $ticket_id, 'raw' ), $reply );
 
+				$next             = $this->next_reply;
+				$this->next_reply = array();
 				if ( $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
-					$subject = '' !== $this->text( 'mailIt_subjectToCust' )
+					$subject = '' !== $this->text( 'mailIt_subjectToCust' ) && empty( $next['subject'] )
 						? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
 						/* translators: 1: ticket number, 2: ticket title. */
-						: sprintf( __( 'New reply on your request #%1$s %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
-					$template = $this->text( 'mailIt_contentToCust' );
+						: ( $next['subject'] ?? sprintf( __( 'New reply on your request #%1$s: %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title ) );
+					$template = $next ? '' : $this->text( 'mailIt_contentToCust' );
 					if ( '' === $template ) {
-						$body = '<strong>' . esc_html( $title ) . '</strong><br/>' . $values['html']['{responseContent}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
+						$body = $this->layout(
+							$ticket_id,
+							array(
+								'greet'   => $this->has_greeting( $reply ) ? null : $contact['first_name'],
+								'intro'   => esc_html( $next['intro'] ?? __( 'We replied to your request:', 'support-ticket-system-for-woocommerce' ) ),
+								'message' => $values['html']['{responseContent}'],
+								'url'     => $next['url'] ?? $values['plain']['{ticketLink}'],
+								'button'  => $next['button'] ?? __( 'View your request', 'support-ticket-system-for-woocommerce' ),
+								'after'   => empty( $next['url'] ) ? '' : '<p style="margin:0 0 20px"><a href="' . esc_url( $values['plain']['{ticketLink}'] ) . '">' . esc_html__( 'View your request', 'support-ticket-system-for-woocommerce' ) . '</a></p>',
+							)
+						);
 					} elseif ( false !== strpos( $template, '{responseContent}' ) ) {
-						$body = $this->fill_body( $template, $values );
+						$body = $this->layout(
+							0,
+							array(
+								'greet' => null,
+								'after' => $this->fill_body( $template, $values ),
+							)
+						);
 					} else {
 						// Templates without {responseContent} get the reply after the merchant's text (as before 2.3.0).
-						$body = $this->fill_body( $template, $values ) . '<br/>' . $values['html']['{responseContent}'] . '<br/>' . $values['html']['{ticketLink}'];
+						$body = $this->layout(
+							0,
+							array(
+								'greet' => null,
+								'after' => $this->fill_body( $template, $values ) . '<br/>' . $values['html']['{responseContent}'] . '<br/>' . $values['html']['{ticketLink}'],
+							)
+						);
 					}
 					$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
 				}
@@ -315,7 +526,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				if ( $this->is_on( 'mailToAssignee' ) && $assignee && get_current_user_id() !== $assignee ) {
 					/* translators: 1: store name, 2: ticket number, 3: ticket title. */
 					$subject = sprintf( __( 'Ticket updated on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );
-					$body    = $values['html']['{responseContent}'] . '<br/><br/>' . $this->admin_link( $ticket_id );
+					$body    = $this->layout(
+						$ticket_id,
+						array(
+							'staff'   => true,
+							/* translators: %s: staff name. */
+							'intro'   => esc_html( sprintf( __( '%s replied to the customer:', 'support-ticket-system-for-woocommerce' ), $this->core->get_user_name( get_current_user_id() ) ) ),
+							'message' => $values['html']['{responseContent}'],
+							'url'     => admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&ticket=' . (int) $ticket_id ),
+							'button'  => __( 'Open the ticket', 'support-ticket-system-for-woocommerce' ),
+						)
+					);
 					$this->send_assignee( $ticket_id, $values, $subject, $body );
 				}
 				return;
@@ -324,18 +545,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			// Customer reply.
 			$values = $this->placeholders( $ticket_id, $reply_id, $reply, $reply );
 			/* translators: 1: ticket number, 2: ticket title. */
-			$staff_subject = sprintf( __( 'New reply on ticket #%1$s %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
-			$staff_body    = $values['html']['{content}'] . '<br/><br/>' . $this->admin_link( $ticket_id );
+			$staff_subject = sprintf( __( 'New reply on ticket #%1$s: %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
+			$staff_body    = $this->layout(
+				$ticket_id,
+				array(
+					'staff'   => true,
+					'intro'   => $this->staff_facts( $ticket_id, $contact ),
+					'message' => $values['html']['{content}'],
+					'url'     => admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&ticket=' . (int) $ticket_id ),
+					'button'  => __( 'Open the ticket', 'support-ticket-system-for-woocommerce' ),
+				)
+			);
 			$this->send_staff( $ticket_id, $values, $staff_subject, $staff_body, $contact['email'] );
 
-			if ( $this->is_on( 'mailToCustomer' ) && is_email( $contact['email'] ) ) {
-				$subject = '' !== $this->text( 'mailIt_subjectToCust' )
-					? $this->fill_subject( $this->text( 'mailIt_subjectToCust' ), $values )
-					/* translators: 1: store name, 2: ticket number. */
-					: sprintf( __( '%1$s received your reply on ticket #%2$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ) );
-				$body = '' !== $this->text( 'mailIt_contentToCust' )
-					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
-					: $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
+			// "We received your reply": an option, off unless the store turns it on.
+			if ( $this->is_on( 'mailToCustomer' ) && '1' === (string) get_option( 'wpfactory_wc_sts_mail_reply_received' ) && is_email( $contact['email'] ) ) {
+				/* translators: 1: ticket number, 2: ticket title. */
+				$subject = sprintf( __( 'We received your reply on request #%1$s: %2$s', 'support-ticket-system-for-woocommerce' ), $this->core->get_ticket_number( $ticket_id ), $title );
+				$body    = $this->layout(
+					$ticket_id,
+					array(
+						'greet'   => $contact['first_name'],
+						'intro'   => esc_html__( 'We received your reply and added it to your request:', 'support-ticket-system-for-woocommerce' ),
+						'message' => $values['html']['{content}'],
+						'url'     => $values['plain']['{ticketLink}'],
+						'button'  => __( 'View your request', 'support-ticket-system-for-woocommerce' ),
+					)
+				);
 				$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
 			}
 		}
@@ -410,17 +646,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 						/* translators: 1: ticket number, 2: ticket title. */
 						? sprintf( __( 'Your request #%1$s is closed: %2$s', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_number}'], $values['plain']['{title}'] )
 						/* translators: 1: ticket number, 2: new status. */
-						: sprintf( __( 'Your request #%1$s is now: %2$s', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_number}'], $values['plain']['{ticket_status}'] );
+						: sprintf( __( 'Update on your request #%1$s: %2$s', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_number}'], $values['plain']['{ticket_status}'] );
 				} else {
 					$subject = $this->fill_subject( $subject, $values );
 				}
 				if ( '' === $body ) {
-					$body = $closed
-						? '<p>' . esc_html__( 'We closed your request. If you still need help, reply to it and it opens again.', 'support-ticket-system-for-woocommerce' ) . '</p><p>' . $values['html']['{ticketLink}'] . '</p>'
-						/* translators: %s: new status. */
-						: '<p>' . esc_html( sprintf( __( 'The status of your request changed to: %s.', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_status}'] ) ) . '</p><p>' . $values['html']['{ticketLink}'] . '</p>';
+					$pipe = $this->reply_by_email( (int) $ticket_id );
+					$body = $this->layout(
+						(int) $ticket_id,
+						array(
+							'greet'  => $contact['first_name'],
+							'intro'  => $closed
+								? esc_html__( 'We closed your request.', 'support-ticket-system-for-woocommerce' ) . ' ' . ( $pipe
+									? esc_html__( 'If you still need help, reply to this email to reopen it.', 'support-ticket-system-for-woocommerce' )
+									: esc_html__( 'If you still need help, use this link to reopen it.', 'support-ticket-system-for-woocommerce' ) )
+								: $this->status_words( (int) $ticket_id ),
+							'url'    => $values['plain']['{ticketLink}'],
+							'button' => $closed && ! $pipe ? __( 'Reopen your request', 'support-ticket-system-for-woocommerce' ) : __( 'View your request', 'support-ticket-system-for-woocommerce' ),
+						)
+					);
 				} else {
-					$body = $this->fill_body( $body, $values );
+					$body = $this->layout(
+						0,
+						array(
+							'greet' => null,
+							'after' => $this->fill_body( $body, $values ),
+						)
+					);
 				}
 				$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', (int) $ticket_id );
 			}
@@ -584,7 +836,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		 * @return array List of { ok: bool, label: string, fix: string }.
 		 */
 		public function get_email_health() {
-			$store  = $this->get_store_email();
+			$sender = $this->get_sender();
+			$store  = $sender['email'];
 			$domain = strtolower( (string) substr( strrchr( $store, '@' ), 1 ) );
 			$site   = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
 			$site   = preg_replace( '/^www\./', '', $site );
@@ -600,8 +853,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				),
 				array(
 					'ok'    => (bool) is_email( $store ),
-					/* translators: %s: email address. */
-					'label' => sprintf( __( 'Sender address: %s', 'support-ticket-system-for-woocommerce' ), $store ),
+					'label' => '' !== $sender['by']
+						/* translators: 1: email address, 2: plugin or filter name. */
+						? sprintf( __( 'Sender address: %1$s (set by %2$s)', 'support-ticket-system-for-woocommerce' ), $store, $sender['by'] )
+						/* translators: %s: email address. */
+						: sprintf( __( 'Sender address: %s', 'support-ticket-system-for-woocommerce' ), $store ),
 					'fix'   => __( 'Enter a valid store email address.', 'support-ticket-system-for-woocommerce' ),
 				),
 				array(
@@ -676,17 +932,28 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			}
 			check_admin_referer( 'wpfactory_wc_sts_test_email' );
 			$site = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+			$to   = sanitize_email( wp_unslash( $_POST['stsw_test_to'] ?? '' ) );
+			$to   = is_email( $to ) ? $to : $this->get_store_email();
 			$sent = $this->notify_users(
-				$this->get_store_email(),
+				$to,
 				/* translators: %s: store name. */
 				sprintf( __( 'Test email from %s support tickets', 'support-ticket-system-for-woocommerce' ), $site ),
-				esc_html__( 'This is a test. If you received it, ticket notifications from your store can reach this address.', 'support-ticket-system-for-woocommerce' )
+				$this->layout(
+					0,
+					array(
+						'greet' => null,
+						'intro' => esc_html__( 'This is a test. If you received it, ticket emails from your store can reach this address.', 'support-ticket-system-for-woocommerce' ),
+					)
+				)
 			);
+			$error = (array) get_option( 'wpfactory_wc_sts_mail_error', array() );
 			update_option(
 				'wpfactory_wc_sts_email_test',
 				array(
-					'time' => time(),
-					'ok'   => $sent,
+					'time'  => time(),
+					'ok'    => $sent,
+					'to'    => $to,
+					'error' => $sent ? '' : (string) ( $error['message'] ?? '' ),
 				),
 				false
 			);
@@ -698,36 +965,85 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 						'wpfactory_wc_sts_test_email' => $sent ? 'sent' : 'failed',
 					),
 					admin_url( 'admin.php' )
-				)
+				) . '#notifications'
 			);
 			exit;
 		}
 
 		/**
-		 * "Send test email" button and the result of the last test.
+		 * "Send test email": a recipient (the admin email by default), the result of the last test, on the Emails tab.
+		 * The settings screen is one big form, so the test is sent by a small form placed after it (see `form`).
 		 */
 		public function render_test_email_button() {
 			$result = isset( $_GET['wpfactory_wc_sts_test_email'] ) ? sanitize_key( wp_unslash( $_GET['wpfactory_wc_sts_test_email'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+			$test   = (array) get_option( 'wpfactory_wc_sts_email_test', array() );
+			$to     = ! empty( $test['to'] ) ? $test['to'] : sanitize_email( get_bloginfo( 'admin_email' ) );
 			if ( 'sent' === $result ) {
-				echo '<div class="notice notice-success inline" role="status"><p>' . esc_html(
+				echo '<div class="notice notice-success inline stsw-test-result" role="status"><p>' . esc_html(
 					sprintf(
 						/* translators: %s: email address. */
-						__( 'Test email sent to %s. If it does not arrive, check the spam folder or set up an SMTP plugin.', 'support-ticket-system-for-woocommerce' ),
-						$this->get_store_email()
+						__( 'Test email sent to %s. If it does not arrive in a few minutes, check the spam folder and your SMTP plugin.', 'support-ticket-system-for-woocommerce' ),
+						$to
 					)
 				) . '</p></div>';
 			} elseif ( 'failed' === $result ) {
-				echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html__( 'WordPress could not send the test email. Your site probably needs an SMTP plugin to send email.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
-			}
-			$url = wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_test_email' ), 'wpfactory_wc_sts_test_email' );
-			echo '<p><a class="button" href="' . esc_url( $url ) . '">' . esc_html__( 'Send test email', 'support-ticket-system-for-woocommerce' ) . '</a> <span class="description">' .
-				esc_html(
+				echo '<div class="notice notice-error inline stsw-test-result" role="alert"><p>' . esc_html(
 					sprintf(
-						/* translators: %s: email address. */
-						__( 'Sends a test to %s (saved store email address).', 'support-ticket-system-for-woocommerce' ),
-						$this->get_store_email()
+						/* translators: 1: email address, 2: error message. */
+						__( 'The test email to %1$s was not sent. %2$s', 'support-ticket-system-for-woocommerce' ),
+						$to,
+						! empty( $test['error'] ) ? $test['error'] : __( 'Your site probably needs an SMTP plugin to send email.', 'support-ticket-system-for-woocommerce' )
 					)
-				) . '</span></p>';
+				) . '</p></div>';
+			}
+			echo '<div class="stsw-test-email"><label for="stsw-test-to">' . esc_html__( 'Send a test email to', 'support-ticket-system-for-woocommerce' ) . '</label> ';
+			echo '<input type="email" id="stsw-test-to" name="stsw_test_to" form="stsw-test-email-form" value="' . esc_attr( $to ) . '" /> ';
+			echo '<button type="submit" class="button" form="stsw-test-email-form">' . esc_html__( 'Send test email', 'support-ticket-system-for-woocommerce' ) . '</button></div>';
+			add_action( 'admin_footer', array( $this, 'render_test_email_form' ) );
+		}
+
+		/**
+		 * The small form the test email button submits (outside the settings form).
+		 */
+		public function render_test_email_form() {
+			echo '<form id="stsw-test-email-form" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" hidden><input type="hidden" name="action" value="wpfactory_wc_sts_test_email" />';
+			wp_nonce_field( 'wpfactory_wc_sts_test_email' );
+			echo '</form>';
+		}
+
+		/**
+		 * The address emails really leave from: an SMTP plugin can force its own sender.
+		 *
+		 * @return array { email: string, by: string } `by` names the plugin that sets it ('' when it is the store email).
+		 */
+		public function get_sender() {
+			$email  = $this->get_store_email();
+			$by     = '';
+			$fluent = get_option( 'fluentmail-settings' );
+			if ( is_array( $fluent ) && ! empty( $fluent['connections'] ) && defined( 'FLUENTMAIL' ) ) {
+				$default = $fluent['misc']['default_connection'] ?? '';
+				$conn    = $default && isset( $fluent['connections'][ $default ] ) ? $fluent['connections'][ $default ] : reset( $fluent['connections'] );
+				$set     = (array) ( $conn['provider_settings'] ?? array() );
+				if ( ! empty( $set['sender_email'] ) && is_email( $set['sender_email'] ) ) {
+					$email = $set['sender_email'];
+					$by    = 'FluentSMTP';
+				}
+			}
+			$wpms = get_option( 'wp_mail_smtp' );
+			if ( '' === $by && is_array( $wpms ) && function_exists( 'wp_mail_smtp' ) && ! empty( $wpms['mail']['from_email'] ) && ! empty( $wpms['mail']['from_email_force'] ) ) {
+				$email = $wpms['mail']['from_email'];
+				$by    = 'WP Mail SMTP';
+			}
+			/** This filter is documented in wp-includes/pluggable.php */
+			$filtered = (string) apply_filters( 'wp_mail_from', $email ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- the WordPress filter.
+			if ( is_email( $filtered ) && strtolower( $filtered ) !== strtolower( $email ) ) {
+				$email = $filtered;
+				$by    = '' !== $by ? $by : 'wp_mail_from';
+			}
+			return array(
+				'email' => sanitize_email( $email ),
+				'by'    => $by,
+			);
 		}
 	}
 
