@@ -3,7 +3,7 @@
  * Plugin Name: Customer Support Helpdesk & Tickets for WooCommerce
  * Description: Customer support for WooCommerce: tickets from My Account and orders, a team inbox with order details, help center and self-hosted live chat.
  * Plugin URI: https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce
- * Version: 2.2.0
+ * Version: 3.0.0
  * Author: WPFactory
  * Author URI: https://wpfactory.com
  * Text Domain: support-ticket-system-for-woocommerce
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '3.0.0' );
 
 /**
  * Plugin file.

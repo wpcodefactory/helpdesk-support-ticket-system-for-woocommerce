@@ -4,7 +4,7 @@ Tags: helpdesk, support ticket, customer support, live chat, knowledge base
 Requires at least: 6.2
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 2.2.0
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,12 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 * AI with your own key: reply drafts, summaries, a chat assistant that answers from your help articles, and suggested resolutions. Nothing is sent to customers without a person.
 * Companies with shared tickets, paid or priority support sold as products, tickets opened by your team, merging.
 * REST API, signed webhooks and an MCP server for AI assistants.
+
+== External services ==
+
+The plugin works without outside services. Two optional features connect to one when you turn them on:
+
+* Human check (Settings > Ticket form > Spam protection, off by default). With Cloudflare Turnstile, the visitor's browser loads the check from challenges.cloudflare.com and the site sends the answer and the visitor's IP address to Cloudflare to verify it. Terms: https://www.cloudflare.com/website-terms/ Privacy: https://www.cloudflare.com/privacypolicy/ . With Google reCAPTCHA, the same happens with www.google.com/recaptcha. Terms: https://policies.google.com/terms Privacy: https://policies.google.com/privacy .
 
 == Installation ==
 
@@ -99,7 +105,35 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
-= 2.3.0 - Unreleased =
+= 3.0.0 - Unreleased =
+* New - Guests can ask for a one-time code by email and see all their tickets.
+* New - Custom fields: date, number, several choices and file (private, same rules as attachments).
+* New - Public ticket numbers: prefix, sequential from a start number or random; existing tickets keep their number.
+* New - Optional confirmation before sending a reply or private note.
+* New - Tickets waiting for a reply in the admin bar (can be turned off).
+* New - Blocked senders (addresses and domains) for forms, chat, guest codes and email piping.
+* New - Optional Cloudflare Turnstile or Google reCAPTCHA on the guest form and the chat (off by default).
+* New - Optional: delete a ticket's files when it closes, or from the ticket.
+* New - Ticket files from older versions are hidden from the Media Library too.
+* New - Edit history of replies and notes, shown to staff.
+* New - Theme template overrides for every customer screen (yourtheme/woocommerce-support/).
+* New - Data retention: anonymise or delete closed tickets after a number of days (off by default).
+* New - Email health checks that scheduled tasks run on time.
+* New - First reply and close times stored in seconds; older tickets are filled once.
+* New - Read-only REST API: customers read their own tickets, staff read all.
+* New - Email codes with a fallback ({customer_first_name|there}) and a plain link code for use inside links.
+* New - Optional emails when the team closes a ticket or changes its status.
+* Improved - The My Account ticket list has pages instead of stopping at 100 tickets.
+* Improved - Settings save only the section on screen.
+* Improved - The chat button picks readable text and focus colours for any theme colour.
+* Improved - Faster ticket screens on large stores (index on the message tables).
+* Fix - Security - A guest chat no longer sends store email to an address nobody confirmed; the human check applies to guests in the chat.
+* Fix - Security - Guest tickets and guest replies are rate limited.
+* Fix - Security - Password-protected help articles no longer appear in search and suggestions.
+* Fix - Security - A text answer could show the file name of another ticket's attachment.
+* Dev - Only one dismissible note about Pro remains (the "Go Pro" link and the recommendations page are removed).
+
+= 2.3.0 - Not released on its own (part of 3.0.0) =
 * New - Display name: Customer Support Helpdesk & Tickets for WooCommerce. The admin menu is now Helpdesk.
 * New - Redesigned admin: header with tabs, three-pane inbox with auto-saving status, priority and assignee, duplicate warning, bulk bar, reply or private note tabs, customer panel; new Priorities, Subjects, Statuses and Saved replies screens with drag ordering; settings with grouped sections and switches.
 * New - Setup wizard on first activation.
@@ -231,6 +265,9 @@ Please report security bugs found in the source code of the plugin through the [
 * Initial release.
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+A large update: new admin and customer screens, knowledge base, live chat, guest codes, ticket numbers and more. Settings, tickets and replies are kept. Back up your site before updating, as for any major update.
 
 = 1.5 =
 Fix query bug on Tickets section in my account page.
