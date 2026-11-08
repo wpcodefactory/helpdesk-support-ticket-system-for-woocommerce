@@ -54,7 +54,7 @@
 		if (!kind) {
 			return;
 		}
-		var text = "reply" === kind ? t.confirmReply : t.confirmTerm;
+		var text = "reply" === kind ? t.confirmReply : "term" === kind ? t.confirmTerm : kind;
 		if (text && !window.confirm(text)) {
 			event.preventDefault();
 		}

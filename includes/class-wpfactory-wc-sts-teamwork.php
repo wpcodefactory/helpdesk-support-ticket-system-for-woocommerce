@@ -67,6 +67,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 			add_action( 'wpfactory_wc_sts_inbox_list_head', array( $this, 'render_list_tools' ), 10, 2 );
 			add_action( 'admin_post_wpfactory_wc_sts_view', array( $this, 'handle_view' ) );
 			add_action( 'admin_post_wpfactory_wc_sts_export', array( $this, 'handle_export' ) );
+			add_action( 'admin_bar_menu', array( $this, 'admin_bar' ), 80 );
 		}
 
 		/**
@@ -83,6 +84,34 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 		| Collision detection
 		|--------------------------------------------------------------------------
 		*/
+
+		/**
+		 * Tickets waiting for a reply, in the admin bar (team members, setting on by default).
+		 *
+		 * @param WP_Admin_Bar $bar Admin bar.
+		 */
+		public function admin_bar( $bar ) {
+			if ( '1' !== (string) get_option( 'wpfactory_wc_sts_admin_bar', '1' ) || ! is_user_logged_in() || ! $this->core()->can_manage_tickets() ) {
+				return;
+			}
+			$key   = 'wpfactory_wc_sts_bar_' . get_current_user_id();
+			$count = get_transient( $key );
+			if ( false === $count ) {
+				$count = WPFactory_WC_STS_Inbox::get_instance()->count( 'needs_reply' );
+				set_transient( $key, (int) $count, MINUTE_IN_SECONDS );
+			}
+			$count = (int) $count;
+			/* translators: %d: number of tickets. */
+			$label = sprintf( _n( '%d ticket waiting for a reply', '%d tickets waiting for a reply', $count, 'support-ticket-system-for-woocommerce' ), $count );
+			$bar->add_node(
+				array(
+					'id'    => 'stsw-tickets',
+					'title' => '<span class="ab-icon dashicons dashicons-format-chat" aria-hidden="true"></span><span class="ab-label" aria-hidden="true">' . (int) $count . '</span><span class="screen-reader-text">' . esc_html( $label ) . '</span>',
+					'href'  => admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&view=needs_reply' ),
+					'meta'  => array( 'title' => $label ),
+				)
+			);
+		}
 
 		/**
 		 * Who is on a ticket now.

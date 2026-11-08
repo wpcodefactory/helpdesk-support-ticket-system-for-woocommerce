@@ -137,6 +137,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 				'WPFactory_WC_STS_Inbox',
 				array(
 					'confirmClose'  => __( 'Close this ticket?', 'support-ticket-system-for-woocommerce' ),
+					'confirmSend'   => __( 'Send this reply to the customer? They will see it.', 'support-ticket-system-for-woocommerce' ),
+					'confirmNote'   => __( 'Add this private note? Only your team will see it.', 'support-ticket-system-for-woocommerce' ),
 					'confirmBulk'   => __( 'Apply this change to the selected tickets?', 'support-ticket-system-for-woocommerce' ),
 					'confirmCanned' => __( 'Replace the text you already typed?', 'support-ticket-system-for-woocommerce' ),
 					'draftSaved'    => __( 'Draft saved on this computer', 'support-ticket-system-for-woocommerce' ),
@@ -1047,7 +1049,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		protected function render_reply_box( $ticket_id, $back ) {
 			$core = $this->core();
 			?>
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data" class="stsw-replybox hd-composer" data-ticket="<?php echo (int) $ticket_id; ?>">
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data" class="stsw-replybox hd-composer" data-ticket="<?php echo (int) $ticket_id; ?>" data-hd-confirm-send="<?php echo '1' === (string) get_option( 'wpfactory_wc_sts_confirm_send' ) ? '1' : '0'; ?>">
 				<input type="hidden" name="action" value="wpfactory_wc_sts_inbox" />
 				<input type="hidden" name="stsw_action" value="reply" />
 				<input type="hidden" name="ticket" value="<?php echo (int) $ticket_id; ?>" />

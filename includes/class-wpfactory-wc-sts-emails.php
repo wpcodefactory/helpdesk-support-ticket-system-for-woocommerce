@@ -487,6 +487,23 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 					'fix'   => __( 'Send a test email and check it arrives (also in the spam folder).', 'support-ticket-system-for-woocommerce' ),
 				),
 			);
+			$late   = 0;
+			foreach ( (array) _get_cron_array() as $time => $hooks ) {
+				if ( (int) $time < time() - 15 * MINUTE_IN_SECONDS ) {
+					$late += count( (array) $hooks );
+				}
+			}
+			$by_server = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
+			$checks[]  = array(
+				'ok'    => 0 === $late,
+				'label' => 0 === $late
+					? ( $by_server ? __( 'Scheduled tasks run on time (started by your server)', 'support-ticket-system-for-woocommerce' ) : __( 'Scheduled tasks run on time', 'support-ticket-system-for-woocommerce' ) )
+					/* translators: %d: number of late tasks. */
+					: sprintf( _n( '%d scheduled task is more than 15 minutes late', '%d scheduled tasks are more than 15 minutes late', $late, 'support-ticket-system-for-woocommerce' ), $late ),
+				'fix'   => $by_server
+					? __( 'WordPress scheduled tasks are turned off (DISABLE_WP_CRON) and nothing seems to run them. Ask your host to run wp-cron.php every 5 minutes. Email piping, automatic closing and data retention depend on it.', 'support-ticket-system-for-woocommerce' )
+					: __( 'Scheduled tasks only run when someone visits the site. On a quiet site, ask your host to run wp-cron.php every 5 minutes. Email piping, automatic closing and data retention depend on it.', 'support-ticket-system-for-woocommerce' ),
+			);
 			if ( ! empty( $error['time'] ) && ( empty( $test['time'] ) || (int) $error['time'] > (int) $test['time'] ) ) {
 				$checks[] = array(
 					'ok'    => false,

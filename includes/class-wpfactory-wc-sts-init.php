@@ -567,19 +567,30 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 */
 		protected function get_assignment_fields() {
 			return array(
-				'assignToRole'   => array(
+				'assignToRole'                   => array(
 					'type'        => 'role',
 					'label'       => __( 'Role that can be assigned tickets', 'support-ticket-system-for-woocommerce' ),
 					'description' => __( 'Users with this role can see and answer tickets in wp-admin and, for tickets assigned to them, in My Account. Shop managers and administrators always can.', 'support-ticket-system-for-woocommerce' ),
 				),
-				'assignToUser'   => array(
+				'assignToUser'                   => array(
 					'type'        => 'user',
 					'label'       => __( 'Default assignee', 'support-ticket-system-for-woocommerce' ),
 					'description' => __( 'Handles tickets that are not assigned to anyone. Subjects can assign their own person (Helpdesk > Subjects).', 'support-ticket-system-for-woocommerce' ),
 				),
-				'mailToAssignee' => array(
+				'mailToAssignee'                 => array(
 					'type'  => 'checkbox',
 					'label' => __( 'Email the assignee about new tickets and replies', 'support-ticket-system-for-woocommerce' ),
+				),
+				'@wpfactory_wc_sts_confirm_send' => array(
+					'type'        => 'checkbox',
+					'label'       => __( 'Ask before sending a reply or note', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'The inbox asks for a confirmation that names who will see the message, so a private note is never sent to a customer by mistake.', 'support-ticket-system-for-woocommerce' ),
+				),
+				'@wpfactory_wc_sts_admin_bar'    => array(
+					'type'        => 'checkbox',
+					'default'     => '1',
+					'label'       => __( 'Show tickets waiting for a reply in the admin bar', 'support-ticket-system-for-woocommerce' ),
+					'description' => __( 'A count in the top bar for team members, linked to the inbox.', 'support-ticket-system-for-woocommerce' ),
 				),
 			);
 		}

@@ -78,6 +78,19 @@
 		});
 	}
 
+	// Optional check before sending, so a private note never goes to the customer by mistake.
+	if (box && "1" === box.getAttribute("data-hd-confirm-send")) {
+		box.addEventListener("submit", function (event) {
+			if (!area || !area.value.trim()) {
+				return;
+			}
+			var note = box.querySelector('input[name="stsw_mode"][value="note"]');
+			if (!window.confirm(note && note.checked ? t.confirmNote : t.confirmSend)) {
+				event.preventDefault();
+			}
+		});
+	}
+
 	// Ctrl+Enter (or Cmd+Enter) sends.
 	if (area) {
 		area.addEventListener("keydown", function (event) {
