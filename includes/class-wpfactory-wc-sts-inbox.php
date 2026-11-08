@@ -1008,6 +1008,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					'row'  => $row,
 				);
 			}
+			if ( class_exists( 'WPFactory_WC_STS_History' ) ) {
+				foreach ( WPFactory_WC_STS_History::get_instance()->get_events( $ticket_id ) as $i => $event ) {
+					$items[] = array(
+						'type'  => 'event',
+						'event' => $event,
+						'row'   => (object) array(
+							'creationdate' => $event['at'],
+							'id'           => $i,
+						),
+					);
+				}
+			}
 			usort(
 				$items,
 				function ( $a, $b ) {
@@ -1043,6 +1055,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			);
 			foreach ( $items as $item ) {
 				$row = $item['row'];
+				if ( 'event' === $item['type'] ) {
+					echo '<li class="hd-event stsw-event"><span class="hd-event__text">' . esc_html( WPFactory_WC_STS_History::get_instance()->event_text( $item['event'] ) ) . '</span> <time class="hd-muted">' . esc_html( $core->format_response_date( $row->creationdate ) ) . '</time></li>';
+					continue;
+				}
 				if ( 'note' === $item['type'] ) {
 					$who = (int) $row->agent ? $core->get_user_name( (int) $row->agent ) : __( 'Automatic note', 'support-ticket-system-for-woocommerce' );
 				} elseif ( 'store' === $item['type'] ) {
@@ -1539,8 +1555,24 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		 * @param string $list      Comma separated names.
 		 */
 		public function set_tags( $ticket_id, $list ) {
-			$names = array_values( array_unique( array_filter( array_map( 'trim', explode( ',', sanitize_text_field( $list ) ) ) ) ) );
-			wp_set_object_terms( $ticket_id, array_slice( $names, 0, 20 ), 'stsw_tickets_tag' );
+			$known = array();
+			foreach ( get_terms(
+				array(
+					'taxonomy'   => 'stsw_tickets_tag',
+					'hide_empty' => false,
+				)
+			) as $term ) {
+				$known[ mb_strtolower( $term->name ) ] = $known[ mb_strtolower( $term->name ) ] ?? (int) $term->term_id;
+			}
+			$tags = array();
+			foreach ( array_filter( array_map( 'trim', explode( ',', sanitize_text_field( $list ) ) ) ) as $name ) {
+				$key = mb_strtolower( $name );
+				if ( ! isset( $tags[ $key ] ) ) {
+					// "VIP" and "vip" are the same tag: reuse the one that exists, in the case it was first written.
+					$tags[ $key ] = $known[ $key ] ?? $name;
+				}
+			}
+			wp_set_object_terms( $ticket_id, array_slice( array_values( $tags ), 0, 20 ), 'stsw_tickets_tag' );
 		}
 
 		/**

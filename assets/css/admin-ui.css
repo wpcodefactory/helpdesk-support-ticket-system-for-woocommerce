@@ -1754,6 +1754,18 @@ body.wpf-hd-screen .wpf-hd.wrap {
 	color: var(--hd-danger);
 }
 
+/* Timeline events in the thread */
+.wpf-hd .hd-event {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: baseline;
+	margin: 4px 0 4px 44px;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-xs, 12px);
+	list-style: none;
+}
+
 /* Dialog */
 .hd-dialog.wpf-hd {
 	max-width: 440px;

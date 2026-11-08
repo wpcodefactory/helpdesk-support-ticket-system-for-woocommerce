@@ -52,6 +52,161 @@ if ( ! class_exists( 'WPFactory_WC_STS_History' ) ) :
 		public function __construct() {
 			self::$instance = $this;
 			add_action( 'wp_ajax_wpfactory_wc_sts_message_edit', array( $this, 'ajax_edit' ) );
+			add_action( 'set_object_terms', array( $this, 'log_terms' ), 10, 6 );
+			add_filter( 'update_post_metadata', array( $this, 'log_assignee' ), 10, 4 );
+			add_filter( 'add_post_metadata', array( $this, 'log_assignee' ), 10, 4 );
+			add_filter( 'delete_post_metadata', array( $this, 'log_unassign' ), 10, 3 );
+		}
+
+		/**
+		 * Meta key of timeline events (one row per change).
+		 */
+		const META_EVENT = '_stsw_event';
+
+		/**
+		 * Adds a timeline event.
+		 *
+		 * @param int    $ticket_id Ticket ID.
+		 * @param string $kind      status, priority, assignee, tag_add or tag_remove.
+		 * @param string $from      Old value (name).
+		 * @param string $to        New value (name).
+		 */
+		public function add_event( $ticket_id, $kind, $from, $to ) {
+			add_post_meta(
+				$ticket_id,
+				self::META_EVENT,
+				array(
+					'at'   => current_time( 'mysql', 1 ),
+					'by'   => get_current_user_id(),
+					'kind' => $kind,
+					'from' => (string) $from,
+					'to'   => (string) $to,
+				)
+			);
+		}
+
+		/**
+		 * Timeline events of a ticket, oldest first.
+		 *
+		 * @param int $ticket_id Ticket ID.
+		 *
+		 * @return array
+		 */
+		public function get_events( $ticket_id ) {
+			return array_values( array_filter( (array) get_post_meta( $ticket_id, self::META_EVENT ), 'is_array' ) );
+		}
+
+		/**
+		 * One event in plain words.
+		 *
+		 * @param array $event Event.
+		 *
+		 * @return string
+		 */
+		public function event_text( $event ) {
+			$who = (int) $event['by'] ? $this->core()->get_user_name( (int) $event['by'] ) : __( 'Automatic', 'support-ticket-system-for-woocommerce' );
+			switch ( $event['kind'] ) {
+				case 'status':
+					/* translators: 1: who, 2: old status, 3: new status. */
+					return '' !== $event['from'] ? sprintf( __( '%1$s changed the status from %2$s to %3$s', 'support-ticket-system-for-woocommerce' ), $who, $event['from'], $event['to'] ) : sprintf( /* translators: 1: who, 2: new status. */ __( '%1$s set the status to %2$s', 'support-ticket-system-for-woocommerce' ), $who, $event['to'] );
+				case 'priority':
+					/* translators: 1: who, 2: priority. */
+					return sprintf( __( '%1$s set the priority to %2$s', 'support-ticket-system-for-woocommerce' ), $who, $event['to'] );
+				case 'assignee':
+					/* translators: 1: who, 2: team member. */
+					return '' !== $event['to'] ? sprintf( __( '%1$s assigned the ticket to %2$s', 'support-ticket-system-for-woocommerce' ), $who, $event['to'] ) : sprintf( /* translators: %s: who. */ __( '%s removed the assignee', 'support-ticket-system-for-woocommerce' ), $who );
+				case 'tag_add':
+					/* translators: 1: who, 2: tag. */
+					return sprintf( __( '%1$s added the tag %2$s', 'support-ticket-system-for-woocommerce' ), $who, $event['to'] );
+				case 'tag_remove':
+					/* translators: 1: who, 2: tag. */
+					return sprintf( __( '%1$s removed the tag %2$s', 'support-ticket-system-for-woocommerce' ), $who, $event['from'] );
+			}
+			return '';
+		}
+
+		/**
+		 * Status, priority and tag changes (any screen, automation or API).
+		 *
+		 * @param int    $object_id  Object ID.
+		 * @param array  $terms      Terms given.
+		 * @param array  $tt_ids     New term taxonomy IDs.
+		 * @param string $taxonomy   Taxonomy.
+		 * @param bool   $append     Appended.
+		 * @param array  $old_tt_ids Old term taxonomy IDs.
+		 */
+		public function log_terms( $object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids ) {
+			unset( $terms, $append );
+			if ( ! in_array( $taxonomy, array( 'stsw_tickets_status', 'stsw_tickets_priority', 'stsw_tickets_tag' ), true ) || 'stsw_tickets' !== get_post_type( $object_id ) ) {
+				return;
+			}
+			$new = array_map( 'intval', (array) $tt_ids );
+			$old = array_map( 'intval', (array) $old_tt_ids );
+			sort( $new );
+			sort( $old );
+			// The first status and priority of a new ticket are not changes.
+			if ( $new === $old || ( ! $old && 'stsw_tickets_tag' !== $taxonomy && time() - (int) get_post_time( 'U', true, $object_id ) < 30 ) ) {
+				return;
+			}
+			$name = function ( $tt_id ) use ( $taxonomy ) {
+				$term = get_term_by( 'term_taxonomy_id', (int) $tt_id, $taxonomy );
+				return $term ? $term->name : '';
+			};
+			if ( 'stsw_tickets_tag' === $taxonomy ) {
+				foreach ( array_diff( $new, $old ) as $tt_id ) {
+					$this->add_event( $object_id, 'tag_add', '', $name( $tt_id ) );
+				}
+				foreach ( array_diff( $old, $new ) as $tt_id ) {
+					$this->add_event( $object_id, 'tag_remove', $name( $tt_id ), '' );
+				}
+				return;
+			}
+			$this->add_event( $object_id, 'stsw_tickets_status' === $taxonomy ? 'status' : 'priority', $old ? $name( $old[0] ) : '', $new ? $name( $new[0] ) : '' );
+		}
+
+		/**
+		 * Assignee changes.
+		 *
+		 * @param mixed  $check     Short-circuit value (returned unchanged).
+		 * @param int    $object_id Post ID.
+		 * @param string $meta_key  Meta key.
+		 * @param mixed  $value     New value.
+		 *
+		 * @return mixed
+		 */
+		public function log_assignee( $check, $object_id, $meta_key, $value ) {
+			if ( WPFactory_WC_STS_Inc::META_AGENT !== $meta_key || 'stsw_tickets' !== get_post_type( $object_id ) ) {
+				return $check;
+			}
+			static $seen = array();
+			$old         = (int) get_post_meta( $object_id, WPFactory_WC_STS_Inc::META_AGENT, true );
+			$new         = (int) $value;
+			// update_post_meta() on a ticket without an assignee also runs add_post_meta(): log the change once.
+			$key = $object_id . ':' . $old . ':' . $new;
+			if ( $old !== $new && ! isset( $seen[ $key ] ) && ( $old || time() - (int) get_post_time( 'U', true, $object_id ) >= 30 ) ) {
+				$seen[ $key ] = true;
+				$this->add_event( $object_id, 'assignee', $old ? $this->core()->get_user_name( $old ) : '', $new ? $this->core()->get_user_name( $new ) : '' );
+			}
+			return $check;
+		}
+
+		/**
+		 * Assignee removed.
+		 *
+		 * @param mixed  $check     Short-circuit value (returned unchanged).
+		 * @param int    $object_id Post ID.
+		 * @param string $meta_key  Meta key.
+		 *
+		 * @return mixed
+		 */
+		public function log_unassign( $check, $object_id, $meta_key ) {
+			if ( WPFactory_WC_STS_Inc::META_AGENT === $meta_key && 'stsw_tickets' === get_post_type( $object_id ) ) {
+				$old = (int) get_post_meta( $object_id, WPFactory_WC_STS_Inc::META_AGENT, true );
+				if ( $old ) {
+					$this->add_event( $object_id, 'assignee', $this->core()->get_user_name( $old ), '' );
+				}
+			}
+			return $check;
 		}
 
 		/**
