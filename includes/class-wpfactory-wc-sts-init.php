@@ -393,6 +393,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					$carded = $this->fields_by_card( $this->get_form_fields() );
 					$this->render_card( __( 'Form options', 'support-ticket-system-for-woocommerce' ), $carded[''] ?? array() );
 					$this->render_card( __( 'Spam protection', 'support-ticket-system-for-woocommerce' ), $carded['spam'] ?? array() );
+					$this->render_card( __( 'Reasons for order questions', 'support-ticket-system-for-woocommerce' ), $carded['reasons'] ?? array(), __( 'Customers asking about an order choose a reason; customers with a general question choose a topic. Each reason can file the ticket under one of your topics.', 'support-ticket-system-for-woocommerce' ) );
 					echo '<div class="hd-card"><div class="hd-card__head"><h3 class="hd-h2">' . esc_html__( 'Extra fields', 'support-ticket-system-for-woocommerce' ) . '</h3></div><div class="hd-card__body">';
 					WPFactory_WC_STS_Fields::get_instance()->render_settings();
 					echo '</div></div>';
@@ -483,7 +484,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				'renameOrderButtonLink' => array(
 					'type'        => 'text',
 					'label'       => __( 'Order button label', 'support-ticket-system-for-woocommerce' ),
-					'placeholder' => __( 'Get Help', 'support-ticket-system-for-woocommerce' ),
+					'placeholder' => __( 'Get help', 'support-ticket-system-for-woocommerce' ),
 				),
 				'hideClosed'            => array(
 					'type'  => 'checkbox',
@@ -522,9 +523,23 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			 *
 			 * @param array $fields Fields.
 			 */
+			$topics = array( '' => __( 'No topic', 'support-ticket-system-for-woocommerce' ) );
+			foreach ( WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_subject' ) as $term ) {
+				$topics[ (string) $term->term_id ] = $term->name;
+			}
+			$by_reason = array();
+			foreach ( WPFactory_WC_STS_Inc::get_main_instance()->get_reasons() as $slug => $label ) {
+				$by_reason[ '@wpfactory_wc_sts_reason_subject_' . $slug ] = array(
+					'type'    => 'select',
+					/* translators: %s: reason. */
+					'label'   => sprintf( __( 'Topic for "%s"', 'support-ticket-system-for-woocommerce' ), $label ),
+					'options' => $topics,
+					'card'    => 'reasons',
+				);
+			}
 			return (array) apply_filters(
 				'wpfactory_wc_sts_settings_form',
-				array(
+				$by_reason + array(
 					'@wpfactory_wc_sts_guest_tickets' => array(
 						'type'        => 'checkbox',
 						'label'       => __( 'Guest tickets', 'support-ticket-system-for-woocommerce' ),

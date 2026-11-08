@@ -63,9 +63,10 @@ $step = 0;
 			?>
 		</legend>
 		<?php $view->render_items( $orders ); ?>
-		<div class="stsw-field">
-			<label for="stsw-reason"><?php esc_html_e( 'Reason', 'support-ticket-system-for-woocommerce' ); ?></label>
-			<select id="stsw-reason" name="stsw_reason">
+		<div class="stsw-field" data-stsw-when="order">
+			<label for="stsw-reason"><?php esc_html_e( 'What is it about?', 'support-ticket-system-for-woocommerce' ); ?> <span aria-hidden="true">*</span></label>
+			<select id="stsw-reason" name="stsw_reason" required>
+				<option value=""><?php esc_html_e( 'Choose a reason', 'support-ticket-system-for-woocommerce' ); ?></option>
 				<?php foreach ( $core->get_reasons() as $slug => $label ) : ?>
 					<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $draft['reason'] ?? '', $slug ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
@@ -78,7 +79,16 @@ $step = 0;
 		 * @param WC_Order[] $orders Orders offered.
 		 */
 		do_action( 'wpfactory_wc_sts_ask_after_reason', $orders );
-		$view->render_term_select( 'stsw_tickets_subject', __( 'Topic', 'support-ticket-system-for-woocommerce' ), 'term_id' );
+		$view->render_term_select(
+			'stsw_tickets_subject',
+			__( 'Topic', 'support-ticket-system-for-woocommerce' ),
+			'term_id',
+			array(
+				'placeholder' => __( 'Choose a topic', 'support-ticket-system-for-woocommerce' ),
+				'when'        => 'general',
+				'required'    => ! $guest,
+			)
+		);
 		if ( '1' === (string) get_option( $core->plugin . 'enablePriority' ) ) {
 			$view->render_term_select( 'stsw_tickets_priority', __( 'How urgent is it?', 'support-ticket-system-for-woocommerce' ), 'name' );
 		}

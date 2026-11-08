@@ -453,7 +453,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 					 * @param WC_Order      $order Order.
 					 */
 					$label = (string) apply_filters( 'wpfactory_wc_sts_item_label', $label, $item, $order );
-					echo '<label class="stsw-choice"><input type="checkbox" name="stsw_items[]" value="' . (int) $item_id . '" /> <span>' . esc_html( $label ) . '</span></label>';
+					$match = class_exists( 'WPFactory_WC_STS_Fields' ) ? WPFactory_WC_STS_Fields::get_instance()->item_match( $item ) : array();
+					echo '<label class="stsw-choice"><input type="checkbox" name="stsw_items[]" value="' . (int) $item_id . '" data-stsw-match="' . esc_attr( implode( ' ', $match ) ) . '" /> <span>' . esc_html( $label ) . '</span></label>';
 				}
 				echo '</div></fieldset>';
 			}
@@ -466,21 +467,27 @@ if ( ! class_exists( 'WPFactory_WC_STS_Customer' ) ) :
 		 * @param string $label    Label.
 		 * @param string $value_by `term_id` or `name`.
 		 */
-		public function render_term_select( $taxonomy, $label, $value_by ) {
-			$terms = get_terms(
+		public function render_term_select( $taxonomy, $label, $value_by, $args = array() ) {
+			$args  = wp_parse_args(
+				$args,
 				array(
-					'taxonomy'   => $taxonomy,
-					'hide_empty' => false,
+					'placeholder' => '',
+					'when'        => '',
+					'required'    => false,
 				)
 			);
-			if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			$terms = WPFactory_WC_STS_UI::ordered_terms( $taxonomy );
+			if ( empty( $terms ) ) {
 				return;
 			}
 			$id = 'stsw-' . $taxonomy;
-			echo '<div class="stsw-field"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label><select id="' . esc_attr( $id ) . '" name="' . esc_attr( $taxonomy ) . '">';
+			echo '<div class="stsw-field"' . ( '' !== $args['when'] ? ' data-stsw-when="' . esc_attr( $args['when'] ) . '"' : '' ) . '><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . ( $args['required'] ? ' <span aria-hidden="true">*</span>' : '' ) . '</label><select id="' . esc_attr( $id ) . '" name="' . esc_attr( $taxonomy ) . '"' . ( $args['required'] ? ' required' : '' ) . '>';
+			if ( '' !== $args['placeholder'] ) {
+				echo '<option value="">' . esc_html( $args['placeholder'] ) . '</option>';
+			}
 			foreach ( $terms as $term ) {
 				$value = 'name' === $value_by ? $term->name : (string) $term->term_id;
-				echo '<option value="' . esc_attr( $value ) . '"' . selected( 'name' === $value_by && 'normal' === $term->slug, true, false ) . '>' . esc_html( $term->name ) . '</option>';
+				echo '<option value="' . esc_attr( $value ) . '"' . selected( '' === $args['placeholder'] && 'name' === $value_by && 'normal' === $term->slug, true, false ) . '>' . esc_html( $term->name ) . '</option>';
 			}
 			echo '</select></div>';
 		}
