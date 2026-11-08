@@ -299,6 +299,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 					'error'    => __( 'Your message was not sent. Please try again.', 'support-ticket-system-for-woocommerce' ),
 					'closed'   => __( 'This chat has ended. Start a new one any time.', 'support-ticket-system-for-woocommerce' ),
 					'received' => __( 'Thanks, we received your message and will reply by email.', 'support-ticket-system-for-woocommerce' ),
+					'away'     => __( "We're away right now. Leave a message and we'll reply by email.", 'support-ticket-system-for-woocommerce' ),
+					'sendMsg'  => __( 'Send message', 'support-ticket-system-for-woocommerce' ),
+					'startBtn' => __( 'Start chat', 'support-ticket-system-for-woocommerce' ),
 					'newChat'  => __( 'New message from support', 'support-ticket-system-for-woocommerce' ),
 				)
 			);

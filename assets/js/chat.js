@@ -21,7 +21,9 @@
 	var start = root.querySelector("[data-stsw-chat-start]");
 	var send = root.querySelector("[data-stsw-chat-send]");
 	var state = root.querySelector("[data-stsw-chat-state]");
-	var offlineNote = root.querySelector("[data-stsw-chat-offline]");
+	var greeting = root.querySelector("[data-stsw-chat-greeting]");
+	var greetingText = greeting ? greeting.textContent : "";
+	var startButton = root.querySelector("[data-stsw-chat-start-button]");
 	var errorBox = root.querySelector("[data-stsw-chat-error]");
 	var captcha = root.querySelector("[data-stsw-chat-captcha]");
 	var STORE = "stsw_chat_session";
@@ -154,7 +156,13 @@
 		return post("status").then(function (json) {
 			if (json && json.success) {
 				nonce = json.data.nonce;
-				offlineNote.hidden = json.data.online;
+				// Nobody online: the greeting says so and the button leaves a message.
+				if (greeting) {
+					greeting.textContent = json.data.online ? greetingText : t.away;
+				}
+				if (startButton) {
+					startButton.textContent = json.data.online ? t.startBtn : t.sendMsg;
+				}
 				if (captcha) {
 					captcha.hidden = json.data.online;
 				}
@@ -235,7 +243,13 @@
 				}
 				start.reset();
 				if (!json.data.online) {
+					// The form closes; the confirmation takes its place and gets the focus.
+					start.hidden = true;
 					note(t.received);
+					var done = log.lastElementChild;
+					done.setAttribute("tabindex", "-1");
+					done.setAttribute("role", "status");
+					done.focus();
 					return;
 				}
 				session = { ticket: json.data.ticket, key: json.data.key };
