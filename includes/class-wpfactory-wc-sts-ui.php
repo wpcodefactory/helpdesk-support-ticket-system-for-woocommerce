@@ -129,6 +129,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					'orderSaved'   => __( 'Order saved', 'support-ticket-system-for-woocommerce' ),
 					'confirmTerm'  => __( 'Delete this item? Tickets keep their other details.', 'support-ticket-system-for-woocommerce' ),
 					'confirmReply' => __( 'Delete this saved reply?', 'support-ticket-system-for-woocommerce' ),
+					'yes'          => __( 'Continue', 'support-ticket-system-for-woocommerce' ),
+					'no'           => __( 'Cancel', 'support-ticket-system-for-woocommerce' ),
+					'ok'           => __( 'OK', 'support-ticket-system-for-woocommerce' ),
+					'deleteYes'    => __( 'Delete', 'support-ticket-system-for-woocommerce' ),
 					'moved'        => __( 'Moved to position %d', 'support-ticket-system-for-woocommerce' ), // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- position number.
 					'checking'     => __( 'Counting...', 'support-ticket-system-for-woocommerce' ),
 					/* translators: 1: tickets found, 2: new, 3: already imported, 4: replies, 5: private notes, 6: files. */

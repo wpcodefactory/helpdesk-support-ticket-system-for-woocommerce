@@ -9,6 +9,11 @@
 
 	var settings = window.WPFactory_WC_STS_Backend || {};
 
+	// The plugin's in-page dialog where it is loaded.
+	function ask(text) {
+		return window.stswUI ? window.stswUI.ask(text) : Promise.resolve(window.confirm(text));
+	}
+
 	// Priority colour picker.
 	if ($.fn.wpColorPicker) {
 		$(".stsw-color-field").wpColorPicker();
@@ -19,10 +24,11 @@
 		event.preventDefault();
 		var button = $(this);
 		var isNote = "note" === button.data("type");
-		if (!window.confirm(isNote ? settings.confirmDeleteNote : settings.confirmDelete)) {
-			return;
-		}
-		$.post(
+		ask(isNote ? settings.confirmDeleteNote : settings.confirmDelete).then(function (sure) {
+			if (!sure) {
+				return;
+			}
+			$.post(
 			window.ajaxurl,
 			{
 				action: isNote ? "wpfactory_wc_sts_note_delete" : "wpfactory_wc_sts_response_delete",
@@ -34,7 +40,8 @@
 					button.closest("tr, li").remove();
 				}
 			}
-		);
+			);
+		});
 	});
 
 	// Insert a canned reply into the reply box.
@@ -45,11 +52,21 @@
 		if (!text || !target.length) {
 			return;
 		}
-		if ($.trim(target.val()) && !window.confirm(settings.confirmReplace)) {
-			$(this).val("");
+		var select = $(this);
+		var put = function () {
+			target.val(String(text)).trigger("focus");
+			select.val("");
+		};
+		if (!$.trim(target.val())) {
+			put();
 			return;
 		}
-		target.val(String(text)).trigger("focus");
-		$(this).val("");
+		ask(settings.confirmReplace).then(function (sure) {
+			if (sure) {
+				put();
+			} else {
+				select.val("");
+			}
+		});
 	});
 })(jQuery);

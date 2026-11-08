@@ -15,6 +15,109 @@
 		Array.prototype.forEach.call((root || document).querySelectorAll(selector), fn);
 	};
 
+	/*
+	 * In-page dialogs in place of the browser's confirm() and alert(): they name the exact change, work with the
+	 * keyboard (Tab stays inside, Escape cancels) and return focus to where it was.
+	 */
+	function dialog(text, yes, no) {
+		return new Promise(function (resolve) {
+			var back = document.activeElement;
+			var box = document.createElement("dialog");
+			if (!box.showModal) {
+				resolve(no ? window.confirm(text) : (window.alert(text), true)); // Very old browsers only.
+				return;
+			}
+			var id = "hd-dialog-" + String(Date.now());
+			box.className = "hd-dialog hd-ask wpf-hd";
+			box.setAttribute("role", "alertdialog");
+			box.setAttribute("aria-modal", "true");
+			box.setAttribute("aria-labelledby", id);
+			var msg = document.createElement("p");
+			msg.id = id;
+			msg.className = "hd-ask__text";
+			msg.textContent = text;
+			var row = document.createElement("div");
+			row.className = "hd-ask__actions";
+			var ok = document.createElement("button");
+			ok.type = "button";
+			ok.className = "hd-btn hd-btn--primary";
+			ok.textContent = yes;
+			var cancel = null;
+			if (no) {
+				cancel = document.createElement("button");
+				cancel.type = "button";
+				cancel.className = "hd-btn";
+				cancel.textContent = no;
+				row.appendChild(cancel);
+			}
+			row.appendChild(ok);
+			box.appendChild(msg);
+			box.appendChild(row);
+			(document.querySelector(".wpf-hd") || document.body).appendChild(box);
+			var done = function (value) {
+				box.close();
+				box.remove();
+				if (back && back.focus) {
+					back.focus({ preventScroll: true });
+				}
+				resolve(value);
+			};
+			ok.addEventListener("click", function () {
+				done(true);
+			});
+			if (cancel) {
+				cancel.addEventListener("click", function () {
+					done(false);
+				});
+			}
+			box.addEventListener("cancel", function (event) {
+				event.preventDefault();
+				done(!no);
+			});
+			box.showModal();
+			ok.focus();
+		});
+	}
+
+	window.stswUI = {
+		/** Asks; resolves true when the person confirms. `yes` is the confirm button text. */
+		ask: function (text, yes) {
+			return dialog(text, yes || t.yes || "Continue", t.no || "Cancel");
+		},
+		/** Tells something; resolves when closed. */
+		tell: function (text) {
+			return dialog(text, t.ok || "OK", null);
+		},
+		/**
+		 * Holds a form submit until the person confirms, then sends it again with the same button.
+		 * Returns true when the submit may go ahead now (already confirmed).
+		 */
+		gate: function (event, text, yes, before) {
+			var form = event.target;
+			if (form.stswConfirmed) {
+				return true;
+			}
+			event.preventDefault();
+			var by = event.submitter && event.submitter.form === form ? event.submitter : null;
+			window.stswUI.ask(text, yes).then(function (sure) {
+				if (!sure) {
+					return;
+				}
+				if (before) {
+					before();
+				}
+				form.stswConfirmed = true;
+				if (form.requestSubmit) {
+					form.requestSubmit(by || undefined);
+				} else {
+					form.submit();
+				}
+				form.stswConfirmed = false;
+			});
+			return false;
+		},
+	};
+
 	each(".wpf-hd", function (el) {
 		el.classList.add("hd-js");
 	});
@@ -55,8 +158,8 @@
 			return;
 		}
 		var text = "reply" === kind ? t.confirmReply : "term" === kind ? t.confirmTerm : kind;
-		if (text && !window.confirm(text)) {
-			event.preventDefault();
+		if (text) {
+			window.stswUI.gate(event, text, form.getAttribute("data-hd-confirm-yes") || t.deleteYes);
 		}
 	});
 

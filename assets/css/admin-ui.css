@@ -1767,6 +1767,20 @@ body.wpf-hd-screen .wpf-hd.wrap {
 	background: rgba(16, 24, 40, 0.4);
 }
 
+.hd-ask__text {
+	margin: 0 0 20px;
+	font-size: var(--hd-text-md, 15px);
+	line-height: 1.5;
+	white-space: pre-line;
+}
+
+.hd-ask__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
 .wpf-hd .hd-keys {
 	display: grid;
 	grid-template-columns: max-content 1fr;
