@@ -107,7 +107,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guard' ) ) :
 				'type'        => 'select',
 				'card'        => 'spam',
 				'label'       => __( 'Human check', 'support-ticket-system-for-woocommerce' ),
-				'description' => __( 'Shown on the guest form and on the chat form when nobody is online. Off by default. When on, the visitor\'s browser loads the check from Cloudflare or Google.', 'support-ticket-system-for-woocommerce' ),
+				'description' => __( 'Shown on the guest form and on the chat form for visitors who are not signed in (for customers, only when nobody is online). Off by default. When on, the visitor\'s browser loads the check from Cloudflare or Google.', 'support-ticket-system-for-woocommerce' ),
 				'options'     => array(
 					''          => __( 'Off', 'support-ticket-system-for-woocommerce' ),
 					'turnstile' => __( 'Cloudflare Turnstile', 'support-ticket-system-for-woocommerce' ),
@@ -200,8 +200,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guard' ) ) :
 			}
 			wp_enqueue_script( 'wpfactory-wc-sts-captcha', self::SCRIPTS[ $service ], array(), null, array( 'strategy' => 'defer' ) ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- the service serves its current version.
 			$class = 'turnstile' === $service ? 'cf-turnstile' : 'g-recaptcha';
-			// In the chat the check is only needed when nobody is online: the chat script shows it then.
-			echo '<div class="stsw-captcha stsw-captcha--' . esc_attr( $context ) . '"' . ( 'chat' === $context ? ' data-stsw-chat-captcha hidden' : '' ) . '><div class="' . esc_attr( $class ) . '" data-sitekey="' . esc_attr( trim( (string) get_option( self::OPTION_SITE ) ) ) . '"></div></div>';
+			// Signed-in customers only need it in the chat when nobody is online (the chat script shows it then).
+			$toggle = 'chat' === $context && is_user_logged_in();
+			echo '<div class="stsw-captcha stsw-captcha--' . esc_attr( $context ) . '"' . ( $toggle ? ' data-stsw-chat-captcha hidden' : '' ) . '><div class="' . esc_attr( $class ) . '" data-sitekey="' . esc_attr( trim( (string) get_option( self::OPTION_SITE ) ) ) . '"></div></div>';
 		}
 
 		/**

@@ -290,7 +290,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				$value = (string) ( $values[0] ?? '' );
 				if ( 'checkbox' === ( $types[ $key ] ?? '' ) ) {
 					$value = '1' === $value ? __( 'Yes', 'support-ticket-system-for-woocommerce' ) : $value;
-				} elseif ( 0 === strpos( $value, 'file:' ) ) {
+				} elseif ( 'file' === ( $types[ $key ] ?? '' ) && 0 === strpos( $value, 'file:' ) && (int) wp_get_post_parent_id( (int) substr( $value, 5 ) ) === (int) $ticket_id ) {
 					$attachment = (int) substr( $value, 5 );
 					$file_name  = (string) get_post_meta( $attachment, '_stsw_original_name', true );
 					$value      = 'attachment' === get_post_type( $attachment )

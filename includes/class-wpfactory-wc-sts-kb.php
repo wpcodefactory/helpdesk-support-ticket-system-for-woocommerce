@@ -243,6 +243,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 					array(
 						'post_type'      => self::POST_TYPE,
 						'post_status'    => 'publish',
+						'has_password'   => false,
 						's'              => $search,
 						'posts_per_page' => $limit,
 						'orderby'        => 'relevance',
@@ -309,6 +310,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 				array(
 					'post_type'      => self::POST_TYPE,
 					'post_status'    => 'publish',
+					'has_password'   => false,
 					'posts_per_page' => 100,
 					'orderby'        => 'title',
 					'order'          => 'ASC',
@@ -393,6 +395,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 									array(
 										'post_type'      => self::POST_TYPE,
 										'post_status'    => 'publish',
+										'has_password'   => false,
 										'posts_per_page' => 6,
 										'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 											array(
@@ -412,6 +415,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 							array(
 								'post_type'      => self::POST_TYPE,
 								'post_status'    => 'publish',
+								'has_password'   => false,
 								'posts_per_page' => 20,
 							)
 						)

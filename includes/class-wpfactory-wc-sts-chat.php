@@ -432,7 +432,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 			}
 			$online = $this->is_online();
 			$guard  = class_exists( 'WPFactory_WC_STS_Guard' ) ? WPFactory_WC_STS_Guard::get_instance() : null;
-			if ( ! $online && $guard && ! $guard->verify_captcha() ) {
+			if ( ( ! $online || ! $user->exists() ) && $guard && ! $guard->verify_captcha() ) {
 				wp_send_json_error( array( 'message' => $guard->captcha_error() ), 400 );
 			}
 			$title  = wp_html_excerpt( preg_replace( '/\s+/', ' ', $message ), 60, '...' );

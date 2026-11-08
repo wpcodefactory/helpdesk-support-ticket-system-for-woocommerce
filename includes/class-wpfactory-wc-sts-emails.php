@@ -234,6 +234,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$title   = $values['plain']['{title}'];
 			$fields  = $this->custom_fields_html( $ticket_id );
 			$inside  = (bool) get_post_meta( $ticket_id, '_stsw_internal', true );
+			// A guest chat gives an email nobody confirmed: no store email to that address until the team replies.
+			if ( 'chat' === get_post_meta( $ticket_id, '_stsw_channel', true ) && ! $this->core->get_ticket_user_id( $ticket_id ) ) {
+				$inside = true;
+			}
 
 			/* translators: 1: store name, 2: ticket number, 3: ticket title. */
 			$staff_subject = sprintf( __( 'New ticket on %1$s - #%2$s %3$s', 'support-ticket-system-for-woocommerce' ), $site, $this->core->get_ticket_number( $ticket_id ), $title );

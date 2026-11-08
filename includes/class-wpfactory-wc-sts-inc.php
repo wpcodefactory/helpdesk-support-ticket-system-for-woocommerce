@@ -1968,7 +1968,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			if ( ! $this->user_can_access_ticket( $ticket_id, $user_id ) ) {
 				return __( 'Wrong user.', 'support-ticket-system-for-woocommerce' );
 			}
-			$by_staff = $this->get_ticket_user_id( $ticket_id ) !== $user_id;
+			// Staff and the assigned agent answer for the store; anyone else with access (Pro: a colleague) writes as a customer.
+			$by_staff = $this->get_ticket_user_id( $ticket_id ) !== $user_id && ( $this->can_manage_tickets( $user_id ) || $this->get_ticket_agent_id( $ticket_id ) === $user_id );
 
 			if ( 'reopen' === $action ) {
 				$this->set_ticket_status( $ticket_id, 'open' );

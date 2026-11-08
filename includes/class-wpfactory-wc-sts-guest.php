@@ -187,6 +187,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 		}
 
 		/**
+		 * Client IP address (REMOTE_ADDR only: forwarded headers can be faked).
+		 *
+		 * @return string
+		 */
+		protected function ip() {
+			return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		}
+
+		/**
+		 * Counts an event in a 15 minute window.
+		 *
+		 * @param string $key   Key.
+		 * @param int    $limit Limit.
+		 *
+		 * @return bool Whether it is still allowed.
+		 */
+		protected function allowed( $key, $limit ) {
+			$key   = 'wpfactory_wc_sts_guest_' . md5( $key );
+			$count = (int) get_transient( $key );
+			if ( $count >= $limit ) {
+				return false;
+			}
+			set_transient( $key, $count + 1, 15 * MINUTE_IN_SECONDS );
+			return true;
+		}
+
+		/**
 		 * Rate limit for order lookups, per IP address.
 		 *
 		 * @return bool Whether another lookup is allowed.
@@ -285,7 +312,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 					return;
 				}
 				$this->lookup = $checked;
-				$blocked      = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', $checked['email'], 'guest' );
+				if ( ! $this->allowed( 'create|' . $this->ip(), 5 ) || ! $this->allowed( 'create-order|' . $checked['order_id'], 3 ) ) {
+					$this->lookup['error'] = __( 'Too many attempts. Please wait a few minutes and try again.', 'support-ticket-system-for-woocommerce' );
+					return;
+				}
+				$blocked = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', $checked['email'], 'guest' );
 				if ( '' !== $blocked ) {
 					$this->lookup['error'] = $blocked;
 					return;
@@ -306,6 +337,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 				$close     = 'close' === $step || ! empty( $_POST['closeTicket'] );
 				if ( ! $ticket_id ) {
 					return;
+				}
+				if ( ! $this->allowed( 'reply|' . $this->ip(), 20 ) || ! $this->allowed( 'reply-ticket|' . $ticket_id, 10 ) ) {
+					wp_safe_redirect( add_query_arg( 'stsw_notice', 'slow', $this->get_ticket_link( $ticket_id ) ) );
+					exit;
 				}
 				$core   = $this->core();
 				$notice = 'replied';
@@ -482,6 +517,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 				'replied'  => __( 'Thanks, your message was sent. We will reply by email.', 'support-ticket-system-for-woocommerce' ),
 				'closed'   => __( 'Your request is closed. You can reopen it at any time.', 'support-ticket-system-for-woocommerce' ),
 				'reopened' => __( 'Your request is open again. Add a reply to tell us what you still need.', 'support-ticket-system-for-woocommerce' ),
+				'slow'     => __( 'Too many messages in a short time. Please wait a few minutes and try again.', 'support-ticket-system-for-woocommerce' ),
 			);
 			echo '<div class="stsw" id="stsw-guest-title">';
 			if ( isset( $texts[ $notice ] ) ) {
