@@ -469,7 +469,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 				array(
 					'error' => (string) ( $this->lookup['error'] ?? '' ),
 					'nonce' => self::NONCE,
-					'otp'   => array(),
+					'otp'   => class_exists( 'WPFactory_WC_STS_OTP' ) ? WPFactory_WC_STS_OTP::get_instance()->get_view_data() : array(),
 				)
 			);
 		}
