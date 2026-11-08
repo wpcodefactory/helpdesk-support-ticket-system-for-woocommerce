@@ -118,8 +118,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				array( $this, 'action_links' )
 			);
 
-			// "Recommendations" page.
-			add_action( 'init', array( $this, 'add_cross_selling_library' ) );
+			// The only note about Pro is the dismissible notice below (no "Go Pro" link, no recommendations page).
 
 			// Settings.
 			add_action( 'admin_menu', array( $this, 'add_settings' ), 11 );
@@ -144,11 +143,6 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 
 			$custom_links[] = '<a href="' . admin_url( 'admin.php?page=support-ticket-system-woocommerce&tab=settings' ) . '">' .
 				__( 'Settings', 'support-ticket-system-for-woocommerce' ) .
-			'</a>';
-
-			$pro_url        = 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce';
-			$custom_links[] = '<a target="_blank" style="font-weight: bold; color: green;" href="' . $pro_url . '">' .
-				__( 'Go Pro', 'support-ticket-system-for-woocommerce' ) .
 			'</a>';
 
 			return array_merge( $custom_links, $links );
@@ -263,7 +257,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 			}
 			$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_dismiss_pro_notice' ), 'wpfactory_wc_sts_dismiss_pro_notice' );
 			echo '<div class="notice notice-info"><p>' .
-				esc_html__( 'Pro adds the order panel and order actions in tickets (refunds, resend emails, status changes), email piping, satisfaction ratings and reports, AI reply drafts with your own key, automation and a REST API.', 'support-ticket-system-for-woocommerce' ) .
+				esc_html__( 'Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, AI with your own key, and a full REST API.', 'support-ticket-system-for-woocommerce' ) .
 				' <a href="https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce" target="_blank" rel="noopener">' . esc_html__( 'See Pro', 'support-ticket-system-for-woocommerce' ) . '</a>' .
 				' | <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Dismiss', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
 		}
