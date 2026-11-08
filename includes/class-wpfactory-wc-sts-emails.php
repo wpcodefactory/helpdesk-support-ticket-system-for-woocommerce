@@ -62,6 +62,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			add_action( 'wpfactory_wc_sts_ticket_created', array( $this, 'on_ticket_created' ) );
 			add_action( 'wpfactory_wc_sts_reply_added', array( $this, 'on_reply_added' ), 10, 3 );
 			add_action( 'admin_post_wpfactory_wc_sts_test_email', array( $this, 'send_test_email' ) );
+			add_action( 'wpfactory_wc_sts_status_changed', array( $this, 'on_status_changed' ), 30, 3 );
+			add_action( 'wpfactory_wc_sts_reply_added', array( $this, 'remember_reply' ), 1, 3 );
+			add_action( 'shutdown', array( $this, 'send_status_emails' ) );
 		}
 
 		/**
@@ -125,11 +128,31 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 				'{toLastName}'      => (string) $contact['last_name'],
 				'{ticketLink}'      => $link,
 			);
-			$html    = array();
+			$order   = $this->core->get_ticket_order_id( $ticket_id ) ? wc_get_order( $this->core->get_ticket_order_id( $ticket_id ) ) : false;
+			$status  = $this->core->get_ticket_term( $ticket_id, 'stsw_tickets_status' );
+			// Names used by saved replies and newer templates.
+			$plain += array(
+				'{ticketLinkPlain}'     => $link,
+				'{customer_first_name}' => (string) $contact['first_name'],
+				'{customer_last_name}'  => (string) $contact['last_name'],
+				'{customer_name}'       => (string) $contact['display_name'],
+				'{customer_email}'      => (string) $contact['email'],
+				'{ticket_number}'       => $this->core->get_ticket_number( $ticket_id ),
+				'{ticket_title}'        => $title,
+				'{ticket_status}'       => $status ? $status->name : '',
+				'{ticket_url}'          => $link,
+				'{ticket_url_plain}'    => $link,
+				'{order_number}'        => $order ? (string) $order->get_order_number() : '',
+				'{store_name}'          => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
+			);
+			$html   = array();
 			foreach ( $plain as $key => $value ) {
 				$html[ $key ] = in_array( $key, array( '{content}', '{responseContent}' ), true ) ? nl2br( esc_html( $value ) ) : esc_html( $value );
 			}
-			$html['{ticketLink}'] = '<a href="' . esc_url( $link ) . '">' . esc_html__( 'View your request', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			$html['{ticketLink}']       = '<a href="' . esc_url( $link ) . '">' . esc_html__( 'View your request', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			$html['{ticket_url}']       = $html['{ticketLink}'];
+			$html['{ticketLinkPlain}']  = esc_url( $link );
+			$html['{ticket_url_plain}'] = esc_url( $link );
 			return array(
 				'plain' => $plain,
 				'html'  => $html,
@@ -145,7 +168,30 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		 * @return string
 		 */
 		protected function fill_subject( $template, $values ) {
-			return wp_strip_all_tags( strtr( $template, $values['plain'] ) );
+			return wp_strip_all_tags( strtr( self::fallbacks( $template, $values['plain'], false ), $values['plain'] ) );
+		}
+
+		/**
+		 * Smartcodes with a fallback, as {customer_first_name|there}: the value when it is not empty, else the fallback.
+		 *
+		 * @param string $text   Text.
+		 * @param array  $values Placeholder => value.
+		 * @param bool   $html   Escape the fallback for HTML.
+		 *
+		 * @return string
+		 */
+		public static function fallbacks( $text, $values, $html ) {
+			return (string) preg_replace_callback(
+				'/\{([A-Za-z_]+)\|([^{}]*)\}/',
+				function ( $m ) use ( $values, $html ) {
+					$value = $values[ '{' . $m[1] . '}' ] ?? '';
+					if ( '' !== trim( wp_strip_all_tags( (string) $value ) ) ) {
+						return (string) $value;
+					}
+					return $html ? esc_html( $m[2] ) : $m[2];
+				},
+				(string) $text
+			);
 		}
 
 		/**
@@ -157,7 +203,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		 * @return string
 		 */
 		protected function fill_body( $template, $values ) {
-			return wp_kses( strtr( wpautop( $template ), $values['html'] ), WPFactory_WC_STS_Init::$allowed_html );
+			return wp_kses( strtr( self::fallbacks( wpautop( $template ), $values['html'], true ), $values['html'] ), WPFactory_WC_STS_Init::$allowed_html );
 		}
 
 		/**
@@ -287,6 +333,92 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 					? $this->fill_body( $this->text( 'mailIt_contentToCust' ), $values )
 					: $values['html']['{content}'] . '<br/><br/>' . $values['html']['{ticketLink}'];
 				$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', $ticket_id );
+			}
+		}
+
+		/**
+		 * Tickets that got a store reply in this request (their status email is not needed).
+		 *
+		 * @var int[]
+		 */
+		protected $replied = array();
+
+		/**
+		 * Status emails waiting for the end of the request: ticket => status slug.
+		 *
+		 * @var array
+		 */
+		protected $pending_status = array();
+
+		/**
+		 * Remembers a store reply (the reply email already tells the customer).
+		 *
+		 * @param int  $ticket_id Ticket ID.
+		 * @param int  $reply_id  Reply ID.
+		 * @param bool $by_staff  Whether the store replied.
+		 */
+		public function remember_reply( $ticket_id, $reply_id, $by_staff ) {
+			if ( $by_staff ) {
+				$this->replied[] = (int) $ticket_id;
+			}
+		}
+
+		/**
+		 * Status change: queue the closed or status email when the store (or an automatic task) changed it.
+		 * Customers who close or reopen their own ticket get no email about it.
+		 *
+		 * @param int    $ticket_id Ticket ID.
+		 * @param string $slug      New status.
+		 * @param string $old       Old status.
+		 */
+		public function on_status_changed( $ticket_id, $slug, $old ) {
+			if ( get_post_meta( $ticket_id, '_stsw_internal', true ) || '' === $old ) {
+				return;
+			}
+			$by_store = $this->core->can_manage_tickets() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && $this->core->can_manage_tickets() );
+			if ( ! $by_store ) {
+				return;
+			}
+			$this->pending_status[ (int) $ticket_id ] = $slug;
+		}
+
+		/**
+		 * Sends the queued status emails (end of the request).
+		 */
+		public function send_status_emails() {
+			$pending              = $this->pending_status;
+			$this->pending_status = array();
+			foreach ( $pending as $ticket_id => $slug ) {
+				$closed = 'closed' === $slug;
+				$prefix = $closed ? 'wpfactory_wc_sts_mail_closed' : 'wpfactory_wc_sts_mail_status';
+				if ( '1' !== (string) get_option( $prefix ) || ( ! $closed && in_array( (int) $ticket_id, $this->replied, true ) ) ) {
+					continue;
+				}
+				$contact = $this->core->get_ticket_contact( $ticket_id );
+				if ( ! is_email( $contact['email'] ) ) {
+					continue;
+				}
+				$values  = $this->placeholders( $ticket_id, 0, (string) get_post_field( 'post_content', $ticket_id, 'raw' ), '' );
+				$subject = trim( (string) get_option( $prefix . '_subject', '' ) );
+				$body    = trim( (string) get_option( $prefix . '_body', '' ) );
+				if ( '' === $subject ) {
+					$subject = $closed
+						/* translators: 1: ticket number, 2: ticket title. */
+						? sprintf( __( 'Your request #%1$s is closed: %2$s', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_number}'], $values['plain']['{title}'] )
+						/* translators: 1: ticket number, 2: new status. */
+						: sprintf( __( 'Your request #%1$s is now: %2$s', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_number}'], $values['plain']['{ticket_status}'] );
+				} else {
+					$subject = $this->fill_subject( $subject, $values );
+				}
+				if ( '' === $body ) {
+					$body = $closed
+						? '<p>' . esc_html__( 'We closed your request. If you still need help, reply to it and it opens again.', 'support-ticket-system-for-woocommerce' ) . '</p><p>' . $values['html']['{ticketLink}'] . '</p>'
+						/* translators: %s: new status. */
+						: '<p>' . esc_html( sprintf( __( 'The status of your request changed to: %s.', 'support-ticket-system-for-woocommerce' ), $values['plain']['{ticket_status}'] ) ) . '</p><p>' . $values['html']['{ticketLink}'] . '</p>';
+				} else {
+					$body = $this->fill_body( $body, $values );
+				}
+				$this->notify_users( $contact['email'], $subject, $this->with_guest_link( $ticket_id, $body, $values ), '', (int) $ticket_id );
 			}
 		}
 

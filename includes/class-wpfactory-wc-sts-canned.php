@@ -131,7 +131,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 			$values = array(
 				'{customer_first_name}' => '',
 				'{order_number}'        => '',
-				'{ticket_number}'       => $ticket_id ? (string) $ticket_id : '',
+				'{ticket_number}'       => $ticket_id ? $core->get_ticket_number( $ticket_id ) : '',
 				'{store_name}'          => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 			);
 			if ( $ticket_id ) {
@@ -170,7 +170,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 			echo '<select id="stsw-canned" class="wpfactory-wc-sts-canned hd-pill hd-pill--ghost" data-target="' . esc_attr( $target ) . '"><option value="">' . esc_html__( 'Saved reply', 'support-ticket-system-for-woocommerce' ) . '</option>';
 			foreach ( $replies as $reply ) {
 				$text = trim( wp_strip_all_tags( str_replace( array( '</p>', '<br>', '<br />', '<br/>' ), "\n", (string) $reply->post_content ) ) );
-				$text = strtr( html_entity_decode( $text, ENT_QUOTES, 'UTF-8' ), $values );
+				$text = strtr( WPFactory_WC_STS_Emails::fallbacks( html_entity_decode( $text, ENT_QUOTES, 'UTF-8' ), $values, false ), $values );
 				echo '<option value="' . (int) $reply->ID . '" data-text="' . esc_attr( $text ) . '">' . esc_html( get_the_title( $reply ) ) . '</option>';
 			}
 			echo '</select>';
