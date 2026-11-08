@@ -291,6 +291,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				}
 			}
 
+			$this->merge_duplicate_tags();
+
 			// The `tickets` endpoint is registered by now, so customers do not get a 404 on My Account > Tickets.
 			flush_rewrite_rules( false );
 
@@ -307,6 +309,41 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			}
 
 			update_option( WPFACTORY_WC_STS_VERSION_OPTION, WPFACTORY_WC_STS_VERSION, false );
+		}
+
+		/**
+		 * Tags differing only in case ("VIP", "vip") become one tag; the tickets keep it. Runs on every update.
+		 */
+		public function merge_duplicate_tags() {
+			$groups = array();
+			foreach ( get_terms(
+				array(
+					'taxonomy'   => 'stsw_tickets_tag',
+					'hide_empty' => false,
+				)
+			) as $term ) {
+				$groups[ mb_strtolower( trim( $term->name ) ) ][] = $term;
+			}
+			foreach ( $groups as $terms ) {
+				if ( count( $terms ) < 2 ) {
+					continue;
+				}
+				// Keep the most used one (the oldest on a tie).
+				usort(
+					$terms,
+					function ( $a, $b ) {
+						return $b->count <=> $a->count ?: $a->term_id <=> $b->term_id;
+					}
+				);
+				$keep = array_shift( $terms );
+				foreach ( $terms as $dup ) {
+					$tickets = get_objects_in_term( $dup->term_id, 'stsw_tickets_tag' );
+					foreach ( is_wp_error( $tickets ) ? array() : $tickets as $ticket_id ) {
+						wp_add_object_terms( (int) $ticket_id, (int) $keep->term_id, 'stsw_tickets_tag' );
+					}
+					wp_delete_term( $dup->term_id, 'stsw_tickets_tag' );
+				}
+			}
 		}
 
 		/**
