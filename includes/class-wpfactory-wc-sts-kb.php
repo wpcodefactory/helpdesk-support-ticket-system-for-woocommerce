@@ -43,6 +43,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 		const OPTION_SLUG = 'wpfactory_wc_sts_kb_slug';
 
 		/**
+		 * Page that shows the help center (search, categories, articles).
+		 */
+		const OPTION_PAGE = 'wpfactory_wc_sts_kb_page';
+
+		/**
 		 * Loaded instance.
 		 *
 		 * @var WPFactory_WC_STS_KB|null
@@ -67,6 +72,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 		public function __construct() {
 			self::$instance = $this;
 			add_action( 'init', array( $this, 'register' ) );
+			add_action( 'template_redirect', array( $this, 'archive_to_page' ) );
+			add_action( 'wpfactory_wc_sts_wizard_done', array( $this, 'ensure_page' ) );
 			add_shortcode( 'stsw_knowledge_base', array( $this, 'shortcode' ) );
 			add_action( 'wp_ajax_wpfactory_wc_sts_kb_suggest', array( $this, 'ajax_suggest' ) );
 			add_action( 'wp_ajax_nopriv_wpfactory_wc_sts_kb_suggest', array( $this, 'ajax_suggest' ) );
@@ -140,7 +147,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 					),
 					'public'              => true,
 					'exclude_from_search' => false,
-					'has_archive'         => $this->get_slug(),
+					// With a help center page the page has the address; the archive only exists as a fallback.
+					'has_archive'         => $this->get_page_id() ? false : $this->get_slug(),
 					'show_ui'             => true,
 					'show_in_menu'        => false,
 					'show_in_rest'        => true,
@@ -155,9 +163,73 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 				)
 			);
 			// New article addresses work without a visit to Settings > Permalinks.
-			if ( get_option( 'wpfactory_wc_sts_kb_rules' ) !== $this->get_slug() ) {
-				update_option( 'wpfactory_wc_sts_kb_rules', $this->get_slug(), false );
+			$rules = $this->get_slug() . ( $this->get_page_id() ? '|page' : '' );
+			if ( get_option( 'wpfactory_wc_sts_kb_rules' ) !== $rules ) {
+				update_option( 'wpfactory_wc_sts_kb_rules', $rules, false );
 				flush_rewrite_rules( false );
+			}
+		}
+
+		/**
+		 * The help center page, if it is published and holds the shortcode.
+		 *
+		 * @return int Page ID or 0.
+		 */
+		public function get_page_id() {
+			$id = absint( get_option( self::OPTION_PAGE, 0 ) );
+			return $id && 'publish' === get_post_status( $id ) && has_shortcode( (string) get_post_field( 'post_content', $id ), 'stsw_knowledge_base' ) ? $id : 0;
+		}
+
+		/**
+		 * Makes sure a help center page exists: an existing page with the shortcode, or a new "Help center" page at the
+		 * help center address.
+		 *
+		 * @return int Page ID.
+		 */
+		public function ensure_page() {
+			$id = $this->get_page_id();
+			if ( $id ) {
+				return $id;
+			}
+			global $wpdb;
+			$id = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'page' AND post_status = 'publish' AND post_content LIKE %s ORDER BY ID LIMIT 1", '%' . $wpdb->esc_like( '[stsw_knowledge_base' ) . '%' )
+			);
+			if ( ! $id ) {
+				$id = (int) wp_insert_post(
+					array(
+						'post_type'    => 'page',
+						'post_status'  => 'publish',
+						'post_title'   => __( 'Help center', 'support-ticket-system-for-woocommerce' ),
+						'post_name'    => $this->get_slug(),
+						'post_content' => '<!-- wp:shortcode -->
+[stsw_knowledge_base]
+<!-- /wp:shortcode -->',
+					)
+				);
+			}
+			if ( $id ) {
+				update_option( self::OPTION_PAGE, $id, false );
+				delete_option( 'wpfactory_wc_sts_kb_rules' ); // Rewrite rules are rebuilt on the next request.
+			}
+			return $id;
+		}
+
+		/**
+		 * The article archive shows the help center: it sends visitors to the help center page (created when missing).
+		 */
+		public function archive_to_page() {
+			if ( ! is_post_type_archive( self::POST_TYPE ) ) {
+				return;
+			}
+			$id = $this->ensure_page();
+			if ( $id ) {
+				// The page may take the archive's address: rebuild the addresses now, and do not let browsers keep this.
+				update_option( 'wpfactory_wc_sts_kb_rules', $this->get_slug() . '|page', false );
+				$this->register();
+				flush_rewrite_rules( false );
+				wp_safe_redirect( get_permalink( $id ), 302 );
+				exit;
 			}
 		}
 
@@ -344,7 +416,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 			echo '<div class="hd-page">';
 			WPFactory_WC_STS_UI::page_head( __( 'Knowledge base', 'support-ticket-system-for-woocommerce' ), __( 'Answers customers can read on their own. Articles are suggested while customers write a ticket, and you can link them in replies.', 'support-ticket-system-for-woocommerce' ), $new );
 			echo '<p class="hd-help">';
-			echo esc_html__( 'Help center:', 'support-ticket-system-for-woocommerce' ) . ' <a href="' . esc_url( home_url( '/' . $this->get_slug() . '/' ) ) . '">' . esc_html( home_url( '/' . $this->get_slug() . '/' ) ) . '</a> · <a href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=' . self::TAXONOMY . '&post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Manage categories', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			$center = $this->get_page_id() ? get_permalink( $this->get_page_id() ) : home_url( '/' . $this->get_slug() . '/' );
+			echo esc_html__( 'Help center:', 'support-ticket-system-for-woocommerce' ) . ' <a href="' . esc_url( $center ) . '">' . esc_html( $center ) . '</a> · <a href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=' . self::TAXONOMY . '&post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Manage categories', 'support-ticket-system-for-woocommerce' ) . '</a>';
 			echo '</p>';
 			if ( ! $articles ) {
 				echo '<section class="hd-card hd-emptystate"><span class="hd-emptystate__icon">' . wp_kses( WPFactory_WC_STS_UI::icon( 'book', 22 ), WPFactory_WC_STS_UI::svg_kses() ) . '</span><h2 class="hd-h2">' . esc_html__( 'No articles yet', 'support-ticket-system-for-woocommerce' ) . '</h2><p class="hd-muted">' . esc_html__( 'Start with the questions you answer most: shipping times, returns, and how to track an order.', 'support-ticket-system-for-woocommerce' ) . '</p></section></div>';

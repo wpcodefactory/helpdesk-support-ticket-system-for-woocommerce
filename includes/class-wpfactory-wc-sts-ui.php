@@ -1156,6 +1156,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					update_option( $p . 'mailToADmin', empty( $_POST['alerts'] ) ? '' : '1' );
 					update_option( $p . 'mailToCustomer', empty( $_POST['customer'] ) ? '' : '1' );
 					update_option( self::WIZARD_OPTION, 'done', false );
+					/**
+					 * The setup wizard finished (the knowledge base creates the Help center page).
+					 */
+					do_action( 'wpfactory_wc_sts_wizard_done' );
 					break;
 			}
 			$keys = array_keys( $this->wizard_steps() );
