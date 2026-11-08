@@ -360,6 +360,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						<?php endforeach; ?>
 					</div>
 					<?php wp_nonce_field( $this->plugin ); ?>
+					<?php // The settings script sets the section shown, so a save only touches that section. ?>
+					<input type="hidden" name="stsw_section" value="" data-hd-section />
 					<div class="hd-savebar" id="save_changes">
 						<span class="hd-savebar__state" data-hd-state aria-live="polite"><?php esc_html_e( 'All changes saved', 'support-ticket-system-for-woocommerce' ); ?></span>
 						<button type="submit" name="submit" class="hd-btn hd-btn--primary"><?php esc_html_e( 'Save changes', 'support-ticket-system-for-woocommerce' ); ?></button>
@@ -770,10 +772,19 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			check_admin_referer( $this->plugin );
 
 			$old_role = (string) get_option( $this->plugin . 'assignToRole' );
-			$fields   = array_merge( $this->get_general_fields(), $this->get_form_fields(), $this->get_assignment_fields(), $this->get_notification_fields() );
-			foreach ( $this->get_extra_sections() as $section ) {
-				$fields = array_merge( $fields, $section['fields'] );
+			$by_tab   = array(
+				'general'       => $this->get_general_fields(),
+				'form'          => $this->get_form_fields(),
+				'assignment'    => $this->get_assignment_fields(),
+				'notifications' => $this->get_notification_fields(),
+			);
+			foreach ( $this->get_extra_sections() as $id => $section ) {
+				$by_tab[ $id ] = $section['fields'];
 			}
+			// Only the section on screen is saved (a section with no fields posted can never clear another one).
+			$tab    = sanitize_key( wp_unslash( $_POST['stsw_section'] ?? '' ) );
+			$tab    = isset( $by_tab[ $tab ] ) ? $tab : '';
+			$fields = '' !== $tab ? $by_tab[ $tab ] : array_merge( ...array_values( $by_tab ) );
 			foreach ( $fields as $key => $field ) {
 				if ( 'html' === $field['type'] ) {
 					continue;
@@ -824,6 +835,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 
 			// Ticket access moves with the assignment role. Administrators always keep it; missing roles are skipped.
 			$new_role = (string) get_option( $this->plugin . 'assignToRole' );
+			if ( ! in_array( $tab, array( '', 'assignment' ), true ) ) {
+				$new_role = $old_role;
+			}
 			if ( $old_role && $old_role !== $new_role && 'administrator' !== $old_role ) {
 				$role = get_role( $old_role );
 				if ( $role ) {
@@ -838,14 +852,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			}
 
 			// Extra form fields (each value is unslashed and sanitized in `sanitize_fields()`).
-			if ( isset( $_POST['wpfactory_wc_sts_custom_fields'] ) && is_array( $_POST['wpfactory_wc_sts_custom_fields'] ) ) {
+			if ( in_array( $tab, array( '', 'form' ), true ) && isset( $_POST['wpfactory_wc_sts_custom_fields'] ) && is_array( $_POST['wpfactory_wc_sts_custom_fields'] ) ) {
 				update_option( WPFactory_WC_STS_Fields::OPTION, WPFactory_WC_STS_Fields::get_instance()->sanitize_fields( $_POST['wpfactory_wc_sts_custom_fields'] ), false ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized in sanitize_fields().
 			}
 
 			/**
-			 * Settings were saved (the nonce is checked). Pro saves its lists here (mailboxes, rules, companies).
+			 * Settings were saved (the nonce is checked). Pro saves its lists here (mailboxes, rules, hours, scopes).
+			 *
+			 * @param string $tab Section saved ('' : all sections, when scripts are off).
 			 */
-			do_action( 'wpfactory_wc_sts_settings_saved' );
+			do_action( 'wpfactory_wc_sts_settings_saved', $tab );
 
 			WPFactory_WC_STS_UI::notice( __( 'Settings saved.', 'support-ticket-system-for-woocommerce' ) );
 		}

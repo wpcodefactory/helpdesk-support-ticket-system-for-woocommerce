@@ -91,6 +91,10 @@
 			each(".hd-panel", function (p) {
 				p.classList.toggle("is-active", p === panel);
 			}, settings);
+			var section = settings.querySelector("[data-hd-section]");
+			if (section) {
+				section.value = id;
+			}
 			Array.prototype.forEach.call(links, function (link) {
 				if (link.getAttribute("data-hd-panel") === id) {
 					link.setAttribute("aria-current", "true");
