@@ -2584,3 +2584,8 @@ body.wpf-hd-wizard {
 	border-left: 3px solid var(--hd-border, #dcdcde);
 	white-space: normal;
 }
+
+/* Elements with the hidden attribute stay hidden even when a class sets display (3.0.0). */
+.wpf-hd [hidden] {
+	display: none !important;
+}
