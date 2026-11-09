@@ -31,6 +31,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guard' ) ) :
 		const OPTION_SECRET  = 'wpfactory_wc_sts_captcha_secret';
 
 		/**
+		 * Option: which header carries the visitor's address behind a proxy ('', `cf` or `xff`). Off by default.
+		 */
+		const OPTION_PROXY = 'wpfactory_wc_sts_proxy_header';
+
+		/**
+		 * Option: proxy addresses (IPs or CIDR ranges) allowed to set that header, one per line.
+		 */
+		const OPTION_PROXIES = 'wpfactory_wc_sts_trusted_proxies';
+
+		/**
 		 * Verification endpoints.
 		 */
 		const VERIFY = array(
@@ -124,7 +134,132 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guard' ) ) :
 				'card'  => 'spam',
 				'label' => __( 'Secret key', 'support-ticket-system-for-woocommerce' ),
 			);
+			$fields[ '@' . self::OPTION_PROXY ]   = array(
+				'type'        => 'select',
+				'card'        => 'spam',
+				'label'       => __( 'Trusted proxy header', 'support-ticket-system-for-woocommerce' ),
+				'description' => __( 'Only when your site is behind Cloudflare or another proxy: attempt limits then count each visitor instead of the proxy. Leave it on None otherwise: these headers are easy to fake.', 'support-ticket-system-for-woocommerce' ),
+				'options'     => array(
+					''    => __( 'None (use the connecting address)', 'support-ticket-system-for-woocommerce' ),
+					'cf'  => __( 'CF-Connecting-IP (Cloudflare)', 'support-ticket-system-for-woocommerce' ),
+					'xff' => __( 'X-Forwarded-For, from the trusted proxies below', 'support-ticket-system-for-woocommerce' ),
+				),
+			);
+			$fields[ '@' . self::OPTION_PROXIES ] = array(
+				'type'        => 'textarea',
+				'card'        => 'spam',
+				'label'       => __( 'Trusted proxy addresses', 'support-ticket-system-for-woocommerce' ),
+				'description' => __( 'One IP address or range per line (for example 10.0.0.0/8). X-Forwarded-For is read only from these. With CF-Connecting-IP, if you list addresses, the header is read only from them.', 'support-ticket-system-for-woocommerce' ),
+			);
 			return $fields;
+		}
+
+		/**
+		 * Whether an address is in a list of IPs and CIDR ranges (IPv4 and IPv6).
+		 *
+		 * @param string   $ip    Address.
+		 * @param string[] $list  IPs or ranges.
+		 *
+		 * @return bool
+		 */
+		public static function ip_in( $ip, $list ) {
+			$packed = @inet_pton( $ip ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- invalid input returns false.
+			if ( false === $packed ) {
+				return false;
+			}
+			foreach ( $list as $entry ) {
+				$entry = trim( (string) $entry );
+				$bits  = null;
+				if ( false !== strpos( $entry, '/' ) ) {
+					list( $entry, $bits ) = explode( '/', $entry, 2 );
+					$bits                 = (int) $bits;
+				}
+				$net = @inet_pton( $entry ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- invalid input returns false.
+				if ( false === $net || strlen( $net ) !== strlen( $packed ) ) {
+					continue;
+				}
+				$bits = null === $bits ? strlen( $net ) * 8 : max( 0, min( $bits, strlen( $net ) * 8 ) );
+				$full = intdiv( $bits, 8 );
+				$rest = $bits % 8;
+				if ( substr( $packed, 0, $full ) !== substr( $net, 0, $full ) ) {
+					continue;
+				}
+				if ( $rest ) {
+					$mask = chr( ( 0xff << ( 8 - $rest ) ) & 0xff );
+					if ( ( $packed[ $full ] & $mask ) !== ( $net[ $full ] & $mask ) ) {
+						continue;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * The visitor's address: the connecting address, or a proxy header when the store turned one on and the
+		 * request came through a trusted proxy. Forwarded headers are never read when the setting is off.
+		 *
+		 * @return string
+		 */
+		public static function client_ip() {
+			$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+			$mode   = (string) get_option( self::OPTION_PROXY, '' );
+			$list   = array_filter( array_map( 'trim', preg_split( '/[\s,]+/', (string) get_option( self::OPTION_PROXIES, '' ) ) ) );
+			if ( 'cf' === $mode && ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) && ( ! $list || self::ip_in( $remote, $list ) ) ) {
+				$ip = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
+				return false !== filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : $remote;
+			}
+			if ( 'xff' === $mode && $list && ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) && self::ip_in( $remote, $list ) ) {
+				// Right to left: the first address that is not one of the trusted proxies is the visitor.
+				$hops = array_reverse( array_map( 'trim', explode( ',', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) );
+				foreach ( $hops as $hop ) {
+					if ( false === filter_var( $hop, FILTER_VALIDATE_IP ) ) {
+						break;
+					}
+					if ( ! self::ip_in( $hop, $list ) ) {
+						return $hop;
+					}
+				}
+			}
+			return $remote;
+		}
+
+		/**
+		 * Counts one attempt and says whether it is still allowed. Each limit has its own bucket and key, so one visitor
+		 * does not block another: limits are kept per address plus email (or chat session), with a wider limit per
+		 * email across addresses and per address across emails.
+		 *
+		 * @param string $bucket What is limited (for the log hook), such as `guest:lookup`.
+		 * @param string $key    Who: for example the address and the email.
+		 * @param int    $limit  Attempts allowed in the window.
+		 * @param int    $window Window in seconds.
+		 *
+		 * @return bool Whether the attempt is allowed.
+		 */
+		public static function attempt( $bucket, $key, $limit, $window = 900 ) {
+			$name  = 'wpfactory_wc_sts_rl_' . md5( $bucket . '|' . strtolower( (string) $key ) );
+			$count = (int) get_transient( $name );
+			if ( $count >= $limit ) {
+				/**
+				 * A rate limit refused a request (for logging; the request is refused either way).
+				 *
+				 * @param string $bucket What was limited.
+				 * @param int    $limit  Limit in the window.
+				 */
+				do_action( 'wpfactory_wc_sts_rate_limited', $bucket, (int) $limit );
+				return false;
+			}
+			set_transient( $name, $count + 1, $window );
+			return true;
+		}
+
+		/**
+		 * Clears every attempt counter (tests, and stores that want a fresh start).
+		 */
+		public static function clear_attempts() {
+			global $wpdb;
+			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_wpfactory\\_wc\\_sts\\_rl\\_%' OR option_name LIKE '\\_transient\\_timeout\\_wpfactory\\_wc\\_sts\\_rl\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- transients under one prefix.
+			wp_cache_flush_group( 'transient' );
 		}
 
 		/**

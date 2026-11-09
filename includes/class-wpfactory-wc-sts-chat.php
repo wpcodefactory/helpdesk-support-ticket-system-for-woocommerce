@@ -325,7 +325,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 		*/
 
 		/**
-		 * Too many requests from this address (per minute window).
+		 * Too many requests: per address plus the browser's chat session (sent by the chat script), and five times the
+		 * limit per address, so visitors behind one address do not block each other.
 		 *
 		 * @param string $what  Bucket.
 		 * @param int    $limit Allowed per 10 minutes.
@@ -333,21 +334,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 		 * @return bool
 		 */
 		protected function limited( $what, $limit ) {
-			$ip  = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-			$key = 'stsw_chat_' . $what . '_' . md5( $ip );
-			$n   = (int) get_transient( $key );
-			if ( $n >= $limit ) {
-				/**
-				 * A rate limit refused a request (for logging; the request is refused either way).
-				 *
-				 * @param string $bucket What was limited.
-				 * @param int    $limit  Limit in the window.
-				 */
-				do_action( 'wpfactory_wc_sts_rate_limited', 'chat:' . $what, (int) $limit );
-				return true;
-			}
-			set_transient( $key, $n + 1, 10 * MINUTE_IN_SECONDS );
-			return false;
+			$ip      = WPFactory_WC_STS_Guard::client_ip();
+			$session = preg_replace( '/[^a-z0-9]/', '', strtolower( sanitize_text_field( wp_unslash( $_POST['client'] ?? '' ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked by the caller.
+			$session = substr( (string) $session, 0, 40 );
+			return ! WPFactory_WC_STS_Guard::attempt( 'chat:' . $what, $ip . '|' . $session, $limit, 10 * MINUTE_IN_SECONDS )
+				|| ! WPFactory_WC_STS_Guard::attempt( 'chat:' . $what . '-ip', $ip, $limit * 5, 10 * MINUTE_IN_SECONDS );
 		}
 
 		/**

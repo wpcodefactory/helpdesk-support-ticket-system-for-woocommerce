@@ -192,57 +192,36 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 		 * @return string
 		 */
 		protected function ip() {
-			return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+			return WPFactory_WC_STS_Guard::client_ip();
 		}
 
 		/**
 		 * Counts an event in a 15 minute window.
 		 *
-		 * @param string $key   Key.
+		 * @param string $key   Bucket and who, as `bucket|who`.
 		 * @param int    $limit Limit.
 		 *
 		 * @return bool Whether it is still allowed.
 		 */
 		protected function allowed( $key, $limit ) {
-			$bucket = 'guest:' . strtok( $key, '|' );
-			$key    = 'wpfactory_wc_sts_guest_' . md5( $key );
-			$count  = (int) get_transient( $key );
-			if ( $count >= $limit ) {
-				/**
-				 * A rate limit refused a request (for logging; the request is refused either way).
-				 *
-				 * @param string $bucket What was limited.
-				 * @param int    $limit  Limit in the window.
-				 */
-				do_action( 'wpfactory_wc_sts_rate_limited', $bucket, (int) $limit );
-				return false;
-			}
-			set_transient( $key, $count + 1, 15 * MINUTE_IN_SECONDS );
-			return true;
+			list( $bucket, $who ) = array_pad( explode( '|', $key, 2 ), 2, '' );
+			return WPFactory_WC_STS_Guard::attempt( 'guest:' . $bucket, $who, $limit );
 		}
 
 		/**
-		 * Rate limit for order lookups, per IP address.
+		 * Rate limit for order lookups: per address plus email, per email from any address (so rotating addresses do
+		 * not help), and a wider limit per address (so many emails from one address are still capped).
+		 *
+		 * @param string $email Email entered.
 		 *
 		 * @return bool Whether another lookup is allowed.
 		 */
-		protected function lookup_allowed() {
-			$ip    = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-			$key   = 'wpfactory_wc_sts_guest_' . md5( $ip );
-			$count = (int) get_transient( $key );
-			$limit = self::MAX_LOOKUPS;
-			if ( $count >= $limit ) {
-				/**
-				 * A rate limit refused a request (for logging; the request is refused either way).
-				 *
-				 * @param string $bucket What was limited.
-				 * @param int    $limit  Limit in the window.
-				 */
-				do_action( 'wpfactory_wc_sts_rate_limited', 'guest:lookup', (int) $limit );
-				return false;
-			}
-			set_transient( $key, $count + 1, 15 * MINUTE_IN_SECONDS );
-			return true;
+		protected function lookup_allowed( $email ) {
+			$ip    = $this->ip();
+			$email = strtolower( (string) $email );
+			return WPFactory_WC_STS_Guard::attempt( 'guest:lookup', $ip . '|' . $email, self::MAX_LOOKUPS )
+				&& WPFactory_WC_STS_Guard::attempt( 'guest:lookup-email', $email, self::MAX_LOOKUPS * 2 )
+				&& WPFactory_WC_STS_Guard::attempt( 'guest:lookup-ip', $ip, self::MAX_LOOKUPS * 5 );
 		}
 
 		/**
@@ -297,7 +276,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 			}
 
 			if ( 'lookup' === $action ) {
-				if ( ! $this->lookup_allowed() ) {
+				if ( ! $this->lookup_allowed( sanitize_email( wp_unslash( $_POST['stsw_email'] ?? '' ) ) ) ) {
 					$this->lookup = array( 'error' => __( 'Too many attempts. Please wait a few minutes and try again.', 'support-ticket-system-for-woocommerce' ) );
 					return;
 				}
@@ -328,7 +307,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 					return;
 				}
 				$this->lookup = $checked;
-				if ( ! $this->allowed( 'create|' . $this->ip(), 5 ) || ! $this->allowed( 'create-order|' . $checked['order_id'], 3 ) ) {
+				if ( ! $this->allowed( 'create|' . $this->ip() . '|' . $checked['email'], 5 ) || ! $this->allowed( 'create-order|' . $checked['order_id'], 3 ) || ! $this->allowed( 'create-ip|' . $this->ip(), 25 ) ) {
 					$this->lookup['error'] = __( 'Too many attempts. Please wait a few minutes and try again.', 'support-ticket-system-for-woocommerce' );
 					return;
 				}
@@ -354,7 +333,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Guest' ) ) :
 				if ( ! $ticket_id ) {
 					return;
 				}
-				if ( ! $this->allowed( 'reply|' . $this->ip(), 20 ) || ! $this->allowed( 'reply-ticket|' . $ticket_id, 10 ) ) {
+				if ( ! $this->allowed( 'reply|' . $this->ip() . '|' . $ticket_id, 10 ) || ! $this->allowed( 'reply-ticket|' . $ticket_id, 20 ) || ! $this->allowed( 'reply-ip|' . $this->ip(), 60 ) ) {
 					wp_safe_redirect( add_query_arg( 'stsw_notice', 'slow', $this->get_ticket_link( $ticket_id ) ) );
 					exit;
 				}

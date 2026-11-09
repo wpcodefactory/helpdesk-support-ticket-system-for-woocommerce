@@ -128,38 +128,25 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 		}
 
 		/**
-		 * Client IP address (REMOTE_ADDR only: forwarded headers can be faked).
+		 * The visitor's address (see Guard::client_ip(): forwarded headers only when the store trusts a proxy).
 		 *
 		 * @return string
 		 */
 		protected function ip() {
-			return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+			return WPFactory_WC_STS_Guard::client_ip();
 		}
 
 		/**
 		 * Counts an event in a 15 minute window.
 		 *
-		 * @param string $key   Key.
+		 * @param string $key   Bucket and who, as `bucket|who`.
 		 * @param int    $limit Limit.
 		 *
 		 * @return bool Whether it is still allowed.
 		 */
 		protected function allowed( $key, $limit ) {
-			$bucket = 'otp:' . strtok( $key, '|' );
-			$key    = 'wpfactory_wc_sts_otp_' . md5( $key );
-			$count  = (int) get_transient( $key );
-			if ( $count >= $limit ) {
-				/**
-				 * A rate limit refused a request (for logging; the request is refused either way).
-				 *
-				 * @param string $bucket What was limited.
-				 * @param int    $limit  Limit in the window.
-				 */
-				do_action( 'wpfactory_wc_sts_rate_limited', $bucket, (int) $limit );
-				return false;
-			}
-			set_transient( $key, $count + 1, 15 * MINUTE_IN_SECONDS );
-			return true;
+			list( $bucket, $who ) = array_pad( explode( '|', $key, 2 ), 2, '' );
+			return WPFactory_WC_STS_Guard::attempt( 'otp:' . $bucket, $who, $limit );
 		}
 
 		/**
@@ -353,7 +340,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 				 * @param string $source Form: `otp`.
 				 */
 				$error = (string) apply_filters( 'wpfactory_wc_sts_check_sender', '', $email, 'otp' );
-				if ( '' === $error && ( ! $this->allowed( 'ip|' . $this->ip(), self::MAX_SENDS * 3 ) || ! $this->allowed( 'email|' . $email, self::MAX_SENDS ) ) ) {
+				if ( '' === $error && ( ! $this->allowed( 'send|' . $this->ip() . '|' . $email, self::MAX_SENDS ) || ! $this->allowed( 'email|' . $email, self::MAX_SENDS * 2 ) || ! $this->allowed( 'ip|' . $this->ip(), self::MAX_SENDS * 10 ) ) ) {
 					$error = __( 'Too many attempts. Please wait a few minutes and try again.', 'support-ticket-system-for-woocommerce' );
 				}
 				if ( '' !== $error ) {
@@ -369,7 +356,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 				return;
 			}
 			if ( 'verify' === $action ) {
-				if ( ! $this->allowed( 'verify|' . $this->ip(), 20 ) ) {
+				if ( ! $this->allowed( 'verify|' . $this->ip() . '|' . $email, 20 ) || ! $this->allowed( 'verify-email|' . $email, 40 ) || ! $this->allowed( 'verify-ip|' . $this->ip(), 100 ) ) {
 					$this->state = array(
 						'step'  => 'verify',
 						'email' => $email,

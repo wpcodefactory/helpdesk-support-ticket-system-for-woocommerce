@@ -73,9 +73,23 @@
 	}
 	fitColours();
 
+	// A random id for this browser's chat, so attempt limits count each visitor, not a shared address.
+	function clientId() {
+		var id = "";
+		try {
+			id = window.localStorage.getItem("stsw_chat_client") || "";
+			if (!id) {
+				id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+				window.localStorage.setItem("stsw_chat_client", id);
+			}
+		} catch (e) {}
+		return id;
+	}
+
 	function post(action, data) {
 		var body = new window.FormData();
 		body.append("action", "wpfactory_wc_sts_chat_" + action);
+		body.append("client", clientId());
 		Object.keys(data || {}).forEach(function (k) {
 			body.append(k, data[k]);
 		});
