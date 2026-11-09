@@ -1182,7 +1182,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * @param string $content     Reply (plain text).
 		 * @param int    $author_id   Author user ID (0 for a guest).
 		 * @param bool   $by_staff    Whether the author answers for the store.
-		 * @param array  $options     { close: bool, files_field: string, notify: bool }.
+		 * @param array  $options     { close: bool, files_field: string, files: array of name and data (email attachments), notify: bool }.
 		 *
 		 * @return int Reply ID, 0 on failure.
 		 */
@@ -1193,6 +1193,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				array(
 					'close'       => false,
 					'files_field' => '',
+					'files'       => array(),
 					'notify'      => true,
 				)
 			);
@@ -1214,8 +1215,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				return 0;
 			}
 
-			if ( '' !== $options['files_field'] && class_exists( 'WPFactory_WC_STS_Files' ) ) {
-				$ids = WPFactory_WC_STS_Files::get_instance()->handle_upload( $options['files_field'], $ticket_id, 'ids' );
+			if ( ( '' !== $options['files_field'] || ! empty( $options['files'] ) ) && class_exists( 'WPFactory_WC_STS_Files' ) ) {
+				$ids = '' !== $options['files_field']
+					? WPFactory_WC_STS_Files::get_instance()->handle_upload( $options['files_field'], $ticket_id, 'ids' )
+					: WPFactory_WC_STS_Files::get_instance()->save_files( $options['files'], $ticket_id ); // Files that did not come from a form (email attachments).
 				if ( ! empty( $ids ) ) {
 					$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 						$wpdb->prefix . $this->table_name,

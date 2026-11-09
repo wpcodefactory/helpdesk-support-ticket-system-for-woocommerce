@@ -245,6 +245,88 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 		}
 
 		/**
+		 * Saves files that did not come from a form (for example email attachments) as ticket files, with the same
+		 * rules as uploads: allowed types, maximum size and number of files, real type checked, protected folder.
+		 *
+		 * @param array $files     Each `name` and `data` (file contents).
+		 * @param int   $ticket_id Ticket ID.
+		 *
+		 * @return int[] Attachment IDs.
+		 */
+		public function save_files( $files, $ticket_id ) {
+			$this->errors = array();
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			$allowed = $this->get_allowed_extensions();
+			$max     = $this->get_max_size();
+			$limit   = $this->get_max_files();
+			$result  = array();
+			foreach ( (array) $files as $file ) {
+				$name = sanitize_file_name( (string) ( $file['name'] ?? '' ) );
+				$data = (string) ( $file['data'] ?? '' );
+				if ( '' === $name || '' === $data ) {
+					continue;
+				}
+				if ( count( $result ) >= $limit ) {
+					/* translators: %d: maximum number of files. */
+					$this->errors[] = sprintf( __( 'Only %d files can be attached; the others were not saved.', 'support-ticket-system-for-woocommerce' ), $limit );
+					break;
+				}
+				$ext = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+				if ( ! in_array( $ext, $allowed, true ) ) {
+					/* translators: %s: file name. */
+					$this->errors[] = sprintf( __( '%s: this file type is not allowed.', 'support-ticket-system-for-woocommerce' ), $name );
+					continue;
+				}
+				if ( strlen( $data ) > $max ) {
+					/* translators: 1: file name, 2: maximum size. */
+					$this->errors[] = sprintf( __( '%1$s is larger than %2$s.', 'support-ticket-system-for-woocommerce' ), $name, size_format( $max ) );
+					continue;
+				}
+				$tmp = wp_tempnam( $name );
+				if ( ! $tmp || false === file_put_contents( $tmp, $data ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- temporary file for wp_handle_sideload().
+					continue;
+				}
+				$sideload = array(
+					'name'     => strtolower( wp_generate_password( 16, false, false ) ) . '-' . $name,
+					'tmp_name' => $tmp,
+					'error'    => 0,
+					'size'     => strlen( $data ),
+				);
+				add_filter( 'upload_dir', array( $this, 'protected_upload_dir' ) );
+				// `wp_handle_sideload()` checks the real file type against WordPress's allowed types.
+				$moved = wp_handle_sideload( $sideload, array( 'test_form' => false ) );
+				remove_filter( 'upload_dir', array( $this, 'protected_upload_dir' ) );
+				if ( file_exists( $tmp ) ) {
+					wp_delete_file( $tmp );
+				}
+				if ( ! $moved || isset( $moved['error'] ) ) {
+					/* translators: %s: file name. */
+					$this->errors[] = sprintf( __( '%s could not be uploaded.', 'support-ticket-system-for-woocommerce' ), $name );
+					continue;
+				}
+				$id = wp_insert_attachment(
+					array(
+						'post_mime_type' => $moved['type'],
+						'guid'           => $moved['url'],
+						'post_parent'    => (int) $ticket_id,
+						'post_title'     => preg_replace( '/\.[^.]+$/', '', $name ),
+						'post_content'   => '',
+					),
+					$moved['file'],
+					(int) $ticket_id
+				);
+				if ( ! $id || is_wp_error( $id ) ) {
+					continue;
+				}
+				update_post_meta( $id, '_stsw_protected', 1 );
+				update_post_meta( $id, '_stsw_ticket_file', 1 );
+				update_post_meta( $id, '_stsw_original_name', $name );
+				$result[] = (int) $id;
+			}
+			return $result;
+		}
+
+		/**
 		 * Upload folder for ticket files: uploads/stsw-tickets/<random>/, protected with .htaccess and index.php.
 		 *
 		 * @param array $dirs Upload dir data.
