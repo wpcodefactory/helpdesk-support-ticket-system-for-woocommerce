@@ -149,13 +149,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_OTP' ) ) :
 			$key    = 'wpfactory_wc_sts_otp_' . md5( $key );
 			$count  = (int) get_transient( $key );
 			if ( $count >= $limit ) {
-			/**
-			 * A rate limit refused a request (for logging; the request is refused either way).
-			 *
-			 * @param string $bucket What was limited.
-			 * @param int    $limit  Limit in the window.
-			 */
-			do_action( 'wpfactory_wc_sts_rate_limited', $bucket, (int) $limit );
+				/**
+				 * A rate limit refused a request (for logging; the request is refused either way).
+				 *
+				 * @param string $bucket What was limited.
+				 * @param int    $limit  Limit in the window.
+				 */
+				do_action( 'wpfactory_wc_sts_rate_limited', $bucket, (int) $limit );
 				return false;
 			}
 			set_transient( $key, $count + 1, 15 * MINUTE_IN_SECONDS );
