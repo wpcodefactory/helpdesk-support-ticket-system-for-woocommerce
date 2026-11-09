@@ -518,10 +518,22 @@
 					toast(why || t.saveError, true);
 					return;
 				}
-				var url = new window.URL(res.url);
-				var msg = url.searchParams.get("stsw_msg") || "";
-				url.searchParams.delete("stsw_msg");
+				var back = new window.URL(res.url);
+				var msg = back.searchParams.get("stsw_msg") || "";
 				var before = new window.URL(window.location.href);
+				// Keep the list as it was (view, search, filters, page); take only the ticket from the answer.
+				var url = new window.URL(window.location.href);
+				url.searchParams.delete("stsw_msg");
+				["ticket", "stsw_new"].forEach(function (key) {
+					if (back.searchParams.get(key)) {
+						url.searchParams.set(key, back.searchParams.get(key));
+					} else {
+						url.searchParams.delete(key);
+					}
+				});
+				var lost = ["view", "s", "prio", "subject", "status", "tag", "order_id", "paged"].some(function (key) {
+					return before.searchParams.get(key) && before.searchParams.get(key) !== back.searchParams.get(key);
+				});
 				var moved = before.searchParams.get("ticket") !== url.searchParams.get("ticket") || before.searchParams.get("stsw_new") !== url.searchParams.get("stsw_new");
 				if (window.history && window.history.replaceState) {
 					window.history[moved ? "pushState" : "replaceState"](null, "", url.toString());
@@ -534,7 +546,10 @@
 						area().value = "";
 					}
 				}
-				apply(res.doc, ["rail", "list", "detail"]);
+				apply(res.doc, lost ? ["rail", "detail"] : ["rail", "list", "detail"]);
+				if (lost) {
+					refresh(["list"]);
+				}
 				var note = $(".hd-inbox-wrap > .hd-toast", res.doc);
 				if (note) {
 					toast(note.textContent.trim(), note.classList.contains("is-error"));

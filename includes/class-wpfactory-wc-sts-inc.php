@@ -1927,11 +1927,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			$subject  = absint( $_POST['stsw_tickets_subject'] ?? 0 );
 			// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-			if ( $order && '' === $reason && $reasons ) {
+			// Only forms that ask (the current template; theme copies of older templates may not) must be answered.
+			if ( $order && '' === $reason && $reasons && isset( $_POST['stsw_reason'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by the callers.
 				return __( 'Please choose what your message is about.', 'support-ticket-system-for-woocommerce' );
 			}
-			$topics = WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_subject' );
-			if ( ! $order && ! $subject && $topics ) {
+			if ( ! $order && ! $subject && isset( $_POST['stsw_tickets_subject'] ) && WPFactory_WC_STS_UI::ordered_terms( 'stsw_tickets_subject' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by the callers.
 				return __( 'Please choose a topic.', 'support-ticket-system-for-woocommerce' );
 			}
 			if ( $order && ! $subject && '' !== $reason ) {

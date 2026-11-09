@@ -24,7 +24,9 @@ defined( 'ABSPATH' ) || exit;
 		<h2 class="stsw-title<?php echo function_exists( 'is_account_page' ) && is_account_page() ? ' screen-reader-text' : ''; ?>" id="stsw-list-title"><?php esc_html_e( 'Support', 'support-ticket-system-for-woocommerce' ); ?></h2>
 		<p class="stsw-intro"><?php esc_html_e( 'Questions about an order or a product? Open a ticket and follow the answers here.', 'support-ticket-system-for-woocommerce' ); ?></p>
 	</div>
-	<a class="stsw-button stsw-button--primary button wp-element-button" href="<?php echo esc_url( $view->get_view_url( 'new' ) ); ?>"><?php esc_html_e( 'Open a ticket', 'support-ticket-system-for-woocommerce' ); ?></a>
+	<?php if ( $query->have_posts() ) : // With no tickets yet, the empty state has the one button. ?>
+		<a class="stsw-button stsw-button--primary button wp-element-button" href="<?php echo esc_url( $view->get_view_url( 'new' ) ); ?>"><?php esc_html_e( 'Open a ticket', 'support-ticket-system-for-woocommerce' ); ?></a>
+	<?php endif; ?>
 </div>
 <?php
 /**
