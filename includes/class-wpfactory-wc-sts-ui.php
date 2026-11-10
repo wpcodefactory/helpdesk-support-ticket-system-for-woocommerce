@@ -69,6 +69,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 			add_action( 'admin_menu', array( $this, 'register_wizard_page' ), 99 );
 			add_action( 'admin_init', array( $this, 'maybe_render_wizard' ), 1 );
 			add_action( 'admin_init', array( $this, 'maybe_redirect_to_wizard' ), 5 );
+			add_action( 'admin_init', array( $this, 'redirect_old_tabs' ) );
 			add_action( 'load-edit-tags.php', array( $this, 'redirect_old_screens' ) );
 			add_action( 'load-term.php', array( $this, 'redirect_old_screens' ) );
 			add_action( 'load-edit.php', array( $this, 'redirect_old_screens' ) );
@@ -97,6 +98,81 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 		public static function url( $tab = '', $args = array() ) {
 			$base = admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE );
 			return add_query_arg( array_merge( $tab ? array( 'tab' => $tab ) : array(), $args ), $base );
+		}
+
+		/**
+		 * Address of a ticket field screen (Settings > Ticket fields).
+		 *
+		 * @param string $field `priorities`, `subjects` or `statuses`.
+		 * @param array  $args  More query arguments.
+		 *
+		 * @return string
+		 */
+		public static function term_url( $field, $args = array() ) {
+			return self::url( 'fields', array_merge( array( 'field' => $field ), $args ) );
+		}
+
+		/**
+		 * Screens shown inside Settings (header tab "Settings" stays current there).
+		 *
+		 * @return array
+		 */
+		public static function settings_pages() {
+			return array( 'settings', 'fields', 'tools', 'priorities', 'subjects', 'statuses' );
+		}
+
+		/**
+		 * Main sections in menu order: Inbox, Reports, Saved replies, Knowledge base, Companies, other add-on tabs,
+		 * Settings. Used by the plugin header and the WordPress admin menu.
+		 *
+		 * @return array key => label ('' is the inbox)
+		 */
+		public static function nav_tabs() {
+			$tabs = array(
+				''      => __( 'Inbox', 'support-ticket-system-for-woocommerce' ),
+				'saved' => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
+			);
+			/**
+			 * Header tabs (the knowledge base, Reports and Companies add their own).
+			 *
+			 * @param array $tabs key => label.
+			 */
+			$tabs  = (array) apply_filters( 'wpfactory_wc_sts_header_tabs', $tabs );
+			$order = array( '', 'reports', 'saved', 'kb', 'companies' );
+			$out   = array();
+			foreach ( $order as $key ) {
+				if ( isset( $tabs[ $key ] ) ) {
+					$out[ $key ] = $tabs[ $key ];
+				}
+			}
+			foreach ( $tabs as $key => $label ) {
+				if ( ! isset( $out[ $key ] ) && ! in_array( $key, self::settings_pages(), true ) ) {
+					$out[ $key ] = $label;
+				}
+			}
+			$out['settings'] = __( 'Settings', 'support-ticket-system-for-woocommerce' );
+			return $out;
+		}
+
+		/**
+		 * Old addresses of screens that moved into Settings open their new place.
+		 */
+		public function redirect_old_tabs() {
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- navigation only.
+			$page = sanitize_key( wp_unslash( $_GET['page'] ?? '' ) );
+			$tab  = sanitize_key( wp_unslash( $_GET['tab'] ?? '' ) );
+			if ( WPFACTORY_WC_STS_PAGE !== $page || ! in_array( $tab, array( 'priorities', 'subjects', 'statuses' ), true ) || 'GET' !== ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ) ) {
+				return;
+			}
+			$args = array();
+			foreach ( array( 'edit', 'hd_msg' ) as $key ) {
+				if ( isset( $_GET[ $key ] ) ) {
+					$args[ $key ] = sanitize_key( wp_unslash( $_GET[ $key ] ) );
+				}
+			}
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			wp_safe_redirect( self::term_url( $tab, $args ) );
+			exit;
 		}
 
 		/**
@@ -173,7 +249,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 				'stsw_tickets_status'   => 'statuses',
 			);
 			if ( in_array( $pagenow, array( 'edit-tags.php', 'term.php' ), true ) && isset( $map[ $taxonomy ] ) ) {
-				wp_safe_redirect( self::url( $map[ $taxonomy ] ) );
+				wp_safe_redirect( self::term_url( $map[ $taxonomy ] ) );
 				exit;
 			}
 			$is_reply = 'stsw_canned_reply' === $post_type || ( 'post.php' === $pagenow && $post_id && 'stsw_canned_reply' === get_post_type( $post_id ) );
@@ -367,20 +443,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 		 * @param string $current Current tab key.
 		 */
 		public static function header( $current ) {
-			$tabs = array(
-				''           => __( 'Inbox', 'support-ticket-system-for-woocommerce' ),
-				'priorities' => __( 'Priorities', 'support-ticket-system-for-woocommerce' ),
-				'subjects'   => __( 'Subjects', 'support-ticket-system-for-woocommerce' ),
-				'saved'      => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
-			);
-			/**
-			 * Header tabs (the knowledge base adds its own).
-			 *
-			 * @param array $tabs key => label.
-			 */
-			$tabs             = (array) apply_filters( 'wpfactory_wc_sts_header_tabs', $tabs );
-			$tabs['settings'] = __( 'Settings', 'support-ticket-system-for-woocommerce' );
-			$search           = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$tabs    = self::nav_tabs();
+			$current = in_array( $current, self::settings_pages(), true ) ? 'settings' : $current;
+			$search  = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			?>
 			<header class="hd-header">
 				<div class="hd-brand">
@@ -566,7 +631,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 						</details>
 						<div class="hd-actions">
 							<?php if ( $editing ) : ?>
-								<a class="hd-btn" href="<?php echo esc_url( self::url( $tab ) ); ?>"><?php esc_html_e( 'Cancel', 'support-ticket-system-for-woocommerce' ); ?></a>
+								<a class="hd-btn" href="<?php echo esc_url( self::term_url( $tab ) ); ?>"><?php esc_html_e( 'Cancel', 'support-ticket-system-for-woocommerce' ); ?></a>
 							<?php endif; ?>
 							<button type="submit" class="hd-btn hd-btn--primary"><?php echo esc_html( $editing ? __( 'Save changes', 'support-ticket-system-for-woocommerce' ) : $screen['add'] ); ?></button>
 						</div>
@@ -602,7 +667,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 								</span>
 								<a href="<?php echo esc_url( self::url( '', array_merge( array( 'view' => 'all' ), $filter ) ) ); ?>"><?php echo (int) $term->count; ?></a>
 								<span class="hd-row-actions">
-									<a class="hd-icon-btn" href="<?php echo esc_url( self::url( $tab, array( 'edit' => $term->term_id ) ) ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: name. */ __( 'Edit %s', 'support-ticket-system-for-woocommerce' ), $term->name ) ); ?>"><?php self::e_icon( 'edit', 16 ); ?></a>
+									<a class="hd-icon-btn" href="<?php echo esc_url( self::term_url( $tab, array( 'edit' => $term->term_id ) ) ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: name. */ __( 'Edit %s', 'support-ticket-system-for-woocommerce' ), $term->name ) ); ?>"><?php self::e_icon( 'edit', 16 ); ?></a>
 									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="hd-inline" data-hd-confirm="term">
 										<input type="hidden" name="action" value="wpfactory_wc_sts_term" />
 										<input type="hidden" name="tab" value="<?php echo esc_attr( $tab ); ?>" />
@@ -637,7 +702,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 				$term = get_term( $delete, $taxonomy );
 				// The three built-in statuses drive the inbox and cannot be deleted.
 				$ok = $term && ! is_wp_error( $term ) && ! ( 'stsw_tickets_status' === $taxonomy && in_array( $term->slug, array( 'open', 'in-progress', 'closed' ), true ) ) && ! is_wp_error( wp_delete_term( $delete, $taxonomy ) );
-				wp_safe_redirect( self::url( $tab, array( 'hd_msg' => $ok ? 'deleted' : 'error' ) ) );
+				wp_safe_redirect( self::term_url( $tab, array( 'hd_msg' => $ok ? 'deleted' : 'error' ) ) );
 				exit;
 			}
 			$name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );
@@ -650,7 +715,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 			}
 			$term_id = absint( $_POST['term_id'] ?? 0 );
 			if ( '' === $name ) {
-				wp_safe_redirect( self::url( $tab, array( 'hd_msg' => 'error' ) ) );
+				wp_safe_redirect( self::term_url( $tab, array( 'hd_msg' => 'error' ) ) );
 				exit;
 			}
 			if ( $term_id ) {
@@ -660,7 +725,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 				$result = wp_insert_term( $name, $taxonomy, $args );
 			}
 			if ( is_wp_error( $result ) ) {
-				wp_safe_redirect( self::url( $tab, array( 'hd_msg' => 'error' ) ) );
+				wp_safe_redirect( self::term_url( $tab, array( 'hd_msg' => 'error' ) ) );
 				exit;
 			}
 			$term_id = (int) $result['term_id'];
@@ -676,7 +741,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					delete_term_meta( $term_id, WPFactory_WC_STS_Inc::META_SUBJECT_ASSIGNEE );
 				}
 			}
-			wp_safe_redirect( self::url( $tab, array( 'hd_msg' => 'saved' ) ) );
+			wp_safe_redirect( self::term_url( $tab, array( 'hd_msg' => 'saved' ) ) );
 			exit;
 		}
 

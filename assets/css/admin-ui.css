@@ -2615,3 +2615,35 @@ body.wpf-hd-wizard {
 .wpf-hd [hidden] {
 	display: none !important;
 }
+
+/* Screens inside Settings: Ticket fields and Tools */
+.wpf-hd .hd-settings__screen > .hd-page {
+	max-width: none;
+	padding: 0;
+}
+
+.wpf-hd .hd-fieldtabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0 0 16px;
+	border-bottom: 1px solid var(--hd-border);
+}
+
+.wpf-hd .hd-fieldtab {
+	margin-bottom: -1px;
+	padding: 8px 12px;
+	border-bottom: 2px solid transparent;
+	color: var(--hd-text-2);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.wpf-hd .hd-fieldtab:hover {
+	color: var(--hd-accent-strong);
+}
+
+.wpf-hd .hd-fieldtab[aria-current="page"] {
+	border-bottom-color: var(--hd-accent);
+	color: var(--hd-accent-strong);
+}

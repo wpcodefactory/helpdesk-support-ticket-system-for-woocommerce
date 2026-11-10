@@ -157,7 +157,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			add_action( 'init', array( $this, 'register_ticket_post_type_and_taxonomy' ) );
 			add_filter( 'user_has_cap', array( $this, 'grant_tickets_cap_to_shop_staff' ) );
 
-			add_action( 'admin_menu', array( $this, 'menu_page' ) );
+			add_action( 'admin_menu', array( $this, 'menu_page' ), 12 ); // After the main page and its Inbox item.
+			add_filter( 'submenu_file', array( $this, 'current_submenu' ) );
 			add_action( 'before_delete_post', array( $this, 'delete_relevant_responses' ) );
 
 			add_filter( 'woocommerce_account_menu_items', array( $this, 'tickets_link' ) );
@@ -1400,27 +1401,57 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		*/
 
 		/**
-		 * Submenu pages.
+		 * Submenu: the same sections and order as the plugin header (Inbox, Reports, Saved replies, Knowledge base,
+		 * Companies, Settings). "Helpdesk" itself opens the Inbox and shows the number of open tickets.
 		 *
-		 * @version 2.3.0
+		 * @version 3.0.0
 		 */
 		public function menu_page() {
-			$items = array(
-				'edit-tags.php?taxonomy=stsw_tickets_priority&post_type=stsw_tickets' => __( 'Priorities', 'support-ticket-system-for-woocommerce' ),
-				'edit-tags.php?taxonomy=stsw_tickets_subject&post_type=stsw_tickets' => __( 'Subjects', 'support-ticket-system-for-woocommerce' ),
-				'edit.php?post_type=stsw_canned_reply' => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
-			);
-			foreach ( $items as $slug => $title ) {
-				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'stsw_tickets', $slug, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
+			foreach ( WPFactory_WC_STS_UI::nav_tabs() as $key => $title ) {
+				if ( '' === $key ) {
+					continue; // The Inbox item is the main page itself.
+				}
+				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'settings' === $key ? 'manage_woocommerce' : 'stsw_tickets', 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $key, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			}
-			add_submenu_page(
-				WPFACTORY_WC_STS_PAGE,
-				__( 'Settings', 'support-ticket-system-for-woocommerce' ),
-				__( 'Settings', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
-				'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=settings',
-				null
-			);
+			$this->menu_badge();
+		}
+
+		/**
+		 * Open-ticket count on the "Helpdesk" menu item.
+		 */
+		protected function menu_badge() {
+			global $menu;
+			if ( ! is_array( $menu ) || ! current_user_can( 'stsw_tickets' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				return;
+			}
+			$open = $this->count_tickets( 'open' );
+			if ( $open < 1 ) {
+				return;
+			}
+			foreach ( $menu as $i => $item ) {
+				if ( isset( $item[2] ) && WPFACTORY_WC_STS_PAGE === $item[2] ) {
+					/* translators: %s: number of open tickets. */
+					$label         = sprintf( _n( '%s open ticket', '%s open tickets', $open, 'support-ticket-system-for-woocommerce' ), number_format_i18n( $open ) );
+					$menu[ $i ][0] .= ' <span class="awaiting-mod count-' . (int) $open . '"><span class="pending-count" aria-hidden="true">' . esc_html( number_format_i18n( $open ) ) . '</span><span class="screen-reader-text">' . esc_html( $label ) . '</span></span>'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- adds the count badge to our own item.
+				}
+			}
+		}
+
+		/**
+		 * The submenu item of the section shown is the current one (screens inside Settings count as Settings).
+		 *
+		 * @param string|null $submenu_file Current submenu item.
+		 *
+		 * @return string|null
+		 */
+		public function current_submenu( $submenu_file ) {
+			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( WPFACTORY_WC_STS_PAGE !== $page ) {
+				return $submenu_file;
+			}
+			$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$tab = in_array( $tab, WPFactory_WC_STS_UI::settings_pages(), true ) ? 'settings' : $tab;
+			return ( '' !== $tab && isset( WPFactory_WC_STS_UI::nav_tabs()[ $tab ] ) ) ? 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $tab : $submenu_file;
 		}
 
 		/**

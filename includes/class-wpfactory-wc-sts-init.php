@@ -217,7 +217,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			if ( 'canned' === $tab ) {
 				$tab = 'saved';
 			}
-			$known = array_merge( array( 'priorities', 'subjects', 'statuses', 'saved', 'settings' ), array_keys( (array) apply_filters( 'wpfactory_wc_sts_header_tabs', array() ) ) );
+			$known = array_merge( array( 'priorities', 'subjects', 'statuses', 'fields', 'saved', 'settings', 'tools' ), array_keys( (array) apply_filters( 'wpfactory_wc_sts_header_tabs', array() ) ) );
 			return in_array( $tab, $known, true ) ? $tab : 'inbox';
 		}
 
@@ -265,7 +265,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				case 'priorities':
 				case 'subjects':
 				case 'statuses':
-					$ui->render_terms( $this->active_tab );
+				case 'tools':
+					$this->render_settings_page( $this->active_tab );
+					return;
+				case 'fields':
+					$this->render_settings_page( sanitize_key( wp_unslash( $_GET['field'] ?? 'priorities' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- navigation only.
 					return;
 				case 'saved':
 					$ui->render_saved();
@@ -280,11 +284,56 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					return;
 			}
 			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				if ( WPFactory_WC_STS_Inc::get_main_instance()->can_manage_tickets() ) {
+					$this->render_settings_page( 'priorities' ); // Team members without settings access still manage ticket fields.
+					return;
+				}
 				echo '<div class="hd-page">';
 				WPFactory_WC_STS_UI::notice( __( 'You are not allowed to change these settings.', 'support-ticket-system-for-woocommerce' ), true );
 				echo '</div>';
 				return;
 			}
+			$sections = $this->settings_nav_sections();
+			?>
+			<div class="hd-page hd-page--settings">
+				<?php $this->admin_process_settings(); ?>
+				<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form" class="hd-settings" data-hd-settings>
+					<?php $this->render_subnav( $sections, '' ); ?>
+					<div class="hd-settings__panels">
+						<?php
+						foreach ( $sections as $id => $section ) :
+							if ( isset( $section['url'] ) ) {
+								continue;
+							}
+							?>
+							<section id="<?php echo esc_attr( $id ); ?>" class="hd-panel" aria-labelledby="hd-panel-h-<?php echo esc_attr( $id ); ?>" tabindex="-1">
+								<h2 class="hd-h1" id="hd-panel-h-<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $section['label'] ); ?></h2>
+								<?php if ( '' !== $section['intro'] ) : ?>
+									<p class="hd-muted"><?php echo esc_html( $section['intro'] ); ?></p>
+								<?php endif; ?>
+								<?php $this->render_section( $id ); ?>
+							</section>
+						<?php endforeach; ?>
+					</div>
+					<?php wp_nonce_field( $this->plugin ); ?>
+					<?php // The settings script sets the section shown, so a save only touches that section. ?>
+					<input type="hidden" name="stsw_section" value="" data-hd-section />
+					<div class="hd-savebar" id="save_changes">
+						<span class="hd-savebar__state" data-hd-state aria-live="polite"><?php esc_html_e( 'All changes saved', 'support-ticket-system-for-woocommerce' ); ?></span>
+						<button type="submit" name="submit" class="hd-btn hd-btn--primary"><?php esc_html_e( 'Save changes', 'support-ticket-system-for-woocommerce' ); ?></button>
+					</div>
+				</form>
+			</div>
+			<?php
+		}
+
+		/**
+		 * Sections of the Settings navigation: setting panels, plus "Ticket fields" and "Tools", which are screens of
+		 * their own (entries with a `url`).
+		 *
+		 * @return array id => `label`, `group`, `intro`, optional `url`.
+		 */
+		protected function settings_nav_sections() {
 			$group_of = array(
 				'pro_ratings'    => 'basics',
 				'pro_automation' => 'workflows',
@@ -322,53 +371,99 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					'intro' => $section['intro'] ?? '',
 				);
 			}
+			$sections['fields'] = array(
+				'label' => __( 'Ticket fields', 'support-ticket-system-for-woocommerce' ),
+				'group' => 'basics',
+				'intro' => '',
+				'url'   => WPFactory_WC_STS_UI::term_url( 'priorities' ),
+			);
+			if ( array_key_exists( 'tools', (array) apply_filters( 'wpfactory_wc_sts_header_tabs', array() ) ) ) {
+				$sections['tools'] = array(
+					'label' => __( 'Tools', 'support-ticket-system-for-woocommerce' ),
+					'group' => 'advanced',
+					'intro' => '',
+					'url'   => WPFactory_WC_STS_UI::url( 'tools' ),
+				);
+			}
+			return $sections;
+		}
+
+		/**
+		 * Settings navigation.
+		 *
+		 * @param array  $sections Sections.
+		 * @param string $current  Screen shown ('' : the settings panels, switched by the script).
+		 */
+		protected function render_subnav( $sections, $current ) {
+			$manager = current_user_can( 'manage_woocommerce' ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			?>
-			<div class="hd-page hd-page--settings">
-				<?php $this->admin_process_settings(); ?>
-				<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form" class="hd-settings" data-hd-settings>
-					<nav class="hd-subnav" aria-label="<?php esc_attr_e( 'Settings sections', 'support-ticket-system-for-woocommerce' ); ?>">
-						<?php
-						foreach ( $this->setting_groups() as $group => $group_label ) :
-							$in_group = array_filter(
-								$sections,
-								function ( $s ) use ( $group ) {
-									return $s['group'] === $group;
-								}
-							);
-							if ( ! $in_group ) {
-								continue;
-							}
-							?>
-							<p class="hd-subnav__group" id="hd-group-<?php echo esc_attr( $group ); ?>"><?php echo esc_html( $group_label ); ?></p>
-							<ul aria-labelledby="hd-group-<?php echo esc_attr( $group ); ?>">
-								<?php foreach ( $in_group as $id => $section ) : ?>
-									<li><a href="#<?php echo esc_attr( $id ); ?>" data-hd-panel="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $section['label'] ); ?></a></li>
-								<?php endforeach; ?>
-							</ul>
-						<?php endforeach; ?>
-						<a class="hd-subnav__wizard" href="<?php echo esc_url( admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '-setup' ) ); ?>"><?php esc_html_e( 'Run setup wizard again', 'support-ticket-system-for-woocommerce' ); ?></a>
-					</nav>
-					<div class="hd-settings__panels">
-						<?php foreach ( $sections as $id => $section ) : ?>
-							<section id="<?php echo esc_attr( $id ); ?>" class="hd-panel" aria-labelledby="hd-panel-h-<?php echo esc_attr( $id ); ?>" tabindex="-1">
-								<h2 class="hd-h1" id="hd-panel-h-<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $section['label'] ); ?></h2>
-								<?php if ( '' !== $section['intro'] ) : ?>
-									<p class="hd-muted"><?php echo esc_html( $section['intro'] ); ?></p>
+			<nav class="hd-subnav" aria-label="<?php esc_attr_e( 'Settings sections', 'support-ticket-system-for-woocommerce' ); ?>">
+				<?php
+				foreach ( $this->setting_groups() as $group => $group_label ) :
+					$in_group = array_filter(
+						$sections,
+						function ( $s, $id ) use ( $group, $manager ) {
+							return $s['group'] === $group && ( $manager || 'fields' === $id );
+						},
+						ARRAY_FILTER_USE_BOTH
+					);
+					if ( ! $in_group ) {
+						continue;
+					}
+					?>
+					<p class="hd-subnav__group" id="hd-group-<?php echo esc_attr( $group ); ?>"><?php echo esc_html( $group_label ); ?></p>
+					<ul aria-labelledby="hd-group-<?php echo esc_attr( $group ); ?>">
+						<?php foreach ( $in_group as $id => $section ) : ?>
+							<li>
+								<?php if ( isset( $section['url'] ) ) : ?>
+									<a href="<?php echo esc_url( $section['url'] ); ?>"<?php echo $current === $id ? ' aria-current="true"' : ''; ?>><?php echo esc_html( $section['label'] ); ?></a>
+								<?php elseif ( '' === $current ) : ?>
+									<a href="#<?php echo esc_attr( $id ); ?>" data-hd-panel="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $section['label'] ); ?></a>
+								<?php else : ?>
+									<a href="<?php echo esc_url( WPFactory_WC_STS_UI::url( 'settings' ) . '#' . $id ); ?>"><?php echo esc_html( $section['label'] ); ?></a>
 								<?php endif; ?>
-								<?php $this->render_section( $id ); ?>
-							</section>
+							</li>
 						<?php endforeach; ?>
-					</div>
-					<?php wp_nonce_field( $this->plugin ); ?>
-					<?php // The settings script sets the section shown, so a save only touches that section. ?>
-					<input type="hidden" name="stsw_section" value="" data-hd-section />
-					<div class="hd-savebar" id="save_changes">
-						<span class="hd-savebar__state" data-hd-state aria-live="polite"><?php esc_html_e( 'All changes saved', 'support-ticket-system-for-woocommerce' ); ?></span>
-						<button type="submit" name="submit" class="hd-btn hd-btn--primary"><?php esc_html_e( 'Save changes', 'support-ticket-system-for-woocommerce' ); ?></button>
-					</div>
-				</form>
-			</div>
+					</ul>
+				<?php endforeach; ?>
+				<?php if ( $manager ) : ?>
+					<a class="hd-subnav__wizard" href="<?php echo esc_url( admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '-setup' ) ); ?>"><?php esc_html_e( 'Run setup wizard again', 'support-ticket-system-for-woocommerce' ); ?></a>
+				<?php endif; ?>
+			</nav>
 			<?php
+		}
+
+		/**
+		 * A screen inside Settings: Ticket fields (priorities, subjects, statuses) or Tools (import and export).
+		 *
+		 * @param string $what `priorities`, `subjects`, `statuses` or `tools`.
+		 */
+		protected function render_settings_page( $what ) {
+			$fields = array(
+				'priorities' => __( 'Priorities', 'support-ticket-system-for-woocommerce' ),
+				'subjects'   => __( 'Subjects', 'support-ticket-system-for-woocommerce' ),
+				'statuses'   => __( 'Statuses', 'support-ticket-system-for-woocommerce' ),
+			);
+			if ( 'tools' !== $what && ! isset( $fields[ $what ] ) ) {
+				$what = 'priorities';
+			}
+			echo '<div class="hd-page hd-page--settings"><div class="hd-settings">';
+			$this->render_subnav( $this->settings_nav_sections(), 'tools' === $what ? 'tools' : 'fields' );
+			echo '<div class="hd-settings__panels hd-settings__screen">';
+			if ( 'tools' === $what ) {
+				/**
+				 * Content of the Tools screen (import and export).
+				 */
+				do_action( 'wpfactory_wc_sts_render_tab_tools' );
+			} else {
+				echo '<nav class="hd-fieldtabs" aria-label="' . esc_attr__( 'Ticket fields', 'support-ticket-system-for-woocommerce' ) . '">';
+				foreach ( $fields as $key => $label ) {
+					echo '<a class="hd-fieldtab" href="' . esc_url( WPFactory_WC_STS_UI::term_url( $key ) ) . '"' . ( $key === $what ? ' aria-current="page"' : '' ) . '>' . esc_html( $label ) . '</a>';
+				}
+				echo '</nav>';
+				WPFactory_WC_STS_UI::get_instance()->render_terms( $what );
+			}
+			echo '</div></div></div>';
 		}
 
 		/**

@@ -106,6 +106,7 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 3.0.0 - Unreleased =
+* New - Simpler Helpdesk menu: Helpdesk opens the Inbox and shows the number of open tickets; Inbox, Saved replies, Knowledge base and Settings, in the same order as the header. Priorities, Subjects and Statuses are in Settings > Ticket fields, import and export in Settings > Tools. Old addresses still work.
 * New - Guests can ask for a one-time code by email and see all their tickets.
 * New - Custom fields: date, number, several choices and file (private, same rules as attachments).
 * New - Public ticket numbers: prefix, sequential from a start number or random; existing tickets keep their number.
