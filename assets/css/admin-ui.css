@@ -2661,3 +2661,135 @@ body.wpf-hd-wizard {
 .wpf-hd .hd-ai-promo__hide {
 	color: var(--hd-text-muted);
 }
+
+/* AI tools in the reply box and the AI settings (3.1.0). */
+.wpf-hd .hd-ai-tools {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+	margin: 8px 0 0;
+}
+
+.wpf-hd .hd-ai-tools__label {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+	color: var(--hd-accent-strong);
+	font-size: var(--hd-text-sm);
+	font-weight: 600;
+}
+
+.wpf-hd .hd-notice {
+	margin: 0 0 12px;
+	padding: 8px 12px;
+	border: 1px solid var(--hd-accent-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-accent-soft);
+	color: var(--hd-text);
+}
+
+.wpf-hd .hd-notice--warning {
+	border-color: var(--hd-warn-border);
+	background: var(--hd-note-bg);
+	color: var(--hd-warn-fg);
+}
+
+.wpf-hd .hd-notice[hidden] {
+	display: none;
+}
+
+.wpf-hd .hd-ai-features {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 8px;
+	margin: 0 0 8px;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-ai-features li {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+	padding: 10px 12px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius);
+	background: var(--hd-surface-muted);
+	font-size: var(--hd-text-sm);
+	color: var(--hd-text-muted);
+}
+
+.wpf-hd .hd-ai-features strong {
+	color: var(--hd-text);
+	font-size: var(--hd-text-md);
+}
+
+/* Pro features page (free edition only, 3.1.0). */
+.wpf-hd .hd-pro {
+	max-width: 1100px;
+}
+
+.wpf-hd .hd-pro__intro {
+	margin: 0 0 16px;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-base);
+}
+
+.wpf-hd .hd-pro__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 12px;
+	margin: 0 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.wpf-hd .hd-pro__card {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+	padding: 16px;
+	border: 1px solid var(--hd-border);
+	border-radius: var(--hd-radius-lg);
+	background: var(--hd-surface);
+	box-shadow: var(--hd-shadow-sm);
+}
+
+.wpf-hd .hd-pro__card h3 {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin: 0;
+	font-size: var(--hd-text-base);
+}
+
+.wpf-hd .hd-pro__card h3 .hd-icon {
+	color: var(--hd-accent);
+}
+
+.wpf-hd .hd-pro__card ul {
+	margin: 0;
+	padding-left: 18px;
+	list-style: disc;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-md);
+}
+
+.wpf-hd .hd-pro__cta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+}
+
+.wpf-hd .hd-pro-hint {
+	display: flex;
+	gap: 8px;
+	align-items: baseline;
+	margin: 12px 8px 0;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+}

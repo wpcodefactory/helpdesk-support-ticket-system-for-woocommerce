@@ -734,8 +734,18 @@
 		var task = button.getAttribute("data-stsw-cai");
 		var out = document.getElementById("stsw-credits-ai-out");
 		var area = document.getElementById("stsw-inbox-reply");
+		if ("improve" === task && (!area || !area.value.trim())) {
+			if (out) {
+				out.classList.add("is-error");
+				out.textContent = button.getAttribute("data-empty");
+			}
+			return;
+		}
 		var body = new window.FormData();
 		body.append("action", "wpfactory_wc_sts_credits_ai");
+		if ("improve" === task) {
+			body.append("text", area.value);
+		}
 		body.append("nonce", button.getAttribute("data-nonce"));
 		body.append("task", task);
 		body.append("ticket", button.getAttribute("data-ticket"));
@@ -752,14 +762,24 @@
 			})
 			.then(function (json) {
 				if (!json || !json.success) {
-					throw new Error((json && json.data && json.data.message) || "");
+					var failure = new Error((json && json.data && json.data.message) || "");
+					failure.link = json && json.data && json.data.link;
+					failure.label = json && json.data && json.data.label;
+					throw failure;
 				}
 				if (json.data.pill) {
 					document.querySelectorAll(".wpfactory-ai-pill").forEach(function (pill) {
 						pill.textContent = json.data.pill;
 					});
 				}
-				if ("draft" === task && area) {
+				if ("improve" === task && area) {
+					area.value = json.data.text;
+					area.dispatchEvent(new Event("input", { bubbles: true }));
+					area.focus();
+					if (out) {
+						out.textContent = "";
+					}
+				} else if ("draft" === task && area) {
 					if (!area.value.trim() || window.confirm(button.getAttribute("data-replace"))) {
 						area.value = json.data.text;
 						area.dispatchEvent(new Event("input", { bubbles: true }));
@@ -776,6 +796,13 @@
 				if (out) {
 					out.classList.add("is-error");
 					out.textContent = error.message || "";
+					if (error.link) {
+						var link = document.createElement("a");
+						link.href = error.link;
+						link.textContent = error.label || error.link;
+						out.appendChild(document.createTextNode(" "));
+						out.appendChild(link);
+					}
 				}
 			})
 			.then(function () {

@@ -172,10 +172,25 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 		/**
 		 * Add settings.
 		 *
-		 * @version 2.0.0
+		 * @version 3.1.0
 		 * @since   2.0.0
 		 */
 		public function add_settings() {
+			// Helpdesk lives in the WPFactory menu; its own top-level menu only when that menu is not available.
+			if ( class_exists( 'WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu' ) ) {
+				$admin_menu = WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu::get_instance();
+				add_submenu_page(
+					$admin_menu->get_menu_slug(),
+					__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+					__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+					'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
+					'support-ticket-system-woocommerce',
+					array( $this, 'output_settings' ),
+					30
+				);
+				return;
+			}
+
 			add_menu_page(
 				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
 				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
@@ -192,23 +207,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				__( 'Inbox', 'support-ticket-system-for-woocommerce' ),
 				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
-				array( $this, 'output_settings' ),
-			);
-
-			if ( ! class_exists( 'WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu' ) ) {
-				return;
-			}
-
-			$admin_menu = WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu::get_instance();
-
-			add_submenu_page(
-				$admin_menu->get_menu_slug(),
-				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
-				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
-				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
-				'support-ticket-system-woocommerce',
-				array( $this, 'output_settings' ),
-				30
+				array( $this, 'output_settings' )
 			);
 		}
 

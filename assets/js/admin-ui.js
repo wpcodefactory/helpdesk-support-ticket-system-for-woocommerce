@@ -206,7 +206,7 @@
 				}
 			});
 			if (focus && panel) {
-				panel.focus();
+				panel.focus({ preventScroll: true }); // Keep the plugin header and tabs in view.
 			}
 		};
 		// Anchors that are not a panel id: a short name (#ratings, #emails), or an element inside a panel.
@@ -244,6 +244,12 @@
 			}
 		};
 		open(window.location.hash.replace("#", ""), false);
+		if (window.location.hash && !resolve(window.location.hash.replace("#", "")).target) {
+			// The browser jumps to the panel on load; start at the top so the header and tabs show.
+			window.requestAnimationFrame(function () {
+				window.scrollTo(0, 0);
+			});
+		}
 		window.addEventListener("hashchange", function () {
 			open(window.location.hash.replace("#", ""), true);
 		});
@@ -258,7 +264,23 @@
 				window.history.replaceState(null, "", "#" + id);
 			}
 			show(id, true);
+			if (settings.getBoundingClientRect().top < 0) {
+				window.scrollTo(0, 0); // Show the new section from its top, with the plugin header and tabs.
+			}
 		});
+		// AI on but not connected: say so as soon as the box is ticked.
+		var aiNotice = settings.querySelector("[data-stsw-ai-notconnected]");
+		var aiBox = settings.querySelector('input[type="checkbox"][name="wpfactory_wc_sts_ai_enabled"], input[type="checkbox"][name="wpfactory_wc_sts_pro_ai_enabled"]');
+		var aiService = settings.querySelector('select[name="wpfactory_wc_sts_pro_ai_provider"]');
+		if (aiNotice && aiBox) {
+			var aiToggle = function () {
+				aiNotice.hidden = !aiBox.checked || (aiService && "wpfactory" !== aiService.value);
+			};
+			aiBox.addEventListener("change", aiToggle);
+			if (aiService) {
+				aiService.addEventListener("change", aiToggle);
+			}
+		}
 		var bar = settings.querySelector(".hd-savebar");
 		var state = settings.querySelector("[data-hd-state]");
 		var dirty = false;
