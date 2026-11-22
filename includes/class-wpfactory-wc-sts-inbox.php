@@ -128,7 +128,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		public function enqueue() {
 			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab  = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( WPFACTORY_WC_STS_PAGE !== $page || '' !== $tab ) {
+			if ( WPFACTORY_WC_STS_PAGE !== $page || '' !== $tab || WPFactory_WC_STS_Dashboard::is_request() ) {
 				return;
 			}
 			wp_enqueue_script( 'wpfactory-wc-sts-inbox', plugins_url( 'assets/js/inbox.js', WPFACTORY_WC_STS_FILE ), array(), WPFACTORY_WC_STS_VERSION, true );
@@ -495,7 +495,6 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 			);
 			echo '<div class="hd-inbox-wrap">';
 			$this->render_notice( $message );
-			$this->render_checklist();
 			?>
 			<div class="stsw-inbox hd-inbox<?php echo $ticket_id || $new ? ' has-detail' : ''; ?>">
 				<nav class="stsw-inbox__rail hd-rail" aria-label="<?php esc_attr_e( 'Ticket views', 'support-ticket-system-for-woocommerce' ); ?>">
@@ -874,7 +873,8 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						</details>
 					<?php endif; ?>
 				</header>
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="stsw-ticket__controls hd-controls" id="stsw-controls" data-hd-autosave data-ticket="<?php echo (int) $ticket_id; ?>">
+				<?php ob_start(); ?>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="stsw-ticket__controls hd-controls hd-props" id="stsw-controls" data-hd-autosave data-ticket="<?php echo (int) $ticket_id; ?>">
 					<input type="hidden" name="action" value="wpfactory_wc_sts_inbox" />
 					<input type="hidden" name="stsw_action" value="update" />
 					<input type="hidden" name="ticket" value="<?php echo (int) $ticket_id; ?>" />
@@ -905,6 +905,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 					<span class="hd-help hd-js-only"><?php esc_html_e( 'Changes save automatically', 'support-ticket-system-for-woocommerce' ); ?></span>
 					<button type="submit" class="hd-btn hd-btn--sm hd-nojs"><?php esc_html_e( 'Save', 'support-ticket-system-for-woocommerce' ); ?></button>
 				</form>
+				<?php $controls = ob_get_clean(); ?>
 				<?php
 				/**
 				 * Above the thread (collision detection).
@@ -941,7 +942,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						<?php $this->render_thread( $ticket_id ); ?>
 						<?php $this->render_reply_box( $ticket_id, $back ); ?>
 					</div>
-					<aside class="stsw-ticket__side hd-side" aria-label="<?php esc_attr_e( 'Customer and order', 'support-ticket-system-for-woocommerce' ); ?>">
+					<aside class="stsw-ticket__side hd-side" aria-label="<?php esc_attr_e( 'Ticket details, customer and order', 'support-ticket-system-for-woocommerce' ); ?>">
+						<section class="hd-side__card hd-side__props" aria-labelledby="hd-side-props">
+							<h3 class="hd-side__title" id="hd-side-props"><?php esc_html_e( 'Ticket details', 'support-ticket-system-for-woocommerce' ); ?></h3>
+							<?php echo $controls; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>
+						</section>
 						<?php $this->render_side( $ticket_id ); ?>
 					</aside>
 				</div>
@@ -1122,9 +1127,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						?>
 					</div>
 					<div class="stsw-replybox__actions hd-composer__send">
-						<span class="hd-help" id="hd-composer-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> <?php esc_html_e( 'to send', 'support-ticket-system-for-woocommerce' ); ?></span>
-						<button type="submit" class="hd-btn hd-btn--sm stsw-reply-close" name="stsw_close" value="1"><?php esc_html_e( 'Send and close', 'support-ticket-system-for-woocommerce' ); ?></button>
-						<button type="submit" class="hd-btn hd-btn--primary hd-composer__submit" name="stsw_close" value="0" data-reply="<?php esc_attr_e( 'Send reply', 'support-ticket-system-for-woocommerce' ); ?>" data-note="<?php esc_attr_e( 'Add note', 'support-ticket-system-for-woocommerce' ); ?>"><?php esc_html_e( 'Send reply', 'support-ticket-system-for-woocommerce' ); ?></button>
+						<span class="screen-reader-text" id="hd-composer-hint"><?php esc_html_e( 'Ctrl + Enter to send', 'support-ticket-system-for-woocommerce' ); ?></span>
+						<button type="submit" class="hd-btn stsw-reply-close" name="stsw_close" value="1"><?php esc_html_e( 'Send and close', 'support-ticket-system-for-woocommerce' ); ?></button>
+						<button type="submit" class="hd-btn hd-btn--primary hd-composer__submit" title="<?php esc_attr_e( 'Ctrl + Enter', 'support-ticket-system-for-woocommerce' ); ?>" name="stsw_close" value="0" data-reply="<?php esc_attr_e( 'Send reply', 'support-ticket-system-for-woocommerce' ); ?>" data-note="<?php esc_attr_e( 'Add note', 'support-ticket-system-for-woocommerce' ); ?>"><?php esc_html_e( 'Send reply', 'support-ticket-system-for-woocommerce' ); ?></button>
 					</div>
 				</div>
 				<p class="stsw-replybox__draft hd-help" aria-live="polite"></p>
@@ -1300,9 +1305,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 		}
 
 		/**
-		 * Checklist at the top of the inbox until every step is done or it is hidden.
+		 * Checklist on the dashboard until every step is done or it is hidden.
 		 */
-		protected function render_checklist() {
+		public function render_checklist() {
 			if ( get_user_meta( get_current_user_id(), 'wpfactory_wc_sts_hide_checklist', true ) ) {
 				return;
 			}

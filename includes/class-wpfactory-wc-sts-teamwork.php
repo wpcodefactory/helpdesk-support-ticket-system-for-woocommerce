@@ -297,7 +297,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 			if ( '' !== $del ) {
 				unset( $views[ $del ] );
 				update_user_meta( $user, self::META_VIEWS, $views );
-				wp_safe_redirect( WPFactory_WC_STS_UI::url() );
+				wp_safe_redirect( WPFactory_WC_STS_UI::url( '', array( 'view' => 'needs_reply' ) ) );
 				exit;
 			}
 			$name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );

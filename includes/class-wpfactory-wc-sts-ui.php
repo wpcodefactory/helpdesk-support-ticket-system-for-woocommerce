@@ -33,6 +33,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 		const WIZARD_OPTION = 'wpfactory_wc_sts_setup_done';
 
 		/**
+		 * Option: the support page (a page with the [stsw_user_tickets] support form).
+		 */
+		const SUPPORT_PAGE = 'wpfactory_wc_sts_support_page';
+
+		/**
 		 * Nonce action.
 		 */
 		const NONCE = 'wpfactory_wc_sts_ui';
@@ -76,6 +81,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 			add_action( 'load-post-new.php', array( $this, 'redirect_old_screens' ) );
 			add_action( 'load-post.php', array( $this, 'redirect_old_screens' ) );
 			add_filter( 'admin_body_class', array( $this, 'body_class' ) );
+			add_filter( 'wpfactory_wc_sts_settings_general', array( $this, 'support_page_field' ) );
+			add_action( 'update_option_' . self::SUPPORT_PAGE, array( $this, 'on_support_page_change' ), 10, 2 );
+			add_action( 'add_option_' . self::SUPPORT_PAGE, array( $this, 'on_support_page_add' ), 10, 2 );
 		}
 
 		/**
@@ -98,6 +106,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 		public static function url( $tab = '', $args = array() ) {
 			$base = admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE );
 			return add_query_arg( array_merge( $tab ? array( 'tab' => $tab ) : array(), $args ), $base );
+		}
+
+		/**
+		 * Address of a header tab: the dashboard is the Helpdesk page itself, the inbox opens on Needs reply.
+		 *
+		 * @param string $tab Tab key ('' : the inbox).
+		 *
+		 * @return string
+		 */
+		public static function tab_url( $tab ) {
+			if ( 'dashboard' === $tab ) {
+				return self::url();
+			}
+			return '' === $tab ? self::url( '', array( 'view' => 'needs_reply' ) ) : self::url( $tab );
 		}
 
 		/**
@@ -129,8 +151,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 		 */
 		public static function nav_tabs() {
 			$tabs = array(
-				''      => __( 'Inbox', 'support-ticket-system-for-woocommerce' ),
-				'saved' => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
+				'dashboard' => __( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
+				''          => __( 'Inbox', 'support-ticket-system-for-woocommerce' ),
+				'saved'     => __( 'Saved replies', 'support-ticket-system-for-woocommerce' ),
 			);
 			/**
 			 * Header tabs (the knowledge base, Reports and Companies add their own).
@@ -138,7 +161,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 			 * @param array $tabs key => label.
 			 */
 			$tabs  = (array) apply_filters( 'wpfactory_wc_sts_header_tabs', $tabs );
-			$order = array( '', 'reports', 'saved', 'kb', 'companies' );
+			$order = array( 'dashboard', '', 'reports', 'saved', 'kb', 'companies', 'automation' );
 			$out   = array();
 			foreach ( $order as $key ) {
 				if ( isset( $tabs[ $key ] ) ) {
@@ -468,7 +491,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 				</div>
 				<nav class="hd-tabs" aria-label="<?php esc_attr_e( 'Helpdesk sections', 'support-ticket-system-for-woocommerce' ); ?>">
 					<?php foreach ( $tabs as $key => $label ) : ?>
-						<a class="hd-tab" href="<?php echo esc_url( self::url( $key ) ); ?>"<?php echo $key === $current ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
+						<a class="hd-tab" href="<?php echo esc_url( self::tab_url( $key ) ); ?>"<?php echo $key === $current ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
 					<?php endforeach; ?>
 				</nav>
 				<div class="hd-header__spacer"></div>
@@ -984,6 +1007,114 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 		}
 
 		/**
+		 * Pages a support page can be: published pages that are not the shop, cart, checkout, My Account or the help
+		 * center.
+		 *
+		 * @return array id => title
+		 */
+		public function support_page_choices() {
+			$skip = array_filter( array_map( 'absint', array( get_option( 'woocommerce_myaccount_page_id' ), get_option( 'woocommerce_cart_page_id' ), get_option( 'woocommerce_checkout_page_id' ), get_option( 'woocommerce_shop_page_id' ), class_exists( 'WPFactory_WC_STS_KB' ) ? WPFactory_WC_STS_KB::get_instance()->get_page_id() : 0 ) ) );
+			$out  = array();
+			foreach ( get_pages(
+				array(
+					'post_status' => 'publish',
+					'sort_column' => 'post_title',
+					'number'      => 200,
+				)
+			) as $page ) { // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_numberposts
+				if ( ! in_array( (int) $page->ID, $skip, true ) ) {
+					$out[ (int) $page->ID ] = '' !== $page->post_title ? $page->post_title : '#' . $page->ID;
+				}
+			}
+			return $out;
+		}
+
+		/**
+		 * Puts the support form on a page (once), or creates a "Support" page with it.
+		 *
+		 * @param int|string $page Page ID, or `new`.
+		 *
+		 * @return int Page ID (0: none).
+		 */
+		public function setup_support_page( $page ) {
+			$block = "<!-- wp:shortcode -->\n[stsw_user_tickets]\n<!-- /wp:shortcode -->";
+			if ( 'new' === $page ) {
+				$id = wp_insert_post(
+					array(
+						'post_type'    => 'page',
+						'post_status'  => 'publish',
+						'post_title'   => __( 'Support', 'support-ticket-system-for-woocommerce' ),
+						'post_content' => $block,
+					)
+				);
+				return is_wp_error( $id ) ? 0 : (int) $id;
+			}
+			$id = absint( $page );
+			if ( ! $id || 'page' !== get_post_type( $id ) ) {
+				return 0;
+			}
+			$content = (string) get_post_field( 'post_content', $id, 'raw' );
+			if ( ! has_shortcode( $content, 'stsw_user_tickets' ) ) {
+				wp_update_post(
+					array(
+						'ID'           => $id,
+						'post_content' => rtrim( $content ) . ( '' !== trim( $content ) ? "\n\n" : '' ) . $block,
+					)
+				);
+			}
+			return $id;
+		}
+
+		/**
+		 * The support page chosen in Settings gets the support form.
+		 *
+		 * @param mixed $old   Old value.
+		 * @param mixed $value New value.
+		 */
+		public function on_support_page_change( $old, $value ) {
+			if ( absint( $value ) && absint( $value ) !== absint( $old ) ) {
+				$this->setup_support_page( absint( $value ) );
+			}
+		}
+
+		/**
+		 * The support page chosen the first time.
+		 *
+		 * @param string $option Option.
+		 * @param mixed  $value  Value.
+		 */
+		public function on_support_page_add( $option, $value ) {
+			$this->on_support_page_change( 0, $value );
+		}
+
+		/**
+		 * The support page, when it is published and has the support form.
+		 *
+		 * @return int
+		 */
+		public static function support_page_id() {
+			$id = absint( get_option( self::SUPPORT_PAGE, 0 ) );
+			return $id && 'publish' === get_post_status( $id ) && has_shortcode( (string) get_post_field( 'post_content', $id, 'raw' ), 'stsw_user_tickets' ) ? $id : 0;
+		}
+
+		/**
+		 * Settings > General: the support page.
+		 *
+		 * @param array $fields Fields.
+		 *
+		 * @return array
+		 */
+		public function support_page_field( $fields ) {
+			$fields[ '@' . self::SUPPORT_PAGE ] = array(
+				'type'        => 'select',
+				'label'       => __( 'Support page', 'support-ticket-system-for-woocommerce' ),
+				'options'     => array( '' => __( 'None: customers use My Account', 'support-ticket-system-for-woocommerce' ) ) + $this->support_page_choices(),
+				'description' => __( 'Optional page where customers open and follow tickets, besides My Account. The support form is added to the page you choose; the rest of the page stays as it is.', 'support-ticket-system-for-woocommerce' ),
+			);
+			return $fields;
+		}
+
+		/**
 		 * Suggested subjects.
 		 *
 		 * @return string[]
@@ -1058,7 +1189,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 							<?php endif; ?>
 							<span class="hd-header__spacer"></span>
 							<?php if ( 'done' === $step ) : ?>
-								<a class="hd-btn hd-btn--primary" href="<?php echo esc_url( self::url() ); ?>"><?php esc_html_e( 'Go to inbox', 'support-ticket-system-for-woocommerce' ); ?></a>
+								<a class="hd-btn hd-btn--primary" href="<?php echo esc_url( self::url() ); ?>"><?php esc_html_e( 'Open the dashboard', 'support-ticket-system-for-woocommerce' ); ?></a>
 							<?php else : ?>
 								<span class="hd-muted"><?php echo esc_html( sprintf( /* translators: 1: step, 2: steps. */ __( 'Step %1$d of %2$d', 'support-ticket-system-for-woocommerce' ), $index + 1, count( $keys ) ) ); ?></span>
 								<button type="submit" class="hd-btn hd-btn--primary"><?php echo esc_html( 'welcome' === $step ? __( 'Get started', 'support-ticket-system-for-woocommerce' ) : __( 'Continue', 'support-ticket-system-for-woocommerce' ) ); ?></button>
@@ -1114,6 +1245,18 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 								<input type="checkbox" role="switch" class="hd-switch" name="hide" value="1" <?php checked( '1', (string) get_option( $p . 'hideClosed' ) ); ?> />
 								<span><strong><?php esc_html_e( 'Hide closed tickets from customers', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'Keeps their support list short and current.', 'support-ticket-system-for-woocommerce' ); ?></span></span>
 							</label>
+							<div class="hd-field">
+								<label for="hd-w-page"><?php esc_html_e( 'Support page (optional)', 'support-ticket-system-for-woocommerce' ); ?></label>
+								<select id="hd-w-page" name="support_page" aria-describedby="hd-w-page-help">
+									<?php $current_page = self::support_page_id(); ?>
+									<option value=""><?php esc_html_e( 'None: customers use My Account', 'support-ticket-system-for-woocommerce' ); ?></option>
+									<option value="new"><?php esc_html_e( 'Create a new "Support" page', 'support-ticket-system-for-woocommerce' ); ?></option>
+									<?php foreach ( $this->support_page_choices() as $page_id => $page_title ) : ?>
+										<option value="<?php echo (int) $page_id; ?>" <?php selected( $current_page, $page_id ); ?>><?php echo esc_html( $page_title ); ?></option>
+									<?php endforeach; ?>
+								</select>
+								<span class="hd-help" id="hd-w-page-help"><?php esc_html_e( 'A page of your site where customers open and follow tickets too. We add the support form to it, so it is never empty; the rest of the page stays as it is.', 'support-ticket-system-for-woocommerce' ); ?></span>
+							</div>
 						</div>
 						<div class="hd-preview" aria-hidden="true">
 							<span class="hd-help"><?php esc_html_e( 'Preview: your store', 'support-ticket-system-for-woocommerce' ); ?></span>
@@ -1179,6 +1322,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 						<h1 class="hd-h1"><?php esc_html_e( 'Your helpdesk is live', 'support-ticket-system-for-woocommerce' ); ?></h1>
 						<p class="hd-muted"><?php echo esc_html( sprintf( /* translators: %s: menu label. */ __( 'Customers can now open tickets from My Account under "%s".', 'support-ticket-system-for-woocommerce' ), '' !== $menu ? $menu : __( 'Help', 'support-ticket-system-for-woocommerce' ) ) ); ?></p>
 						<ol class="hd-nextsteps">
+							<?php if ( self::support_page_id() ) : ?>
+								<li data-stsw-wizard-page><span><strong><?php esc_html_e( 'Your support page', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php echo esc_html( get_the_title( self::support_page_id() ) ); ?></span></span><a href="<?php echo esc_url( get_permalink( self::support_page_id() ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View page', 'support-ticket-system-for-woocommerce' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ); ?></span></a></li>
+							<?php endif; ?>
 							<li><span><strong><?php esc_html_e( 'Open a test ticket', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'See what your customers see.', 'support-ticket-system-for-woocommerce' ); ?></span></span><a href="<?php echo esc_url( $this->core()->get_customer_tickets_url() ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open store', 'support-ticket-system-for-woocommerce' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ); ?></span></a></li>
 							<li><span><strong><?php esc_html_e( 'Save your first saved reply', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'Answer common questions in one click.', 'support-ticket-system-for-woocommerce' ); ?></span></span><a href="<?php echo esc_url( self::url( 'saved' ) ); ?>"><?php esc_html_e( 'Add reply', 'support-ticket-system-for-woocommerce' ); ?></a></li>
 							<?php
@@ -1215,6 +1361,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					update_option( $p . 'renameAccountTabLink', sanitize_text_field( wp_unslash( $_POST['menu'] ?? '' ) ) );
 					update_option( $p . 'renameOrderButtonLink', sanitize_text_field( wp_unslash( $_POST['order'] ?? '' ) ) );
 					update_option( $p . 'hideClosed', empty( $_POST['hide'] ) ? '' : '1' );
+					$choice = sanitize_key( wp_unslash( $_POST['support_page'] ?? '' ) );
+					if ( '' !== $choice ) {
+						$page_id = $this->setup_support_page( 'new' === $choice ? 'new' : absint( $choice ) );
+						if ( $page_id ) {
+							update_option( self::SUPPORT_PAGE, $page_id );
+						}
+					}
 					flush_rewrite_rules( false );
 					break;
 				case 'subjects':

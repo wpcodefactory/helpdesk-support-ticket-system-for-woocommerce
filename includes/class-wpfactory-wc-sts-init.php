@@ -99,6 +99,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'backend_scripts' ) );
 			add_action( 'wpfactory_wc_sts_output_settings', array( $this, 'init' ) );
+			add_filter( 'wpfactory_wc_sts_header_tabs', array( $this, 'automation_tab' ), 30 );
 			add_action( 'all_admin_notices', array( $this, 'add_tabs_to_tickets' ) );
 		}
 
@@ -217,6 +218,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 			if ( 'canned' === $tab ) {
 				$tab = 'saved';
 			}
+			if ( class_exists( 'WPFactory_WC_STS_Dashboard' ) && WPFactory_WC_STS_Dashboard::is_request() ) {
+				return 'dashboard';
+			}
 			$known = array_merge( array( 'priorities', 'subjects', 'statuses', 'fields', 'saved', 'settings', 'tools' ), array_keys( (array) apply_filters( 'wpfactory_wc_sts_header_tabs', array() ) ) );
 			return in_array( $tab, $known, true ) ? $tab : 'inbox';
 		}
@@ -243,9 +247,39 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		protected function setting_groups() {
 			return array(
 				'basics'    => __( 'Basics', 'support-ticket-system-for-woocommerce' ),
-				'workflows' => __( 'Workflows', 'support-ticket-system-for-woocommerce' ),
+				'workflows' => __( 'Orders and channels', 'support-ticket-system-for-woocommerce' ),
 				'advanced'  => __( 'Advanced', 'support-ticket-system-for-woocommerce' ),
+				'rules'     => __( 'Automation', 'support-ticket-system-for-woocommerce' ),
 			);
+		}
+
+		/**
+		 * Settings sections shown in the Automation tab (workflow rules, reply targets and automatic closing, working
+		 * hours, proactive tickets).
+		 *
+		 * @return string[]
+		 */
+		public static function automation_sections() {
+			/**
+			 * Settings sections shown in the Automation tab instead of Settings.
+			 *
+			 * @param string[] $ids Section IDs.
+			 */
+			return (array) apply_filters( 'wpfactory_wc_sts_automation_sections', array( 'pro_workflows', 'pro_automation', 'pro_hours', 'pro_proactive' ) );
+		}
+
+		/**
+		 * "Automation" in the plugin header when there are automation settings (Pro), for people who manage the store.
+		 *
+		 * @param array $tabs Tabs.
+		 *
+		 * @return array
+		 */
+		public function automation_tab( $tabs ) {
+			if ( current_user_can( 'manage_woocommerce' ) && array_intersect( self::automation_sections(), array_keys( $this->get_extra_sections() ) ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				$tabs['automation'] = __( 'Automation', 'support-ticket-system-for-woocommerce' );
+			}
+			return $tabs;
 		}
 
 		/**
@@ -262,6 +296,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				case 'inbox':
 					WPFactory_WC_STS_Inbox::get_instance()->render();
 					return;
+				case 'dashboard':
+					WPFactory_WC_STS_Dashboard::get_instance()->render();
+					return;
 				case 'priorities':
 				case 'subjects':
 				case 'statuses':
@@ -276,6 +313,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 					return;
 				case 'settings':
 					break;
+				case 'automation':
+					if ( current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+						$this->render_settings_form( 'automation' );
+					}
+					return;
 				default:
 					/**
 					 * Content of an add-on header tab.
@@ -293,11 +335,26 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				echo '</div>';
 				return;
 			}
-			$sections = $this->settings_nav_sections();
+			$this->render_settings_form( 'settings' );
+		}
+
+		/**
+		 * The settings form: Settings (every section but automation) or the Automation tab.
+		 *
+		 * @param string $scope `settings` or `automation`.
+		 */
+		protected function render_settings_form( $scope ) {
+			$sections = $this->settings_nav_sections( $scope );
+			$moved    = array();
+			if ( 'settings' === $scope ) {
+				foreach ( array_keys( $this->settings_nav_sections( 'automation' ) ) as $id ) {
+					$moved[ $id ] = WPFactory_WC_STS_UI::url( 'automation' ) . '#' . $id;
+				}
+			}
 			?>
 			<div class="hd-page hd-page--settings">
 				<?php $this->admin_process_settings(); ?>
-				<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form" class="hd-settings" data-hd-settings>
+				<form method="post" id="<?php echo esc_attr( $this->plugin ); ?>Form" class="hd-settings" data-hd-settings<?php echo $moved ? ' data-hd-moved="' . esc_attr( wp_json_encode( $moved ) ) . '"' : ''; ?>>
 					<?php $this->render_subnav( $sections, '' ); ?>
 					<div class="hd-settings__panels">
 						<?php
@@ -331,9 +388,24 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		 * Sections of the Settings navigation: setting panels, plus "Ticket fields" and "Tools", which are screens of
 		 * their own (entries with a `url`).
 		 *
+		 * @param string $scope `settings` (default) or `automation`.
+		 *
 		 * @return array id => `label`, `group`, `intro`, optional `url`.
 		 */
-		protected function settings_nav_sections() {
+		protected function settings_nav_sections( $scope = 'settings' ) {
+			if ( 'automation' === $scope ) {
+				$out = array();
+				foreach ( $this->get_extra_sections() as $id => $section ) {
+					if ( in_array( $id, self::automation_sections(), true ) ) {
+						$out[ $id ] = array(
+							'label' => $section['label'],
+							'group' => 'rules',
+							'intro' => $section['intro'] ?? '',
+						);
+					}
+				}
+				return $out;
+			}
 			$group_of = array(
 				'pro_ratings'    => 'basics',
 				'pro_automation' => 'workflows',
@@ -365,6 +437,9 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 				),
 			);
 			foreach ( $this->get_extra_sections() as $id => $section ) {
+				if ( in_array( $id, self::automation_sections(), true ) ) {
+					continue; // In the Automation tab.
+				}
 				$sections[ $id ] = array(
 					'label' => $section['label'],
 					'group' => $section['group'] ?? ( $group_of[ $id ] ?? 'workflows' ),
@@ -397,7 +472,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 		protected function render_subnav( $sections, $current ) {
 			$manager = current_user_can( 'manage_woocommerce' ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			?>
-			<nav class="hd-subnav" aria-label="<?php esc_attr_e( 'Settings sections', 'support-ticket-system-for-woocommerce' ); ?>">
+			<nav class="hd-subnav" aria-label="<?php echo esc_attr( 'automation' === $this->active_tab ? __( 'Automation sections', 'support-ticket-system-for-woocommerce' ) : __( 'Settings sections', 'support-ticket-system-for-woocommerce' ) ); ?>">
 				<?php
 				foreach ( $this->setting_groups() as $group => $group_label ) :
 					$in_group = array_filter(
@@ -426,7 +501,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Init' ) ) :
 						<?php endforeach; ?>
 					</ul>
 				<?php endforeach; ?>
-				<?php if ( $manager ) : ?>
+				<?php if ( $manager && 'automation' !== $this->active_tab ) : ?>
 					<a class="hd-subnav__wizard" href="<?php echo esc_url( admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '-setup' ) ); ?>"><?php esc_html_e( 'Run setup wizard again', 'support-ticket-system-for-woocommerce' ); ?></a>
 				<?php endif; ?>
 			</nav>

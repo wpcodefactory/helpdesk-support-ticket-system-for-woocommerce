@@ -232,7 +232,18 @@
 			});
 			return { panel: found || id };
 		};
+		var moved = {};
+		try {
+			moved = JSON.parse(settings.getAttribute("data-hd-moved") || "{}");
+		} catch (e) {
+			moved = {};
+		}
 		var open = function (hash, focus) {
+			var key = decodeURIComponent(String(hash || "")).toLowerCase();
+			if (moved[key] || moved["pro_" + key]) {
+				window.location.replace(moved[key] || moved["pro_" + key]);
+				return;
+			}
 			var where = resolve(hash);
 			show(where.panel, focus && !where.target);
 			if (where.target) {

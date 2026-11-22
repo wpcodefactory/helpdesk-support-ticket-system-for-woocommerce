@@ -27,6 +27,7 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 
 = For your team =
 
+* **Dashboard.** What waits for your team, your own tickets and new tickets per day, on the first screen.
 * **One inbox.** Views with counts (Needs reply, Mine, Unassigned, Waiting on customer, Live chats, Closed), priority filters, search by name, email or ticket number, and your own saved views.
 * **Everything on one screen.** The conversation, private notes, the customer's lifetime value, orders and other tickets.
 * **Fast answers.** Saved replies with placeholders (customer name, order number), links to help articles, drafts kept on your computer, keyboard shortcuts and Ctrl+Enter to send.
@@ -114,6 +115,9 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 3.1.0 - 23/11/2026 =
+* New - Dashboard: Helpdesk opens on counters that lead to each inbox view, the tickets waiting longest, your own tickets, new tickets per day, the setup checklist and the AI status.
+* New - Support page: the setup wizard and Settings > General can put the support form on one of your pages, or create a Support page, so the page is never empty.
+* Improved - Inbox: status, priority, assignee and tags moved to a Ticket details card next to the conversation; messages use the full width; the AI tools are one AI menu; Ctrl+Enter is shown as a tip on Send reply.
 * New - AI tools in the reply box: Improve my reply and Translate, next to Draft a reply and Summarize.
 * New - AI chat assistant in the free version: answers live chats from your help articles and hands over to your team (off by default).
 * New - Settings > AI shows what AI does, and says right away when AI is on but the site is not connected to WPFactory AI yet, with Connect.

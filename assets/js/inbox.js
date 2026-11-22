@@ -731,6 +731,10 @@
 			return;
 		}
 		event.preventDefault();
+		var menu = button.closest("[data-stsw-ai-menu]");
+		if (menu) {
+			menu.open = false;
+		}
 		var task = button.getAttribute("data-stsw-cai");
 		var out = document.getElementById("stsw-credits-ai-out");
 		var area = document.getElementById("stsw-inbox-reply");

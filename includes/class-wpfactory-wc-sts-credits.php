@@ -579,12 +579,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		public function render_tools( $ticket_id ) {
 			$url   = admin_url( 'admin-ajax.php' );
 			$nonce = wp_create_nonce( 'wpfactory_wc_sts_credits_ai' );
-			echo '<div class="stsw-credits-ai hd-ai-tools" role="group" aria-label="' . esc_attr__( 'AI tools', 'support-ticket-system-for-woocommerce' ) . '">';
-			echo '<span class="hd-ai-tools__label">' . wp_kses( WPFactory_WC_STS_UI::icon( 'sparkle', 14 ), WPFactory_WC_STS_UI::svg_kses() ) . ' ' . esc_html__( 'AI', 'support-ticket-system-for-woocommerce' ) . '</span> ';
+			echo '<details class="stsw-credits-ai hd-menu hd-ai-tools" data-stsw-ai-menu><summary class="hd-btn hd-btn--sm hd-btn--ghost hd-ai-tools__toggle">' . wp_kses( WPFactory_WC_STS_UI::icon( 'sparkle', 14 ), WPFactory_WC_STS_UI::svg_kses() ) . ' ' . esc_html__( 'AI', 'support-ticket-system-for-woocommerce' ) . '</summary><div class="hd-menu__panel hd-ai-tools__panel" role="group" aria-label="' . esc_attr__( 'AI tools', 'support-ticket-system-for-woocommerce' ) . '">';
 			foreach ( $this->tools() as $task => $tool ) {
-				echo '<button type="button" class="hd-btn hd-btn--sm" title="' . esc_attr( $tool[1] ) . '" data-stsw-cai="' . esc_attr( $task ) . '" data-ticket="' . (int) $ticket_id . '" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $nonce ) . '" data-working="' . esc_attr__( 'Asking the AI...', 'support-ticket-system-for-woocommerce' ) . '" data-replace="' . esc_attr__( 'Replace the text in the reply box with the AI draft?', 'support-ticket-system-for-woocommerce' ) . '" data-empty="' . esc_attr__( 'Write a reply first, then click Improve my reply.', 'support-ticket-system-for-woocommerce' ) . '">' . esc_html( $tool[0] ) . '</button> ';
+				echo '<button type="button" class="hd-menu__item hd-ai-tools__item" data-stsw-cai="' . esc_attr( $task ) . '" data-ticket="' . (int) $ticket_id . '" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $nonce ) . '" data-working="' . esc_attr__( 'Asking the AI...', 'support-ticket-system-for-woocommerce' ) . '" data-replace="' . esc_attr__( 'Replace the text in the reply box with the AI draft?', 'support-ticket-system-for-woocommerce' ) . '" data-empty="' . esc_attr__( 'Write a reply first, then click Improve my reply.', 'support-ticket-system-for-woocommerce' ) . '"><strong>' . esc_html( $tool[0] ) . '</strong><span>' . esc_html( $tool[1] ) . '</span></button>';
 			}
-			echo '</div><div id="stsw-credits-ai-out" class="hd-help" aria-live="polite"></div>';
+			echo '</div></details><div id="stsw-credits-ai-out" class="hd-help hd-ai-out" aria-live="polite"></div>';
 		}
 
 		/**

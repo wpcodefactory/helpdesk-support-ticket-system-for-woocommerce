@@ -1418,10 +1418,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 				return;
 			}
 			foreach ( WPFactory_WC_STS_UI::nav_tabs() as $key => $title ) {
-				if ( '' === $key ) {
-					continue; // The Inbox item is the main page itself.
+				if ( 'dashboard' === $key ) {
+					continue; // The Dashboard item is the main page itself.
 				}
-				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'settings' === $key ? 'manage_woocommerce' : 'stsw_tickets', 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $key, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				$slug = '' === $key ? 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&view=needs_reply' : 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $key;
+				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'settings' === $key ? 'manage_woocommerce' : 'stsw_tickets', $slug, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			}
 			$this->menu_badge();
 		}
