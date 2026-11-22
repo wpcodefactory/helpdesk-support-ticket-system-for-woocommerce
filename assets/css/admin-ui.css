@@ -2853,6 +2853,13 @@ body.wpf-hd-wizard {
 	cursor: pointer;
 }
 
+.wpf-hd .hd-ai-tools__toggle {
+	border-color: var(--hd-accent-border);
+	background: var(--hd-accent-soft);
+	color: var(--hd-accent-strong);
+	font-weight: 600;
+}
+
 .wpf-hd .hd-ai-tools summary::-webkit-details-marker {
 	display: none;
 }

@@ -1466,6 +1466,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			if ( WPFACTORY_WC_STS_PAGE !== $page ) {
 				return $submenu_file;
 			}
+			global $menu;
+			if ( ! in_array( WPFACTORY_WC_STS_PAGE, array_column( (array) $menu, 2 ), true ) ) {
+				return WPFACTORY_WC_STS_PAGE; // In the WPFactory menu every Helpdesk screen highlights the one Helpdesk item.
+			}
 			$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = in_array( $tab, WPFactory_WC_STS_UI::settings_pages(), true ) ? 'settings' : $tab;
 			return ( '' !== $tab && isset( WPFactory_WC_STS_UI::nav_tabs()[ $tab ] ) ) ? 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $tab : $submenu_file;

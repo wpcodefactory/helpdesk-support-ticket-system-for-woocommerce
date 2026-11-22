@@ -7,7 +7,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-22T22:08:59+00:00\n"
+"POT-Creation-Date: 2026-11-22T22:24:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: support-ticket-system-for-woocommerce\n"
@@ -15,7 +15,7 @@ msgstr ""
 #: includes/class-wpfactory-wc-sts-admin.php:152
 #: includes/class-wpfactory-wc-sts-inbox.php:562
 #: includes/class-wpfactory-wc-sts-inc.php:450
-#: includes/class-wpfactory-wc-sts-inc.php:1575
+#: includes/class-wpfactory-wc-sts-inc.php:1579
 #: includes/class-wpfactory-wc-sts-teamwork.php:349
 msgid "Ticket"
 msgstr ""
@@ -112,7 +112,7 @@ msgstr ""
 
 #: includes/class-wpfactory-wc-sts-admin.php:290
 #: includes/class-wpfactory-wc-sts-admin.php:445
-#: includes/class-wpfactory-wc-sts-inc.php:1576
+#: includes/class-wpfactory-wc-sts-inc.php:1580
 #: includes/class-wpfactory-wc-sts-privacy.php:131
 #: includes/class-wpfactory-wc-sts-teamwork.php:354
 msgid "Customer"
@@ -137,7 +137,7 @@ msgstr ""
 #: includes/class-wpfactory-wc-sts-admin.php:447
 #: includes/class-wpfactory-wc-sts-admin.php:673
 #: includes/class-wpfactory-wc-sts-inbox.php:897
-#: includes/class-wpfactory-wc-sts-inc.php:1577
+#: includes/class-wpfactory-wc-sts-inc.php:1581
 #: includes/class-wpfactory-wc-sts-teamwork.php:357
 msgid "Assignee"
 msgstr ""
@@ -209,7 +209,7 @@ msgstr ""
 #: includes/class-wpfactory-wc-sts-admin.php:503
 #: includes/class-wpfactory-wc-sts-customer.php:336
 #: includes/class-wpfactory-wc-sts-dashboard.php:178
-#: includes/class-wpfactory-wc-sts-inc.php:1589
+#: includes/class-wpfactory-wc-sts-inc.php:1593
 msgid "%s ago"
 msgstr ""
 
@@ -1380,7 +1380,7 @@ msgid "This form expired. Please enter your order number again."
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-guest.php:387
-#: includes/class-wpfactory-wc-sts-inc.php:2073
+#: includes/class-wpfactory-wc-sts-inc.php:2077
 msgid "Your request could not be saved. Please try again."
 msgstr ""
 
@@ -1395,17 +1395,17 @@ msgstr ""
 
 #. translators: %s: request number.
 #: includes/class-wpfactory-wc-sts-guest.php:514
-#: includes/class-wpfactory-wc-sts-inc.php:1906
+#: includes/class-wpfactory-wc-sts-inc.php:1910
 msgid "Thanks, your message was sent. We will reply by email."
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-guest.php:515
-#: includes/class-wpfactory-wc-sts-inc.php:2116
+#: includes/class-wpfactory-wc-sts-inc.php:2120
 msgid "Your request is closed. You can reopen it at any time."
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-guest.php:516
-#: includes/class-wpfactory-wc-sts-inc.php:2109
+#: includes/class-wpfactory-wc-sts-inc.php:2113
 msgid "Your request is open again. Add a reply to tell us what you still need."
 msgstr ""
 
@@ -1677,7 +1677,7 @@ msgid "Waiting on customer"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-inbox.php:263
-#: includes/class-wpfactory-wc-sts-inc.php:1482
+#: includes/class-wpfactory-wc-sts-inc.php:1486
 msgid "All"
 msgstr ""
 
@@ -1810,7 +1810,7 @@ msgid "Older"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-inbox.php:860
-#: includes/class-wpfactory-wc-sts-inc.php:1564
+#: includes/class-wpfactory-wc-sts-inc.php:1568
 msgid "All tickets"
 msgstr ""
 
@@ -1969,7 +1969,7 @@ msgid "Customers can reach the Help page in My Account"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-inbox.php:1290
-#: includes/class-wpfactory-wc-sts-inc.php:1563
+#: includes/class-wpfactory-wc-sts-inc.php:1567
 msgid "View the customer page"
 msgstr ""
 
@@ -2046,7 +2046,7 @@ msgstr ""
 #: includes/class-wpfactory-wc-sts-inbox.php:1671
 #: includes/class-wpfactory-wc-sts-inc.php:449
 #: includes/class-wpfactory-wc-sts-inc.php:457
-#: includes/class-wpfactory-wc-sts-inc.php:1737
+#: includes/class-wpfactory-wc-sts-inc.php:1741
 #: includes/class-wpfactory-wc-sts-init.php:652
 #: includes/class-wpfactory-wc-sts-ui.php:674
 msgid "Tickets"
@@ -2057,12 +2057,12 @@ msgid "No tickets"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-inc.php:377
-#: includes/class-wpfactory-wc-sts-inc.php:1483
+#: includes/class-wpfactory-wc-sts-inc.php:1487
 msgid "Open"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts-inc.php:378
-#: includes/class-wpfactory-wc-sts-inc.php:1484
+#: includes/class-wpfactory-wc-sts-inc.php:1488
 msgid "In Progress"
 msgstr ""
 
@@ -2231,81 +2231,81 @@ msgid_plural "%s open tickets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1558
+#: includes/class-wpfactory-wc-sts-inc.php:1562
 msgid "Email alerts are off: you will not be told when a customer opens or replies to a ticket."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1559
+#: includes/class-wpfactory-wc-sts-inc.php:1563
 msgid "Turn them on in Settings > Emails"
 msgstr ""
 
 #. translators: %d: number of free credits.
-#: includes/class-wpfactory-wc-sts-inc.php:1565
+#: includes/class-wpfactory-wc-sts-inc.php:1569
 #: includes/class-wpfactory-wc-sts-ui.php:176
 #: includes/class-wpfactory-wc-sts-ui.php:1336
 #: includes/class-wpfactory-wc-sts.php:146
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1568
+#: includes/class-wpfactory-wc-sts-inc.php:1572
 msgid "Waiting for your reply"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1571
+#: includes/class-wpfactory-wc-sts-inc.php:1575
 msgid "No customer is waiting for a reply. Customers open tickets from My Account > Tickets, from their orders, or on any page with the [stsw_user_tickets] shortcode."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1578
+#: includes/class-wpfactory-wc-sts-inc.php:1582
 msgid "Last message"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1712
+#: includes/class-wpfactory-wc-sts-inc.php:1716
 msgid "Need help with this order?"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1722
+#: includes/class-wpfactory-wc-sts-inc.php:1726
 #: includes/class-wpfactory-wc-sts-init.php:657
 #: includes/class-wpfactory-wc-sts-ui.php:1242
 #: includes/class-wpfactory-wc-sts-ui.php:1265
 msgid "Get help"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1822
+#: includes/class-wpfactory-wc-sts-inc.php:1826
 msgid "A problem with this order? Send us a message and we will reply by email."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1872
+#: includes/class-wpfactory-wc-sts-inc.php:1876
 msgid "This form expired. Please refresh the page and send your message again."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1898
-#: includes/class-wpfactory-wc-sts-inc.php:1908
+#: includes/class-wpfactory-wc-sts-inc.php:1902
+#: includes/class-wpfactory-wc-sts-inc.php:1912
 msgid "Your message could not be sent. Please check the form and try again."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1983
+#: includes/class-wpfactory-wc-sts-inc.php:1987
 msgid "Please choose what your message is about."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1986
+#: includes/class-wpfactory-wc-sts-inc.php:1990
 msgid "Please choose a topic."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:1996
-#: includes/class-wpfactory-wc-sts-inc.php:2118
+#: includes/class-wpfactory-wc-sts-inc.php:2000
+#: includes/class-wpfactory-wc-sts-inc.php:2122
 msgid "Please write a message."
 msgstr ""
 
 #. translators: 1: reason or message start, 2: order number.
-#: includes/class-wpfactory-wc-sts-inc.php:2003
+#: includes/class-wpfactory-wc-sts-inc.php:2007
 msgid "%1$s (order #%2$s)"
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:2053
+#: includes/class-wpfactory-wc-sts-inc.php:2057
 msgid "Wrong order."
 msgstr ""
 
-#: includes/class-wpfactory-wc-sts-inc.php:2100
+#: includes/class-wpfactory-wc-sts-inc.php:2104
 msgid "Wrong user."
 msgstr ""
 
@@ -3771,11 +3771,11 @@ msgid "Go Pro"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts.php:264
-msgid "Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, more AI (a chat assistant and suggested resolutions, on WPFactory AI credits or your own key), and a full REST API."
+msgid "Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, and a full REST API."
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts.php:265
-msgid "See Pro"
+msgid "See Pro features"
 msgstr ""
 
 #: includes/class-wpfactory-wc-sts.php:266
