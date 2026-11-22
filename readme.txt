@@ -52,9 +52,10 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 
 == External services ==
 
-The plugin works without outside services. Two optional features connect to one when you turn them on:
+The plugin works without outside services. These optional features connect to one when you turn them on:
 
 * Human check (Settings > Ticket form > Spam protection, off by default). With Cloudflare Turnstile, the visitor's browser loads the check from challenges.cloudflare.com and the site sends the answer and the visitor's IP address to Cloudflare to verify it. Terms: https://www.cloudflare.com/website-terms/ Privacy: https://www.cloudflare.com/privacypolicy/ . With Google reCAPTCHA, the same happens with www.google.com/recaptcha. Terms: https://policies.google.com/terms Privacy: https://policies.google.com/privacy .
+* AI with WPFactory AI credits (off by default). This plugin can use WPFactory AI (https://ai.wpfactory.com), a service by WPFactory, for its AI features, paid with WPFactory credits. Nothing is sent until a site administrator connects the site on the AI Credits screen with an email address and a 6-digit code sent to it. When connecting, the site address and that email address are sent. After that, the text of each AI request the plugin makes is sent when a user starts it (for example the ticket conversation when a team member clicks "Draft a reply with AI"); WPFactory AI passes it to Anthropic, its AI provider, to produce the answer. WPFactory AI keeps only numbers about each request (tokens, credits, time), never its content. Terms: https://wpfactory.com/terms-conditions/#wpfactory-ai Privacy: https://wpfactory.com/privacy-policy/#wpfactory-ai
 
 == Installation ==
 
@@ -106,6 +107,7 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 3.0.0 - Unreleased =
+* New - AI with WPFactory AI credits, free and Pro: connect the site once with an email code (no API key), then "Draft a reply with AI" and "Summarize" are paid with credits (about 1 credit per draft with the fast model; free monthly credits included, buy more when needed). The credits link shows in the Helpdesk header. Uses the shared WPFactory AI library 1.3.0.
 * New - Simpler Helpdesk menu: Helpdesk opens the Inbox and shows the number of open tickets; Inbox, Saved replies, Knowledge base and Settings, in the same order as the header. Priorities, Subjects and Statuses are in Settings > Ticket fields, import and export in Settings > Tools. Old addresses still work.
 * New - Guests can ask for a one-time code by email and see all their tickets.
 * New - Custom fields: date, number, several choices and file (private, same rules as attachments).

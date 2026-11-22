@@ -724,5 +724,60 @@
 		}
 	});
 
+	// AI with WPFactory AI credits: the draft goes into the reply box (never sent on its own), the summary below.
+	document.addEventListener("click", function (event) {
+		var button = event.target.closest ? event.target.closest("[data-stsw-cai]") : null;
+		if (!button) {
+			return;
+		}
+		event.preventDefault();
+		var task = button.getAttribute("data-stsw-cai");
+		var out = document.getElementById("stsw-credits-ai-out");
+		var area = document.getElementById("stsw-inbox-reply");
+		var body = new window.FormData();
+		body.append("action", "wpfactory_wc_sts_credits_ai");
+		body.append("nonce", button.getAttribute("data-nonce"));
+		body.append("task", task);
+		body.append("ticket", button.getAttribute("data-ticket"));
+		button.setAttribute("aria-busy", "true");
+		button.disabled = true;
+		if (out) {
+			out.classList.remove("is-error");
+			out.textContent = button.getAttribute("data-working");
+		}
+		window
+			.fetch(button.getAttribute("data-url"), { method: "POST", body: body, credentials: "same-origin" })
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (json) {
+				if (!json || !json.success) {
+					throw new Error((json && json.data && json.data.message) || "");
+				}
+				if ("draft" === task && area) {
+					if (!area.value.trim() || window.confirm(button.getAttribute("data-replace"))) {
+						area.value = json.data.text;
+						area.dispatchEvent(new Event("input", { bubbles: true }));
+						area.focus();
+					}
+					if (out) {
+						out.textContent = "";
+					}
+				} else if (out) {
+					out.textContent = json.data.text;
+				}
+			})
+			.catch(function (error) {
+				if (out) {
+					out.classList.add("is-error");
+					out.textContent = error.message || "";
+				}
+			})
+			.then(function () {
+				button.removeAttribute("aria-busy");
+				button.disabled = false;
+			});
+	});
+
 	setup();
 })();

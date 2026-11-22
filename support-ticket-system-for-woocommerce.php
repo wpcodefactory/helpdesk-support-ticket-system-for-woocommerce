@@ -122,6 +122,13 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @todo (v2.2.0) Move everything to the `plugins_loaded` action.
  */
-foreach ( array( 'init', 'inc', 'customer', 'inbox', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy', 'ui', 'kb', 'chat', 'teamwork', 'import', 'tracking', 'templates', 'numbers', 'otp', 'guard', 'lifecycle', 'history', 'rest' ) as $wpfactory_wc_sts_part ) {
+foreach ( array( 'init', 'inc', 'customer', 'inbox', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy', 'ui', 'kb', 'chat', 'teamwork', 'import', 'tracking', 'templates', 'numbers', 'otp', 'guard', 'lifecycle', 'history', 'rest', 'credits' ) as $wpfactory_wc_sts_part ) {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-' . $wpfactory_wc_sts_part . '.php';
+}
+
+/**
+ * WPFactory AI library (AI with WPFactory AI credits). Each WPFactory plugin bundles a copy; the newest one loads.
+ */
+if ( is_readable( plugin_dir_path( __FILE__ ) . 'vendor/wpfactory/wpfactory-ai/wpfactory-ai.php' ) ) {
+	require_once plugin_dir_path( __FILE__ ) . 'vendor/wpfactory/wpfactory-ai/wpfactory-ai.php';
 }
