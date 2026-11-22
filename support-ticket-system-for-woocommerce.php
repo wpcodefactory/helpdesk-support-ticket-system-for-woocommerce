@@ -8,12 +8,12 @@
  * Author URI: https://wpfactory.com
  * Text Domain: support-ticket-system-for-woocommerce
  * Domain Path: /langs
- * WC tested up to: 11.2
+ * WC tested up to: 11.3
  * Requires Plugins: woocommerce
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Created on: 09-10-2019
- * Updated on: 25-09-2026
+ * Updated on: 22-11-2026
  *
  * @package WPFactory\WC_Support_Ticket_System
  */

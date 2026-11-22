@@ -107,7 +107,7 @@ Please report security bugs found in the source code of the plugin through the [
 
 == Changelog ==
 
-= 3.0.0 - Unreleased =
+= 3.0.0 - 22/11/2026 =
 * New - AI with WPFactory AI credits, free and Pro: create a free WPFactory AI account (email and a 6-digit code) and the site is connected, then "Draft a reply with AI" and "Summarize" are paid with credits (about 1 credit per draft with the fast model; 100 free credits a month on a live site, buy more when needed). The reply box and the setup wizard point to it. The credits link shows in the Helpdesk header. Uses the shared WPFactory AI library 1.3.0.
 * New - Simpler Helpdesk menu: Helpdesk opens the Inbox and shows the number of open tickets; Inbox, Saved replies, Knowledge base and Settings, in the same order as the header. Priorities, Subjects and Statuses are in Settings > Ticket fields, import and export in Settings > Tools. Old addresses still work.
 * New - Guests can ask for a one-time code by email and see all their tickets.
@@ -137,7 +137,7 @@ Please report security bugs found in the source code of the plugin through the [
 * Fix - Security - A text answer could show the file name of another ticket's attachment.
 * Fix - My Account orders column uses the current WooCommerce hook (no deprecation notice).
 * Dev - The "Go Pro" plugin link is plain text now (no colour); one dismissible note about Pro.
-* Dev - WC tested up to: 11.2.
+* Dev - WC tested up to: 11.3.
 
 = 2.3.0 - Not released on its own (part of 3.0.0) =
 * New - Display name: Customer Support Helpdesk & Tickets for WooCommerce. The admin menu is now Helpdesk.
