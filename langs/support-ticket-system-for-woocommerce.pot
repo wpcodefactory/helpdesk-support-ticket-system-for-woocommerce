@@ -1,32 +1,3669 @@
 # Copyright (C) 2026 WPFactory
-# This file is distributed under the GPLv2 or later.
+# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Helpdesk Support Ticket System for WooCommerce 2.2.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/support-ticket-system-for-woocommerce\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: Customer Support Helpdesk & Tickets for WooCommerce 3.0.0\n"
+"Report-Msgid-Bugs-To: https://wpfactory.com/\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-25T16:26:02+00:00\n"
+"POT-Creation-Date: 2026-11-22T13:26:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: support-ticket-system-for-woocommerce\n"
+
+#: includes/class-wpfactory-wc-sts-admin.php:152
+#: includes/class-wpfactory-wc-sts-inbox.php:563
+#: includes/class-wpfactory-wc-sts-inc.php:450
+#: includes/class-wpfactory-wc-sts-inc.php:1558
+#: includes/class-wpfactory-wc-sts-teamwork.php:349
+msgid "Ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:153
+#: includes/class-wpfactory-wc-sts-privacy.php:156
+msgid "Conversation"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:154
+#: includes/class-wpfactory-wc-sts-admin.php:236
+msgid "Reply to the customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:155
+msgid "Private notes"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:156
+msgid "Ticket info"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:189
+#: includes/class-wpfactory-wc-sts-admin.php:211
+#: includes/class-wpfactory-wc-sts-admin.php:240
+#: includes/class-wpfactory-wc-sts-privacy.php:189
+msgid "Attachments"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:204
+msgid "No replies yet"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:208
+#: includes/class-wpfactory-wc-sts-admin.php:261
+#: includes/class-wpfactory-wc-sts-admin.php:449
+#: includes/class-wpfactory-wc-sts-fields.php:482
+msgid "Date"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:209
+msgid "From"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:210
+#: includes/class-wpfactory-wc-sts-privacy.php:152
+#: includes/class-wpfactory-wc-sts-ui.php:870
+#: templates/chat-widget.php:34
+#: templates/ticket-new.php:123
+msgid "Message"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:212
+#: includes/class-wpfactory-wc-sts-admin.php:264
+msgid "Action"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:220
+#: includes/class-wpfactory-wc-sts-admin.php:267
+#: includes/class-wpfactory-wc-sts-inbox.php:701
+#: includes/class-wpfactory-wc-sts-inbox.php:984
+#: includes/class-wpfactory-wc-sts-ui.php:211
+#: includes/class-wpfactory-wc-sts-ui.php:856
+msgid "Delete"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:237
+msgid "Write your reply to the customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:245
+msgid "Close the ticket with this reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:247
+msgid "The reply is saved when you click Update. The customer gets an email if customer emails are on."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:262
+msgid "Written by"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:263
+msgid "Note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:274
+msgid "New private note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:275
+msgid "Only store staff can see private notes"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:290
+#: includes/class-wpfactory-wc-sts-admin.php:445
+#: includes/class-wpfactory-wc-sts-inc.php:1559
+#: includes/class-wpfactory-wc-sts-privacy.php:131
+#: includes/class-wpfactory-wc-sts-teamwork.php:354
+msgid "Customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:294
+msgid "guest"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:315
+#: includes/class-wpfactory-wc-sts-admin.php:446
+#: includes/class-wpfactory-wc-sts-privacy.php:170
+#: includes/class-wpfactory-wc-sts-teamwork.php:356
+msgid "Order"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:319
+msgid "No order"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:327
+#: includes/class-wpfactory-wc-sts-admin.php:447
+#: includes/class-wpfactory-wc-sts-admin.php:673
+#: includes/class-wpfactory-wc-sts-inbox.php:897
+#: includes/class-wpfactory-wc-sts-inc.php:1560
+#: includes/class-wpfactory-wc-sts-teamwork.php:357
+msgid "Assignee"
+msgstr ""
+
+#. translators: %s: name of the default assignee.
+#: includes/class-wpfactory-wc-sts-admin.php:331
+msgid "Default assignee (%s)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:333
+#: includes/class-wpfactory-wc-sts-admin.php:592
+#: includes/class-wpfactory-wc-sts-admin.php:604
+#: includes/class-wpfactory-wc-sts-inbox.php:694
+#: includes/class-wpfactory-wc-sts-inbox.php:898
+#: includes/class-wpfactory-wc-sts-init.php:842
+msgid "Nobody"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:417
+#: includes/class-wpfactory-wc-sts-credits.php:468
+#: includes/class-wpfactory-wc-sts-emails.php:931
+#: includes/class-wpfactory-wc-sts-history.php:341
+#: includes/class-wpfactory-wc-sts-inbox.php:1364
+#: includes/class-wpfactory-wc-sts-inbox.php:1373
+#: includes/class-wpfactory-wc-sts-inbox.php:1499
+#: includes/class-wpfactory-wc-sts-lifecycle.php:319
+#: includes/class-wpfactory-wc-sts-teamwork.php:292
+#: includes/class-wpfactory-wc-sts-teamwork.php:401
+#: includes/class-wpfactory-wc-sts-ui.php:697
+#: includes/class-wpfactory-wc-sts-ui.php:900
+#: includes/class-wpfactory-wc-sts-ui.php:1003
+#: includes/class-wpfactory-wc-sts-ui.php:1196
+msgid "You are not allowed to do this."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:441
+#: includes/class-wpfactory-wc-sts-kb.php:424
+#: includes/class-wpfactory-wc-sts-privacy.php:140
+#: includes/class-wpfactory-wc-sts-ui.php:865
+msgid "Title"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:442
+#: includes/class-wpfactory-wc-sts-inbox.php:883
+#: includes/class-wpfactory-wc-sts-kb.php:424
+#: includes/class-wpfactory-wc-sts-privacy.php:148
+#: includes/class-wpfactory-wc-sts-teamwork.php:351
+msgid "Status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:443
+#: includes/class-wpfactory-wc-sts-teamwork.php:350
+msgid "Subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:444
+#: includes/class-wpfactory-wc-sts-inbox.php:528
+#: includes/class-wpfactory-wc-sts-inbox.php:890
+#: includes/class-wpfactory-wc-sts-teamwork.php:352
+msgid "Priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:448
+msgid "Last reply"
+msgstr ""
+
+#. translators: %s: human readable time difference, e.g. "2 hours".
+#: includes/class-wpfactory-wc-sts-admin.php:503
+#: includes/class-wpfactory-wc-sts-customer.php:336
+#: includes/class-wpfactory-wc-sts-inc.php:1572
+msgid "%s ago"
+msgstr ""
+
+#. translators: %s: time since the reply, e.g. "2 hours ago".
+#: includes/class-wpfactory-wc-sts-admin.php:506
+msgid "Store replied %s"
+msgstr ""
+
+#. translators: %s: time since the message, e.g. "2 hours ago".
+#: includes/class-wpfactory-wc-sts-admin.php:509
+msgid "Customer wrote %s, awaiting reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:512
+msgid "No reply yet"
+msgstr ""
+
+#. translators: %s: taxonomy name, e.g. "Status".
+#: includes/class-wpfactory-wc-sts-admin.php:540
+msgid "All: %s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:559
+#: includes/class-wpfactory-wc-sts-admin.php:570
+#: includes/class-wpfactory-wc-sts-admin.php:644
+#: includes/class-wpfactory-wc-sts-ui.php:603
+msgid "Color"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-admin.php:591
+#: includes/class-wpfactory-wc-sts-admin.php:603
+msgid "Assign tickets with this subject to"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:69
+#: includes/class-wpfactory-wc-sts-ui.php:133
+#: includes/class-wpfactory-wc-sts-ui.php:810
+#: includes/class-wpfactory-wc-sts-ui.php:822
+msgid "Saved replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:70
+#: includes/class-wpfactory-wc-sts-canned.php:170
+msgid "Saved reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:71
+#: includes/class-wpfactory-wc-sts-canned.php:72
+msgid "Add saved reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:73
+#: includes/class-wpfactory-wc-sts-ui.php:850
+msgid "Edit saved reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:74
+msgid "No saved replies yet."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:75
+#: includes/class-wpfactory-wc-sts-ui.php:826
+msgid "Search saved replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:165
+msgid "Add saved replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-canned.php:169
+msgid "Insert a saved reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:128
+msgid "Live chat on your store"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:129
+msgid "A chat button on every page. Visitors can chat while a team member has \"Available\" on in the inbox; otherwise they leave a message that becomes a ticket. Runs on your own site, no outside service."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:133
+msgid "Chat greeting"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:134
+#: includes/class-wpfactory-wc-sts-chat.php:318
+msgid "Hi! How can we help?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:201
+msgid "Available for chat"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:201
+msgid "Visitors can chat while this is on and you are active."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:240
+msgid "Live chats"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:270
+msgid "Chat"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:297
+#: includes/class-wpfactory-wc-sts-customer.php:593
+msgid "You"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:298
+#: includes/class-wpfactory-wc-sts-init.php:173
+msgid "Sending..."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:299
+#: includes/class-wpfactory-wc-sts-chat.php:422
+#: includes/class-wpfactory-wc-sts-chat.php:451
+#: includes/class-wpfactory-wc-sts-chat.php:491
+msgid "Your message was not sent. Please try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:300
+msgid "This chat has ended. Start a new one any time."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:301
+msgid "Thanks, we received your message and will reply by email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:302
+msgid "We're away right now. Leave a message and we'll reply by email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:303
+msgid "Send message"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:304
+#: templates/chat-widget.php:44
+msgid "Start chat"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:305
+msgid "New message from support"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:425
+msgid "Please enter your email and a message."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:428
+msgid "Too many chats from your connection. Please try again in a few minutes."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:482
+#: includes/class-wpfactory-wc-sts-inbox.php:599
+msgid "Write a message first."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-chat.php:485
+msgid "You are sending messages too fast. Please wait a moment."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:120
+msgid "AI replies are on, but this site is not connected to WPFactory AI yet."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:121
+msgid "Connect"
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-credits.php:124
+msgid "Draft replies and summaries with AI. Create a free WPFactory AI account and get %d free credits a month (about one credit per draft)."
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-credits.php:125
+#: includes/class-wpfactory-wc-sts-ui.php:1180
+msgid "Set up AI"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:126
+msgid "Hide"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:155
+#: includes/class-wpfactory-wc-sts-ui.php:453
+#: includes/class-wpfactory-wc-sts.php:180
+#: includes/class-wpfactory-wc-sts.php:181
+#: includes/class-wpfactory-wc-sts.php:206
+#: includes/class-wpfactory-wc-sts.php:207
+msgid "Helpdesk"
+msgstr ""
+
+#. translators: %s: number of credits.
+#: includes/class-wpfactory-wc-sts-credits.php:227
+msgid "%s credit"
+msgid_plural "%s credits"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:244
+#: includes/class-wpfactory-wc-sts-credits.php:392
+msgid "WPFactory AI is not available in this copy of the plugin."
+msgstr ""
+
+#. translators: %s: address of the AI Credits screen.
+#: includes/class-wpfactory-wc-sts-credits.php:248
+msgid "Connect this site to WPFactory AI first: %s"
+msgstr ""
+
+#. translators: 1: credits needed, 2: credits left, 3: address of the AI Credits screen.
+#: includes/class-wpfactory-wc-sts-credits.php:270
+msgid "Not enough AI credits: this needs about %1$d and %2$d are left. Buy credits: %3$s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:281
+msgid "The AI sent an empty answer."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:355
+msgid "AI"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:357
+msgid "When a team member clicks \"Draft a reply\" or \"Summarize\", the ticket conversation and the order details are sent to WPFactory AI and paid with WPFactory AI credits. Nothing is sent otherwise, and drafts are never sent to customers without a person reviewing them."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:361
+msgid "Show AI buttons in the reply box"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:365
+msgid "WPFactory AI credits"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:370
+msgid "Quality"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:372
+msgid "Fast: about 1 credit per draft or summary"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:373
+msgid "Best: about 11 credits per draft or summary"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:378
+msgid "Store guidelines for drafts"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:379
+msgid "For example tone, sign-off, return policy. Added to every request."
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-credits.php:397
+msgid "Create a free WPFactory AI account with your email address (we send you a 6-digit code) and this site is connected. Each account gets %d free credits a month for Helpdesk on a live site (https); buy more when you need them (1 credit = 1 cent). Test and local sites can use bought credits."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:399
+msgid "Create a free account and connect"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:401
+msgid "Ask a site administrator to connect the site."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:409
+msgid "Connected. The balance could not be read right now."
+msgstr ""
+
+#. translators: %s: number of credits.
+#: includes/class-wpfactory-wc-sts-credits.php:412
+msgid "Connected: %s credit available."
+msgid_plural "Connected: %s credits available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:414
+msgid "Buy credits"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:414
+msgid "Usage and account"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:452
+msgid "Draft a reply with AI"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:453
+msgid "Summarize"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:455
+msgid "Asking the AI..."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-credits.php:455
+msgid "Replace the text in the reply box with the AI draft?"
+msgstr ""
+
+#. translators: %s: ticket number.
+#: includes/class-wpfactory-wc-sts-customer.php:86
+msgid "Log in to see your request #%s. You will go straight back to it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:133
+#: includes/class-wpfactory-wc-sts-kb.php:203
+msgid "Help center"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:134
+msgid "Customers see their requests, ask for help and follow the conversation."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:135
+msgid "Ask for help form"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:136
+msgid "The three step form to open a support request."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:137
+msgid "Support request"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:138
+msgid "One request with its conversation (from the link customers receive)."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:139
+msgid "Shown to customers on the site. Logged-out visitors see the login form, or the guest form when guest tickets are on."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:272
+msgid "This request was not found."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:316
+msgid "New reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:317
+msgid "Waiting for us"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:318
+#: includes/class-wpfactory-wc-sts-inbox.php:251
+#: includes/class-wpfactory-wc-sts-inc.php:379
+msgid "Closed"
+msgstr ""
+
+#. translators: 1: order number, 2: date, 3: number of items, 4: order total.
+#: includes/class-wpfactory-wc-sts-customer.php:395
+msgid "Order #%1$s, %2$s, %3$d item, %4$s"
+msgid_plural "Order #%1$s, %2$s, %3$d items, %4$s"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: order number.
+#: includes/class-wpfactory-wc-sts-customer.php:444
+msgid "Which items of order #%s? (optional)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:507
+msgid "Attach files (optional)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:510
+msgid "Drop files here or choose files"
+msgstr ""
+
+#. translators: %s: store name.
+#: includes/class-wpfactory-wc-sts-customer.php:595
+msgid "%s Support"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:615
+msgid "Reason"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:619
+msgid "Items"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-customer.php:623
+#: includes/class-wpfactory-wc-sts-teamwork.php:353
+#: templates/ticket-new.php:84
+msgid "Topic"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:152
+#: includes/class-wpfactory-wc-sts-emails.php:404
+#: includes/class-wpfactory-wc-sts-emails.php:435
+#: includes/class-wpfactory-wc-sts-emails.php:499
+#: includes/class-wpfactory-wc-sts-emails.php:500
+#: includes/class-wpfactory-wc-sts-emails.php:572
+#: includes/class-wpfactory-wc-sts-emails.php:665
+msgid "View your request"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:217
+#: includes/class-wpfactory-wc-sts-emails.php:378
+#: includes/class-wpfactory-wc-sts-emails.php:537
+#: includes/class-wpfactory-wc-sts-emails.php:556
+msgid "Open the ticket"
+msgstr ""
+
+#. translators: %s: first name, or "there".
+#: includes/class-wpfactory-wc-sts-emails.php:254
+msgid "Hi %s,"
+msgstr ""
+
+#. translators: %s: first name, or "there".
+#: includes/class-wpfactory-wc-sts-emails.php:254
+msgid "there"
+msgstr ""
+
+#. translators: %s: ticket number.
+#: includes/class-wpfactory-wc-sts-emails.php:261
+#: templates/guest-tickets.php:43
+#: templates/ticket-list.php:52
+#: templates/ticket-view.php:31
+msgid "Ticket #%s"
+msgstr ""
+
+#. translators: %s: ticket number.
+#: includes/class-wpfactory-wc-sts-emails.php:263
+msgid "Request #%s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:336
+msgid "Your request is open again and waiting for our team."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:337
+msgid "We are working on your request."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:338
+msgid "Your request is closed."
+msgstr ""
+
+#. translators: %s: status name.
+#: includes/class-wpfactory-wc-sts-emails.php:344
+msgid "Your request is now: %s."
+msgstr ""
+
+#. translators: 1: ticket number, 2: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:370
+msgid "New ticket #%1$s: %2$s"
+msgstr ""
+
+#. translators: 1: ticket number, 2: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:387
+msgid "We received your request #%1$s: %2$s"
+msgstr ""
+
+#. translators: %s: store name.
+#: includes/class-wpfactory-wc-sts-emails.php:401
+msgid "Thank you for contacting %s. We received your request and will reply by email."
+msgstr ""
+
+#. translators: 1: store name, 2: ticket number, 3: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:426
+msgid "A message from %1$s - #%2$s %3$s"
+msgstr ""
+
+#. translators: %s: store name.
+#: includes/class-wpfactory-wc-sts-emails.php:432
+msgid "%s sent you a message about your request."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:451
+msgid "From:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:455
+msgid "Order:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:459
+msgid "Subject:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:462
+msgid "Attachments:"
+msgstr ""
+
+#. translators: 1: ticket number, 2: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:489
+msgid "New reply on your request #%1$s: %2$s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:496
+msgid "We replied to your request:"
+msgstr ""
+
+#. translators: 1: store name, 2: ticket number, 3: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:528
+msgid "Ticket updated on %1$s - #%2$s %3$s"
+msgstr ""
+
+#. translators: %s: staff name.
+#: includes/class-wpfactory-wc-sts-emails.php:534
+msgid "%s replied to the customer:"
+msgstr ""
+
+#. translators: 1: ticket number, 2: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:548
+msgid "New reply on ticket #%1$s: %2$s"
+msgstr ""
+
+#. translators: 1: ticket number, 2: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:564
+msgid "We received your reply on request #%1$s: %2$s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:569
+msgid "We received your reply and added it to your request:"
+msgstr ""
+
+#. translators: 1: ticket number, 2: ticket title.
+#: includes/class-wpfactory-wc-sts-emails.php:647
+msgid "Your request #%1$s is closed: %2$s"
+msgstr ""
+
+#. translators: 1: ticket number, 2: new status.
+#: includes/class-wpfactory-wc-sts-emails.php:649
+msgid "Update on your request #%1$s: %2$s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:660
+msgid "We closed your request."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:661
+msgid "If you still need help, reply to this email to reopen it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:662
+msgid "If you still need help, use this link to reopen it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:665
+msgid "Reopen your request"
+msgstr ""
+
+#. translators: %s: order number.
+#: includes/class-wpfactory-wc-sts-emails.php:757
+#: templates/order-tracking.php:21
+#: templates/ticket-list.php:55
+msgid "Order #%s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:851
+msgid "Store and customer emails are on"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:852
+msgid "Turn on both email settings above, or customers and staff miss replies."
+msgstr ""
+
+#. translators: 1: email address, 2: plugin or filter name.
+#: includes/class-wpfactory-wc-sts-emails.php:858
+msgid "Sender address: %1$s (set by %2$s)"
+msgstr ""
+
+#. translators: %s: email address.
+#: includes/class-wpfactory-wc-sts-emails.php:860
+msgid "Sender address: %s"
+msgstr ""
+
+#. translators: %s: email address.
+#: includes/class-wpfactory-wc-sts-emails.php:861
+msgid "Enter a valid store email address."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:865
+msgid "Sender address uses your shop domain"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:866
+msgid "Emails sent from a free mailbox or another domain often land in spam. Use an address on your shop domain."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:870
+msgid "An email sending plugin (SMTP) is active"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:871
+msgid "Without one, many hosts drop or delay email. Install an SMTP plugin and connect it to your mail provider."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:876
+msgid "Test email not sent yet"
+msgstr ""
+
+#. translators: %s: time since the test, e.g. "2 hours".
+#: includes/class-wpfactory-wc-sts-emails.php:878
+msgid "Last test email: %s ago"
+msgstr ""
+
+#. translators: %s: time since the test, e.g. "2 hours".
+#: includes/class-wpfactory-wc-sts-emails.php:879
+msgid "Send a test email and check it arrives (also in the spam folder)."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:892
+msgid "Scheduled tasks run on time (started by your server)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:892
+msgid "Scheduled tasks run on time"
+msgstr ""
+
+#. translators: %d: number of late tasks.
+#: includes/class-wpfactory-wc-sts-emails.php:894
+msgid "%d scheduled task is more than 15 minutes late"
+msgid_plural "%d scheduled tasks are more than 15 minutes late"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:896
+msgid "WordPress scheduled tasks are turned off (DISABLE_WP_CRON) and nothing seems to run them. Ask your host to run wp-cron.php every 5 minutes. Email piping, automatic closing and data retention depend on it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:897
+msgid "Scheduled tasks only run when someone visits the site. On a quiet site, ask your host to run wp-cron.php every 5 minutes. Email piping, automatic closing and data retention depend on it."
+msgstr ""
+
+#. translators: 1: time since the error, 2: error message.
+#: includes/class-wpfactory-wc-sts-emails.php:903
+msgid "A ticket email failed %1$s ago: %2$s"
+msgstr ""
+
+#. translators: 1: time since the error, 2: error message.
+#: includes/class-wpfactory-wc-sts-emails.php:904
+msgid "Check your SMTP plugin's log, then send a test email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:914
+msgid "Email health"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:917
+#: includes/class-wpfactory-wc-sts-ui.php:210
+msgid "OK"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:917
+msgid "Check"
+msgstr ""
+
+#. translators: %s: store name.
+#: includes/class-wpfactory-wc-sts-emails.php:940
+msgid "Test email from %s support tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:945
+msgid "This is a test. If you received it, ticket emails from your store can reach this address."
+msgstr ""
+
+#. translators: %s: email address.
+#: includes/class-wpfactory-wc-sts-emails.php:985
+msgid "Test email sent to %s. If it does not arrive in a few minutes, check the spam folder and your SMTP plugin."
+msgstr ""
+
+#. translators: 1: email address, 2: error message.
+#: includes/class-wpfactory-wc-sts-emails.php:993
+msgid "The test email to %1$s was not sent. %2$s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:995
+msgid "Your site probably needs an SMTP plugin to send email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:999
+msgid "Send a test email to"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-emails.php:1001
+msgid "Send test email"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:293
+msgid "Choose..."
+msgstr ""
+
+#. translators: %s: field label.
+#: includes/class-wpfactory-wc-sts-fields.php:358
+msgid "Please fill in \"%s\"."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:427
+msgid "Yes"
+msgstr ""
+
+#. translators: %s: file name.
+#: includes/class-wpfactory-wc-sts-fields.php:433
+msgid "%s (with the files of this ticket)"
+msgstr ""
+
+#. translators: %s: file name.
+#: includes/class-wpfactory-wc-sts-fields.php:434
+msgid "File removed"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:479
+msgid "Text"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:480
+msgid "Dropdown"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:481
+msgid "Checkbox"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:483
+msgid "Number"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:484
+msgid "Several choices"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:485
+msgid "File"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:487
+msgid "Extra questions on the new ticket form. Leave the label empty to remove a field; answers already given stay on their tickets."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:489
+msgid "Label"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:490
+#: includes/class-wpfactory-wc-sts-fields.php:501
+msgid "Type"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:491
+msgid "Choices (dropdown and several choices, comma separated)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:492
+#: includes/class-wpfactory-wc-sts-fields.php:507
+msgid "Required"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:493
+msgid "Ask only for"
+msgstr ""
+
+#. translators: %d: row number.
+#: includes/class-wpfactory-wc-sts-fields.php:499
+msgid "Label of field %d"
+msgstr ""
+
+#. translators: %d: row number.
+#: includes/class-wpfactory-wc-sts-fields.php:500
+msgid "New field"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:506
+msgid "Choices"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:510
+msgid "Some tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:510
+msgid "Every ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:511
+msgid "Leave all empty to ask on every ticket. When you fill more than one, all must match."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:517
+msgid "Products in the order (IDs or SKUs, comma separated)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:518
+msgid "Product categories"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:519
+msgid "Topics"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:520
+msgid "Reasons"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-fields.php:525
+msgid "Save to get another empty row."
+msgstr ""
+
+#. translators: 1: number of files, 2: file types, 3: maximum size.
+#: includes/class-wpfactory-wc-sts-files.php:139
+msgid "Up to %1$d files: %2$s, %3$s each at most."
+msgstr ""
+
+#. translators: %d: maximum number of files.
+#: includes/class-wpfactory-wc-sts-files.php:191
+#: includes/class-wpfactory-wc-sts-files.php:271
+msgid "Only %d files can be attached; the others were not saved."
+msgstr ""
+
+#. translators: %s: file name.
+#: includes/class-wpfactory-wc-sts-files.php:197
+#: includes/class-wpfactory-wc-sts-files.php:277
+msgid "%s: this file type is not allowed."
+msgstr ""
+
+#. translators: 1: file name, 2: maximum size.
+#: includes/class-wpfactory-wc-sts-files.php:202
+#: includes/class-wpfactory-wc-sts-files.php:282
+msgid "%1$s is larger than %2$s."
+msgstr ""
+
+#. translators: %s: file name.
+#: includes/class-wpfactory-wc-sts-files.php:219
+#: includes/class-wpfactory-wc-sts-files.php:304
+msgid "%s could not be uploaded."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-files.php:434
+#: includes/class-wpfactory-wc-sts-files.php:449
+msgid "File not found."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-files.php:444
+msgid "You do not have access to this file."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-files.php:507
+msgid "Hide ticket files from the Media Library"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-files.php:508
+msgid "Files customers attach never show in Media. This also hides files from tickets created before version 2.3, which were stored as normal media."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:113
+msgid "Blocked senders"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:114
+msgid "One per line: a full email address (name@example.com) or a whole domain (example.com). They cannot open tickets, start chats, ask for guest codes or reach you through email piping."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:119
+msgid "Human check"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:120
+msgid "Shown on the guest form and on the chat form for visitors who are not signed in (for customers, only when nobody is online). Off by default. When on, the visitor's browser loads the check from Cloudflare or Google."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:122
+msgid "Off"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:123
+msgid "Cloudflare Turnstile"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:124
+msgid "Google reCAPTCHA v2 (checkbox)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:130
+msgid "Site key"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:135
+msgid "Secret key"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:140
+msgid "Trusted proxy header"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:141
+msgid "Only when your site is behind Cloudflare or another proxy: attempt limits then count each visitor instead of the proxy. Leave it on None otherwise: these headers are easy to fake."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:143
+msgid "None (use the connecting address)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:144
+msgid "CF-Connecting-IP (Cloudflare)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:145
+msgid "X-Forwarded-For, from the trusted proxies below"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:151
+msgid "Trusted proxy addresses"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:152
+msgid "One IP address or range per line (for example 10.0.0.0/8). X-Forwarded-For is read only from these. With CF-Connecting-IP, if you list addresses, the header is read only from them."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:309
+msgid "We could not accept this request. Please contact the store another way."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guard.php:381
+msgid "Please confirm you are not a robot and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:274
+#: includes/class-wpfactory-wc-sts-otp.php:320
+msgid "This form expired. Please refresh the page and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:280
+#: includes/class-wpfactory-wc-sts-guest.php:311
+#: includes/class-wpfactory-wc-sts-otp.php:344
+#: includes/class-wpfactory-wc-sts-otp.php:363
+msgid "Too many attempts. Please wait a few minutes and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:299
+msgid "We could not find an order with this number and email address."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:306
+msgid "This form expired. Please enter your order number again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:387
+#: includes/class-wpfactory-wc-sts-inc.php:2056
+msgid "Your request could not be saved. Please try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:419
+msgid "This link has expired. Enter your order number and email below to get a new one."
+msgstr ""
+
+#. translators: %s: request number.
+#: includes/class-wpfactory-wc-sts-guest.php:513
+msgid "Thanks, we received your request #%s. We will reply by email. Keep the link we sent you to follow this request."
+msgstr ""
+
+#. translators: %s: request number.
+#: includes/class-wpfactory-wc-sts-guest.php:514
+#: includes/class-wpfactory-wc-sts-inc.php:1889
+msgid "Thanks, your message was sent. We will reply by email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:515
+#: includes/class-wpfactory-wc-sts-inc.php:2099
+msgid "Your request is closed. You can reopen it at any time."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:516
+#: includes/class-wpfactory-wc-sts-inc.php:2092
+msgid "Your request is open again. Add a reply to tell us what you still need."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-guest.php:517
+msgid "Too many messages in a short time. Please wait a few minutes and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-history.php:107
+msgid "Automatic"
+msgstr ""
+
+#. translators: 1: who, 2: old status, 3: new status.
+#: includes/class-wpfactory-wc-sts-history.php:111
+msgid "%1$s changed the status from %2$s to %3$s"
+msgstr ""
+
+#. translators: 1: who, 2: new status.
+#: includes/class-wpfactory-wc-sts-history.php:111
+msgid "%1$s set the status to %2$s"
+msgstr ""
+
+#. translators: 1: who, 2: priority.
+#: includes/class-wpfactory-wc-sts-history.php:114
+msgid "%1$s set the priority to %2$s"
+msgstr ""
+
+#. translators: 1: who, 2: team member.
+#: includes/class-wpfactory-wc-sts-history.php:117
+msgid "%1$s assigned the ticket to %2$s"
+msgstr ""
+
+#. translators: %s: who.
+#: includes/class-wpfactory-wc-sts-history.php:117
+msgid "%s removed the assignee"
+msgstr ""
+
+#. translators: 1: who, 2: tag.
+#: includes/class-wpfactory-wc-sts-history.php:120
+msgid "%1$s added the tag %2$s"
+msgstr ""
+
+#. translators: 1: who, 2: tag.
+#: includes/class-wpfactory-wc-sts-history.php:123
+msgid "%1$s removed the tag %2$s"
+msgstr ""
+
+#. translators: %d: number of earlier versions.
+#: includes/class-wpfactory-wc-sts-history.php:321
+msgid "Edited (%d earlier version)"
+msgid_plural "Edited (%d earlier versions)"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: staff name, 2: date.
+#: includes/class-wpfactory-wc-sts-history.php:326
+msgid "Changed by %1$s on %2$s. Text before:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-history.php:344
+msgid "Write the new text first."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-history.php:349
+msgid "Changes saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:92
+#: includes/class-wpfactory-wc-sts-import.php:751
+msgid "Import and export"
+msgstr ""
+
+#. translators: 1: plugin name, 2: ticket number there, 3: status there.
+#: includes/class-wpfactory-wc-sts-import.php:677
+msgid "Imported from %1$s (ticket %2$d, status \"%3$s\")."
+msgstr ""
+
+#. translators: %d: number of files.
+#: includes/class-wpfactory-wc-sts-import.php:684
+msgid "%d attached file stays in the old plugin and was not copied."
+msgid_plural "%d attached files stay in the old plugin and were not copied."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-import.php:735
+msgid "Nothing to import from this plugin."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:751
+msgid "Bring tickets over from another helpdesk plugin, or download your tickets as a spreadsheet."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:752
+msgid "Import tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:752
+msgid "Start with a check: it only counts. The other plugin's data is never changed, and tickets already imported are skipped. No emails are sent."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:755
+msgid "Tickets found on this site."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:755
+msgid "No tickets found. The plugin's tables are not on this site."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:757
+msgid "Check what will be imported"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:757
+msgid "Import now"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:772
+msgid "Export tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:772
+msgid "A CSV file with every ticket: number, subject, status, priority, topic, customer, order, assignee and dates. To export only some tickets, filter the inbox and use Export CSV there."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-import.php:772
+msgid "Download all tickets (CSV)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:139
+msgid "Close this ticket?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:140
+msgid "Edit message"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:141
+#: includes/class-wpfactory-wc-sts-init.php:323
+#: includes/class-wpfactory-wc-sts-ui.php:636
+msgid "Save changes"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:142
+#: includes/class-wpfactory-wc-sts-ui.php:209
+#: includes/class-wpfactory-wc-sts-ui.php:634
+#: includes/class-wpfactory-wc-sts-ui.php:883
+msgid "Cancel"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:143
+msgid "Send this reply to the customer? They will see it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:144
+msgid "Add this private note? Only your team will see it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:145
+msgid "Apply this change to the selected tickets?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:146
+#: includes/class-wpfactory-wc-sts-init.php:155
+msgid "Replace the text you already typed?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:147
+msgid "Draft saved on this computer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:148
+msgid "Private note: only staff will see it"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:149
+#: includes/class-wpfactory-wc-sts-inbox.php:1105
+msgid "Reply: the customer will see it"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:150
+#: includes/class-wpfactory-wc-sts-inbox.php:1106
+msgid "Write your reply..."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:151
+msgid "Only your team can see this note."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:152
+msgid "Move the selected tickets to the trash?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:153
+msgid "%d selected"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:154
+#: includes/class-wpfactory-wc-sts-inbox.php:689
+msgid "Select tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:155
+msgid "Not saved. Check your connection and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:157
+msgid "%s is also looking at this ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:158
+msgid "%s is writing a reply."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:159
+msgid "New activity on this ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:160
+msgid "Show it"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:161
+#: includes/class-wpfactory-wc-sts-inbox.php:1127
+#: templates/ticket-view.php:75
+msgid "Send reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:162
+#: includes/class-wpfactory-wc-sts-inbox.php:1127
+msgid "Add note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:163
+#: templates/ticket-view.php:76
+msgid "Close ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:164
+msgid "Apply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:165
+msgid "Move to trash"
+msgstr ""
+
+#. translators: %d: number of tickets.
+#: includes/class-wpfactory-wc-sts-inbox.php:167
+msgid "Move %d selected tickets to the trash?"
+msgstr ""
+
+#. translators: 1: action, such as Close or Assign, 2: number of tickets.
+#: includes/class-wpfactory-wc-sts-inbox.php:169
+msgid "%1$s: apply to %2$d selected tickets?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:195
+msgid "Needs reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:209
+msgid "Mine"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:221
+msgid "Unassigned"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:239
+msgid "Waiting on customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:263
+#: includes/class-wpfactory-wc-sts-inc.php:1465
+msgid "All"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:455
+msgid "You are not allowed to see tickets."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:501
+msgid "Ticket views"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:508
+msgid "Views"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:554
+#: includes/class-wpfactory-wc-sts-inbox.php:1257
+msgid "Keyboard shortcuts"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:575
+msgid "Select a ticket to read and answer it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:593
+msgid "Reply sent."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:594
+msgid "Private note added."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:595
+msgid "Ticket updated."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:596
+msgid "Selected tickets updated."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:597
+msgid "Selected tickets moved to the trash."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:598
+msgid "Test ticket created. Open it below, reply, and check that the emails arrive."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:600
+msgid "Select at least one ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:601
+#: includes/class-wpfactory-wc-sts-inbox.php:1507
+#: includes/class-wpfactory-wc-sts-inbox.php:1525
+msgid "That did not work. Please try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:602
+#: includes/class-wpfactory-wc-sts-inbox.php:1502
+msgid "Your role does not allow this on this ticket."
+msgstr ""
+
+#. translators: %s: search words.
+#: includes/class-wpfactory-wc-sts-inbox.php:661
+#: templates/help-center.php:43
+msgid "Results for \"%s\""
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:663
+msgid "Clear"
+msgstr ""
+
+#. translators: %d: order ID.
+#: includes/class-wpfactory-wc-sts-inbox.php:670
+msgid "Tickets of order %d"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:672
+msgid "Show all"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:678
+msgid "Nothing here"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:678
+msgid "No tickets in this view."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:688
+msgid "Select all"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:691
+msgid "Assign to"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:693
+#: includes/class-wpfactory-wc-sts-inbox.php:699
+msgid "Assign"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:700
+#: includes/class-wpfactory-wc-sts-inbox.php:1261
+msgid "Close"
+msgstr ""
+
+#. translators: %d: ticket number.
+#: includes/class-wpfactory-wc-sts-inbox.php:715
+msgid "Select ticket #%d"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:722
+msgid "(needs reply)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:755
+msgid "Pages"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:757
+msgid "Newer"
+msgstr ""
+
+#. translators: 1: current page, 2: number of pages.
+#: includes/class-wpfactory-wc-sts-inbox.php:760
+#: templates/ticket-list.php:83
+msgid "Page %1$d of %2$d"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:762
+msgid "Older"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:861
+#: includes/class-wpfactory-wc-sts-inc.php:1547
+msgid "All tickets"
+msgstr ""
+
+#. translators: 1: ticket number, 2: time ago.
+#: includes/class-wpfactory-wc-sts-inbox.php:865
+msgid "Ticket #%1$s · opened %2$s ago"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:872
+msgid "More actions"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:901
+#: includes/class-wpfactory-wc-sts-inc.php:543
+msgid "Tags"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:902
+msgid "vip, refund"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:904
+msgid "Separate tags with commas."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:905
+msgid "Changes save automatically"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:906
+#: includes/class-wpfactory-wc-sts-teamwork.php:281
+msgid "Save"
+msgstr ""
+
+#. translators: %s: ticket number.
+#: includes/class-wpfactory-wc-sts-inbox.php:922
+msgid "Possible duplicate: this customer has another open ticket with the same subject (#%s)."
+msgstr ""
+
+#. translators: %s: ticket number.
+#: includes/class-wpfactory-wc-sts-inbox.php:926
+msgid "Open #%s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:944
+msgid "Customer and order"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:964
+msgid "Agent"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:965
+#: includes/class-wpfactory-wc-sts-inbox.php:1103
+#: includes/class-wpfactory-wc-sts-inbox.php:1251
+msgid "Private note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:983
+msgid "Edit"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1063
+msgid "Automatic note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1101
+msgid "Message type"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1102
+msgid "Reply to customer"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1114
+msgid "Attach"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1125
+msgid "to send"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1126
+msgid "Send and close"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1190
+msgid "Guest"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1195
+msgid "Lifetime value"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1196
+#: includes/class-wpfactory-wc-sts-ui.php:1113
+msgid "Orders"
+msgstr ""
+
+#. translators: %s: date.
+#: includes/class-wpfactory-wc-sts-inbox.php:1199
+msgid "Customer since %s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1204
+msgid "Recent orders"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1228
+msgid "Other tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1248
+msgid "Next ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1249
+msgid "Previous ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1250
+msgid "Reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1252
+msgid "Close the ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1253
+#: includes/class-wpfactory-wc-sts-ui.php:471
+msgid "Search tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1254
+msgid "Send the reply or note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1255
+msgid "Show or hide this help"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1261
+msgid "Shortcuts do nothing while you type in a field."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1282
+msgid "Customers can reach the Help page in My Account"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1285
+#: includes/class-wpfactory-wc-sts-inc.php:1546
+msgid "View the customer page"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1288
+msgid "Store email address set and email alerts on"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1291
+msgid "Open Emails"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1294
+msgid "Send yourself a test ticket"
+msgstr ""
+
+#. translators: 1: steps done, 2: number of steps.
+#: includes/class-wpfactory-wc-sts-inbox.php:1319
+msgid "Get set up (%1$d of %2$d done)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1327
+#: templates/order-tracking.php:55
+msgid "(done)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1327
+msgid "(to do)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1333
+msgid "Create a test ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1345
+msgid "Hide this checklist"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1471
+msgid "Test ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1472
+msgid "This is a test ticket. Reply to it to see what customers receive, then close it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1510
+msgid "Status saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1514
+msgid "Priority saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1518
+msgid "Assignee saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1522
+msgid "Tags saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1614
+#: includes/class-wpfactory-wc-sts-privacy.php:53
+#: includes/class-wpfactory-wc-sts-privacy.php:68
+#: includes/class-wpfactory-wc-sts-privacy.php:196
+msgid "Support tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1630
+msgid "No tickets for this order."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1662
+#: includes/class-wpfactory-wc-sts-inbox.php:1666
+#: includes/class-wpfactory-wc-sts-inc.php:449
+#: includes/class-wpfactory-wc-sts-inc.php:457
+#: includes/class-wpfactory-wc-sts-inc.php:1720
+#: includes/class-wpfactory-wc-sts-init.php:577
+#: includes/class-wpfactory-wc-sts-ui.php:643
+msgid "Tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inbox.php:1703
+msgid "No tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:377
+#: includes/class-wpfactory-wc-sts-inc.php:1466
+msgid "Open"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:378
+#: includes/class-wpfactory-wc-sts-inc.php:1467
+msgid "In Progress"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:388
+msgid "Low"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:389
+msgid "Normal"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:390
+msgid "High"
+msgstr ""
+
+#. translators: %s: menu label.
+#: includes/class-wpfactory-wc-sts-inc.php:423
+#: includes/class-wpfactory-wc-sts-ui.php:1099
+#: includes/class-wpfactory-wc-sts-ui.php:1113
+#: includes/class-wpfactory-wc-sts-ui.php:1172
+msgid "Help"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:451
+msgid "Search Tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:452
+msgid "All Tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:453
+msgid "Edit Ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:454
+msgid "Add New Ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:455
+#: includes/class-wpfactory-wc-sts-inc.php:456
+msgid "New Ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:458
+msgid "No Tickets found"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:460
+msgid "Customer support tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:482
+msgctxt "taxonomy general name"
+msgid "Status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:483
+msgid "Add New Status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:484
+msgid "Edit Status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:485
+msgid "Search Status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:486
+msgid "No Status found."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:489
+msgctxt "taxonomy general name"
+msgid "Priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:490
+msgid "Add New Priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:491
+msgid "Edit Priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:492
+msgid "Search Priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:493
+msgid "No Priority found."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:496
+msgctxt "taxonomy general name"
+msgid "Subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:497
+msgid "Add New Subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:498
+msgid "Edit Subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:499
+msgid "Search Subjects"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:500
+msgid "No Subject found."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:544
+msgid "Tag"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:844
+msgid "Where is my order?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:845
+msgid "Return or exchange"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:846
+msgid "Damaged or faulty item"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:847
+msgid "Wrong or missing item"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:848
+msgid "Billing or payment"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:849
+msgid "Question about a product"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:850
+msgid "Something else"
+msgstr ""
+
+#. translators: %s: name of the store staff member who replied.
+#: includes/class-wpfactory-wc-sts-inc.php:1335
+msgid "Store: %s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1338
+msgid "unknown"
+msgstr ""
+
+#. translators: %s: customer name.
+#: includes/class-wpfactory-wc-sts-inc.php:1340
+msgid "Customer: %s"
+msgstr ""
+
+#. translators: %s: number of open tickets.
+#: includes/class-wpfactory-wc-sts-inc.php:1434
+msgid "%s open ticket"
+msgid_plural "%s open tickets"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1541
+msgid "Email alerts are off: you will not be told when a customer opens or replies to a ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1542
+msgid "Turn them on in Settings > Emails"
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-inc.php:1548
+#: includes/class-wpfactory-wc-sts-ui.php:153
+#: includes/class-wpfactory-wc-sts-ui.php:1182
+#: includes/class-wpfactory-wc-sts.php:146
+msgid "Settings"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1551
+msgid "Waiting for your reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1554
+msgid "No customer is waiting for a reply. Customers open tickets from My Account > Tickets, from their orders, or on any page with the [stsw_user_tickets] shortcode."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1561
+msgid "Last message"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1695
+msgid "Need help with this order?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1705
+#: includes/class-wpfactory-wc-sts-init.php:582
+#: includes/class-wpfactory-wc-sts-ui.php:1103
+#: includes/class-wpfactory-wc-sts-ui.php:1114
+msgid "Get help"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1805
+msgid "A problem with this order? Send us a message and we will reply by email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1855
+msgid "This form expired. Please refresh the page and send your message again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1881
+#: includes/class-wpfactory-wc-sts-inc.php:1891
+msgid "Your message could not be sent. Please check the form and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1966
+msgid "Please choose what your message is about."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1969
+msgid "Please choose a topic."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:1979
+#: includes/class-wpfactory-wc-sts-inc.php:2101
+msgid "Please write a message."
+msgstr ""
+
+#. translators: 1: reason or message start, 2: order number.
+#: includes/class-wpfactory-wc-sts-inc.php:1986
+msgid "%1$s (order #%2$s)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:2036
+msgid "Wrong order."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-inc.php:2083
+msgid "Wrong user."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:153
+msgid "Delete this message? This cannot be undone."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:154
+msgid "Delete this note? This cannot be undone."
+msgstr ""
+
+#. translators: %d: number of articles.
+#: includes/class-wpfactory-wc-sts-init.php:176
+msgid "%d help articles might answer your question. They are listed under the message."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:245
+msgid "Basics"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:246
+msgid "Workflows"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:247
+#: includes/class-wpfactory-wc-sts-ui.php:626
+msgid "Advanced"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:292
+#: includes/class-wpfactory-wc-sts-init.php:884
+msgid "You are not allowed to change these settings."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:322
+#: includes/class-wpfactory-wc-sts-ui.php:204
+msgid "All changes saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:347
+msgid "General"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:349
+msgid "How customers reach support and what they see after they write."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:352
+msgid "Ticket form"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:354
+msgid "Who can open tickets, file uploads and extra questions on the form."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:357
+#: includes/class-wpfactory-wc-sts-init.php:497
+msgid "Assignment"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:359
+msgid "Who answers tickets and who gets new ones."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:362
+msgid "Emails"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:364
+msgid "Emails to your team and to customers."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:375
+#: includes/class-wpfactory-wc-sts-init.php:459
+msgid "Ticket fields"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:382
+msgid "Tools"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:400
+msgid "Settings sections"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:430
+msgid "Run setup wizard again"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:443
+#: includes/class-wpfactory-wc-sts-ui.php:525
+msgid "Priorities"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:444
+#: includes/class-wpfactory-wc-sts-ui.php:534
+#: includes/class-wpfactory-wc-sts-ui.php:1129
+msgid "Subjects"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:445
+#: includes/class-wpfactory-wc-sts-ui.php:543
+msgid "Statuses"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:480
+#: includes/class-wpfactory-wc-sts-ui.php:971
+msgid "Customer access"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:481
+#: includes/class-wpfactory-wc-sts-ui.php:973
+#: templates/chat-widget.php:26
+msgid "Messages"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:482
+#: includes/class-wpfactory-wc-sts-numbers.php:81
+msgid "Ticket numbers"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:484
+msgid "Help center and live chat"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:485
+msgid "Data"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:489
+msgid "Form options"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:490
+msgid "Spam protection"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:491
+msgid "Reasons for order questions"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:491
+msgid "Customers asking about an order choose a reason; customers with a general question choose a topic. Each reason can file the ticket under one of your topics."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:492
+msgid "Extra fields"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:501
+msgid "Alerts"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:502
+msgid "Placeholders:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:502
+msgid "Add a fallback after a bar: {customer_first_name|there}. Older names such as {ticketId} and {ticketLink} still work."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:504
+msgid "Email templates"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:508
+msgid "Closed and status emails"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:509
+msgid "Email delivery"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:576
+#: includes/class-wpfactory-wc-sts-ui.php:1098
+msgid "My Account menu label"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:581
+msgid "Order button label"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:586
+#: includes/class-wpfactory-wc-sts-ui.php:1107
+msgid "Hide closed tickets from customers"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:590
+#: includes/class-wpfactory-wc-sts-ui.php:1147
+msgid "Message after a customer opens a ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:594
+msgid "Message after a customer replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:598
+msgid "Remove data on delete"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:599
+msgid "Delete all tickets, replies, saved replies and these settings when the plugin is deleted. Off by default. Data is kept while the free or Pro edition is still installed, because both use the same tickets."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:621
+msgid "No topic"
+msgstr ""
+
+#. translators: %s: reason.
+#: includes/class-wpfactory-wc-sts-init.php:630
+msgid "Topic for \"%s\""
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:640
+msgid "Guest tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:641
+msgid "Customers without an account can ask for help with an order by entering the order number and billing email (on the My Account login screen and on pages with the shortcode). They follow their request through a private link sent by email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:646
+msgid "Guests can see all their tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:647
+msgid "With guest tickets on, a guest can ask for a one-time code by email and then see every ticket of that email address."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:651
+msgid "Let customers choose a priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:655
+msgid "Let customers attach files"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:659
+msgid "Allowed file types"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:661
+msgid "Comma separated, for example jpg,png,pdf. Empty: jpg, jpeg, png, gif and pdf."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:665
+msgid "Maximum file size (MB)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:666
+msgid "Never above the upload limit of your server."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:670
+msgid "Files per message"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:686
+msgid "Role that can be assigned tickets"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:687
+msgid "Users with this role can see and answer tickets in wp-admin and, for tickets assigned to them, in My Account. Shop managers and administrators always can."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:691
+msgid "Default assignee"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:692
+msgid "Handles tickets that are not assigned to anyone. Subjects can assign their own person (Helpdesk > Subjects)."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:696
+msgid "Email the assignee about new tickets and replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:700
+msgid "Ask before sending a reply or note"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:701
+msgid "The inbox asks for a confirmation that names who will see the message, so a private note is never sent to a customer by mistake."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:706
+msgid "Show tickets waiting for a reply in the admin bar"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:707
+msgid "A count in the top bar for team members, linked to the inbox."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:721
+msgid "Email the store about new tickets and replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:725
+msgid "Store email address"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:730
+msgid "Email the customer (confirmations and store replies)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:734
+msgid "Email customers \"We received your reply\" when they reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:735
+msgid "Off: customer replies only notify your team."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:739
+msgid "Customer email subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:743
+msgid "Customer email text"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:747
+msgid "Staff email subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:748
+msgid "Used for the store and assignee emails. Empty: a subject with the ticket number and title."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:752
+msgid "Staff email text"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:756
+msgid "Email the customer when the team closes a ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:757
+msgid "Also when a ticket closes automatically. Not sent when customers close their own ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:761
+msgid "Closed email subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:762
+msgid "Empty: a subject with the ticket number and title."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:766
+msgid "Closed email text"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:770
+msgid "Email the customer when the team changes the status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:771
+msgid "Not sent when the change comes with a reply: the reply email already tells them."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:775
+msgid "Status email subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:779
+msgid "Status email text"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:837
+msgid "None"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:859
+msgid "Saved. Leave empty to keep it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-init.php:981
+msgid "Settings saved."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:117
+msgid "Article categories"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:118
+msgid "Article category"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:119
+msgid "Add category"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:140
+msgid "Articles"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:141
+msgid "Article"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:142
+#: includes/class-wpfactory-wc-sts-kb.php:143
+msgid "Add article"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:144
+msgid "Edit article"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:145
+#: templates/help-center.php:55
+msgid "No articles yet."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:146
+msgid "Search articles"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:256
+msgid "Suggest help articles in the ticket form"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:257
+msgid "While customers describe their problem, matching knowledge base articles appear under the message."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:262
+msgid "Help center address"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:264
+msgid "Articles are published under this address, for example /help-center/returns/. Add the [stsw_knowledge_base] shortcode to any page for a searchable help center."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:277
+#: includes/class-wpfactory-wc-sts-kb.php:415
+msgid "Knowledge base"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:368
+msgid "These articles might answer your question"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:392
+msgid "Insert a link to an article"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:393
+msgid "Insert article"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:413
+msgid "New article"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:415
+msgid "Answers customers can read on their own. Articles are suggested while customers write a ticket, and you can link them in replies."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:418
+msgid "Help center:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:418
+msgid "Manage categories"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:421
+msgid "No articles yet"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:421
+msgid "Start with the questions you answer most: shipping times, returns, and how to track an order."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:424
+msgid "Category"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:424
+msgid "Updated"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:428
+msgid "(no title)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-kb.php:430
+msgid "View"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:118
+msgid "Delete files when a ticket closes"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:119
+msgid "Removes every file attached to the ticket when it is closed. The messages stay. Off by default."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:124
+msgid "Remove closed tickets after (days)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:125
+msgid "Empty or 0: keep them. Counted from the last message. Runs once a day."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:130
+msgid "How to remove them"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:132
+msgid "Anonymise: keep the ticket for reports, remove personal data, messages and files"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:133
+msgid "Delete the ticket completely"
+msgstr ""
+
+#. translators: %d: number of files.
+#: includes/class-wpfactory-wc-sts-lifecycle.php:289
+msgid "%d file of this ticket was deleted."
+msgid_plural "%d files of this ticket were deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:305
+msgid "Files"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:306
+msgid "Delete every file of this ticket? This cannot be undone."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:309
+msgid "Delete files"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-lifecycle.php:334
+msgid "The files of this ticket were deleted."
+msgstr ""
+
+#. translators: %s: ticket number.
+#: includes/class-wpfactory-wc-sts-lifecycle.php:441
+msgid "Removed ticket %s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:82
+msgid "Applies to new tickets. Existing tickets keep their current number."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:84
+msgid "Same as the ticket ID"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:85
+msgid "Sequential, from a start number"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:86
+msgid "Random, with a set length"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:92
+msgid "Number prefix"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:94
+msgid "Optional, for example HD- gives HD-1001."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:99
+msgid "Start number (sequential)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:101
+msgid "Merchants moving from another helpdesk can continue their numbering here."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:106
+msgid "Number length (random)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-numbers.php:108
+msgid "Digits in a random number, from 4 to 12."
+msgstr ""
+
+#. translators: %s: store name.
+#: includes/class-wpfactory-wc-sts-otp.php:261
+msgid "Your code for %s support"
+msgstr ""
+
+#. translators: %s: store name.
+#: includes/class-wpfactory-wc-sts-otp.php:262
+msgid "Use this code to see your support requests:"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-otp.php:264
+msgid "The code works for 15 minutes. If you did not ask for it, you can ignore this email."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-otp.php:331
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-otp.php:354
+msgid "If we have requests for this email address, we sent a code to it. Enter the code below."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-otp.php:375
+msgid "This code is not right. Check the six digits in the email and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-otp.php:376
+msgid "Too many wrong codes. Ask for a new code below."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-otp.php:377
+msgid "This code has expired or was already used. Ask for a new code below."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:131
+msgid "Store"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:136
+msgid "Ticket number"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:144
+msgid "Opened"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:163
+#: includes/class-wpfactory-wc-sts-teamwork.php:355
+#: templates/chat-widget.php:32
+#: templates/guest-lookup.php:50
+msgid "Email"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:197
+msgid "Support tickets you opened and the replies in them."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:241
+msgid "When you open a support ticket we store the title, your message, your answers to the form, your replies and the store's replies, linked to your account or, without an account, to your email address and order. We use them to answer your request and keep a record of it. Files you attach to a ticket are stored on this site with the ticket. We email you about your tickets if the store has turned on email notifications."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-privacy.php:242
+msgid "You can ask for an export or for the deletion of your tickets; deleting them removes the tickets, every reply in them and their files."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-rest.php:125
+msgid "Sign in to read tickets."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-rest.php:128
+msgid "You cannot read this ticket."
+msgstr ""
+
+#. translators: %d: number of tickets.
+#: includes/class-wpfactory-wc-sts-teamwork.php:105
+msgid "%d ticket waiting for a reply"
+msgid_plural "%d tickets waiting for a reply"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:253
+msgid "Saved views"
+msgstr ""
+
+#. translators: %s: view name.
+#: includes/class-wpfactory-wc-sts-teamwork.php:260
+msgid "Remove the saved view %s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:274
+msgid "Export CSV"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:276
+msgid "Save view"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:279
+msgid "Name of the view"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:280
+msgid "Keeps the current view, filters and search. Only you see your saved views."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:358
+msgid "Created (UTC)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:359
+msgid "Last message (UTC)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:360
+msgid "Last message by"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-teamwork.php:361
+msgid "Replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:105
+msgid "Order placed"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:110
+msgid "Payment received"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:115
+msgid "Being prepared"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:120
+msgid "Completed"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:166
+msgid "Here is what we know about your order"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:168
+msgid "Still need help? Write to us below."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-tracking.php:187
+msgid "Tracking"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:132
+#: includes/class-wpfactory-wc-sts.php:191
+#: includes/class-wpfactory-wc-sts.php:192
+msgid "Inbox"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:203
+msgid "Unsaved changes"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:205
+msgid "Order saved"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:206
+msgid "Delete this item? Tickets keep their other details."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:207
+msgid "Delete this saved reply?"
+msgstr ""
+
+#. translators: 1: step, 2: steps.
+#: includes/class-wpfactory-wc-sts-ui.php:208
+#: includes/class-wpfactory-wc-sts-ui.php:1056
+#: templates/guest-lookup.php:39
+msgid "Continue"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:212
+msgid "Moved to position %d"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:213
+msgid "Counting..."
+msgstr ""
+
+#. translators: 1: tickets found, 2: new, 3: already imported, 4: replies, 5: private notes, 6: files.
+#: includes/class-wpfactory-wc-sts-ui.php:215
+msgid "%1$d tickets found: %2$d to import, %3$d already imported. %4$d replies, %5$d private notes, %6$d attached files (files are not copied)."
+msgstr ""
+
+#. translators: 1: tickets imported so far, 2: tickets left.
+#: includes/class-wpfactory-wc-sts-ui.php:217
+msgid "Imported %1$d so far, %2$d left..."
+msgstr ""
+
+#. translators: %d: tickets imported.
+#: includes/class-wpfactory-wc-sts-ui.php:219
+msgid "Done: %d tickets imported. They are in the inbox."
+msgstr ""
+
+#. translators: %d: tickets imported.
+#: includes/class-wpfactory-wc-sts-ui.php:220
+msgid "The import stopped. Run it again to continue where it stopped."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:461
+msgid "Helpdesk sections"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:473
+msgid "Search name, email or #number"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:526
+msgid "Use priorities to decide what your team answers first. Drag to set the order they appear in the ticket screen."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:527
+msgid "Add priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:528
+msgid "Edit priority"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:529
+msgid "e.g. Urgent"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:535
+msgid "Customers pick a subject when they open a ticket. A subject can send its tickets to one team member."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:536
+msgid "Add subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:537
+msgid "Edit subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:538
+msgid "e.g. Returns and exchanges"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:544
+msgid "Open, In Progress and Closed drive the inbox; you can rename them or add your own."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:545
+msgid "Add status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:546
+msgid "Edit status"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:547
+msgid "e.g. Waiting on supplier"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:568
+msgid "Orange"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:569
+msgid "Red"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:570
+msgid "Yellow"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:571
+msgid "Green"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:572
+msgid "Teal"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:573
+msgid "Blue"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:574
+msgid "Purple"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:575
+msgid "Gray"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:579
+msgid "Saved."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:580
+msgid "Deleted."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:581
+msgid "That did not work. Check the name and try again."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:598
+#: includes/class-wpfactory-wc-sts-ui.php:643
+msgid "Name"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:612
+msgid "Shown as a dot and chip on every ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:617
+msgid "Send tickets with this subject to"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:618
+msgid "Nobody in particular"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:622
+msgid "Description"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:622
+msgid "(optional)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:628
+msgid "Slug"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:629
+msgid "Created from the name"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:643
+msgid "Actions"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:649
+msgid "Nothing here yet."
+msgstr ""
+
+#. translators: %s: name.
+#: includes/class-wpfactory-wc-sts-ui.php:655
+msgid "Move %s. Use the arrow keys."
+msgstr ""
+
+#. translators: %s: name.
+#: includes/class-wpfactory-wc-sts-ui.php:670
+msgid "Edit %s"
+msgstr ""
+
+#. translators: %s: name.
+#: includes/class-wpfactory-wc-sts-ui.php:676
+msgid "Delete %s"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:780
+msgid "Order status update"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:780
+msgid "Hi {customer_first_name},\n\"
+"\n\"
+"Thanks for your patience. Your order #{order_number} is on its way and you will get the tracking details by email.\n\"
+"\n\"
+"The {store_name} team"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:781
+msgid "Return instructions"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:781
+msgid "Hi {customer_first_name},\n\"
+"\n\"
+"We are sorry the item did not work out. Please send it back in its original packaging and reply here with the tracking number. We will take it from there.\n\"
+"\n\"
+"The {store_name} team"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:782
+msgid "Thanks for your patience"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:782
+msgid "Hi {customer_first_name},\n\"
+"\n\"
+"Thank you for your patience while we look into ticket #{ticket_number}. We will update you here as soon as we know more.\n\"
+"\n\"
+"The {store_name} team"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:803
+#: includes/class-wpfactory-wc-sts-ui.php:850
+msgid "New saved reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:806
+msgid "Saved reply saved."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:808
+msgid "Saved reply deleted."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:810
+msgid "Save answers you send often, then insert them from any ticket with one click."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:813
+msgid "No saved replies yet"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:813
+msgid "Start with one of these common answers, or write your own."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:828
+msgid "Search replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:841
+msgid "Your saved replies will show here."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:847
+msgid "Pick a saved reply to edit it, or create a new one."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:866
+msgid "e.g. Return instructions"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:867
+msgid "Only your team sees the title. Use one you can find fast."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:874
+msgid "Insert customer details"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:880
+msgid "Replaced with the ticket's details when you insert the reply."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:884
+msgid "Save reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:960
+#: includes/class-wpfactory-wc-sts-ui.php:1021
+#: includes/class-wpfactory-wc-sts-ui.php:1028
+msgid "Helpdesk setup"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:970
+msgid "Welcome"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:972
+msgid "Ticket subjects"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:974
+msgid "Done"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:985
+msgid "Order issue"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:986
+msgid "Returns and exchanges"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:987
+msgid "Shipping and delivery"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:988
+msgid "Billing and invoices"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:989
+msgid "Product question"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:990
+msgid "Account and login"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1025
+msgid "Skip to the step"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1031
+msgid "Skip, I'll set it up later"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1034
+msgid "Setup steps"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1049
+#: templates/ticket-new.php:147
+msgid "Back"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1053
+msgid "Go to inbox"
+msgstr ""
+
+#. translators: 1: step, 2: steps.
+#: includes/class-wpfactory-wc-sts-ui.php:1055
+msgid "Step %1$d of %2$d"
+msgstr ""
+
+#. translators: 1: step, 2: steps.
+#: includes/class-wpfactory-wc-sts-ui.php:1056
+msgid "Get started"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1077
+msgid "Let's set up support for your store"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1077
+msgid "Four quick steps. You can change everything later in Settings."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1079
+msgid "Help from My Account"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1079
+msgid "Customers open tickets from their account or straight from an order."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1080
+msgid "Orders next to every ticket"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1080
+msgid "See the order and the customer without leaving the conversation."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1081
+msgid "One inbox for your team"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1081
+msgid "Priorities, assignees, private notes and saved replies."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1095
+msgid "Where customers ask for help"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1096
+msgid "These labels appear in your store's My Account area."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1102
+msgid "Button on each order"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1107
+msgid "Keeps their support list short and current."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1111
+msgid "Preview: your store"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1113
+msgid "Dashboard"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1113
+msgid "Account details"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1114
+msgid "Order #1042"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1114
+msgid "2 items, Completed"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1116
+msgid "Your theme's colors and fonts apply on the live store."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1126
+msgid "What do customers usually contact you about?"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1127
+msgid "Customers pick one of these subjects when they open a ticket. Choose the ones that fit your store."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1135
+msgid "Add your own subject"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1136
+msgid "Add your own, e.g. Custom orders"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1144
+msgid "Messages and alerts"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1145
+msgid "What customers see after they write, and how your team hears about it."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1148
+msgid "Thanks for reaching out. We have received your request and will get back to you soon."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1149
+msgid "Only promise a reply time your team can keep."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1152
+msgid "Send new ticket alerts to"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1157
+msgid "Email me about new tickets and customer replies"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1157
+msgid "More options under Settings, Emails."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1161
+msgid "Email customers when you reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1161
+msgid "They also get a confirmation when they open a ticket."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1171
+msgid "Your helpdesk is live"
+msgstr ""
+
+#. translators: %s: menu label.
+#: includes/class-wpfactory-wc-sts-ui.php:1172
+msgid "Customers can now open tickets from My Account under \"%s\"."
+msgstr ""
+
+#. translators: %s: menu label.
+#: includes/class-wpfactory-wc-sts-ui.php:1174
+msgid "Open a test ticket"
+msgstr ""
+
+#. translators: %s: menu label.
+#: includes/class-wpfactory-wc-sts-ui.php:1174
+msgid "See what your customers see."
+msgstr ""
+
+#. translators: %s: menu label.
+#: includes/class-wpfactory-wc-sts-ui.php:1174
+msgid "Open store"
+msgstr ""
+
+#. translators: %s: menu label.
+#: includes/class-wpfactory-wc-sts-ui.php:1174
+#: templates/order-tracking.php:32
+msgid "(opens in a new tab)"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1175
+msgid "Save your first saved reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1175
+msgid "Answer common questions in one click."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1175
+msgid "Add reply"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts-ui.php:1180
+msgid "Turn on AI replies"
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-ui.php:1180
+msgid "Draft replies and summaries with AI. A free WPFactory AI account gets %d free credits a month."
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-ui.php:1182
+msgid "Review all settings"
+msgstr ""
+
+#. translators: %d: number of free credits.
+#: includes/class-wpfactory-wc-sts-ui.php:1182
+msgid "Assignment, notifications, ticket form and more."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:150
+msgid "Go Pro"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:265
+msgid "Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, more AI (a chat assistant and suggested resolutions, on WPFactory AI credits or your own key), and a full REST API."
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:266
+msgid "See Pro"
+msgstr ""
+
+#: includes/class-wpfactory-wc-sts.php:267
+msgid "Dismiss"
+msgstr ""
+
+#: support-ticket-system-for-woocommerce.php:83
+msgid "Customer Support Helpdesk & Tickets for WooCommerce Pro is active, so the free version is paused. You can deactivate the free version; your tickets stay in place."
+msgstr ""
+
+#: templates/chat-widget.php:18
+#: templates/chat-widget.php:22
+msgid "Chat with us"
+msgstr ""
+
+#: templates/chat-widget.php:24
+msgid "Close the chat window"
+msgstr ""
+
+#: templates/chat-widget.php:30
+msgid "Your name"
+msgstr ""
+
+#: templates/chat-widget.php:47
+msgid "Your message"
+msgstr ""
+
+#: templates/chat-widget.php:48
+msgid "Write a message"
+msgstr ""
+
+#: templates/chat-widget.php:49
+#: templates/ticket-new.php:149
+msgid "Send"
+msgstr ""
+
+#: templates/guest-code.php:17
+msgid "Check your email"
+msgstr ""
+
+#: templates/guest-code.php:26
+msgid "Code from the email"
+msgstr ""
+
+#: templates/guest-code.php:28
+msgid "Six digits. The code works for 15 minutes."
+msgstr ""
+
+#: templates/guest-code.php:33
+msgid "See my requests"
+msgstr ""
+
+#: templates/guest-code.php:39
+msgid "Send a new code"
+msgstr ""
+
+#: templates/guest-lookup.php:17
+msgid "Need help with an order?"
+msgstr ""
+
+#: templates/guest-lookup.php:18
+msgid "No account needed: enter your order number and the email address used for the order."
+msgstr ""
+
+#: templates/guest-lookup.php:24
+msgid "Order number"
+msgstr ""
+
+#: templates/guest-lookup.php:28
+msgid "Billing email"
+msgstr ""
+
+#: templates/guest-lookup.php:43
+msgid "Wrote to us before?"
+msgstr ""
+
+#: templates/guest-lookup.php:44
+msgid "Enter your email and we will send you a code to see all your requests."
+msgstr ""
+
+#: templates/guest-lookup.php:55
+msgid "Email me a code"
+msgstr ""
+
+#: templates/guest-tickets.php:18
+msgid "Your requests"
+msgstr ""
+
+#. translators: %s: email address.
+#: templates/guest-tickets.php:22
+msgid "Requests sent from %s."
+msgstr ""
+
+#: templates/guest-tickets.php:29
+msgid "Sign out"
+msgstr ""
+
+#: templates/guest-tickets.php:33
+msgid "There are no requests for this email address."
+msgstr ""
+
+#: templates/guest-tickets.php:52
+msgid "Need help with another order? Sign out and enter its order number."
+msgstr ""
+
+#: templates/help-center.php:35
+#: templates/help-center.php:36
+msgid "Search help articles"
+msgstr ""
+
+#: templates/help-center.php:37
+msgid "Search"
+msgstr ""
+
+#: templates/help-center.php:46
+msgid "No articles match. Try other words, or open a ticket."
+msgstr ""
+
+#: templates/help-center.php:57
+msgid "Still need help?"
+msgstr ""
+
+#: templates/help-center.php:57
+#: templates/ticket-list.php:28
+#: templates/ticket-new.php:27
+msgid "Open a ticket"
+msgstr ""
+
+#. translators: %s: date.
+#: templates/order-tracking.php:40
+msgid "shipped %s"
+msgstr ""
+
+#: templates/order-tracking.php:55
+msgid "(not yet)"
+msgstr ""
+
+#: templates/ticket-list.php:24
+msgid "Support"
+msgstr ""
+
+#: templates/ticket-list.php:25
+msgid "Questions about an order or a product? Open a ticket and follow the answers here."
+msgstr ""
+
+#: templates/ticket-list.php:41
+msgid "You have no tickets yet."
+msgstr ""
+
+#: templates/ticket-list.php:41
+msgid "Questions about an order or a product? We reply here and by email."
+msgstr ""
+
+#: templates/ticket-list.php:41
+msgid "Ask for help"
+msgstr ""
+
+#. translators: %s: time since the last message, e.g. "2 hours ago".
+#: templates/ticket-list.php:58
+msgid "updated %s"
+msgstr ""
+
+#: templates/ticket-list.php:64
+msgid "Assigned to you"
+msgstr ""
+
+#. translators: %s: name.
+#: templates/ticket-list.php:67
+msgid "Opened by %s"
+msgstr ""
+
+#: templates/ticket-list.php:76
+msgid "Ticket pages"
+msgstr ""
+
+#: templates/ticket-list.php:78
+msgid "Newer tickets"
+msgstr ""
+
+#: templates/ticket-list.php:87
+msgid "Older tickets"
+msgstr ""
+
+#: templates/ticket-list.php:94
+msgid "Closed tickets are not shown here."
+msgstr ""
+
+#: templates/ticket-new.php:25
+#: templates/ticket-view.php:22
+msgid "Back to support"
+msgstr ""
+
+#. translators: 1: step number, 2: number of steps.
+#: templates/ticket-new.php:38
+msgid "Step %1$d of %2$d: which order is it about?"
+msgstr ""
+
+#: templates/ticket-new.php:50
+msgid "Not about an order"
+msgstr ""
+
+#. translators: 1: step number, 2: number of steps.
+#: templates/ticket-new.php:62
+msgid "Step %1$d of %2$d: what is it about?"
+msgstr ""
+
+#: templates/ticket-new.php:67
+msgid "What is it about?"
+msgstr ""
+
+#: templates/ticket-new.php:69
+msgid "Choose a reason"
+msgstr ""
+
+#: templates/ticket-new.php:87
+msgid "Choose a topic"
+msgstr ""
+
+#: templates/ticket-new.php:93
+msgid "How urgent is it?"
+msgstr ""
+
+#. translators: 1: step number, 2: number of steps.
+#: templates/ticket-new.php:102
+msgid "Step %1$d of %2$d: tell us more"
+msgstr ""
+
+#: templates/ticket-new.php:114
+msgid "Short summary (optional)"
+msgstr ""
+
+#: templates/ticket-new.php:148
+msgid "Next"
+msgstr ""
+
+#: templates/ticket-sent.php:22
+msgid "Thanks, we received your request"
+msgstr ""
+
+#. translators: %s: ticket number.
+#: templates/ticket-sent.php:27
+msgid "Your ticket number is #%s."
+msgstr ""
+
+#: templates/ticket-sent.php:29
+msgid "View your ticket"
+msgstr ""
+
+#. translators: %s: order number.
+#: templates/ticket-view.php:35
+msgid "About order #%s"
+msgstr ""
+
+#: templates/ticket-view.php:57
+msgid "This ticket is closed. Reopen it if you still need help."
+msgstr ""
+
+#: templates/ticket-view.php:60
+msgid "Reopen ticket"
+msgstr ""
+
+#: templates/ticket-view.php:68
+msgid "Your reply"
+msgstr ""
 
 #. Plugin Name of the plugin
 #: support-ticket-system-for-woocommerce.php
-msgid "Helpdesk Support Ticket System for WooCommerce"
-msgstr ""
-
-#. Plugin URI of the plugin
-#: support-ticket-system-for-woocommerce.php
-msgid "https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce"
+msgid "Customer Support Helpdesk & Tickets for WooCommerce"
 msgstr ""
 
 #. Description of the plugin
 #: support-ticket-system-for-woocommerce.php
-msgid "WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system."
+msgid "Customer support for WooCommerce: tickets from My Account and orders, a team inbox with order details, help center and self-hosted live chat."
 msgstr ""
 
 #. Author of the plugin
@@ -34,527 +3671,3 @@ msgstr ""
 msgid "WPFactory"
 msgstr ""
 
-#. Author URI of the plugin
-#: support-ticket-system-for-woocommerce.php
-msgid "https://wpfactory.com"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:164
-#: includes/class-wpfactory-wc-sts-inc.php:176
-#: includes/class-wpfactory-wc-sts-inc.php:682
-#: includes/class-wpfactory-wc-sts-inc.php:683
-#: includes/class-wpfactory-wc-sts-inc.php:859
-#: includes/class-wpfactory-wc-sts-inc.php:1629
-msgid "Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:165
-msgid "Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:166
-msgid "Search Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:167
-msgid "All Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:168
-msgid "Parent Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:169
-msgid "Parent Ticket:"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:170
-msgid "Edit Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:171
-msgid "Update Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:172
-msgid "Add New Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:173
-#: includes/class-wpfactory-wc-sts-inc.php:175
-msgid "New Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:174
-msgid "New Ticket Name"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:177
-msgid "No Tickets found"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:179
-msgid "Adding and editing my Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:199
-msgctxt "taxonomy general name"
-msgid "Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:200
-msgctxt "taxonomy singular name"
-msgid "Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:201
-msgid "Search Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:202
-msgid "All Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:203
-msgid "Parent Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:204
-msgid "Parent Status:"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:205
-msgid "Edit Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:206
-msgid "Update Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:207
-msgid "Add New Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:208
-msgid "New Status Name"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:209
-msgid "No Status found."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:210
-#: includes/class-wpfactory-wc-sts-inc.php:662
-msgid "Status"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:235
-msgid "Ticket Content"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:244
-#: includes/class-wpfactory-wc-sts-inc.php:988
-msgid "Responses"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:253
-msgid "Ticket Info"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:262
-msgid "Assign to User"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:271
-msgid "New Response"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:321
-#: includes/class-wpfactory-wc-sts-inc.php:591
-#: includes/class-wpfactory-wc-sts-inc.php:668
-msgid "Order"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:322
-#: includes/class-wpfactory-wc-sts-inc.php:339
-#: includes/class-wpfactory-wc-sts-inc.php:377
-#: includes/class-wpfactory-wc-sts-inc.php:425
-#: includes/class-wpfactory-wc-sts-inc.php:469
-msgid "Pro Version"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:326
-#: includes/class-wpfactory-wc-sts-inc.php:592
-#: includes/class-wpfactory-wc-sts-inc.php:663
-msgid "User"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:338
-msgid "Ticket Assignee"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:369
-msgid "Issue"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:370
-#: includes/class-wpfactory-wc-sts-inc.php:411
-msgid "Attachments"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:408
-#: includes/class-wpfactory-wc-sts-inc.php:665
-#: includes/class-wpfactory-wc-sts-inc.php:991
-msgid "Date"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:409
-msgid "Who Sent It"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:410
-#: includes/class-wpfactory-wc-sts-inc.php:1061
-msgid "Message"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:412
-msgid "Action"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:433
-msgid "No responses yet"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:546
-#: includes/class-wpfactory-wc-sts-inc.php:1176
-#: includes/class-wpfactory-wc-sts-inc.php:1261
-msgid "Wrong user."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:593
-#: includes/class-wpfactory-wc-sts-inc.php:669
-msgid "Assignee"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:594
-#: includes/class-wpfactory-wc-sts-inc.php:664
-msgid "Last Response"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:595
-#: includes/class-wpfactory-wc-sts-inc.php:667
-msgid "Priority"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:610
-msgid "Pro"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:661
-#: includes/class-wpfactory-wc-sts-inc.php:966
-#: includes/class-wpfactory-wc-sts-inc.php:1054
-msgid "Title"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:666
-#: includes/class-wpfactory-wc-sts-inc.php:700
-#: includes/class-wpfactory-wc-sts-inc.php:701
-msgid "Subject"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:691
-#: includes/class-wpfactory-wc-sts-inc.php:692
-msgid "Priorities"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:709
-#: includes/class-wpfactory-wc-sts-inc.php:710
-#: includes/class-wpfactory-wc-sts.php:142
-msgid "Settings"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:729
-msgid "ALL"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:738
-msgid "OPEN"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:747
-msgid "IN PROGRESS"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:833
-msgid "Get Help"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:942
-msgid "TICKETS"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:992
-msgid "Who Responded"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:993
-msgid "Content"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1019
-msgid "Add a response"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1026
-msgid "Close Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1029
-#: includes/class-wpfactory-wc-sts-inc.php:1070
-msgid "Send"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1043
-msgid " No Tickets found"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1047
-msgid "ADD NEW TICKET"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1166
-msgid "Did not save because your submission is invalid..."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1272
-msgid "Did not save because your submission has issues."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1281
-msgid "Please enter a proper title. Titles must be at least 3 characters long."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1288
-msgid "Please enter content more than 1 characters in length."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1372
-#: includes/class-wpfactory-wc-sts-inc.php:1387
-msgid "New Ticket to "
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1374
-#: includes/class-wpfactory-wc-sts-inc.php:1394
-#: includes/class-wpfactory-wc-sts-inc.php:1416
-#: includes/class-wpfactory-wc-sts-inc.php:1434
-#: includes/class-wpfactory-wc-sts-inc.php:1518
-#: includes/class-wpfactory-wc-sts-inc.php:1541
-msgid "Check it Here"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-inc.php:1413
-#: includes/class-wpfactory-wc-sts-inc.php:1502
-msgid "New Response to ticket #"
-msgstr ""
-
-#. Translators: %s: Taxonomy name.
-#: includes/class-wpfactory-wc-sts-inc.php:1590
-msgid "Show All %s"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:394
-msgid "Go PRO and get more important features!"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:395
-msgid "Enable Attachments on Ticket Submission"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:396
-msgid "Choose File Size, Number and Type for Upload"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:397
-msgid "Enable Ticket Priorities for Better Management"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:398
-msgid "Assign Ticket to Different Users"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:399
-msgid "Private Notes that customer cannot view "
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:400
-msgid "Add Ticket Subject and Automate Ticket Assignment"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:401
-msgid "Customize your Email Notifications "
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:402
-msgid "Useful Placeholders for your Notification Template"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:403
-msgid ".. and a lot more!"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:404
-msgid "GET IT HERE"
-msgstr ""
-
-#. translators: %s: shortcode [stsw_user_tickets]
-#: includes/class-wpfactory-wc-sts-init.php:516
-msgid "Use the %s shortcode in any page you like as alternative to provide the ticketing system."
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:532
-msgid "Get more plugins by extendWP"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:547
-msgid "Use Ticket System in any page with the shortcode [stsw_user_tickets]"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:548
-msgid "Important Note: If you don't see the tickets dashboard in my account page, flush your permalinks from WP Backend"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:568
-msgid "General"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:569
-msgid "Notifications"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:583
-msgid "Available placeholders for your Emails:"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:585
-msgid "in PRO Version"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:673
-msgid "Rename Tab Link in My Account Page for Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:690
-msgid "Enable Attachments to Ticket"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:698
-msgid "Allowed Attachments File Types"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:706
-msgid "Max File Size "
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:714
-msgid "Allowed Number of Attachments "
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:722
-msgid "Enable Priority Field to Ticket Creation"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:730
-msgid "Rename Button on Orders Table in My Account Page for Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:747
-msgid "Show only Open in Frontend"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:766
-msgid "Default User Role for Ticket Assignment"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:774
-msgid "Default Assignee"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:782
-msgid "Text to display once Ticket is saved"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:799
-msgid "Text to display once Response is saved"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:816
-msgid "Notify Assignee by Email"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:824
-msgid "Notify Admin by Email"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:843
-msgid "Admin Address"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:860
-msgid "Notify Customer by Email"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:879
-msgid "Email Subject sent to Assignee"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:887
-msgid "Email Content sent to Assignee"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:895
-msgid "Email Subject sent to Customer"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:912
-msgid "Email Content sent to Customer"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:1100
-msgid "Admin Email Address"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:1143
-msgid "Pro Version Only - html enabled"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:1207
-msgid "Mail Subject"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:1218
-msgid "Extensions allowed - Pro Version"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:1229
-msgid "Files size - Pro Version"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts-init.php:1240
-msgid "Allowed N.Files  - Pro Version "
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts.php:147
-msgid "Go Pro"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts.php:177
-#: includes/class-wpfactory-wc-sts.php:178
-#: includes/class-wpfactory-wc-sts.php:203
-#: includes/class-wpfactory-wc-sts.php:204
-msgid "Support Tickets"
-msgstr ""
-
-#: includes/class-wpfactory-wc-sts.php:188
-#: includes/class-wpfactory-wc-sts.php:189
-msgid "Dashboard"
-msgstr ""

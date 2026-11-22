@@ -1,0 +1,225 @@
+/**
+ * Helpdesk Support Ticket System for WooCommerce - live chat widget.
+ *
+ * Fonts come from the theme; the accent comes from theme.json presets when present.
+ *
+ * @author WPFactory
+ */
+
+.stsw-chat {
+	--stsw-chat-accent: var(--wp--preset--color--primary, #3858e9);
+	--stsw-chat-bg: #fff;
+	--stsw-chat-text: #101828;
+	--stsw-chat-muted: #475467;
+	--stsw-chat-border: #d0d5dd;
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	z-index: 99990;
+	font: inherit;
+	color: var(--stsw-chat-text);
+}
+
+.stsw-chat [hidden] {
+	display: none !important;
+}
+
+.stsw-chat *,
+.stsw-chat *::before,
+.stsw-chat *::after {
+	box-sizing: border-box;
+}
+
+.stsw-chat__launcher {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 48px;
+	padding: 0 18px;
+	border: 2px solid var(--stsw-chat-edge, transparent);
+	border-radius: 999px;
+	background: var(--stsw-chat-accent);
+	box-shadow: 0 8px 24px rgba(16, 24, 40, 0.18);
+	color: var(--stsw-chat-on-accent, #fff);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.stsw-chat__panel {
+	position: absolute;
+	right: 0;
+	bottom: 60px;
+	display: flex;
+	flex-direction: column;
+	width: min(360px, calc(100vw - 32px));
+	max-height: min(560px, calc(100vh - 100px));
+	border: 1px solid var(--stsw-chat-border);
+	border-radius: 16px;
+	background: var(--stsw-chat-bg);
+	box-shadow: 0 24px 48px rgba(16, 24, 40, 0.2);
+	overflow: hidden;
+}
+
+.stsw-chat__head {
+	position: relative;
+	padding: 14px 48px 10px 16px;
+	background: var(--stsw-chat-accent);
+	color: var(--stsw-chat-on-accent, #fff);
+}
+
+.stsw-chat__title {
+	margin: 0;
+	color: inherit;
+	font-size: 1rem;
+	line-height: 1.4;
+}
+
+.stsw-chat__state {
+	margin: 2px 0 0;
+	font-size: 0.85rem;
+}
+
+.stsw-chat__state:empty {
+	display: none;
+}
+
+.stsw-chat__close {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 36px;
+	height: 36px;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: inherit;
+	font-size: 1.4rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.stsw-chat__log {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 120px;
+	margin: 0;
+	padding: 12px;
+	overflow-y: auto;
+	list-style: none;
+}
+
+.stsw-chat__msg {
+	max-width: 85%;
+	margin: 0;
+	padding: 8px 12px;
+	border-radius: 12px;
+	font-size: 0.95rem;
+	line-height: 1.45;
+	overflow-wrap: anywhere;
+	white-space: pre-wrap;
+}
+
+.stsw-chat__msg--store {
+	align-self: flex-start;
+	border: 1px solid var(--stsw-chat-border);
+}
+
+.stsw-chat__msg--you {
+	align-self: flex-end;
+	background: #f2f4f7;
+}
+
+.stsw-chat__msg--note {
+	align-self: center;
+	max-width: 100%;
+	color: var(--stsw-chat-muted);
+	font-size: 0.85rem;
+	text-align: center;
+}
+
+.stsw-chat__start,
+.stsw-chat__send {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px;
+	border-top: 1px solid var(--stsw-chat-border);
+}
+
+.stsw-chat__send {
+	flex-direction: row;
+	align-items: flex-end;
+}
+
+.stsw-chat__start label {
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+
+.stsw-chat input[type="text"],
+.stsw-chat input[type="email"],
+.stsw-chat textarea {
+	width: 100%;
+	min-height: 40px;
+	padding: 8px 10px;
+	border: 1px solid var(--stsw-chat-border);
+	border-radius: 8px;
+	background: #fff;
+	color: var(--stsw-chat-text);
+	font: inherit;
+}
+
+.stsw-chat__send textarea {
+	flex: 1;
+	resize: none;
+}
+
+.stsw-chat__offline {
+	margin: 0 0 4px;
+	color: var(--stsw-chat-muted);
+	font-size: 0.9rem;
+}
+
+.stsw-chat__error {
+	margin: 0;
+	color: #b42318;
+	font-size: 0.85rem;
+}
+
+.stsw-chat__error:empty {
+	display: none;
+}
+
+.stsw-chat__hp {
+	position: absolute;
+	left: -9999px;
+}
+
+.stsw-chat button:focus-visible,
+.stsw-chat input:focus-visible,
+.stsw-chat textarea:focus-visible {
+	outline: 3px solid var(--stsw-chat-focus, var(--stsw-chat-accent));
+	outline-offset: 2px;
+}
+
+.stsw-chat__head button:focus-visible {
+	outline-color: var(--stsw-chat-on-accent, #fff);
+}
+
+@media (max-width: 480px) {
+	.stsw-chat {
+		right: 12px;
+		bottom: 12px;
+	}
+
+	.stsw-chat__launcher span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+	}
+}

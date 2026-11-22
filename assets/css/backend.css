@@ -126,7 +126,7 @@
 	color: #fff;
 }
 
-.STSWooCommerce {
+.STSWooCommerce:not(.wpf-hd) {
 	overflow: hidden;
 	margin: 20px 0;
 }

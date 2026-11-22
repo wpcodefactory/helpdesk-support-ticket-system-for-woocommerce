@@ -7,89 +7,66 @@
 (function ($) {
 	"use strict";
 
-	$(
-		"#toplevel_page_support-ticket-system-woocommerce .wp-submenu > li:nth-child(4)",
-	).addClass("proVersion proSpan");
-	$(
-		"#toplevel_page_support-ticket-system-woocommerce .wp-submenu > li:nth-child(3)",
-	).addClass("proVersion proSpan");
-	$(".proVersion").click(function (e) {
-		e.preventDefault();
-		$("#STSWooCommerceModal").slideDown();
-	});
+	var settings = window.WPFactory_WC_STS_Backend || {};
 
-	$("#STSWooCommerceModal .close").click(function (e) {
-		e.preventDefault();
-		$("#STSWooCommerceModal").fadeOut();
-	});
+	// The plugin's in-page dialog where it is loaded.
+	function ask(text) {
+		return window.stswUI ? window.stswUI.ask(text) : Promise.resolve(window.confirm(text));
+	}
 
-	var modal = document.getElementById("STSWooCommerceModal");
+	// Priority colour picker.
+	if ($.fn.wpColorPicker) {
+		$(".stsw-color-field").wpColorPicker();
+	}
 
-	// When the user clicks anywhere outside of the modal, close it
-	window.onclick = function (event) {
-		if (event.target == modal) {
-			modal.style.display = "none";
-		}
-	};
-
-	$(".STSWooCommerce .nav-tab-wrapper a").on("click", function (e) {
-		e.preventDefault();
-
-		if ($(this).hasClass("proVersion")) {
-			//do nothing
-		} else {
-			var url = $(this).attr("href");
-			$(".STSWooCommerce").addClass("loading");
-			$("body").load($(this).attr("href"), function () {
-				window.history.replaceState("object or string", "Title", url);
-			});
-		}
-	});
-
-	$(".stswaccordion").accordion({
-		collapsible: true,
-	});
-
-	$(".STSWooCommerce #tabs").tabs();
-	$(".STSWooCommerce .subtabs").tabs();
-	$(".STSWooCommerce #accordion").accordion();
-
-	$(".STSWooCommerce form").on("submit", function (e) {
-		if ($(this).hasClass("STSWooCommercelicense")) {
-		} else {
-			tinyMCE.triggerSave();
-			e.preventDefault();
-			$.ajax({
-				url: window.location.href,
-				data: $(this).serialize(),
-				type: "POST",
-				beforeSend: function () {
-					$(".STSWooCommerce").addClass("loading");
-				},
-				success: function (data) {
-					$("body").html(data);
-					$("html, body").animate({ scrollTop: 0 }, "slow");
-				},
-			});
-		}
-	});
-
-	/**
-	 * On delete button click, delete the response and clear the row from the table - via AJAX call to `response_delete()`.
-	 *
-	 * @version 2.2.0
-	 */
-	$(document).on("click", "#deleteResponse a", function (event) {
+	// Delete a reply or a private note.
+	$(document).on("click", ".wpfactory-wc-sts-delete", function (event) {
 		event.preventDefault();
+		var button = $(this);
+		var isNote = "note" === button.data("type");
+		ask(isNote ? settings.confirmDeleteNote : settings.confirmDelete).then(function (sure) {
+			if (!sure) {
+				return;
+			}
+			$.post(
+			window.ajaxurl,
+			{
+				action: isNote ? "wpfactory_wc_sts_note_delete" : "wpfactory_wc_sts_response_delete",
+				nonce: settings.responseDeleteNonce,
+				id: button.data("id"),
+			},
+			function (response) {
+				if (response && response.success) {
+					button.closest("tr, li").remove();
+				}
+			}
+			);
+		});
+	});
 
-		var ajax_options = {
-			action: "wpfactory_wc_sts_response_delete",
-			nonce: WPFactory_WC_STS_Backend.responseDeleteNonce,
-			id: $(this).attr("id"),
+	// Insert a canned reply into the reply box.
+	$(document).on("change", ".wpfactory-wc-sts-canned", function () {
+		var option = $(this).find("option:selected");
+		var target = $("#" + $(this).data("target"));
+		var text = option.data("text");
+		if (!text || !target.length) {
+			return;
+		}
+		var select = $(this);
+		var put = function () {
+			target.val(String(text)).trigger("focus");
+			select.val("");
 		};
-
-		$.post(ajaxurl, ajax_options, function (data) {
-			$("tr." + data).remove(); // remove row of the deleted item
+		if (!$.trim(target.val())) {
+			put();
+			return;
+		}
+		ask(settings.confirmReplace).then(function (sure) {
+			if (sure) {
+				put();
+			} else {
+				select.val("");
+			}
 		});
 	});
 })(jQuery);

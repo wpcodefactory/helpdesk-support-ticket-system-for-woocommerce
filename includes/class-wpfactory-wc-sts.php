@@ -118,11 +118,15 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				array( $this, 'action_links' )
 			);
 
-			// "Recommendations" page.
+			// "Recommendations" page (WPFactory menu).
 			add_action( 'init', array( $this, 'add_cross_selling_library' ) );
 
 			// Settings.
 			add_action( 'admin_menu', array( $this, 'add_settings' ), 11 );
+
+			// One short, dismissible note about Pro on the plugin's own screens.
+			add_action( 'admin_notices', array( $this, 'pro_notice' ) );
+			add_action( 'admin_post_wpfactory_wc_sts_dismiss_pro_notice', array( $this, 'dismiss_pro_notice' ) );
 		}
 
 		/**
@@ -142,8 +146,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 				__( 'Settings', 'support-ticket-system-for-woocommerce' ) .
 			'</a>';
 
-			$pro_url        = 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce';
-			$custom_links[] = '<a target="_blank" style="font-weight: bold; color: green;" href="' . $pro_url . '">' .
+			$custom_links[] = '<a href="' . esc_url( 'https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce' ) . '" target="_blank" rel="noopener">' .
 				__( 'Go Pro', 'support-ticket-system-for-woocommerce' ) .
 			'</a>';
 
@@ -174,20 +177,20 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 		 */
 		public function add_settings() {
 			add_menu_page(
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
-				'dashicons-tag',
+				'dashicons-format-chat',
 				50
 			);
 
 			add_submenu_page(
 				'support-ticket-system-woocommerce',
-				__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
-				__( 'Dashboard', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				__( 'Inbox', 'support-ticket-system-for-woocommerce' ),
+				__( 'Inbox', 'support-ticket-system-for-woocommerce' ),
+				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
 			);
@@ -200,9 +203,9 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 
 			add_submenu_page(
 				$admin_menu->get_menu_slug(),
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				__( 'Support Tickets', 'support-ticket-system-for-woocommerce' ),
-				'manage_woocommerce', // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+				__( 'Helpdesk', 'support-ticket-system-for-woocommerce' ),
+				'stsw_tickets', // phpcs:ignore WordPress.WP.Capabilities.Unknown -- granted to shop staff and the assignment role.
 				'support-ticket-system-woocommerce',
 				array( $this, 'output_settings' ),
 				30
@@ -241,6 +244,42 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 		 */
 		public function plugin_path() {
 			return untrailingslashit( plugin_dir_path( WPFACTORY_WC_STS_FILE ) );
+		}
+
+		/**
+		 * Short note about the Pro edition on the plugin's screens, until dismissed.
+		 *
+		 * @version 2.3.0
+		 * @since   2.3.0
+		 */
+		public function pro_notice() {
+			if ( ! current_user_can( 'manage_woocommerce' ) || get_user_meta( get_current_user_id(), 'wpfactory_wc_sts_pro_notice_dismissed', true ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				return;
+			}
+			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( WPFACTORY_WC_STS_PAGE !== $page ) {
+				return;
+			}
+			$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_dismiss_pro_notice' ), 'wpfactory_wc_sts_dismiss_pro_notice' );
+			echo '<div class="notice notice-info"><p>' .
+				esc_html__( 'Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, more AI (a chat assistant and suggested resolutions, on WPFactory AI credits or your own key), and a full REST API.', 'support-ticket-system-for-woocommerce' ) .
+				' <a href="https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce" target="_blank" rel="noopener">' . esc_html__( 'See Pro', 'support-ticket-system-for-woocommerce' ) . '</a>' .
+				' | <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Dismiss', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
+		}
+
+		/**
+		 * Hides the Pro note for this user.
+		 *
+		 * @version 2.3.0
+		 * @since   2.3.0
+		 */
+		public function dismiss_pro_notice() {
+			check_admin_referer( 'wpfactory_wc_sts_dismiss_pro_notice' );
+			if ( current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				update_user_meta( get_current_user_id(), 'wpfactory_wc_sts_pro_notice_dismissed', 1 );
+			}
+			wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE ) );
+			exit;
 		}
 	}
 

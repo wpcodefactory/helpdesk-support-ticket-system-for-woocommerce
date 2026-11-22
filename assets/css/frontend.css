@@ -1,25 +1,628 @@
 /**
- * Helpdesk Support Ticket System for WooCommerce - Frontend CSS
+ * Helpdesk Support Ticket System for WooCommerce - customer screens.
+ *
+ * Inherits the theme: fonts and text colour come from the page, accents from theme.json presets when the theme has
+ * them, otherwise from the text colour. Works with block and classic themes.
  *
  * @author WPFactory
  */
 
-/* === Ajaxify === */
-.stswproaccordion.loading>* {
-	opacity: 0.2;
+.stsw {
+	--stsw-accent: var(--wp--preset--color--primary, var(--wp--preset--color--contrast, currentColor));
+	--stsw-border: color-mix(in srgb, currentColor 22%, transparent);
+	--stsw-soft: color-mix(in srgb, currentColor 6%, transparent);
+	--stsw-radius: 8px;
+	--stsw-gap: 1rem;
+	font: inherit;
+	color: inherit;
 }
 
-.stswproaccordion.loading:before {
-	position: fixed;
-	content: "Loading...";
-	font-size: 2em;
-	padding: 22px;
-	background: #000;
-	background: url(../images/loading.gif) no-repeat center center;
-	color: #777;
-	width: 50%;
-	height: 50%;
-	margin-left: 15%;
+.stsw [hidden] {
+	display: none !important;
+}
+
+.stsw *,
+.stsw *::before,
+.stsw *::after {
 	box-sizing: border-box;
+}
+
+.stsw-head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 0 var(--stsw-gap);
+}
+
+.stsw-title {
+	margin: 0;
+	font-size: 1.4em;
+	line-height: 1.3;
+}
+
+.stsw-link {
+	color: inherit;
+	text-decoration: underline;
+}
+
+/* Buttons: at least 44px tall, visible focus. */
+.stsw-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 44px;
+	min-width: 44px;
+	padding: 0.6em 1.2em;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* Primary buttons also carry the theme's `button` and `wp-element-button` classes: the theme gives them its colours. */
+.stsw-button--primary {
+	border-color: transparent;
+}
+
+.stsw-button:hover {
+	filter: brightness(0.95);
+}
+
+.stsw a:focus-visible,
+.stsw button:focus-visible,
+.stsw input:focus-visible,
+.stsw select:focus-visible,
+.stsw textarea:focus-visible,
+.stsw [tabindex="-1"]:focus-visible {
+	outline: 3px solid var(--stsw-accent);
+	outline-offset: 2px;
+}
+
+.stsw-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-top: var(--stsw-gap);
+}
+
+/* Ticket form: fields inherit the theme's fonts and colours, with even spacing. */
+.stsw-ask fieldset.stsw-step,
+.stsw-ask .stsw-items {
+	min-width: 0;
+	margin: 0 0 calc(var(--stsw-gap) * 1.25);
+	padding: 0;
+	border: 0;
+}
+
+.stsw-ask legend,
+.stsw-step__title {
+	margin: 0 0 0.75rem;
+	padding: 0;
+	font-weight: 600;
+}
+
+.stsw-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin: 0 0 var(--stsw-gap);
+}
+
+.stsw-field > label,
+.stsw-field > legend {
+	font-weight: 600;
+}
+
+.stsw input[type="text"],
+.stsw input[type="email"],
+.stsw input[type="number"],
+.stsw input[type="date"],
+.stsw input[type="search"],
+.stsw select,
+.stsw textarea {
+	width: 100%;
+	max-width: 100%;
+	min-height: 44px;
+	padding: 0.55em 0.75em;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.stsw select option {
+	color: initial;
+}
+
+.stsw textarea {
+	min-height: 8em;
+	resize: vertical;
+}
+
+.stsw-help {
+	opacity: 1;
+	font-size: 0.875em;
+}
+
+/* Choices: the whole row is the click target. */
+.stsw-choices {
+	display: grid;
+	gap: 0.5rem;
+}
+
+.stsw-choice {
+	display: flex;
+	gap: 0.65rem;
+	align-items: center;
+	width: 100%;
+	min-height: 44px;
+	padding: 0.6rem 0.85rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	cursor: pointer;
+}
+
+.stsw-choice:hover,
+.stsw-choice:has(input:checked) {
+	background: var(--stsw-soft);
+}
+
+.stsw-choice input {
+	flex: none;
+	width: 1.15em;
+	height: 1.15em;
+	margin: 0;
+}
+
+/* Ticket list. */
+.stsw-plan {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0 0 var(--stsw-gap);
+}
+
+.stsw-intro {
+	margin: 0.25rem 0 0;
+}
+
+.stsw-back {
+	display: inline-flex;
+	gap: 0.35rem;
+	margin: 0 0 0.5rem;
+	color: inherit;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+
+.stsw-back:hover {
+	text-decoration: underline;
+}
+
+.stsw-empty {
+	padding: 2rem 1.5rem;
+	border: 1px dashed var(--stsw-border);
+	border-radius: var(--stsw-radius);
 	text-align: center;
+}
+
+.stsw-empty p {
+	margin: 0.25rem 0;
+}
+
+.stsw-cards {
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	list-style: none;
+	overflow: hidden;
+}
+
+.stsw-card {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	margin: 0;
+	padding: 0.9rem 1.1rem;
+	border-bottom: 1px solid var(--stsw-border);
+}
+
+.stsw-card:last-child {
+	border-bottom: 0;
+}
+
+.stsw-card:hover {
+	background: var(--stsw-soft);
+}
+
+.stsw-card--reply_needed {
+	box-shadow: inset 3px 0 0 var(--stsw-accent);
+}
+
+.stsw-card__main {
+	min-width: 0;
+}
+
+.stsw-card__link {
+	color: inherit;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.stsw-card__link::after {
+	position: absolute;
+	inset: 0;
+	content: "";
+}
+
+.stsw-card__link:hover {
+	text-decoration: underline;
+}
+
+.stsw-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.5rem;
+	margin: 0.25rem 0 0;
+	font-size: 0.9em;
+}
+
+.stsw-card__chips {
+	position: relative;
+	margin: 0;
+}
+
+.stsw-chip {
+	display: inline-block;
+	padding: 0.15em 0.7em;
+	border-radius: 999px;
+	background: var(--stsw-soft);
+	font-size: 0.85em;
+	font-weight: 600;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+
+/* Status colours (text 4.5:1 or better on their backgrounds). */
+.stsw-chip--reply_needed {
+	background: #eef1fd;
+	color: #1d35b4;
+}
+
+.stsw-chip--waiting {
+	background: #fef0c7;
+	color: #93370d;
+}
+
+.stsw-chip--closed {
+	background: #f2f4f7;
+	color: #344054;
+}
+
+.stsw-hidden-note {
+	display: block;
+	margin-top: 0.75rem;
+}
+
+/* Ask flow and confirmation. */
+.stsw-sent {
+	margin: 0 0 var(--stsw-gap);
+	padding: 1rem 1.25rem;
+	border: 1px solid #abefc6;
+	border-radius: var(--stsw-radius);
+	background: #ecfdf3;
+	color: #054f31;
+}
+
+.stsw-sent a {
+	color: inherit;
+}
+
+.stsw-sent p,
+.stsw-sent__text p {
+	margin: 0.25rem 0;
+}
+
+.stsw-drop__zone {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 88px;
+	padding: 1rem;
+	border: 2px dashed var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	text-align: center;
+}
+
+.stsw-drop__zone:focus-within,
+.stsw-drop__zone.is-over {
+	border-color: var(--stsw-accent);
+	background: var(--stsw-soft);
+}
+
+.stsw-drop__zone input[type="file"] {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.stsw-drop__text {
+	pointer-events: none;
+}
+
+/* Suggested articles and help center. */
+.stsw-suggest {
+	margin: 0 0 var(--stsw-gap);
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: var(--stsw-soft);
+}
+
+.stsw-suggest__title {
+	margin: 0 0 0.4rem;
+	font-weight: 600;
+}
+
+.stsw-suggest ul,
+.stsw-kb__list {
+	display: grid;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stsw-suggest li,
+.stsw-kb__list li {
+	display: flex;
+	flex-direction: column;
+}
+
+.stsw-suggest li span,
+.stsw-kb__list li span {
+	font-size: 0.9em;
+}
+
+.stsw-kb__search {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0 0 1.5rem;
+}
+
+.stsw-kb__search input[type="search"] {
+	flex: 1;
+	min-width: 220px;
+	min-height: 44px;
+}
+
+.stsw-kb__cat {
+	margin: 0 0 1.5rem;
+}
+
+/* Conversation: the customer on the right, the store on the left. */
+.stsw-head--ticket {
+	justify-content: flex-start;
+	margin-bottom: 0.25rem;
+}
+
+.stsw-thread {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin: var(--stsw-gap) 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stsw-msg {
+	max-width: min(46rem, 88%);
+	margin: 0;
+	padding: 0.85rem 1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: 12px;
+}
+
+.stsw-msg--customer {
+	align-self: flex-end;
+	border-color: transparent;
+	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.stsw-msg--store {
+	align-self: flex-start;
+	background: transparent;
+}
+
+.stsw-msg__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0 0 0.4rem;
+	font-size: 0.9em;
+}
+
+.stsw-msg__head time {
+}
+
+.stsw-msg__body {
+	overflow-wrap: anywhere;
+}
+
+.stsw-details {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 0.25rem 0.75rem;
+	margin: 0.75rem 0 0;
+	font-size: 0.9em;
+}
+
+.stsw-details dt {
+	font-weight: 600;
+}
+
+.stsw-details dd {
+	margin: 0;
+}
+
+.stsw-files p {
+	margin: 0.4rem 0 0;
+}
+
+.stsw-notice--error {
+	padding: 0.75rem 1rem;
+	border: 1px solid currentColor;
+	border-radius: var(--stsw-radius);
+}
+
+/* Guest box on the login screen. */
+.wpfactory-wc-sts-guest {
+	margin: 0 0 2rem;
+}
+
+@media (max-width: 768px) {
+	/* Themes with a fixed bar at the bottom of small screens (Storefront and others): the buttons stay above it. */
+	.stsw-ask--barred {
+		padding-bottom: calc(var(--stsw-bar, 0px) + 5rem);
+	}
+
+	.stsw-ask--barred.stsw-ask--onscreen .stsw-actions {
+		position: fixed;
+		right: 0;
+		bottom: var(--stsw-bar, 0px);
+		left: 0;
+		z-index: 9990;
+		margin: 0;
+		padding: 0.6rem 1rem;
+		border-top: 1px solid var(--stsw-border);
+		background: var(--stsw-bg, #fff);
+	}
+
+	.stsw-ask--barred.stsw-ask--onscreen .stsw-actions .stsw-button {
+		width: auto;
+		flex: 1;
+	}
+
+	.stsw-sent {
+		scroll-margin: 96px 0;
+	}
+}
+
+@media (max-width: 600px) {
+	.stsw-head {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.stsw-actions .stsw-button,
+	.stsw-head .stsw-button {
+		width: 100%;
+	}
+
+	.stsw-msg {
+		max-width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stsw * {
+		scroll-behavior: auto;
+		transition: none;
+	}
+}
+
+/* Where is my order. */
+.stsw-track {
+	margin: 0 0 var(--stsw-gap);
+	padding: 1rem 1.1rem;
+	border: 1px solid var(--stsw-border);
+	border-radius: var(--stsw-radius);
+	background: var(--stsw-soft);
+}
+
+.stsw-track__title {
+	margin: 0 0 0.5rem;
+	font-size: 1.05em;
+}
+
+.stsw-track__status {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0 0 0.5rem;
+}
+
+.stsw-track__list {
+	margin: 0 0 0.5rem;
+	padding-left: 1.2em;
+}
+
+.stsw-track__timeline {
+	display: grid;
+	gap: 0.35rem;
+	margin: 0 0 0.5rem;
+	padding: 0;
+	list-style: none;
+}
+
+.stsw-track__timeline li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.stsw-track__timeline li::before {
+	content: "";
+	width: 0.7em;
+	height: 0.7em;
+	border: 2px solid currentColor;
+	border-radius: 50%;
+}
+
+.stsw-track__timeline li.is-done {
+	opacity: 1;
+	font-weight: 600;
+}
+
+.stsw-track__timeline li.is-done::before {
+	background: currentColor;
+}
+
+/* Ticket list pages (3.0.0). */
+.stsw .stsw-pages {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin: 1rem 0;
+}
+
+.stsw .stsw-pages__current {
+	color: inherit;
+}
+
+/* Muted text keeps the theme's text colour (opacity made light themes fail 4.5:1). Steps not reached yet use a lighter weight. */
+.stsw-track__timeline li:not(.is-done) {
+	font-weight: 400;
 }

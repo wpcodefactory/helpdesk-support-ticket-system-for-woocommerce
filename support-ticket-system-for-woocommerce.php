@@ -1,19 +1,19 @@
 <?php
 /**
- * Plugin Name: Helpdesk Support Ticket System for WooCommerce
- * Description: WordPress ticket system - Manage customer queries and issues on your WordPress eShop with helpdesk WooCommerce support ticket system.
+ * Plugin Name: Customer Support Helpdesk & Tickets for WooCommerce
+ * Description: Customer support for WooCommerce: tickets from My Account and orders, a team inbox with order details, help center and self-hosted live chat.
  * Plugin URI: https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce
- * Version: 2.2.0
+ * Version: 3.0.0
  * Author: WPFactory
  * Author URI: https://wpfactory.com
  * Text Domain: support-ticket-system-for-woocommerce
  * Domain Path: /langs
- * WC tested up to: 11.1
+ * WC tested up to: 11.3
  * Requires Plugins: woocommerce
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Created on: 09-10-2019
- * Updated on: 25-09-2026
+ * Updated on: 22-11-2026
  *
  * @package WPFactory\WC_Support_Ticket_System
  */
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.2.0' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '3.0.0' );
 
 /**
  * Plugin file.
@@ -35,6 +35,57 @@ defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '2.
  * @since   2.0.0
  */
 defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ );
+
+/**
+ * Edition settings used by the shared core (Pro defines its own values).
+ *
+ * @version 2.3.0
+ * @since   2.3.0
+ */
+defined( 'WPFACTORY_WC_STS_PAGE' ) || define( 'WPFACTORY_WC_STS_PAGE', 'support-ticket-system-woocommerce' );
+defined( 'WPFACTORY_WC_STS_VERSION_OPTION' ) || define( 'WPFACTORY_WC_STS_VERSION_OPTION', 'wpfactory_wc_sts_version' );
+defined( 'WPFACTORY_WC_STS_NAME' ) || define( 'WPFACTORY_WC_STS_NAME', 'Customer Support Helpdesk & Tickets for WooCommerce' );
+
+if ( ! function_exists( 'wpfactory_wc_sts_is_pro_active' ) ) {
+	/**
+	 * Whether the Pro plugin is active.
+	 *
+	 * Pro is a full standalone plugin sharing the same tickets, table, shortcode and endpoint.
+	 * Running both creates every ticket, response and email twice, so the free plugin stands down.
+	 *
+	 * @version 2.2.1
+	 * @since   2.2.1
+	 *
+	 * @return bool
+	 */
+	function wpfactory_wc_sts_is_pro_active() {
+		$plugins = (array) get_option( 'active_plugins', array() );
+		if ( is_multisite() ) {
+			$plugins = array_merge( $plugins, array_keys( (array) get_site_option( 'active_sitewide_plugins', array() ) ) );
+		}
+		foreach ( $plugins as $plugin ) {
+			if ( '/support-ticket-system-woocommerce-pro.php' === substr( (string) $plugin, -strlen( '/support-ticket-system-woocommerce-pro.php' ) ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+if ( wpfactory_wc_sts_is_pro_active() ) {
+	add_action(
+		'admin_notices',
+		function () {
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+				return;
+			}
+			echo '<div class="notice notice-info"><p>' .
+				esc_html__( 'Customer Support Helpdesk & Tickets for WooCommerce Pro is active, so the free version is paused. You can deactivate the free version; your tickets stay in place.', 'support-ticket-system-for-woocommerce' ) .
+			'</p></div>';
+		}
+	);
+	return;
+}
 
 /**
  * Plugin main class.
@@ -71,5 +122,13 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @todo (v2.2.0) Move everything to the `plugins_loaded` action.
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-init.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-inc.php';
+foreach ( array( 'init', 'inc', 'customer', 'inbox', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy', 'ui', 'kb', 'chat', 'teamwork', 'import', 'tracking', 'templates', 'numbers', 'otp', 'guard', 'lifecycle', 'history', 'rest', 'credits' ) as $wpfactory_wc_sts_part ) {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-' . $wpfactory_wc_sts_part . '.php';
+}
+
+/**
+ * WPFactory AI library (AI with WPFactory AI credits). Each WPFactory plugin bundles a copy; the newest one loads.
+ */
+if ( is_readable( plugin_dir_path( __FILE__ ) . 'vendor/wpfactory/wpfactory-ai/wpfactory-ai.php' ) ) {
+	require_once plugin_dir_path( __FILE__ ) . 'vendor/wpfactory/wpfactory-ai/wpfactory-ai.php';
+}
