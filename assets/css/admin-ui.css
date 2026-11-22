@@ -2647,3 +2647,17 @@ body.wpf-hd-wizard {
 	border-bottom-color: var(--hd-accent);
 	color: var(--hd-accent-strong);
 }
+
+.wpf-hd .hd-ai-promo {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 10px;
+	align-items: baseline;
+	margin: 8px 0 0;
+	color: var(--hd-text-muted);
+	font-size: var(--hd-text-sm);
+}
+
+.wpf-hd .hd-ai-promo__hide {
+	color: var(--hd-text-muted);
+}

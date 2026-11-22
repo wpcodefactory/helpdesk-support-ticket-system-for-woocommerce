@@ -42,6 +42,16 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		const MODEL_BEST = 'claude-sonnet-5-5';
 
 		/**
+		 * Free credits each WPFactory AI account gets per plugin and month (set on the server; can change).
+		 */
+		const FREE_MONTHLY = 100;
+
+		/**
+		 * User meta: the AI suggestion in the reply box was hidden.
+		 */
+		const META_PROMO_HIDDEN = 'wpfactory_wc_sts_ai_promo_hidden';
+
+		/**
 		 * Loaded instance.
 		 *
 		 * @var WPFactory_WC_STS_Credits|null
@@ -69,6 +79,63 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 			add_action( 'wpfactory_wc_sts_inbox_reply_tools', array( $this, 'render_buttons' ), 20 );
 			add_action( 'wp_ajax_wpfactory_wc_sts_credits_ai', array( $this, 'ajax' ) );
 			add_action( 'wpfactory_wc_sts_header_actions', array( $this, 'header_pill' ), 5 );
+			add_action( 'admin_post_wpfactory_wc_sts_ai_promo_hide', array( $this, 'hide_promo' ) );
+		}
+
+		/**
+		 * Free credits a month, for texts.
+		 *
+		 * @return int
+		 */
+		public function free_monthly() {
+			/**
+			 * Free WPFactory AI credits each account gets per month for this plugin (as set on the server).
+			 *
+			 * @param int $credits Credits.
+			 */
+			return (int) apply_filters( 'wpfactory_wc_sts_ai_free_monthly', self::FREE_MONTHLY );
+		}
+
+		/**
+		 * Settings > AI (Pro has its own section).
+		 *
+		 * @return string
+		 */
+		public function settings_url() {
+			return WPFactory_WC_STS_UI::url( 'settings' ) . ( $this->handled_elsewhere() ? '#pro_ai' : '#ai' );
+		}
+
+		/**
+		 * A short suggestion in the reply box while AI is not set up: what it does, the free credits, one link to set
+		 * it up, and Hide. Only for people who can change settings.
+		 *
+		 * @param bool $on AI is turned on but the site is not connected yet.
+		 */
+		public function render_promo( $on = false ) {
+			if ( ! $this->library() || ! current_user_can( 'manage_woocommerce' ) || ( ! $on && get_user_meta( get_current_user_id(), self::META_PROMO_HIDDEN, true ) ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				return;
+			}
+			echo '<p class="hd-ai-promo" data-stsw-ai-promo>';
+			if ( $on ) {
+				echo '<span>' . esc_html__( 'AI replies are on, but this site is not connected to WPFactory AI yet.', 'support-ticket-system-for-woocommerce' ) . '</span> ';
+				echo '<a href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Connect', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			} else {
+				/* translators: %d: number of free credits. */
+				echo '<span>' . esc_html( sprintf( __( 'Draft replies and summaries with AI. Create a free WPFactory AI account and get %d free credits a month (about one credit per draft).', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</span> ';
+				echo '<a href="' . esc_url( $this->settings_url() ) . '" data-stsw-ai-promo-setup>' . esc_html__( 'Set up AI', 'support-ticket-system-for-woocommerce' ) . '</a> ';
+				echo '<a class="hd-ai-promo__hide" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_ai_promo_hide' ), 'wpfactory_wc_sts_ai_promo_hide' ) ) . '">' . esc_html__( 'Hide', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			}
+			echo '</p>';
+		}
+
+		/**
+		 * Hides the AI suggestion for the current user.
+		 */
+		public function hide_promo() {
+			check_admin_referer( 'wpfactory_wc_sts_ai_promo_hide' );
+			update_user_meta( get_current_user_id(), self::META_PROMO_HIDDEN, '1' );
+			wp_safe_redirect( wp_get_referer() ? wp_get_referer() : WPFactory_WC_STS_UI::url() );
+			exit;
 		}
 
 		/**
@@ -311,9 +378,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 				return;
 			}
 			if ( ! $this->is_connected() ) {
-				echo '<p class="hd-help">' . esc_html__( 'Connect this site with your email address and a 6-digit code. Free monthly credits are included; buy more when you need them (1 credit = 1 cent). No API key needed.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+				/* translators: %d: number of free credits. */
+				echo '<p class="hd-help">' . esc_html( sprintf( __( 'Create a free WPFactory AI account with your email address (we send you a 6-digit code) and this site is connected. Each account gets %d free credits a month for Helpdesk on a live site (https); buy more when you need them (1 credit = 1 cent). Test and local sites can use bought credits.', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</p>';
 				if ( current_user_can( 'manage_options' ) ) {
-					echo '<p><a class="hd-btn hd-btn--primary" data-stsw-credits-connect href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Connect to WPFactory AI', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
+					echo '<p><a class="hd-btn hd-btn--primary" data-stsw-credits-connect href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Create a free account and connect', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
 				} else {
 					echo '<p class="hd-help">' . esc_html__( 'Ask a site administrator to connect the site.', 'support-ticket-system-for-woocommerce' ) . '</p>';
 				}
@@ -355,7 +423,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		 * @param int $ticket_id Ticket ID.
 		 */
 		public function render_buttons( $ticket_id ) {
-			if ( $this->handled_elsewhere() || ! $this->is_enabled() ) {
+			if ( $this->handled_elsewhere() ) {
+				return;
+			}
+			if ( ! $this->is_enabled() || ! $this->is_connected() ) {
+				$this->render_promo( $this->is_enabled() );
 				return;
 			}
 			$url   = admin_url( 'admin-ajax.php' );

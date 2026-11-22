@@ -1173,6 +1173,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 						<ol class="hd-nextsteps">
 							<li><span><strong><?php esc_html_e( 'Open a test ticket', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'See what your customers see.', 'support-ticket-system-for-woocommerce' ); ?></span></span><a href="<?php echo esc_url( $this->core()->get_customer_tickets_url() ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open store', 'support-ticket-system-for-woocommerce' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ); ?></span></a></li>
 							<li><span><strong><?php esc_html_e( 'Save your first saved reply', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'Answer common questions in one click.', 'support-ticket-system-for-woocommerce' ); ?></span></span><a href="<?php echo esc_url( self::url( 'saved' ) ); ?>"><?php esc_html_e( 'Add reply', 'support-ticket-system-for-woocommerce' ); ?></a></li>
+							<?php
+							$credits = WPFactory_WC_STS_Credits::get_instance();
+							if ( $credits->library() ) :
+								?>
+								<li data-stsw-wizard-ai><span><strong><?php esc_html_e( 'Turn on AI replies', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php echo esc_html( sprintf( /* translators: %d: number of free credits. */ __( 'Draft replies and summaries with AI. A free WPFactory AI account gets %d free credits a month.', 'support-ticket-system-for-woocommerce' ), $credits->free_monthly() ) ); ?></span></span><a href="<?php echo esc_url( $credits->settings_url() ); ?>"><?php esc_html_e( 'Set up AI', 'support-ticket-system-for-woocommerce' ); ?></a></li>
+							<?php endif; ?>
 							<li><span><strong><?php esc_html_e( 'Review all settings', 'support-ticket-system-for-woocommerce' ); ?></strong><span class="hd-help"><?php esc_html_e( 'Assignment, notifications, ticket form and more.', 'support-ticket-system-for-woocommerce' ); ?></span></span><a href="<?php echo esc_url( self::url( 'settings' ) ); ?>"><?php esc_html_e( 'Settings', 'support-ticket-system-for-woocommerce' ); ?></a></li>
 						</ol>
 					</div>
