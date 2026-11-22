@@ -18,4 +18,4 @@ if ( ! function_exists( 'wpfactory_ai' ) ) {
 	require_once __DIR__ . '/src/functions.php';
 }
 
-WPFactory_AI_Versions::register( '1.3.0', __DIR__ . '/src/bootstrap.php' );
+WPFactory_AI_Versions::register( '1.5.0', __DIR__ . '/src/bootstrap.php' );

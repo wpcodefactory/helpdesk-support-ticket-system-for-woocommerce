@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitWPFactoryWCSTS
 {
+    public static $files = array (
+        'c9e94061304adc4c944e07a363eaeb28' => __DIR__ . '/..' . '/wpfactory/wpfactory-ai/wpfactory-ai.php',
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'WPFactory\\WPFactory_Admin_Menu\\Plugin_Icon' => __DIR__ . '/..' . '/wpfactory/wpfactory-admin-menu/src/php/class-plugin-icon.php',

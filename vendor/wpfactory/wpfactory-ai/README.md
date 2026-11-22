@@ -58,6 +58,25 @@ $ai->usage();                              // this month, by plugin and task (nu
 echo $ai->pill( 'helpdesk' );              // "123 credits" link for a plugin header
 ```
 
+Images (image models, Gemini):
+
+```php
+$r = $ai->image(
+	'image-generator',
+	array(
+		'prompt'       => $prompt,                // 'model' is optional: the plugin's default
+		'images'       => array( array( 'mime_type' => 'image/jpeg', 'data' => base64_encode( $bytes ) ) ), // 1 to 4, product photo first
+		'aspect_ratio' => '4:5',                  // 1:1, 4:5, 3:2, 2:3, 16:9, 9:16, 4:3, 3:4, or leave out
+	),
+	array( 'task' => 'generate' )             // generate, wizard, bulk, automation
+);
+// WP_Error (the codes of call(), plus wpfactory_ai_image_blocked for a safety refusal; nothing charged), or
+// array( images => array( array( mime_type, data ) ), text, model, request_id, credits, balance )
+$ai->prices( 'image-generator' );          // images: model => credits per image, default (cached 5 minutes)
+```
+
+Each input image is a JPEG, PNG or WebP of at most 7 MB, and the whole request at most 20 MB. One picture per call, 120 second timeout. Refunds by request id work as for text.
+
 Notes:
 - Use `(object) array()` where the API needs an empty JSON object (for example a tool schema with no properties).
 - Models: `claude-haiku-5-5` (fast, cheap) and `claude-sonnet-5-5` (stronger). The server reserves the most a call can cost (`max_tokens` included), so smaller `max_tokens` lets low balances through.

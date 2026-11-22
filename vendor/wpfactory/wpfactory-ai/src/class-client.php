@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Client {
 
-	const VERSION = '1.3.0';
+	const VERSION = '1.5.0';
 
 	/**
 	 * The one instance.
@@ -293,6 +293,70 @@ final class Client {
 			'credits'    => (int) ( $wpf['credits'] ?? 0 ),
 			'balance'    => (int) ( $wpf['balance'] ?? 0 ),
 		);
+	}
+
+	/**
+	 * One picture from an image model (Gemini), paid with credits. Nothing is charged when no picture comes back;
+	 * a picture the provider refuses for safety gives the code wpfactory_ai_image_blocked.
+	 *
+	 * @param string              $product Product id.
+	 * @param array<string,mixed> $request model (optional: the plugin's default), prompt, images (1 to 4: array of
+	 *                                     mime_type and base64 data; the product photo first), aspect_ratio, temperature.
+	 * @param array<string,mixed> $opts    task (generate, wizard, bulk, automation), request_id (UUID, keep it for refunds), timeout.
+	 * @return array{images:array<int,array{mime_type:string, data:string}>, text:string, model:string, request_id:string, credits:int, balance:int}|\WP_Error
+	 */
+	public function image( $product, $request, $opts = array() ) {
+		$product = sanitize_key( $product );
+		$rid     = ! empty( $opts['request_id'] ) ? (string) $opts['request_id'] : wp_generate_uuid4();
+		$headers = array(
+			'X-WPFactory-Product'    => $product,
+			'X-WPFactory-Task'       => sanitize_key( isset( $opts['task'] ) ? (string) $opts['task'] : 'generate' ),
+			'X-WPFactory-Request-Id' => $rid,
+		);
+		$data    = $this->request( 'POST', '/v1/images', (array) $request, $headers, true, isset( $opts['timeout'] ) ? (int) $opts['timeout'] : 120 );
+		if ( is_wp_error( $data ) ) {
+			$info = (array) $data->get_error_data();
+			if ( isset( $info['balance'] ) ) {
+				$this->remember_balance( $product, array( 'balance' => (int) $info['balance'] ) );
+			}
+			return $data;
+		}
+		$wpf = isset( $data['wpfactory'] ) ? (array) $data['wpfactory'] : array();
+		$this->remember_balance( $product, $wpf );
+		return array(
+			'images'     => isset( $data['images'] ) ? array_values( (array) $data['images'] ) : array(),
+			'text'       => isset( $data['text'] ) ? (string) $data['text'] : '',
+			'model'      => isset( $data['model'] ) ? (string) $data['model'] : '',
+			'request_id' => isset( $wpf['request_id'] ) ? (string) $wpf['request_id'] : $rid,
+			'credits'    => (int) ( $wpf['credits'] ?? 0 ),
+			'balance'    => (int) ( $wpf['balance'] ?? 0 ),
+		);
+	}
+
+	/**
+	 * Credits per image for each image model of a product, and the default model, so a plugin can say
+	 * "17 credits per image" before the owner generates. Cached for 5 minutes.
+	 *
+	 * @param string $product Product id.
+	 * @return array{images:array<string,int>, default:string}|\WP_Error
+	 */
+	public function prices( $product ) {
+		$product = sanitize_key( $product );
+		$key     = 'wpfactory_ai_prices_' . $product;
+		$hit     = get_transient( $key );
+		if ( is_array( $hit ) ) {
+			return $hit;
+		}
+		$data = $this->request( 'GET', '/v1/prices?product=' . rawurlencode( $product ), null, array(), false );
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+		$out = array(
+			'images'  => array_map( 'intval', isset( $data['images'] ) ? (array) $data['images'] : array() ),
+			'default' => isset( $data['default'] ) ? (string) $data['default'] : '',
+		);
+		set_transient( $key, $out, 5 * MINUTE_IN_SECONDS );
+		return $out;
 	}
 
 	/**
