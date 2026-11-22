@@ -213,6 +213,21 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		}
 
 		/**
+		 * The header credits link text for a balance ("123 credits"), or '' when unknown.
+		 *
+		 * @param int|null $balance Credits.
+		 *
+		 * @return string
+		 */
+		public function credits_label( $balance ) {
+			if ( null === $balance ) {
+				return '';
+			}
+			/* translators: %s: number of credits. */
+			return sprintf( _n( '%s credit', '%s credits', (int) $balance, 'support-ticket-system-for-woocommerce' ), number_format_i18n( (int) $balance ) );
+		}
+
+		/**
 		 * Asks the AI with credits.
 		 *
 		 * @param string $system     System prompt.
@@ -456,10 +471,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 			if ( is_wp_error( $text ) ) {
 				wp_send_json_error( array( 'message' => $text->get_error_message() ) );
 			}
+			$balance = $this->balance();
 			wp_send_json_success(
 				array(
 					'text'    => sanitize_textarea_field( $text ),
-					'balance' => $this->balance(),
+					'balance' => $balance,
+					'pill'    => $this->credits_label( $balance ),
 				)
 			);
 		}

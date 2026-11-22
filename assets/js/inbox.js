@@ -754,6 +754,11 @@
 				if (!json || !json.success) {
 					throw new Error((json && json.data && json.data.message) || "");
 				}
+				if (json.data.pill) {
+					document.querySelectorAll(".wpfactory-ai-pill").forEach(function (pill) {
+						pill.textContent = json.data.pill;
+					});
+				}
 				if ("draft" === task && area) {
 					if (!area.value.trim() || window.confirm(button.getAttribute("data-replace"))) {
 						area.value = json.data.text;

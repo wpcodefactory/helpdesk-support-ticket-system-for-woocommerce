@@ -262,7 +262,7 @@ if ( ! class_exists( 'WPFactory_WC_STS' ) ) :
 			}
 			$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_dismiss_pro_notice' ), 'wpfactory_wc_sts_dismiss_pro_notice' );
 			echo '<div class="notice notice-info"><p>' .
-				esc_html__( 'Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, AI with your own key, and a full REST API.', 'support-ticket-system-for-woocommerce' ) .
+				esc_html__( 'Pro adds order actions in tickets (refunds, store credit, replacements, returns), automation and working hours, team permissions, email piping, ratings and reports, more AI (a chat assistant and suggested resolutions, on WPFactory AI credits or your own key), and a full REST API.', 'support-ticket-system-for-woocommerce' ) .
 				' <a href="https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce" target="_blank" rel="noopener">' . esc_html__( 'See Pro', 'support-ticket-system-for-woocommerce' ) . '</a>' .
 				' | <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Dismiss', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
 		}
