@@ -316,15 +316,15 @@ if ( ! class_exists( 'WPFactory_WC_STS_History' ) ) :
 				return '';
 			}
 			$core = $this->core();
-			$html = '<details class="hd-history"><summary>' . esc_html(
+			$html = '<details class="msg-history"><summary class="hint">' . esc_html(
 				/* translators: %d: number of earlier versions. */
 				sprintf( _n( 'Edited (%d earlier version)', 'Edited (%d earlier versions)', count( $versions ), 'support-ticket-system-for-woocommerce' ), count( $versions ) )
-			) . '</summary><ol class="hd-history__list">';
+			) . '</summary><ol class="history-list">';
 			foreach ( array_reverse( $versions ) as $version ) {
-				$html .= '<li><p class="hd-help">' . esc_html(
+				$html .= '<li><p class="hint">' . esc_html(
 					/* translators: 1: staff name, 2: date. */
 					sprintf( __( 'Changed by %1$s on %2$s. Text before:', 'support-ticket-system-for-woocommerce' ), $core->get_user_name( (int) $version['by'] ), $core->format_response_date( (string) $version['at'] ) )
-				) . '</p><div class="hd-history__text">' . $core->format_message( (string) $version['content'] ) . '</div></li>';
+				) . '</p><div class="history-text">' . $core->format_message( (string) $version['content'] ) . '</div></li>';
 			}
 			return $html . '</ol></details>';
 		}

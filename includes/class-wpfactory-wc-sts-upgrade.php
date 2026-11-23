@@ -2,8 +2,8 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - "Pro features" page (free edition only).
  *
- * One header tab that describes what the Pro plugin adds, with a link to it. Information only: no Pro code, no
- * locked or disabled controls, and every feature of this plugin works without Pro.
+ * A header tab that describes what the Pro plugin adds, with a link to it, and a Companies tab that shows the Pro
+ * screen empty and locked. Information only: no Pro code, and every feature of this plugin works without Pro.
  *
  * @version 3.1.0
  * @since   3.1.0
@@ -52,6 +52,22 @@ if ( ! class_exists( 'WPFactory_WC_STS_Upgrade' ) ) :
 		public function __construct() {
 			add_filter( 'wpfactory_wc_sts_header_tabs', array( $this, 'header_tab' ), 50 );
 			add_action( 'wpfactory_wc_sts_render_tab_pro', array( $this, 'render' ) );
+			add_filter( 'wpfactory_wc_sts_header_tabs', array( $this, 'companies_tab' ), 15 );
+			add_action( 'wpfactory_wc_sts_render_tab_companies', array( $this, 'render_companies' ) );
+		}
+
+		/**
+		 * "Companies" in the plugin header (a Pro feature, shown locked), for people who manage tickets.
+		 *
+		 * @param array $tabs Tabs.
+		 *
+		 * @return array
+		 */
+		public function companies_tab( $tabs ) {
+			if ( ! isset( $tabs['companies'] ) && WPFactory_WC_STS_Inc::get_main_instance()->can_manage_tickets() ) {
+				$tabs['companies'] = __( 'Companies', 'support-ticket-system-for-woocommerce' );
+			}
+			return $tabs;
 		}
 
 		/**
@@ -150,20 +166,58 @@ if ( ! class_exists( 'WPFactory_WC_STS_Upgrade' ) ) :
 			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
 				return;
 			}
-			$cta = '<a class="hd-btn hd-btn--primary" href="' . esc_url( self::URL ) . '" target="_blank" rel="noopener noreferrer" data-stsw-pro-cta>' . esc_html__( 'See Helpdesk Pro', 'support-ticket-system-for-woocommerce' ) . '</a>';
-			echo '<div class="hd-page hd-pro" data-stsw-pro-page>';
-			WPFactory_WC_STS_UI::page_head( __( 'Pro features', 'support-ticket-system-for-woocommerce' ), __( 'Everything you use now keeps working, and AI replies are included in this plugin. Helpdesk Pro is a separate plugin that adds the following.', 'support-ticket-system-for-woocommerce' ), $cta );
-			echo '<ul class="hd-pro__grid">';
+			$cta = '<a class="btn btn-primary" href="' . esc_url( self::URL ) . '" target="_blank" rel="noopener noreferrer" data-stsw-pro-cta>' . esc_html__( 'See Helpdesk Pro', 'support-ticket-system-for-woocommerce' ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ) . '</span></a>';
+			echo '<div class="page narrow" data-stsw-pro-page>';
+			WPFactory_WC_STS_UI::page_head( __( 'What Helpdesk Pro adds', 'support-ticket-system-for-woocommerce' ), __( 'Everything you use now keeps working, and AI replies are included in this plugin. Helpdesk Pro is a separate plugin that adds the following.', 'support-ticket-system-for-woocommerce' ), $cta, __( 'Pro features', 'support-ticket-system-for-woocommerce' ) );
+			echo '<div class="stack"><div class="pro-features">';
 			foreach ( $this->features() as $key => $feature ) {
-				echo '<li class="hd-pro__card" data-feature="' . esc_attr( $key ) . '"><h3>' . wp_kses( WPFactory_WC_STS_UI::icon( $feature[0], 18 ), WPFactory_WC_STS_UI::svg_kses() ) . ' ' . esc_html( $feature[1] ) . '</h3><ul>';
+				echo '<section class="card" data-feature="' . esc_attr( $key ) . '" aria-labelledby="hd-pro-' . esc_attr( $key ) . '"><div class="card-head"><h2 class="card-title" id="hd-pro-' . esc_attr( $key ) . '">' . esc_html( $feature[1] ) . '</h2></div><ul class="pro-points">';
 				foreach ( $feature[2] as $point ) {
-					echo '<li>' . esc_html( $point ) . '</li>';
+					echo '<li class="row">' . esc_html( $point ) . '</li>';
 				}
-				echo '</ul></li>';
+				echo '</ul></section>';
 			}
-			echo '</ul>';
-			echo '<p class="hd-pro__cta">' . $cta . ' <span class="hd-help">' . esc_html__( 'Your tickets, replies and settings carry over when you install Pro.', 'support-ticket-system-for-woocommerce' ) . '</span></p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $cta escaped above.
 			echo '</div>';
+			echo '<div class="banner banner-info"><span>' . esc_html__( 'Your tickets, replies and settings carry over when you install Pro.', 'support-ticket-system-for-woocommerce' ) . '</span><a class="btn btn-text btn-sm" href="' . esc_url( self::URL ) . '" target="_blank" rel="noopener noreferrer" data-stsw-pro-cta>' . esc_html__( 'See Helpdesk Pro', 'support-ticket-system-for-woocommerce' ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ) . '</span></a></div>';
+			echo '</div></div>';
+		}
+
+		/**
+		 * Companies (a Pro feature): the Pro screen with no companies, a line pointing to Pro and the form locked.
+		 */
+		public function render_companies() {
+			if ( ! WPFactory_WC_STS_Inc::get_main_instance()->can_manage_tickets() ) {
+				return;
+			}
+			$fields = array(
+				'name'    => array( __( 'Name', 'support-ticket-system-for-woocommerce' ), '' ),
+				'domains' => array( __( 'Email domains', 'support-ticket-system-for-woocommerce' ), __( 'Customers with these domains join automatically. Comma separated.', 'support-ticket-system-for-woocommerce' ) ),
+				'members' => array( __( 'Members (account emails)', 'support-ticket-system-for-woocommerce' ), __( 'Comma separated. Emails without an account are skipped.', 'support-ticket-system-for-woocommerce' ) ),
+			);
+			echo '<div class="page narrow" data-stsw-companies-locked>';
+			WPFactory_WC_STS_UI::page_head( __( 'No companies yet', 'support-ticket-system-for-woocommerce' ), __( 'Group customers of the same business. Their tickets show the company, and colleagues can see each other\'s tickets when sharing is on.', 'support-ticket-system-for-woocommerce' ), '', __( 'Companies', 'support-ticket-system-for-woocommerce' ) );
+			echo '<div class="stack"><div class="banner banner-info"><span>' . esc_html__( 'Companies are part of Helpdesk Pro.', 'support-ticket-system-for-woocommerce' ) . '</span><a class="btn btn-text btn-sm" href="' . esc_url( self::URL ) . '" target="_blank" rel="noopener noreferrer" data-stsw-pro-cta>' . esc_html__( 'See Helpdesk Pro', 'support-ticket-system-for-woocommerce' ) . '<span class="screen-reader-text"> ' . esc_html__( '(opens in a new tab)', 'support-ticket-system-for-woocommerce' ) . '</span></a></div>';
+			echo '<div class="grid"><section class="card" aria-label="' . esc_attr__( 'Companies', 'support-ticket-system-for-woocommerce' ) . '"><div class="empty"><p class="row-title">' . esc_html__( 'No companies yet', 'support-ticket-system-for-woocommerce' ) . '</p>' . esc_html__( 'Companies you add show here, with their domains, members and tickets.', 'support-ticket-system-for-woocommerce' ) . '</div>';
+			echo '<div class="card-foot"><span class="small muted">' . esc_html__( 'Customers who joined before a company was added are not grouped automatically.', 'support-ticket-system-for-woocommerce' ) . '</span><button type="button" class="btn btn-text btn-sm" disabled>' . esc_html__( 'Match existing customers', 'support-ticket-system-for-woocommerce' ) . '</button></div></section>';
+			echo '<section class="card" aria-labelledby="hd-co-form-title"><div class="card-head"><h2 class="card-title" id="hd-co-form-title">' . esc_html__( 'Add company', 'support-ticket-system-for-woocommerce' ) . '</h2></div><fieldset class="card-body company-form" disabled><legend class="screen-reader-text">' . esc_html__( 'Add company (Helpdesk Pro)', 'support-ticket-system-for-woocommerce' ) . '</legend>';
+			foreach ( $fields as $key => $field ) {
+				echo '<div class="field"><label class="label" for="hd-co-' . esc_attr( $key ) . '">' . esc_html( $field[0] ) . '</label>';
+				echo 'members' === $key ? '<textarea class="input" id="hd-co-' . esc_attr( $key ) . '" rows="3"></textarea>' : '<input type="text" class="input" id="hd-co-' . esc_attr( $key ) . '" />';
+				echo '' !== $field[1] ? '<p class="hint">' . esc_html( $field[1] ) . '</p>' : '';
+				echo '</div>';
+			}
+			echo '<div class="company-share"><span class="label" id="hd-co-shared-label">' . esc_html__( 'Members see each other\'s tickets', 'support-ticket-system-for-woocommerce' ) . '</span>' . wp_kses(
+				WPFactory_WC_STS_UI::toggle(
+					'',
+					false,
+					array(
+						'aria-labelledby' => 'hd-co-shared-label',
+						'disabled'        => true,
+					)
+				),
+				WPFactory_WC_STS_UI::toggle_kses()
+			) . '</div></fieldset>';
+			echo '<div class="card-foot"><span></span><button type="button" class="btn btn-primary" disabled>' . esc_html__( 'Save company', 'support-ticket-system-for-woocommerce' ) . '</button></div></section></div></div></div>';
 		}
 	}
 

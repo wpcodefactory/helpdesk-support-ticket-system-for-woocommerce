@@ -390,7 +390,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 				return;
 			}
 			echo '<label class="screen-reader-text" for="stsw-insert-article">' . esc_html__( 'Insert a link to an article', 'support-ticket-system-for-woocommerce' ) . '</label>';
-			echo '<select id="stsw-insert-article" class="hd-pill hd-pill--ghost" data-hd-insert-select="stsw-inbox-reply"><option value="">' . esc_html__( 'Insert article', 'support-ticket-system-for-woocommerce' ) . '</option>';
+			echo '<select id="stsw-insert-article" data-hd-insert-select="stsw-inbox-reply"><option value="">' . esc_html__( 'Insert article', 'support-ticket-system-for-woocommerce' ) . '</option>';
 			foreach ( $articles as $article ) {
 				echo '<option value="' . esc_attr( get_the_title( $article ) . ': ' . get_permalink( $article ) ) . '">' . esc_html( get_the_title( $article ) ) . '</option>';
 			}
@@ -398,7 +398,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 		}
 
 		/**
-		 * Knowledge base tab: articles with their category and status.
+		 * Knowledge base tab: the help center address, the articles (search, status filter) and the categories.
 		 */
 		public function render_admin() {
 			$articles = get_posts(
@@ -410,28 +410,76 @@ if ( ! class_exists( 'WPFactory_WC_STS_KB' ) ) :
 					'order'          => 'DESC',
 				)
 			);
-			$new      = '<a class="hd-btn hd-btn--primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . wp_kses( WPFactory_WC_STS_UI::icon( 'plus', 16 ), WPFactory_WC_STS_UI::svg_kses() ) . ' ' . esc_html__( 'New article', 'support-ticket-system-for-woocommerce' ) . '</a>';
-			echo '<div class="hd-page">';
-			WPFactory_WC_STS_UI::page_head( __( 'Knowledge base', 'support-ticket-system-for-woocommerce' ), __( 'Answers customers can read on their own. Articles are suggested while customers write a ticket, and you can link them in replies.', 'support-ticket-system-for-woocommerce' ), $new );
-			echo '<p class="hd-help">';
-			$center = $this->get_page_id() ? get_permalink( $this->get_page_id() ) : home_url( '/' . $this->get_slug() . '/' );
-			echo esc_html__( 'Help center:', 'support-ticket-system-for-woocommerce' ) . ' <a href="' . esc_url( $center ) . '">' . esc_html( $center ) . '</a> · <a href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=' . self::TAXONOMY . '&post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'Manage categories', 'support-ticket-system-for-woocommerce' ) . '</a>';
-			echo '</p>';
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- list filters only.
+			$search = sanitize_text_field( wp_unslash( $_GET['q'] ?? '' ) );
+			$status = sanitize_key( wp_unslash( $_GET['status'] ?? '' ) );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			$status   = in_array( $status, array( 'publish', 'draft' ), true ) ? $status : '';
+			$new      = '<a class="btn btn-primary" href="' . esc_url( admin_url( 'post-new.php?post_type=' . self::POST_TYPE ) ) . '">' . esc_html__( 'New article', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			$manage   = admin_url( 'edit-tags.php?taxonomy=' . self::TAXONOMY . '&post_type=' . self::POST_TYPE );
+			$center   = $this->get_page_id() ? get_permalink( $this->get_page_id() ) : home_url( '/' . $this->get_slug() . '/' );
+			$path     = (string) wp_parse_url( $center, PHP_URL_PATH );
+			$count    = count( $articles );
+			$heading  = $count ? sprintf( /* translators: %s: number of articles. */ _n( '%s help article', '%s help articles', $count, 'support-ticket-system-for-woocommerce' ), number_format_i18n( $count ) ) : __( 'No help articles yet', 'support-ticket-system-for-woocommerce' );
+			$statuses = array(
+				''        => __( 'All', 'support-ticket-system-for-woocommerce' ),
+				'publish' => __( 'Published', 'support-ticket-system-for-woocommerce' ),
+				'draft'   => __( 'Draft', 'support-ticket-system-for-woocommerce' ),
+			);
+			echo '<div class="page narrow" data-stsw-kb>';
+			WPFactory_WC_STS_UI::page_head( $heading, __( 'Answers customers find on their own. Articles are suggested while customers write a ticket, and you can link them in replies.', 'support-ticket-system-for-woocommerce' ), $new, __( 'Knowledge base', 'support-ticket-system-for-woocommerce' ) );
+			echo '<div class="stack">';
+			echo '<div class="banner banner-info" data-stsw-kb-center><span>' . ( $this->get_page_id() ? esc_html__( 'Your help center is live at', 'support-ticket-system-for-woocommerce' ) : esc_html__( 'Your help center address is', 'support-ticket-system-for-woocommerce' ) ) . ' <b>' . esc_html( '' !== $path ? $path : $center ) . '</b></span><a class="btn btn-text btn-sm" href="' . esc_url( $center ) . '">' . esc_html__( 'View page', 'support-ticket-system-for-woocommerce' ) . '</a></div>';
+			echo '<div class="grid"><section class="card" aria-label="' . esc_attr__( 'Articles', 'support-ticket-system-for-woocommerce' ) . '">';
 			if ( ! $articles ) {
-				echo '<section class="hd-card hd-emptystate"><span class="hd-emptystate__icon">' . wp_kses( WPFactory_WC_STS_UI::icon( 'book', 22 ), WPFactory_WC_STS_UI::svg_kses() ) . '</span><h2 class="hd-h2">' . esc_html__( 'No articles yet', 'support-ticket-system-for-woocommerce' ) . '</h2><p class="hd-muted">' . esc_html__( 'Start with the questions you answer most: shipping times, returns, and how to track an order.', 'support-ticket-system-for-woocommerce' ) . '</p></section></div>';
-				return;
-			}
-			echo '<section class="hd-card hd-card--list"><table class="hd-table"><thead><tr><th scope="col">' . esc_html__( 'Title', 'support-ticket-system-for-woocommerce' ) . '</th><th scope="col">' . esc_html__( 'Category', 'support-ticket-system-for-woocommerce' ) . '</th><th scope="col">' . esc_html__( 'Status', 'support-ticket-system-for-woocommerce' ) . '</th><th scope="col">' . esc_html__( 'Updated', 'support-ticket-system-for-woocommerce' ) . '</th></tr></thead><tbody>';
-			foreach ( $articles as $article ) {
-				$cats = get_the_terms( $article, self::TAXONOMY );
-				$obj  = get_post_status_object( $article->post_status );
-				echo '<tr><td><a href="' . esc_url( (string) get_edit_post_link( $article->ID ) ) . '"><strong>' . esc_html( get_the_title( $article ) ? get_the_title( $article ) : __( '(no title)', 'support-ticket-system-for-woocommerce' ) ) . '</strong></a>';
-				if ( 'publish' === $article->post_status ) {
-					echo ' <a class="hd-help hd-inline-link" href="' . esc_url( get_permalink( $article ) ) . '">' . esc_html__( 'View', 'support-ticket-system-for-woocommerce' ) . '<span class="screen-reader-text"> ' . esc_html( get_the_title( $article ) ) . '</span></a>';
+				echo '<div class="empty"><p class="row-title">' . esc_html__( 'No articles yet', 'support-ticket-system-for-woocommerce' ) . '</p>' . esc_html__( 'Start with the questions you answer most: shipping times, returns, and how to track an order.', 'support-ticket-system-for-woocommerce' ) . '</div>';
+			} else {
+				echo '<form method="get" class="list-tools" role="search" data-hd-filter="hd-kb-rows"><input type="hidden" name="page" value="' . esc_attr( WPFACTORY_WC_STS_PAGE ) . '" /><input type="hidden" name="tab" value="kb" />';
+				echo '<input type="search" class="input" id="hd-kb-q" name="q" value="' . esc_attr( $search ) . '" placeholder="' . esc_attr__( 'Search articles', 'support-ticket-system-for-woocommerce' ) . '" aria-label="' . esc_attr__( 'Search articles', 'support-ticket-system-for-woocommerce' ) . '" />';
+				echo '<select class="select kb-status" id="hd-kb-status" name="status" aria-label="' . esc_attr__( 'Status', 'support-ticket-system-for-woocommerce' ) . '">';
+				foreach ( $statuses as $value => $label ) {
+					echo '<option value="' . esc_attr( $value ) . '"' . selected( $status, $value, false ) . '>' . esc_html( $label ) . '</option>';
 				}
-				echo '</td><td>' . esc_html( $cats && ! is_wp_error( $cats ) ? implode( ', ', wp_list_pluck( $cats, 'name' ) ) : '' ) . '</td><td><span class="hd-status">' . esc_html( $obj ? $obj->label : $article->post_status ) . '</span></td><td>' . esc_html( human_time_diff( strtotime( $article->post_modified_gmt . ' UTC' ) ) ) . '</td></tr>';
+				echo '</select><noscript><button type="submit" class="btn btn-secondary btn-sm">' . esc_html__( 'Filter', 'support-ticket-system-for-woocommerce' ) . '</button></noscript></form><div id="hd-kb-rows">';
+				$shown = 0;
+				foreach ( $articles as $article ) {
+					$cats      = get_the_terms( $article, self::TAXONOMY );
+					$cats      = $cats && ! is_wp_error( $cats ) ? implode( ', ', wp_list_pluck( $cats, 'name' ) ) : '';
+					$published = 'publish' === $article->post_status;
+					$filter    = $published ? 'publish' : 'draft';
+					$name      = get_the_title( $article ) ? get_the_title( $article ) : __( '(no title)', 'support-ticket-system-for-woocommerce' );
+					$match     = ( '' === $search || false !== stripos( $name . ' ' . $cats, $search ) ) && ( '' === $status || $status === $filter );
+					$shown    += $match ? 1 : 0;
+					$obj       = get_post_status_object( $article->post_status );
+					/* translators: %s: time, e.g. "3 days". */
+					$meta = array_filter( array( $cats, $published ? sprintf( __( 'Updated %s ago', 'support-ticket-system-for-woocommerce' ), human_time_diff( strtotime( $article->post_modified_gmt . ' UTC' ) ) ) : __( 'Not published yet', 'support-ticket-system-for-woocommerce' ) ) );
+					echo '<div class="row" data-hd-filter-text="' . esc_attr( strtolower( $name . ' ' . $cats ) ) . '" data-hd-filter-status="' . esc_attr( $filter ) . '"' . ( $match ? '' : ' hidden' ) . '><div><p class="row-title">' . esc_html( $name ) . '</p><div class="row-meta">' . esc_html( implode( ' · ', $meta ) );
+					if ( $published ) {
+						echo ' · <a href="' . esc_url( get_permalink( $article ) ) . '">' . esc_html__( 'View', 'support-ticket-system-for-woocommerce' ) . '<span class="screen-reader-text"> ' . esc_html( $name ) . '</span></a>';
+					}
+					echo '</div></div><div class="row-actions">' . WPFactory_WC_STS_UI::chip( $published ? __( 'Published', 'support-ticket-system-for-woocommerce' ) : ( $obj ? $obj->label : $article->post_status ), $published ? 'ok' : 'neutral' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- chip escaped.
+					/* translators: %s: article title. */
+					echo '<a class="btn btn-text btn-sm" href="' . esc_url( (string) get_edit_post_link( $article->ID ) ) . '" aria-label="' . esc_attr( sprintf( __( 'Edit %s', 'support-ticket-system-for-woocommerce' ), $name ) ) . '">' . esc_html__( 'Edit', 'support-ticket-system-for-woocommerce' ) . '</a></div></div>';
+				}
+				echo '<div class="empty" data-hd-filter-none' . ( $shown ? ' hidden' : '' ) . '><p class="row-title">' . esc_html__( 'No articles match', 'support-ticket-system-for-woocommerce' ) . '</p><a class="btn btn-text btn-sm" href="' . esc_url( WPFactory_WC_STS_UI::url( 'kb' ) ) . '">' . esc_html__( 'Show all', 'support-ticket-system-for-woocommerce' ) . '</a></div></div>';
 			}
-			echo '</tbody></table></section></div>';
+			echo '</section>';
+			$terms = get_terms(
+				array(
+					'taxonomy'   => self::TAXONOMY,
+					'hide_empty' => false,
+				)
+			);
+			echo '<section class="card" aria-labelledby="hd-kb-cats" data-stsw-kb-cats><div class="card-head"><h2 class="card-title" id="hd-kb-cats">' . esc_html__( 'Categories', 'support-ticket-system-for-woocommerce' ) . '</h2><a class="btn btn-text btn-sm" href="' . esc_url( $manage ) . '">' . esc_html__( 'Manage', 'support-ticket-system-for-woocommerce' ) . '<span class="screen-reader-text"> ' . esc_html__( 'categories', 'support-ticket-system-for-woocommerce' ) . '</span></a></div>';
+			if ( ! $terms || is_wp_error( $terms ) ) {
+				echo '<div class="card-body small muted">' . esc_html__( 'No categories yet. Group articles by topic, for example Orders, Shipping or Returns.', 'support-ticket-system-for-woocommerce' ) . '</div>';
+			} else {
+				foreach ( $terms as $term ) {
+					/* translators: %s: number of articles. */
+					echo '<div class="row"><p class="row-title small">' . esc_html( $term->name ) . '</p><span class="small muted" aria-label="' . esc_attr( sprintf( _n( '%s article', '%s articles', (int) $term->count, 'support-ticket-system-for-woocommerce' ), number_format_i18n( (int) $term->count ) ) ) . '">' . esc_html( number_format_i18n( (int) $term->count ) ) . '</span></div>';
+				}
+			}
+			echo '</section></div></div></div>';
 		}
 
 		/**

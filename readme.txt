@@ -115,6 +115,7 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 3.1.0 - 23/11/2026 =
+$L
 * New - Dashboard: Helpdesk opens on counters that lead to each inbox view, the tickets waiting longest, your own tickets, new tickets per day, the setup checklist and the AI status.
 * New - Support page: the setup wizard and Settings > General can put the support form on one of your pages, or create a Support page, so the page is never empty.
 * Improved - Inbox: status, priority, assignee and tags moved to a Ticket details card next to the conversation; messages use the full width; the AI tools are one AI menu; Ctrl+Enter is shown as a tip on Send reply.

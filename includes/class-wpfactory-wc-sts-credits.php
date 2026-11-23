@@ -77,6 +77,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		public function __construct() {
 			add_action( 'init', array( $this, 'register_product' ), 5 );
 			add_filter( 'wpfactory_wc_sts_settings_sections', array( $this, 'settings' ) );
+			add_action( 'wpfactory_wc_sts_settings_before_save', array( $this, 'map_choice' ) );
 			add_action( 'wpfactory_wc_sts_inbox_reply_tools', array( $this, 'render_buttons' ), 20 );
 			add_action( 'wp_ajax_wpfactory_wc_sts_credits_ai', array( $this, 'ajax' ) );
 			add_action( 'wpfactory_wc_sts_header_actions', array( $this, 'header_pill' ), 5 );
@@ -116,17 +117,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 			if ( ! $this->library() || ! current_user_can( 'manage_woocommerce' ) || ( ! $on && get_user_meta( get_current_user_id(), self::META_PROMO_HIDDEN, true ) ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
 				return;
 			}
-			echo '<p class="hd-ai-promo" data-stsw-ai-promo>';
+			echo '<div class="menu-note ai-promo" data-stsw-ai-promo>';
 			if ( $on ) {
-				echo '<span>' . esc_html__( 'AI replies are on, but this site is not connected to WPFactory AI yet.', 'support-ticket-system-for-woocommerce' ) . '</span> ';
-				echo '<a href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Connect', 'support-ticket-system-for-woocommerce' ) . '</a>';
+				echo '<p class="small">' . esc_html__( 'AI replies are on, but this site is not connected to WPFactory AI yet.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+				echo '<a class="btn btn-text btn-sm" href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Connect', 'support-ticket-system-for-woocommerce' ) . '</a>';
 			} else {
 				/* translators: %d: number of free credits. */
-				echo '<span>' . esc_html( sprintf( __( 'Draft, improve, summarize and translate replies with AI. Create a free WPFactory AI account and get %d free credits a month (about one credit per draft).', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</span> ';
-				echo '<a href="' . esc_url( $this->settings_url() ) . '" data-stsw-ai-promo-setup>' . esc_html__( 'Set up AI', 'support-ticket-system-for-woocommerce' ) . '</a> ';
-				echo '<a class="hd-ai-promo__hide" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_ai_promo_hide' ), 'wpfactory_wc_sts_ai_promo_hide' ) ) . '">' . esc_html__( 'Hide', 'support-ticket-system-for-woocommerce' ) . '</a>';
+				echo '<p class="small">' . esc_html( sprintf( __( 'Draft, improve, summarize and translate replies with AI. Create a free WPFactory AI account and get %d free credits a month (about one credit per draft).', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</p>';
+				echo '<a class="btn btn-text btn-sm" href="' . esc_url( $this->settings_url() ) . '" data-stsw-ai-promo-setup>' . esc_html__( 'Set up AI', 'support-ticket-system-for-woocommerce' ) . '</a>';
+				echo '<a class="btn btn-text btn-sm ai-promo-hide" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=wpfactory_wc_sts_ai_promo_hide' ), 'wpfactory_wc_sts_ai_promo_hide' ) ) . '">' . esc_html__( 'Hide', 'support-ticket-system-for-woocommerce' ) . '</a>';
 			}
-			echo '</p>';
+			echo '</div>';
 		}
 
 		/**
@@ -448,6 +449,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 				'label'  => __( 'AI', 'support-ticket-system-for-woocommerce' ),
 				'group'  => 'advanced',
 				'intro'  => __( 'When a team member clicks an AI button, the ticket conversation and the order details are sent to WPFactory AI and paid with WPFactory AI credits. Nothing is sent otherwise, and drafts are never sent to customers without a person reviewing them.', 'support-ticket-system-for-woocommerce' ),
+				'render' => array( $this, 'render_settings' ),
 				'fields' => array(
 					'@wpfactory_wc_sts_ai_features'     => array(
 						'type'   => 'html',
@@ -482,56 +484,125 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		}
 
 		/**
+		 * Settings > AI (free edition): how AI connects (WPFactory AI credits; your own key is a Pro choice), limits,
+		 * and what AI does.
+		 *
+		 * @param WPFactory_WC_STS_Init $init Settings page.
+		 * @param string                $id   Section ID.
+		 */
+		public function render_settings( $init, $id ) {
+			$enabled = '1' === (string) get_option( 'wpfactory_wc_sts_ai_enabled', '' );
+			foreach ( array( '@wpfactory_wc_sts_ai_enabled', '@wpfactory_wc_sts_ai_connection', '@wpfactory_wc_sts_ai_features' ) as $key ) {
+				$init->mark( $id, $key );
+			}
+			$balance = $this->is_connected() ? $this->balance() : null;
+			/* translators: %s: number of credits, for example "95 credits". */
+			$credits = null !== $balance ? sprintf( __( '%s left. Nothing to set up.', 'support-ticket-system-for-woocommerce' ), $this->credits_label( $balance ) ) : sprintf( /* translators: %d: free credits a month. */ __( 'Free account with %d free credits a month. Nothing else to set up.', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() );
+			$foot    = $enabled
+				? '<span class="small muted">' . esc_html__( 'AI is on with WPFactory AI credits.', 'support-ticket-system-for-woocommerce' ) . '</span><button type="submit" class="btn btn-text btn-sm" name="stsw_ai_mode" value="off">' . esc_html__( 'Turn AI off', 'support-ticket-system-for-woocommerce' ) . '</button>'
+				: '<span class="small muted">' . esc_html__( 'AI stays off until you choose and save.', 'support-ticket-system-for-woocommerce' ) . '</span>';
+			$init->card_start(
+				__( 'How should AI connect?', 'support-ticket-system-for-woocommerce' ),
+				array(
+					'id'     => $id,
+					'action' => '',
+					'intro'  => __( 'Used for reply drafts, summaries, translations and the chat assistant. Off until you choose.', 'support-ticket-system-for-woocommerce' ),
+				)
+			);
+			echo '<div class="card-body stack">';
+			$this->render_features( 'notice' );
+			echo '<input type="hidden" name="stsw_ai_mode" value="" />';
+			echo '<div class="choices" role="radiogroup" aria-label="' . esc_attr__( 'How AI connects', 'support-ticket-system-for-woocommerce' ) . '">';
+			echo '<label class="choice"><input type="radio" name="stsw_ai_mode" value="credits"' . checked( $enabled, true, false ) . ' /><span><b>' . esc_html__( 'WPFactory AI credits', 'support-ticket-system-for-woocommerce' ) . '</b><span class="small muted">' . esc_html( $credits ) . '</span></span></label>';
+			echo '<label class="choice is-locked"><input type="radio" name="stsw_ai_mode" value="key" disabled /><span><b>' . esc_html__( 'Your own API key', 'support-ticket-system-for-woocommerce' ) . ' ' . WPFactory_WC_STS_UI::chip( __( 'Pro', 'support-ticket-system-for-woocommerce' ), 'info' ) . '</b><span class="small muted">' . esc_html__( 'OpenAI, Anthropic or Google Gemini with your own key, in Helpdesk Pro.', 'support-ticket-system-for-woocommerce' ) . '</span></span></label>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in chip().
+			echo '</div><div class="choice-detail" data-hd-when="stsw_ai_mode=credits">';
+			$this->render_connection();
+			echo '</div></div>';
+			$init->card_end( $foot );
+
+			$foot = '';
+			if ( null !== $balance ) {
+				/* translators: %s: number of credits, for example "95 credits". */
+				$foot = '<span class="small muted">' . esc_html( sprintf( __( 'Credits left: %s', 'support-ticket-system-for-woocommerce' ), $this->credits_label( $balance ) ) ) . '</span><a class="btn btn-text btn-sm" href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Usage and account', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			}
+			$init->card( $id, __( 'Limits', 'support-ticket-system-for-woocommerce' ), array( '@wpfactory_wc_sts_ai_chat', '@wpfactory_wc_sts_ai_chat_user' ), array( 'foot' => $foot ) );
+
+			$init->card_start( __( 'What AI does', 'support-ticket-system-for-woocommerce' ) );
+			$this->render_features( 'list' );
+			$init->rows( $id, array( '@wpfactory_wc_sts_ai_quality', '@wpfactory_wc_sts_ai_instructions' ) );
+			$init->card_end();
+			$init->card( $id, __( 'More AI settings', 'support-ticket-system-for-woocommerce' ) );
+		}
+
+		/**
+		 * Settings > AI: the connection choice becomes the posted "AI on" value (the nonce is checked by the core).
+		 *
+		 * @param string[] $tabs Sections saved.
+		 */
+		public function map_choice( $tabs ) {
+			if ( $this->handled_elsewhere() || ! isset( $_POST['stsw_ai_mode'] ) || ! array_intersect( (array) $tabs, array( '', 'ai' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked by the core.
+				return;
+			}
+			$mode                                 = sanitize_key( wp_unslash( $_POST['stsw_ai_mode'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked by the core.
+			$_POST['wpfactory_wc_sts_ai_enabled'] = 'credits' === $mode ? '1' : '';
+		}
+
+		/**
 		 * Connection status: connect, or credits left and where to buy more.
 		 */
 		public function render_connection() {
-			echo '<div class="hd-credits" data-stsw-credits>';
+			echo '<div class="credits-box" data-stsw-credits>';
 			if ( ! $this->library() ) {
-				echo '<p class="hd-help">' . esc_html__( 'WPFactory AI is not available in this copy of the plugin.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				echo '<p class="hint">' . esc_html__( 'WPFactory AI is not available in this copy of the plugin.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
 				return;
 			}
 			if ( ! $this->is_connected() ) {
 				/* translators: %d: number of free credits. */
-				echo '<p class="hd-help">' . esc_html( sprintf( __( 'Create a free WPFactory AI account with your email address (we send you a 6-digit code) and this site is connected. Each account gets %d free credits a month for Helpdesk on a live site (https); buy more when you need them (1 credit = 1 cent). Test and local sites can use bought credits.', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</p>';
+				echo '<p class="hint">' . esc_html( sprintf( __( 'Create a free WPFactory AI account with your email address (we send you a 6-digit code) and this site is connected. Each account gets %d free credits a month for Helpdesk on a live site (https); buy more when you need them (1 credit = 1 cent). Test and local sites can use bought credits.', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</p>';
 				if ( current_user_can( 'manage_options' ) ) {
-					echo '<p><a class="hd-btn hd-btn--primary" data-stsw-credits-connect href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Create a free account and connect', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
+					echo '<p><a class="btn btn-primary btn-sm" data-stsw-credits-connect href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Create a free account and connect', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
 				} else {
-					echo '<p class="hd-help">' . esc_html__( 'Ask a site administrator to connect the site.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+					echo '<p class="hint">' . esc_html__( 'Ask a site administrator to connect the site.', 'support-ticket-system-for-woocommerce' ) . '</p>';
 				}
 				echo '</div>';
 				return;
 			}
 			$balance = $this->balance();
-			echo '<p data-stsw-credits-balance>';
+			echo '<p class="row-title" data-stsw-credits-balance>';
 			if ( null === $balance ) {
 				esc_html_e( 'Connected. The balance could not be read right now.', 'support-ticket-system-for-woocommerce' );
 			} else {
 				/* translators: %s: number of credits. */
 				echo esc_html( sprintf( _n( 'Connected: %s credit available.', 'Connected: %s credits available.', $balance, 'support-ticket-system-for-woocommerce' ), number_format_i18n( $balance ) ) );
 			}
-			echo '</p><p><a class="hd-btn" href="' . esc_url( $this->library()->buy_url() ) . '">' . esc_html__( 'Buy credits', 'support-ticket-system-for-woocommerce' ) . '</a> <a class="hd-btn" href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Usage and account', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
+			echo '</p><p class="credits-actions"><a class="btn btn-secondary btn-sm" href="' . esc_url( $this->library()->buy_url() ) . '">' . esc_html__( 'Buy credits', 'support-ticket-system-for-woocommerce' ) . '</a><a class="btn btn-text btn-sm" href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Usage and account', 'support-ticket-system-for-woocommerce' ) . '</a></p></div>';
 		}
 
 		/**
 		 * What the AI does (tools and chat assistant), and a notice while AI is on but the site is not connected.
+		 *
+		 * @param string $part `all`, `notice` (the not connected notice only) or `list` (the list only).
 		 */
-		public function render_features() {
-			if ( ! $this->handled_elsewhere() && ! $this->is_connected() ) {
+		public function render_features( $part = 'all' ) {
+			if ( 'list' !== $part && ! $this->handled_elsewhere() && ! $this->is_connected() ) {
 				$hidden = '1' === (string) get_option( 'wpfactory_wc_sts_ai_enabled', '' ) ? '' : ' hidden';
-				echo '<p class="hd-notice hd-notice--warning" data-stsw-ai-notconnected' . esc_attr( $hidden ) . '><span>' . esc_html__( 'AI replies are on, but this site is not connected to WPFactory AI yet.', 'support-ticket-system-for-woocommerce' ) . '</span> <a href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Connect', 'support-ticket-system-for-woocommerce' ) . '</a></p>';
+				echo '<div class="banner banner-warn" data-stsw-ai-notconnected' . esc_attr( $hidden ) . '><span>' . esc_html__( 'AI replies are on, but this site is not connected to WPFactory AI yet.', 'support-ticket-system-for-woocommerce' ) . '</span><a class="btn btn-text btn-sm" href="' . esc_url( $this->screen_url() ) . '">' . esc_html__( 'Connect', 'support-ticket-system-for-woocommerce' ) . '</a></div>';
+			}
+			if ( 'notice' === $part ) {
+				return;
 			}
 			$items         = $this->tools();
 			$items['chat'] = array( __( 'Chat assistant', 'support-ticket-system-for-woocommerce' ), __( 'Answers live chat questions from your help articles, day and night, and hands the chat to your team when the articles do not cover it.', 'support-ticket-system-for-woocommerce' ) );
-			echo '<ul class="hd-ai-features" data-stsw-ai-features>';
+			echo '<ul class="ai-features" data-stsw-ai-features>';
 			foreach ( $items as $task => $item ) {
-				echo '<li data-task="' . esc_attr( $task ) . '"><strong>' . esc_html( $item[0] ) . '</strong><span>' . esc_html( $item[1] ) . '</span></li>';
+				echo '<li class="row" data-task="' . esc_attr( $task ) . '"><div><p class="row-title">' . esc_html( $item[0] ) . '</p><div class="row-meta">' . esc_html( $item[1] ) . '</div></div></li>';
 			}
 			echo '</ul>';
 			if ( $this->handled_elsewhere() ) {
 				return;
 			}
 			/* translators: %d: number of free credits. */
-			echo '<p class="hd-help">' . esc_html( sprintf( __( 'Included in the free plugin. A free WPFactory AI account gets %d credits a month on a live site, about one credit per draft.', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</p>';
+			echo '<p class="card-intro">' . esc_html( sprintf( __( 'Included in the free plugin. A free WPFactory AI account gets %d credits a month on a live site, about one credit per draft.', 'support-ticket-system-for-woocommerce' ), $this->free_monthly() ) ) . '</p>';
 		}
 
 		/**
@@ -547,9 +618,13 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 			 * @param bool $on In use.
 			 */
 			$on = (bool) apply_filters( 'wpfactory_wc_sts_ai_uses_credits', ! $this->handled_elsewhere() && $this->is_enabled() );
-			if ( $on ) {
-				echo wp_kses_post( $this->library()->pill( self::PRODUCT ) );
+			if ( ! $on ) {
+				return;
 			}
+			$balance = $this->balance();
+			/* translators: %s: number of credits, for example "95 credits". */
+			$text = null === $balance ? __( 'AI credits', 'support-ticket-system-for-woocommerce' ) : sprintf( __( 'AI: %s', 'support-ticket-system-for-woocommerce' ), $this->credits_label( $balance ) );
+			echo '<a class="btn btn-secondary btn-sm" href="' . esc_url( $this->screen_url() ) . '" data-stsw-credits-pill>' . esc_html( $text ) . '</a>';
 		}
 
 		/**
@@ -561,29 +636,46 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 			if ( $this->handled_elsewhere() ) {
 				return; // Pro decides what shows, then calls render_tools().
 			}
+			ob_start();
 			if ( ! $this->is_enabled() ) {
 				$this->render_promo();
+				$promo = (string) ob_get_clean();
+				if ( '' !== $promo ) {
+					$this->render_tools( $ticket_id, $promo, false );
+				}
 				return;
 			}
 			if ( ! $this->is_connected() ) {
 				$this->render_promo( true );
 			}
-			$this->render_tools( $ticket_id );
+			$this->render_tools( $ticket_id, (string) ob_get_clean() );
 		}
 
 		/**
-		 * The AI tool buttons and their answer area.
+		 * The "Draft with AI" menu of the composer: the four AI tasks (their answers show under the reply box), more
+		 * items from other modules, and a notice when AI still needs setting up.
 		 *
-		 * @param int $ticket_id Ticket ID.
+		 * @param int    $ticket_id Ticket ID.
+		 * @param string $notice    Notice at the top of the menu (HTML).
+		 * @param bool   $tasks     Show the AI tasks.
 		 */
-		public function render_tools( $ticket_id ) {
+		public function render_tools( $ticket_id, $notice = '', $tasks = true ) {
 			$url   = admin_url( 'admin-ajax.php' );
 			$nonce = wp_create_nonce( 'wpfactory_wc_sts_credits_ai' );
-			echo '<details class="stsw-credits-ai hd-menu hd-ai-tools" data-stsw-ai-menu><summary class="hd-btn hd-btn--sm hd-ai-tools__toggle">' . wp_kses( WPFactory_WC_STS_UI::icon( 'sparkle', 14 ), WPFactory_WC_STS_UI::svg_kses() ) . ' ' . esc_html__( 'AI', 'support-ticket-system-for-woocommerce' ) . '</summary><div class="hd-menu__panel hd-ai-tools__panel" role="group" aria-label="' . esc_attr__( 'AI tools', 'support-ticket-system-for-woocommerce' ) . '">';
-			foreach ( $this->tools() as $task => $tool ) {
-				echo '<button type="button" class="hd-menu__item hd-ai-tools__item" data-stsw-cai="' . esc_attr( $task ) . '" data-ticket="' . (int) $ticket_id . '" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $nonce ) . '" data-working="' . esc_attr__( 'Asking the AI...', 'support-ticket-system-for-woocommerce' ) . '" data-replace="' . esc_attr__( 'Replace the text in the reply box with the AI draft?', 'support-ticket-system-for-woocommerce' ) . '" data-empty="' . esc_attr__( 'Write a reply first, then click Improve my reply.', 'support-ticket-system-for-woocommerce' ) . '"><strong>' . esc_html( $tool[0] ) . '</strong><span>' . esc_html( $tool[1] ) . '</span></button>';
+			echo '<details class="menu ai-menu stsw-credits-ai" data-stsw-ai-menu><summary class="btn btn-text btn-sm">' . esc_html__( 'Draft with AI', 'support-ticket-system-for-woocommerce' ) . '</summary><div class="menu-panel" role="group" aria-label="' . esc_attr__( 'AI tools', 'support-ticket-system-for-woocommerce' ) . '">';
+			echo wp_kses_post( $notice );
+			if ( $tasks ) {
+				foreach ( $this->tools() as $task => $tool ) {
+					echo '<button type="button" class="menu-item" data-stsw-cai="' . esc_attr( $task ) . '" data-ticket="' . (int) $ticket_id . '" data-url="' . esc_url( $url ) . '" data-nonce="' . esc_attr( $nonce ) . '" data-working="' . esc_attr__( 'Asking the AI...', 'support-ticket-system-for-woocommerce' ) . '" data-replace="' . esc_attr__( 'Replace the text in the reply box with the AI draft?', 'support-ticket-system-for-woocommerce' ) . '" data-empty="' . esc_attr__( 'Write a reply first, then click Improve my reply.', 'support-ticket-system-for-woocommerce' ) . '"><b>' . esc_html( $tool[0] ) . '</b><span>' . esc_html( $tool[1] ) . '</span></button>';
+				}
+				/**
+				 * More items in the "Draft with AI" menu (Pro: Suggest a resolution).
+				 *
+				 * @param int $ticket_id Ticket ID.
+				 */
+				do_action( 'wpfactory_wc_sts_inbox_ai_items', $ticket_id );
 			}
-			echo '</div></details><div id="stsw-credits-ai-out" class="hd-help hd-ai-out" aria-live="polite"></div>';
+			echo '</div></details>';
 		}
 
 		/**

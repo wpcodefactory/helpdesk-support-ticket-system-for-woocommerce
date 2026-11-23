@@ -1,1981 +1,3119 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - admin design.
  *
- * Every rule is scoped under .wpf-hd so nothing leaks into other wp-admin screens.
+ * Every rule is scoped under .hd-app (the wrapper of each plugin screen), so nothing leaks into wp-admin or other
+ * plugins. Loaded on the plugin screens only. Components: buttons (.btn-primary, .btn-secondary, .btn-text,
+ * .btn-danger), chips (status only), cards, rows, settings rows, segmented controls, underline tabs, toggles,
+ * banners, tiles, tables and the sticky save bar.
  *
  * @author WPFactory
  */
 
 /* Tokens */
-.wpf-hd {
-	--hd-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	--hd-font-mono: ui-monospace, Menlo, Consolas, monospace;
-	--hd-text-xs: 11px;
-	--hd-text-sm: 12px;
-	--hd-text-md: 13px;
-	--hd-text-base: 14px;
-	--hd-text-lg: 16px;
-	--hd-text-xl: 20px;
-	--hd-text-2xl: 24px;
-	--hd-bg: #f6f7f9;
-	--hd-surface: #fff;
-	--hd-surface-muted: #f9fafb;
-	--hd-surface-sunken: #fcfcfd;
-	--hd-hover: #f2f4f7;
-	--hd-border: #e4e7ec;
-	--hd-border-strong: #d0d5dd;
-	--hd-divider: #f2f4f7;
-	--hd-text: #101828;
-	--hd-text-2: #344054;
-	--hd-text-muted: #475467;
-	--hd-icon-muted: #667085;
-	--hd-accent: #3858e9;
-	--hd-accent-hover: #2a46c9;
-	--hd-accent-strong: #1d35b4;
-	--hd-accent-soft: #eef1fd;
-	--hd-accent-selected: #f5f7ff;
-	--hd-accent-border: #dbe2fb;
-	--hd-prio-high-fg: #b93815;
-	--hd-prio-high-bg: #fef3ee;
-	--hd-prio-high-dot: #e8590c;
-	--hd-prio-normal-fg: #067647;
-	--hd-prio-normal-bg: #ecfdf3;
-	--hd-prio-normal-dot: #16a34a;
-	--hd-prio-low-fg: #1d4ed8;
-	--hd-prio-low-bg: #eff4ff;
-	--hd-prio-low-dot: #2563eb;
-	--hd-note-bg: #fffaeb;
-	--hd-note-bg-2: #fffcf0;
-	--hd-note-border: #fec84b;
-	--hd-note-tag-bg: #fef0c7;
-	--hd-note-fg: #93370d;
-	--hd-warn-border: #fedf89;
-	--hd-warn-fg: #7a2e0e;
-	--hd-success-bg: #ecfdf3;
-	--hd-success-fg: #15803d;
-	--hd-danger: #b42318;
-	--hd-danger-bg: #fef3f2;
-	--hd-radius-sm: 6px;
-	--hd-radius: 8px;
-	--hd-radius-lg: 12px;
-	--hd-radius-xl: 16px;
-	--hd-radius-pill: 999px;
-	--hd-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
-	--hd-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
-	--hd-control-h: 40px;
-	--hd-control-h-sm: 34px;
-	--hd-gap: 16px;
-	font-family: var(--hd-font);
-	font-size: var(--hd-text-base);
-	color: var(--hd-text);
-	line-height: 1.5;
+.hd-app {
+	--bg: #f5f1e6;
+	--surface: #fff;
+	--surface-2: #faf7ef;
+	--line: #e6e0cf;
+	--line-strong: #cfc8b4;
+	--ink: #171509;
+	--muted: #5e5a4c;
+	--accent: #6bbfff;
+	--accent-hover: #56b2f7;
+	--accent-ink: #0b4f86;
+	--accent-soft: #eaf5ff;
+	--accent-line: #b9dcf7;
+	--ok: #1f7a43;
+	--ok-soft: #e7f5ec;
+	--warn: #8a5200;
+	--warn-soft: #fff4e0;
+	--warn-line: #e8c98a;
+	--bad: #b42318;
+	--bad-soft: #fdecea;
+	--neutral-soft: #efebdf;
+	--placeholder: #8a8573;
+	--on-ink: #fff;
+	--switch-off: #cfc8b4;
+	--logo: #3858e9;
+	--note: #fff8e1;
+	--note-line: #e8c98a;
+	--r-card: 16px;
+	--r-ctl: 10px;
+	--r-pill: 999px;
+	--s1: 4px;
+	--s2: 8px;
+	--s3: 12px;
+	--s4: 16px;
+	--s5: 20px;
+	--s6: 24px;
+	--s8: 32px;
+	--font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	--mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	--bar-top: var(--wp-admin--admin-bar--height, 32px);
+	color-scheme: light;
+	background: var(--bg);
+	color: var(--ink);
+	font: 14px/1.45 var(--font);
 }
 
-.wpf-hd.wrap {
+/* Screen frame: the app fills the wp-admin content area. */
+.hd-app.wrap {
 	margin: 0 0 0 -20px;
 	padding: 0;
-	background: var(--hd-bg);
-	min-height: calc(100vh - 32px);
+	min-height: calc(100vh - var(--bar-top));
+}
+
+@media screen and (max-width: 782px) {
+	.hd-app {
+		--bar-top: 46px;
+	}
+
+	.hd-app.wrap {
+		margin-left: -10px;
+	}
+}
+
+.hd-app *,
+.hd-app *::before,
+.hd-app *::after {
+	box-sizing: border-box;
+}
+
+.hd-app a {
+	color: var(--accent-ink);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.hd-app a:hover {
+	text-decoration: underline;
+}
+
+.hd-app a:focus {
+	box-shadow: none;
+}
+
+.hd-app button,
+.hd-app input,
+.hd-app select,
+.hd-app textarea {
+	font-family: var(--font);
+}
+
+.hd-app h1,
+.hd-app h2,
+.hd-app h3,
+.hd-app h4 {
+	color: var(--ink);
+	padding: 0;
+}
+
+.hd-app p {
+	font-size: inherit;
+}
+
+.hd-app svg.icon {
+	flex: none;
+	vertical-align: middle;
+}
+
+.hd-app [hidden] {
+	display: none !important;
+}
+
+/* WordPress notices that do not belong to the plugin stay out of the plugin screens. */
+body.wpf-hd-screen #wpbody-content > .notice,
+body.wpf-hd-screen #wpbody-content > .error,
+body.wpf-hd-screen #wpbody-content > .updated,
+body.wpf-hd-screen #wpbody-content > .update-nag,
+body.wpf-hd-screen #wpbody-content > div.fs-notice,
+body.wpf-hd-screen #wpbody-content > .wrap > .notice:not(.hd-own) {
+	display: none !important;
 }
 
 body.wpf-hd-screen #wpcontent {
-	padding-left: 0;
+	background: #f5f1e6;
 }
 
 body.wpf-hd-screen #wpbody-content {
 	padding-bottom: 0;
 }
 
-body.wpf-hd-screen .wpf-hd.wrap {
-	margin-left: 0;
+body.wpf-hd-screen #wpfooter {
+	position: static;
 }
 
-.wpf-hd *,
-.wpf-hd *::before,
-.wpf-hd *::after {
-	box-sizing: border-box;
-}
-
-.wpf-hd .hd-icon {
-	flex: none;
-	vertical-align: middle;
-}
-
-.wpf-hd .hd-muted {
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd .hd-help {
-	display: block;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-mono {
-	font-family: var(--hd-font-mono);
-}
-
-.wpf-hd .hd-h1 {
-	margin: 0;
-	padding: 0;
-	font-size: var(--hd-text-xl);
-	font-weight: 600;
-	line-height: 1.3;
-	color: var(--hd-text);
-}
-
-.wpf-hd .hd-h2 {
-	margin: 0;
-	padding: 0;
-	font-size: var(--hd-text-lg);
-	font-weight: 600;
-	line-height: 1.4;
-	color: var(--hd-text);
-}
-
-.wpf-hd kbd {
-	display: inline-block;
-	min-width: 20px;
-	padding: 0 5px;
-	border: 1px solid var(--hd-border-strong);
-	border-bottom-width: 2px;
-	border-radius: 4px;
-	background: var(--hd-surface);
-	font-family: var(--hd-font-mono);
-	font-size: var(--hd-text-xs);
-	line-height: 18px;
-	text-align: center;
-	color: var(--hd-text-2);
-}
-
-/* Focus */
-.wpf-hd a:focus-visible,
-.wpf-hd button:focus-visible,
-.wpf-hd input:focus-visible,
-.wpf-hd select:focus-visible,
-.wpf-hd textarea:focus-visible,
-.wpf-hd summary:focus-visible,
-.wpf-hd [tabindex]:focus-visible {
-	outline: 2px solid var(--hd-accent);
-	outline-offset: 2px;
-	box-shadow: none;
-}
-
-/* Header */
-.wpf-hd .hd-header {
+/* Top bar */
+.hd-app .topbar {
 	display: flex;
-	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px 24px;
-	min-height: 64px;
-	padding: 0 24px;
-	background: var(--hd-surface);
-	border-bottom: 1px solid var(--hd-border);
+	justify-content: space-between;
+	gap: var(--s4);
+	background: var(--surface);
+	border-bottom: 1px solid var(--line);
+	padding: 10px var(--s4);
+	position: sticky;
+	top: var(--bar-top);
+	z-index: 50;
+	min-width: 0;
 }
 
-.wpf-hd .hd-brand {
+.hd-app .topbar .left {
+	display: flex;
+	align-items: center;
+	gap: var(--s4);
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.hd-app .brand {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	font-weight: 700;
+	font-size: 15px;
+	white-space: nowrap;
+	flex: none;
 }
 
-.wpf-hd .hd-logo {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
+.hd-app .brand-mark {
 	width: 32px;
 	height: 32px;
-	border-radius: var(--hd-radius);
-	background: var(--hd-accent);
-	color: #fff;
-}
-
-.wpf-hd .hd-brand__name {
-	font-size: var(--hd-text-lg);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-badge-pro {
-	padding: 1px 6px;
-	border-radius: 4px;
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-	font-size: var(--hd-text-xs);
-	font-weight: 700;
-	letter-spacing: 0.04em;
-}
-
-.wpf-hd .hd-tabs {
-	display: flex;
-	flex-wrap: wrap;
-	align-self: stretch;
-	gap: 4px;
-}
-
-.wpf-hd .hd-tab {
+	border-radius: 8px;
+	background: var(--logo);
+	color: var(--on-ink);
 	display: flex;
 	align-items: center;
-	padding: 0 12px;
-	min-height: 44px;
-	border-bottom: 2px solid transparent;
-	color: var(--hd-text-muted);
+	justify-content: center;
+	flex: none;
+}
+
+.hd-app .edition {
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--muted);
+	border: 1px solid var(--line-strong);
+	border-radius: 6px;
+	padding: 1px 6px;
+}
+
+.hd-app .nav {
+	display: flex;
+	gap: 2px;
+	align-items: center;
+	flex-wrap: nowrap;
+	min-width: 0;
+	overflow-x: auto;
+	scrollbar-width: thin;
+}
+
+.hd-app .nav a {
+	color: var(--ink);
 	font-weight: 500;
+	padding: 8px 12px;
+	border-radius: var(--r-pill);
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	white-space: nowrap;
+	flex: none;
+}
+
+.hd-app .nav a:hover {
+	background: var(--neutral-soft);
 	text-decoration: none;
 }
 
-.wpf-hd .hd-tab:hover {
-	color: var(--hd-text);
+.hd-app .nav a.on {
+	background: var(--ink);
+	color: var(--on-ink);
 }
 
-.wpf-hd .hd-tab[aria-current="page"] {
-	border-bottom-color: var(--hd-accent);
-	color: var(--hd-accent-strong);
+.hd-app .count {
+	font-size: 11px;
+	font-weight: 700;
+	background: var(--warn-soft);
+	color: var(--warn);
+	border-radius: var(--r-pill);
+	padding: 1px 7px;
+	font-variant-numeric: tabular-nums;
 }
 
-.wpf-hd .hd-header__spacer {
-	flex: 1;
+.hd-app .nav a.on .count {
+	background: var(--surface);
+	color: var(--ink);
 }
 
-.wpf-hd .hd-header__actions {
+.hd-app .top-right {
 	display: flex;
-	align-items: center;
 	gap: 8px;
-	padding: 10px 0;
-}
-
-/* Search */
-.wpf-hd .hd-search {
-	position: relative;
-	display: flex;
 	align-items: center;
+	flex: none;
 }
 
-.wpf-hd .hd-search > .hd-icon {
+.hd-app .search {
+	position: relative;
+	width: 260px;
+	display: block;
+	margin: 0;
+}
+
+.hd-app .search .input {
+	padding-right: 34px;
+}
+
+.hd-app .search kbd {
 	position: absolute;
-	left: 10px;
-	color: var(--hd-icon-muted);
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	font: 600 11px var(--mono);
+	color: var(--muted);
+	background: var(--neutral-soft);
+	border: 1px solid var(--line);
+	border-radius: 5px;
+	padding: 1px 6px;
 	pointer-events: none;
 }
 
-.wpf-hd .hd-search input[type="search"] {
-	width: 280px;
+@media (max-width: 1180px) {
+	.hd-app .topbar {
+		flex-wrap: wrap;
+	}
+
+	.hd-app .topbar .left {
+		flex-basis: 100%;
+	}
+}
+
+@media (max-width: 780px) {
+	.hd-app .top-right {
+		width: 100%;
+	}
+
+	.hd-app .search {
+		width: auto;
+		flex: 1 1 auto;
+	}
+}
+
+@media (max-width: 600px) {
+	.hd-app .topbar {
+		position: static;
+	}
+}
+
+/* Page */
+.hd-app .page {
+	max-width: 1480px;
+	margin: 0 auto;
+	padding: var(--s6) var(--s4) 64px;
+}
+
+.hd-app .page.narrow {
+	max-width: 1180px;
+}
+
+.hd-app .page-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	gap: var(--s4);
+	margin-bottom: var(--s5);
+	flex-wrap: wrap;
+}
+
+.hd-app .page-head > div:first-child {
+	min-width: 0;
 	max-width: 100%;
-	height: var(--hd-control-h-sm);
-	padding: 0 34px 0 34px;
-	border: 1px solid var(--hd-border-strong);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface-muted);
-	font-size: var(--hd-text-md);
 }
 
-.wpf-hd .hd-search kbd {
-	position: absolute;
-	right: 8px;
+.hd-app .eyebrow {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted);
 }
 
-.wpf-hd .hd-search--block {
-	margin-bottom: 8px;
+.hd-app h1,
+.hd-app .h1 {
+	font-size: 30px;
+	line-height: 1.15;
+	margin: 6px 0 0;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	text-wrap: balance;
 }
 
-.wpf-hd .hd-search--block input[type="search"] {
-	width: 100%;
+.hd-app .lead {
+	font-size: 15px;
+	color: var(--muted);
+	margin: 8px 0 0;
+	max-width: 760px;
 }
 
-/* Buttons */
-.wpf-hd .hd-btn {
-	display: inline-flex;
+.hd-app .head-actions {
+	display: flex;
+	gap: var(--s2);
 	align-items: center;
-	justify-content: center;
-	gap: 6px;
-	min-height: var(--hd-control-h-sm);
-	padding: 0 14px;
-	border: 1px solid var(--hd-border-strong);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-	color: var(--hd-text-2);
-	font: inherit;
-	font-size: var(--hd-text-md);
-	font-weight: 600;
-	line-height: 1;
-	text-decoration: none;
-	cursor: pointer;
-	white-space: nowrap;
+	flex-wrap: wrap;
+	max-width: 100%;
 }
 
-.wpf-hd .hd-btn:hover {
-	background: var(--hd-hover);
-	color: var(--hd-text);
+.hd-app .stack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s4);
+	min-width: 0;
 }
 
-.wpf-hd .hd-btn--primary {
-	border-color: var(--hd-accent);
-	background: var(--hd-accent);
-	color: #fff;
+.hd-app .grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	gap: var(--s6);
+	align-items: start;
 }
 
-.wpf-hd .hd-btn--primary:hover {
-	border-color: var(--hd-accent-hover);
-	background: var(--hd-accent-hover);
-	color: #fff;
-}
-
-.wpf-hd .hd-btn--sm {
-	min-height: 30px;
-	padding: 0 10px;
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-btn--ghost {
-	border-color: transparent;
-	background: transparent;
-	box-shadow: none;
-}
-
-.wpf-hd .hd-btn--danger-ghost {
-	border-color: transparent;
-	background: transparent;
-	box-shadow: none;
-	color: var(--hd-danger);
-}
-
-.wpf-hd .hd-btn--danger-ghost:hover {
-	background: var(--hd-danger-bg);
-	color: var(--hd-danger);
-}
-
-.wpf-hd .hd-icon-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
+/* Card */
+.hd-app .card {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
+	overflow: hidden;
+	min-width: 0;
+	margin: 0;
 	padding: 0;
-	border: 1px solid transparent;
-	border-radius: var(--hd-radius-sm);
-	background: transparent;
-	color: var(--hd-icon-muted);
-	cursor: pointer;
-	list-style: none;
+	max-width: none;
+	box-shadow: none;
 }
 
-.wpf-hd .hd-icon-btn::-webkit-details-marker {
-	display: none;
-}
-
-.wpf-hd .hd-icon-btn:hover {
-	background: var(--hd-hover);
-	color: var(--hd-text);
-}
-
-.wpf-hd .hd-danger:hover {
-	color: var(--hd-danger);
-}
-
-.wpf-hd .hd-linkbtn {
-	display: inline-flex;
+.hd-app .card-head {
+	display: flex;
+	justify-content: space-between;
 	align-items: center;
-	gap: 6px;
-	padding: 4px 0;
-	border: 0;
-	background: none;
-	color: var(--hd-text-muted);
-	font: inherit;
-	font-size: var(--hd-text-md);
-	cursor: pointer;
+	gap: var(--s3);
+	padding: var(--s4) var(--s5);
+	border-bottom: 1px solid var(--line);
 }
 
-.wpf-hd .hd-linkbtn:hover {
-	color: var(--hd-accent-strong);
+.hd-app .card-title {
+	font-size: 16px;
+	font-weight: 700;
+	margin: 0;
+	line-height: 1.3;
 }
 
-.wpf-hd .hd-inline {
-	display: inline;
+.hd-app .card-body {
+	padding: var(--s5);
+}
+
+.hd-app .card-foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--s3);
+	padding: var(--s3) var(--s5);
+	border-top: 1px solid var(--line);
+	background: var(--surface-2);
+	flex-wrap: wrap;
+}
+
+.hd-app .card.emphasis {
+	border: 2px solid var(--ink);
+}
+
+.hd-app .card.danger {
+	border-color: var(--bad-soft);
+}
+
+.hd-app .card.danger .section-label {
+	color: var(--bad);
+	background: var(--surface);
+}
+
+.hd-app .section-label {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted);
+	padding: var(--s3) var(--s5) 6px;
+	background: var(--surface-2);
+	border-bottom: 1px solid var(--line);
 	margin: 0;
 }
 
-/* Form controls */
-.wpf-hd input[type="text"],
-.wpf-hd input[type="email"],
-.wpf-hd input[type="number"],
-.wpf-hd input[type="password"],
-.wpf-hd input[type="url"],
-.wpf-hd select,
-.wpf-hd textarea {
-	max-width: 100%;
-	min-height: var(--hd-control-h-sm);
-	padding: 6px 10px;
-	border: 1px solid var(--hd-border-strong);
-	border-radius: var(--hd-radius);
-	background-color: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-	color: var(--hd-text);
-	font-family: inherit;
-	font-size: var(--hd-text-base);
+/* Buttons: four kinds only. */
+.hd-app .btn {
+	font: 600 14px/1 var(--font);
+	height: 40px;
+	padding: 0 16px;
+	border-radius: var(--r-pill);
+	border: 1px solid transparent;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	white-space: nowrap;
+	text-decoration: none;
+	margin: 0;
+	box-shadow: none;
+	vertical-align: middle;
 }
 
-.wpf-hd select {
-	padding-right: 28px;
+.hd-app .btn:hover {
+	text-decoration: none;
 }
 
-.wpf-hd textarea {
+.hd-app .btn[disabled],
+.hd-app .btn[aria-disabled="true"] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.hd-app .btn-primary {
+	background: var(--accent);
+	color: var(--ink);
+}
+
+.hd-app .btn-primary:hover:not([disabled]) {
+	background: var(--accent-hover);
+	color: var(--ink);
+}
+
+.hd-app .btn-secondary {
+	background: var(--surface);
+	color: var(--ink);
+	border-color: var(--line-strong);
+}
+
+.hd-app .btn-secondary:hover:not([disabled]) {
+	background: var(--neutral-soft);
+	color: var(--ink);
+}
+
+.hd-app .btn-text {
+	background: transparent;
+	color: var(--accent-ink);
+	padding: 0 6px;
+}
+
+.hd-app .btn-text:hover:not([disabled]) {
+	text-decoration: underline;
+	color: var(--accent-ink);
+}
+
+.hd-app .btn-danger {
+	background: transparent;
+	color: var(--bad);
+	padding: 0 6px;
+}
+
+.hd-app .btn-danger:hover:not([disabled]) {
+	text-decoration: underline;
+	color: var(--bad);
+}
+
+.hd-app .btn-sm {
+	height: 32px;
+	padding: 0 12px;
+	font-size: 13px;
+}
+
+.hd-app .btn-text.btn-sm,
+.hd-app .btn-danger.btn-sm {
+	padding: 0 6px;
+}
+
+.hd-app .btn:focus-visible,
+.hd-app .input:focus-visible,
+.hd-app .select:focus-visible,
+.hd-app .seg button:focus-visible,
+.hd-app .seg a:focus-visible,
+.hd-app .trow:focus-visible,
+.hd-app textarea:focus-visible,
+.hd-app .tabs button:focus-visible,
+.hd-app .tabs a:focus-visible,
+.hd-app .nav a:focus-visible,
+.hd-app a:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+/* Chips: status only, never clickable. */
+.hd-app .chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	height: 22px;
+	padding: 0 8px;
+	border-radius: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	line-height: 1;
+	vertical-align: middle;
+	background: var(--neutral-soft);
+	color: var(--ink);
+}
+
+.hd-app .chip-neutral {
+	background: var(--neutral-soft);
+	color: var(--ink);
+}
+
+.hd-app .chip-ok {
+	background: var(--ok-soft);
+	color: var(--ok);
+}
+
+.hd-app .chip-warn {
+	background: var(--warn-soft);
+	color: var(--warn);
+}
+
+.hd-app .chip-bad {
+	background: var(--bad-soft);
+	color: var(--bad);
+}
+
+.hd-app .chip-info {
+	background: var(--accent-soft);
+	color: var(--accent-ink);
+}
+
+/* Inputs */
+.hd-app .input,
+.hd-app .select,
+.hd-app input[type="text"],
+.hd-app input[type="email"],
+.hd-app input[type="url"],
+.hd-app input[type="number"],
+.hd-app input[type="password"],
+.hd-app input[type="search"],
+.hd-app input[type="time"],
+.hd-app input[type="date"],
+.hd-app select {
+	height: 40px;
+	border: 1px solid var(--line-strong);
+	border-radius: var(--r-ctl);
+	background-color: var(--surface);
+	padding: 0 12px;
+	font: 14px var(--font);
+	color: var(--ink);
+	min-width: 0;
 	width: 100%;
-	line-height: 1.5;
+	max-width: 100%;
+	box-shadow: none;
+	margin: 0;
+	line-height: normal;
 }
 
-.wpf-hd input:focus,
-.wpf-hd select:focus,
-.wpf-hd textarea:focus {
-	border-color: var(--hd-accent);
-	box-shadow: 0 0 0 1px var(--hd-accent);
+.hd-app select,
+.hd-app .select {
+	padding-right: 32px;
 }
 
-.wpf-hd .hd-field {
+.hd-app input[type="checkbox"],
+.hd-app input[type="radio"] {
+	margin: 0;
+	accent-color: var(--accent-ink);
+}
+
+.hd-app textarea,
+.hd-app textarea.input {
+	display: block;
+	width: 100%;
+	min-height: 80px;
+	border: 1px solid var(--line-strong);
+	border-radius: var(--r-ctl);
+	padding: 10px 12px;
+	font: 14px/1.5 var(--font);
+	color: var(--ink);
+	background: var(--surface);
+	resize: vertical;
+	margin: 0;
+	box-shadow: none;
+}
+
+.hd-app .input:focus,
+.hd-app .select:focus,
+.hd-app input:focus,
+.hd-app select:focus,
+.hd-app textarea:focus {
+	border-color: var(--accent-ink);
+	box-shadow: none;
+}
+
+.hd-app .input::placeholder,
+.hd-app input::placeholder,
+.hd-app textarea::placeholder {
+	color: var(--placeholder);
+}
+
+.hd-app .input-num {
+	width: 96px !important;
+	text-align: center;
+	font-weight: 600;
+}
+
+.hd-app .label {
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.hd-app .field {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	margin: 0 0 16px;
-	padding: 0;
+	margin-bottom: var(--s4);
+}
+
+.hd-app .field:last-child {
+	margin-bottom: 0;
+}
+
+.hd-app .hint,
+.hd-app .field .hint {
+	font-size: 12px;
+	color: var(--muted);
+	margin: 0;
+	font-weight: 400;
+}
+
+.hd-app .small {
+	font-size: 13px;
+}
+
+.hd-app .muted {
+	color: var(--muted);
+}
+
+.hd-app .code {
+	font: 12px var(--mono);
+	background: var(--neutral-soft);
+	border-radius: 6px;
+	padding: 1px 6px;
+}
+
+/* Segmented control: views and periods. */
+.hd-app .seg {
+	display: inline-flex;
+	background: var(--neutral-soft);
+	border-radius: var(--r-ctl);
+	padding: 3px;
+	gap: 2px;
+	flex-wrap: wrap;
+	max-width: 100%;
+}
+
+.hd-app .seg button,
+.hd-app .seg a,
+.hd-app .seg label {
+	font: 600 13px var(--font);
 	border: 0;
+	background: transparent;
+	color: var(--muted);
+	height: 32px;
+	padding: 0 12px;
+	border-radius: 8px;
+	cursor: pointer;
+	display: inline-flex;
+	gap: 6px;
+	align-items: center;
+	white-space: nowrap;
+	text-decoration: none;
+	margin: 0;
 }
 
-.wpf-hd .hd-field > label,
-.wpf-hd .hd-field > legend,
-.wpf-hd .hd-field > span:first-child {
+.hd-app .seg .on,
+.hd-app .seg [aria-current="page"],
+.hd-app .seg [aria-selected="true"],
+.hd-app .seg label:has(input:checked) {
+	background: var(--surface);
+	color: var(--ink);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.hd-app .seg label input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+}
+
+.hd-app .seg label:has(input:focus-visible) {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.hd-app .seg .n {
+	font-variant-numeric: tabular-nums;
+	color: var(--muted);
 	font-weight: 600;
-	color: var(--hd-text-2);
-	font-size: var(--hd-text-md);
 }
 
-.wpf-hd .hd-field > legend {
-	margin-bottom: 6px;
+.hd-app .seg .on .n,
+.hd-app .seg [aria-current="page"] .n {
+	color: var(--ink);
+}
+
+/* Underline tabs: Settings and Automation sub-sections. */
+.hd-app .tabs {
+	display: flex;
+	gap: 4px;
+	border-bottom: 1px solid var(--line);
+	margin-bottom: var(--s5);
+	overflow-x: auto;
+}
+
+.hd-app .tabs button,
+.hd-app .tabs a {
+	font: 600 14px var(--font);
+	background: none;
+	border: 0;
+	color: var(--muted);
+	padding: 10px 12px;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -1px;
+	cursor: pointer;
+	white-space: nowrap;
+	text-decoration: none;
+	border-radius: 0;
+}
+
+.hd-app .tabs .on,
+.hd-app .tabs [aria-selected="true"],
+.hd-app .tabs [aria-current="page"] {
+	color: var(--ink);
+	border-bottom-color: var(--ink);
+}
+
+/* Rows */
+.hd-app .row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: var(--s3);
+	align-items: center;
+	padding: var(--s3) var(--s5);
+	border-bottom: 1px solid var(--line);
+}
+
+.hd-app .row:last-child {
+	border-bottom: 0;
+}
+
+.hd-app .row-title {
+	font-weight: 600;
+	margin: 0;
+}
+
+.hd-app .row-meta {
+	font-size: 13px;
+	color: var(--muted);
+	margin-top: 2px;
+}
+
+.hd-app .row-actions {
+	position: static;
+	left: auto;
+	color: inherit;
+	font-size: inherit;
 	padding: 0;
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+	justify-content: flex-end;
+	flex-wrap: wrap;
 }
 
-.wpf-hd .hd-field input[type="text"],
-.wpf-hd .hd-field input[type="email"],
-.wpf-hd .hd-field select {
-	width: 100%;
+.hd-app .list-tools {
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+	padding: var(--s3) var(--s5);
+	border-bottom: 1px solid var(--line);
+	flex-wrap: wrap;
 }
 
-.wpf-hd .hd-actions {
+.hd-app .list-tools > * {
+	flex: 1 1 140px;
+}
+
+/* Key and value rows */
+.hd-app .kv {
+	display: grid;
+	grid-template-columns: 96px minmax(0, 1fr);
+	gap: var(--s3);
+	align-items: center;
+	padding: var(--s3) var(--s5);
+	border-bottom: 1px solid var(--line);
+}
+
+.hd-app .kv:last-child {
+	border-bottom: 0;
+}
+
+.hd-app .kv .label {
+	color: var(--muted);
+}
+
+/* Settings rows: label and help on the left, control on the right. */
+.hd-app .setting {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(200px, 320px);
+	gap: var(--s4);
+	align-items: center;
+	padding: var(--s4) var(--s5);
+	border-bottom: 1px solid var(--line);
+}
+
+.hd-app .setting:last-child {
+	border-bottom: 0;
+}
+
+.hd-app .setting .ctl {
 	display: flex;
 	justify-content: flex-end;
-	gap: 8px;
+	gap: var(--s2);
+	align-items: center;
+	min-width: 0;
+	flex-wrap: wrap;
 }
 
-/* Toggle switch (checkbox role="switch") */
-.wpf-hd input[type="checkbox"].hd-switch {
-	position: relative;
-	flex: none;
-	width: 40px;
-	height: 22px;
+.hd-app .setting .ctl .input,
+.hd-app .setting .ctl .select,
+.hd-app .setting .ctl > input:not([type="checkbox"]):not([type="radio"]),
+.hd-app .setting .ctl > select {
+	max-width: 320px;
+}
+
+.hd-app .setting.full {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.hd-app .setting.full .ctl {
+	justify-content: flex-start;
+}
+
+.hd-app .setting textarea {
+	width: 100%;
 	margin: 0;
-	border: 0;
-	border-radius: var(--hd-radius-pill);
-	background: var(--hd-border-strong);
-	box-shadow: none;
-	cursor: pointer;
-	appearance: none;
-	-webkit-appearance: none;
-	transition: background-color 0.15s;
+	min-height: 80px;
 }
 
-.wpf-hd input[type="checkbox"].hd-switch::before {
+/* Toggles: one state label, On or Off. A real checkbox inside, so forms post as before. */
+.hd-app .toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var(--muted);
+	background: none;
+	border: 0;
+	cursor: pointer;
+	padding: 0;
+	font-family: var(--font);
+	position: relative;
+	margin: 0;
+}
+
+.hd-app .toggle input {
+	position: absolute;
+	opacity: 0;
+	width: 40px;
+	height: 24px;
+	margin: 0;
+	cursor: pointer;
+}
+
+.hd-app .switch {
+	width: 40px;
+	height: 24px;
+	border-radius: var(--r-pill);
+	background: var(--switch-off);
+	position: relative;
+	flex-shrink: 0;
+	display: inline-block;
+	transition: background 0.15s;
+}
+
+.hd-app .switch::after {
 	content: "";
 	position: absolute;
 	top: 3px;
 	left: 3px;
-	width: 16px;
-	height: 16px;
-	margin: 0;
+	width: 18px;
+	height: 18px;
 	border-radius: 50%;
-	background: #fff;
-	box-shadow: var(--hd-shadow);
-	transition: transform 0.15s;
+	background: var(--surface);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	transition: left 0.15s;
 }
 
-.wpf-hd input[type="checkbox"].hd-switch:checked {
-	background: var(--hd-accent);
+.hd-app .toggle[aria-checked="true"] .switch,
+.hd-app .toggle input:checked + .switch {
+	background: var(--accent-ink);
 }
 
-.wpf-hd input[type="checkbox"].hd-switch:checked::before {
-	transform: translateX(18px);
+.hd-app .toggle[aria-checked="true"] .switch::after,
+.hd-app .toggle input:checked + .switch::after {
+	left: 19px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.wpf-hd input[type="checkbox"].hd-switch,
-	.wpf-hd input[type="checkbox"].hd-switch::before {
-		transition: none;
-	}
-}
-
-.wpf-hd .hd-switchrow {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-	margin: 0 0 14px;
-	cursor: pointer;
-}
-
-.wpf-hd .hd-switchrow > span {
-	display: flex;
-	flex-direction: column;
-}
-
-/* Pages and cards */
-.wpf-hd .hd-page {
-	max-width: 1280px;
-	padding: 24px;
-}
-
-.wpf-hd .hd-pagehead {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 16px;
-	margin: 0 0 20px;
-}
-
-.wpf-hd .hd-pagehead p {
-	margin: 4px 0 0;
-}
-
-.wpf-hd .hd-card {
-	margin: 0 0 16px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-}
-
-.wpf-hd .hd-card--form,
-.wpf-hd .hd-card--list,
-.wpf-hd .hd-split > .hd-card {
-	padding: 20px;
-}
-
-.wpf-hd .hd-card--form .hd-h2 {
-	margin-bottom: 16px;
-}
-
-.wpf-hd .hd-card__head {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 8px;
-	padding: 16px 20px;
-	border-bottom: 1px solid var(--hd-divider);
-}
-
-.wpf-hd .hd-split > .hd-card .hd-card__head {
-	margin: -20px -20px 16px;
-}
-
-.wpf-hd .hd-card__pad {
-	padding: 16px 20px;
-}
-
-.wpf-hd .hd-split {
-	display: grid;
-	grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-	gap: 20px;
-	align-items: start;
-}
-
-.wpf-hd .hd-split--wide {
-	grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
-}
-
-.wpf-hd .hd-details summary {
-	cursor: pointer;
-	color: var(--hd-text-muted);
-	font-weight: 600;
-	font-size: var(--hd-text-md);
-	margin-bottom: 12px;
-}
-
-/* Swatches */
-.wpf-hd .hd-swatches {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.wpf-hd .hd-swatch {
-	position: relative;
-	display: inline-flex;
-}
-
-.wpf-hd .hd-swatch input {
-	width: 28px;
-	height: 28px;
-	margin: 0;
-	border: 2px solid #fff;
-	border-radius: 50%;
-	background: var(--hd-swatch);
-	box-shadow: 0 0 0 1px var(--hd-border-strong);
-	cursor: pointer;
-	appearance: none;
-	-webkit-appearance: none;
-}
-
-.wpf-hd .hd-swatch input:checked {
-	box-shadow: 0 0 0 2px var(--hd-text);
-}
-
-.wpf-hd .hd-swatch input::before {
-	display: none;
-}
-
-/* Sortable lists */
-.wpf-hd .hd-list-head,
-.wpf-hd .hd-sortable__row {
-	display: grid;
-	grid-template-columns: 32px minmax(0, 1fr) 70px 80px;
-	align-items: center;
-	gap: 8px;
-}
-
-.wpf-hd .hd-list-head {
-	padding: 0 0 8px;
-	border-bottom: 1px solid var(--hd-divider);
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.03em;
-}
-
-.wpf-hd .hd-sortable {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-sortable__row {
-	padding: 10px 0;
-	border-bottom: 1px solid var(--hd-divider);
-	background: var(--hd-surface);
-}
-
-.wpf-hd .hd-sortable__row.is-dragging {
+.hd-app .toggle input:disabled + .switch {
 	opacity: 0.5;
 }
 
-.wpf-hd .hd-sortable__row.is-over {
-	box-shadow: inset 0 2px 0 var(--hd-accent);
+.hd-app .toggle:focus-visible,
+.hd-app .toggle:has(input:focus-visible) {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+	border-radius: var(--r-pill);
 }
 
-.wpf-hd .hd-sortable__name {
+.hd-app .toggle .state {
+	min-width: 22px;
+}
+
+/* Banners: one line, at most one action. */
+.hd-app .banner {
 	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	min-width: 0;
-}
-
-.wpf-hd .hd-sortable__name .hd-muted {
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-drag {
-	cursor: grab;
-}
-
-.wpf-hd .hd-row-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 2px;
-}
-
-.wpf-hd .hd-empty {
-	padding: 24px 0;
-	color: var(--hd-text-muted);
-	text-align: center;
-	list-style: none;
-}
-
-/* Priority chip and dots */
-.wpf-hd .hd-prio {
-	--hd-prio-fg: var(--hd-text-2);
-	--hd-prio-bg: var(--hd-hover);
-	display: inline-flex;
+	justify-content: space-between;
 	align-items: center;
-	gap: 6px;
-	padding: 2px 8px;
-	border-radius: var(--hd-radius-pill);
-	background: var(--hd-prio-bg);
-	color: var(--hd-prio-fg);
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-dot {
-	display: inline-block;
-	flex: none;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--hd-prio-dot, var(--hd-icon-muted));
-}
-
-.wpf-hd .hd-prio--high {
-	--hd-prio-fg: var(--hd-prio-high-fg);
-	--hd-prio-bg: var(--hd-prio-high-bg);
-	--hd-prio-dot: var(--hd-prio-high-dot);
-}
-
-.wpf-hd .hd-prio--normal {
-	--hd-prio-fg: var(--hd-prio-normal-fg);
-	--hd-prio-bg: var(--hd-prio-normal-bg);
-	--hd-prio-dot: var(--hd-prio-normal-dot);
-}
-
-.wpf-hd .hd-prio--low {
-	--hd-prio-fg: var(--hd-prio-low-fg);
-	--hd-prio-bg: var(--hd-prio-low-bg);
-	--hd-prio-dot: var(--hd-prio-low-dot);
-}
-
-/* Avatars */
-.wpf-hd .hd-avatar {
-	display: inline-flex;
-	flex: none;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	font-size: var(--hd-text-md);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-avatar--sm {
-	width: 28px;
-	height: 28px;
-	font-size: var(--hd-text-xs);
-}
-
-.wpf-hd .hd-avatar--lg {
-	width: 48px;
-	height: 48px;
-	font-size: var(--hd-text-lg);
-}
-
-.wpf-hd .hd-tone-a { background: #eef1fd; color: #1d35b4; }
-.wpf-hd .hd-tone-b { background: #ecfdf3; color: #067647; }
-.wpf-hd .hd-tone-c { background: #fef3ee; color: #b93815; }
-.wpf-hd .hd-tone-d { background: #f4f3ff; color: #5925dc; }
-.wpf-hd .hd-tone-e { background: #fdf2fa; color: #c11574; }
-.wpf-hd .hd-tone-f { background: #f0f9ff; color: #026aa2; }
-
-/* Tags and statuses */
-.wpf-hd .hd-tag {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-	padding: 1px 6px;
-	border-radius: 4px;
-	background: var(--hd-hover);
-	color: var(--hd-text-2);
-	font-size: var(--hd-text-xs);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-tag--store {
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-tag--note {
-	background: var(--hd-note-tag-bg);
-	color: var(--hd-note-fg);
-}
-
-.wpf-hd .hd-status {
-	display: inline-block;
-	padding: 1px 8px;
-	border-radius: var(--hd-radius-pill);
-	background: var(--hd-hover);
-	color: var(--hd-text-2);
-	font-size: var(--hd-text-xs);
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-status--completed {
-	background: var(--hd-success-bg);
-	color: var(--hd-success-fg);
-}
-
-.wpf-hd .hd-status--processing {
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-status--on-hold,
-.wpf-hd .hd-status--pending {
-	background: var(--hd-note-tag-bg);
-	color: var(--hd-note-fg);
-}
-
-.wpf-hd .hd-status--cancelled,
-.wpf-hd .hd-status--failed,
-.wpf-hd .hd-status--refunded {
-	background: var(--hd-danger-bg);
-	color: var(--hd-danger);
-}
-
-/* Toasts and banners */
-.wpf-hd .hd-toast {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 0 0 16px;
-	padding: 10px 14px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow);
-	font-weight: 500;
-}
-
-.wpf-hd .hd-toast.is-success {
-	border-color: #abefc6;
-	background: var(--hd-success-bg);
-	color: var(--hd-success-fg);
-}
-
-.wpf-hd .hd-toast.is-error {
-	border-color: #fecdca;
-	background: var(--hd-danger-bg);
-	color: var(--hd-danger);
-}
-
-.wpf-hd .hd-toast-region {
-	position: fixed;
-	right: 24px;
-	bottom: 24px;
-	z-index: 100000;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.wpf-hd .hd-toast-region .hd-toast {
-	margin: 0;
-}
-
-.wpf-hd .hd-banner {
-	display: flex;
+	gap: var(--s3);
+	padding: var(--s3) var(--s4);
+	border-radius: var(--r-ctl);
+	border: 1px solid;
+	font-size: 14px;
 	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px 10px;
-	margin: 0 24px 12px;
-	padding: 10px 14px;
-	border: 1px solid var(--hd-warn-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-note-bg);
-	color: var(--hd-warn-fg);
+	margin: 0 0 var(--s4);
 }
 
-.wpf-hd .hd-banner > span:nth-child(2) {
-	flex: 1;
-	min-width: 220px;
-}
-
-.wpf-hd .hd-banner__actions {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.wpf-hd .hd-banner a {
-	color: var(--hd-warn-fg);
-	font-weight: 600;
-}
-
-/* Empty states */
-.wpf-hd .hd-emptystate {
-	padding: 48px 24px;
-	text-align: center;
-}
-
-.wpf-hd .hd-emptystate__icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 48px;
-	height: 48px;
-	margin: 0 auto 12px;
-	border-radius: 50%;
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent);
-}
-
-.wpf-hd .hd-emptystate__icon.is-success {
-	background: var(--hd-success-bg);
-	color: var(--hd-success-fg);
-}
-
-.wpf-hd .hd-chips {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 8px;
-	margin-top: 16px;
-}
-
-.wpf-hd .hd-field .hd-chips {
-	justify-content: flex-start;
-	margin-top: 0;
-}
-
-.wpf-hd .hd-chip-btn {
-	display: inline-flex;
-	align-items: center;
-	min-height: 30px;
-	padding: 0 12px;
-	border: 1px solid var(--hd-border-strong);
-	border-radius: var(--hd-radius-pill);
-	background: var(--hd-surface);
-	color: var(--hd-text-2);
-	font: inherit;
-	font-size: var(--hd-text-md);
-	text-decoration: none;
-	cursor: pointer;
-}
-
-.wpf-hd .hd-chip-btn:hover {
-	border-color: var(--hd-accent);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-blank {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	min-height: 240px;
-	padding: 32px;
-	text-align: center;
-}
-
-.wpf-hd .hd-blank p {
-	margin: 0;
-}
-
-/* Pick list (saved replies) */
-.wpf-hd .hd-pick-list {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-pick-list a {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	padding: 10px 12px;
-	border-radius: var(--hd-radius);
-	color: var(--hd-text);
-	text-decoration: none;
-}
-
-.wpf-hd .hd-pick-list a:hover {
-	background: var(--hd-hover);
-}
-
-.wpf-hd .hd-pick-list a[aria-current="true"] {
-	background: var(--hd-accent-selected);
-	box-shadow: inset 3px 0 0 var(--hd-accent);
-}
-
-.wpf-hd .hd-pick-list .hd-muted {
-	font-size: var(--hd-text-sm);
-}
-
-/* Inbox */
-.wpf-hd .hd-inbox-wrap > .hd-toast,
-.wpf-hd .hd-inbox-wrap > .stsw-checklist {
-	margin: 16px 24px 0;
-}
-
-.wpf-hd .hd-inbox {
-	display: grid;
-	grid-template-columns: 220px minmax(300px, 380px) minmax(0, 1fr);
-	min-height: calc(100vh - 32px - 65px);
-	background: var(--hd-surface);
-}
-
-.wpf-hd .hd-rail {
-	padding: 16px 12px;
-	border-right: 1px solid var(--hd-border);
-	background: var(--hd-surface-muted);
-}
-
-.wpf-hd .hd-rail__label {
-	margin: 16px 8px 6px;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-xs);
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-}
-
-.wpf-hd .hd-rail__list {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-rail__list li {
-	margin: 0 0 2px;
-}
-
-.wpf-hd .hd-rail__item {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	min-height: 34px;
-	padding: 0 8px;
-	border-radius: var(--hd-radius-sm);
-	color: var(--hd-text-2);
-	font-weight: 500;
-	text-decoration: none;
-}
-
-.wpf-hd .hd-rail__item .hd-icon {
-	color: var(--hd-icon-muted);
-}
-
-.wpf-hd .hd-rail__item:hover {
-	background: var(--hd-hover);
-	color: var(--hd-text);
-}
-
-.wpf-hd .hd-rail__item[aria-current="page"] {
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-rail__item[aria-current="page"] .hd-icon {
-	color: var(--hd-accent);
-}
-
-.wpf-hd .hd-rail__text {
-	flex: 1;
-	min-width: 0;
-}
-
-.wpf-hd .hd-count {
-	min-width: 24px;
-	padding: 0 6px;
-	border-radius: var(--hd-radius-pill);
-	background: var(--hd-surface);
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-	text-align: center;
-}
-
-.wpf-hd .hd-rail__foot {
-	margin: 24px 8px 0;
-}
-
-.wpf-hd .hd-rail .hd-btn {
-	width: 100%;
-}
-
-.wpf-hd .hd-list {
-	display: flex;
-	flex-direction: column;
-	min-width: 0;
-	border-right: 1px solid var(--hd-border);
-}
-
-.wpf-hd .hd-list__head {
-	padding: 16px 16px 8px;
-}
-
-.wpf-hd .hd-filter {
-	margin: 6px 0 0;
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-bulkbar {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px;
-	min-height: 44px;
-	padding: 6px 16px;
-	border-top: 1px solid var(--hd-divider);
-	border-bottom: 1px solid var(--hd-border);
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-bulkbar__count {
-	flex: 1;
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd .hd-bulkbar.is-active {
-	background: var(--hd-accent-selected);
-}
-
-.wpf-hd .hd-bulkbar.is-active .hd-bulkbar__count {
-	color: var(--hd-accent-strong);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-bulkbar__actions {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px;
-}
-
-.wpf-hd.hd-js .hd-bulkbar:not(.is-active) .hd-bulkbar__actions {
-	display: none;
-}
-
-.wpf-hd .hd-rows {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-row-t {
-	position: relative;
-	display: flex;
-	align-items: flex-start;
-	gap: 10px;
-	margin: 0;
-	padding: 12px 16px;
-	border-bottom: 1px solid var(--hd-divider);
-}
-
-.wpf-hd .hd-row-t:hover {
-	background: var(--hd-surface-muted);
-}
-
-.wpf-hd .hd-row-t.is-current {
-	background: var(--hd-accent-selected);
-	box-shadow: inset 3px 0 0 var(--hd-accent);
-}
-
-.wpf-hd .hd-row-t__check {
-	margin-top: 10px !important;
-}
-
-.wpf-hd .hd-row-t__link {
-	display: flex;
-	flex: 1;
-	gap: 10px;
-	min-width: 0;
-	color: inherit;
-	text-decoration: none;
-}
-
-.wpf-hd .hd-row-t__main {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	gap: 2px;
-	min-width: 0;
-}
-
-.wpf-hd .hd-row-t__top {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.wpf-hd .hd-row-t__name {
-	overflow: hidden;
-	color: var(--hd-text-2);
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-row-t.is-waiting .hd-row-t__name {
-	color: var(--hd-text);
-	font-weight: 700;
-}
-
-.wpf-hd .hd-unread {
-	flex: none;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--hd-accent);
-}
-
-.wpf-hd .hd-row-t__time {
-	margin-left: auto;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-row-t__subject {
-	overflow: hidden;
-	font-size: var(--hd-text-md);
-	font-weight: 600;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-row-t__preview {
-	display: -webkit-box;
-	overflow: hidden;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-md);
-	-webkit-line-clamp: 1;
-	-webkit-box-orient: vertical;
-}
-
-.wpf-hd .hd-row-t__meta {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	margin-top: 4px;
-}
-
-.wpf-hd .hd-pages {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 10px;
-	padding: 12px;
-}
-
-.wpf-hd .hd-detail {
-	min-width: 0;
-	background: var(--hd-surface);
-}
-
-.wpf-hd .hd-ticket__head {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-	padding: 20px 24px 12px;
-}
-
-.wpf-hd .hd-ticket__titles {
-	flex: 1;
-	min-width: 0;
-}
-
-.wpf-hd .hd-ticket__kicker {
-	margin: 0 0 4px;
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-back {
-	display: none;
-	align-items: center;
-	gap: 4px;
-	margin-bottom: 8px;
-	font-size: var(--hd-text-md);
-	text-decoration: none;
-}
-
-.wpf-hd .hd-menu {
-	position: relative;
-}
-
-.wpf-hd .hd-menu__panel {
-	position: absolute;
-	right: 0;
-	z-index: 20;
-	width: 300px;
-	margin-top: 6px;
-	padding: 12px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-	box-shadow: 0 12px 24px rgba(16, 24, 40, 0.12);
-}
-
-.wpf-hd .hd-menu__panel details,
-.wpf-hd .hd-menu__panel form {
-	margin: 0 0 8px;
-}
-
-.wpf-hd .hd-menu__panel summary {
-	cursor: pointer;
-	padding: 4px 0;
-	font-weight: 600;
-	color: var(--hd-text-2);
-}
-
-.wpf-hd .hd-controls {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px 12px;
-	padding: 0 24px 16px;
-	border-bottom: 1px solid var(--hd-border);
-}
-
-.wpf-hd .hd-pillfield {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-}
-
-.wpf-hd select.hd-pill,
-.wpf-hd .hd-pillfield select {
-	min-height: 30px;
-	padding: 2px 28px 2px 12px;
-	border-radius: var(--hd-radius-pill);
-	font-size: var(--hd-text-md);
-	font-weight: 500;
-}
-
-.wpf-hd select.hd-pill--ghost {
-	box-shadow: none;
-}
-
-.wpf-hd.hd-js .hd-nojs {
-	display: none;
-}
-
-.wpf-hd:not(.hd-js) .hd-js-only {
-	display: none;
-}
-
-.wpf-hd .hd-controls .hd-help {
-	display: inline;
-}
-
-.wpf-hd .hd-controls.is-saving {
-	opacity: 0.7;
-}
-
-.wpf-hd .hd-ticket__body {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) 300px;
-	align-items: start;
-}
-
-.wpf-hd .hd-ticket__main {
-	min-width: 0;
-	padding: 16px 24px 24px;
-}
-
-.wpf-hd .hd-thread {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	margin: 0 0 20px;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-msg {
-	display: flex;
-	gap: 10px;
-	max-width: 85%;
-	margin: 0;
-}
-
-.wpf-hd .hd-msg--store,
-.wpf-hd .hd-msg--note {
-	flex-direction: row-reverse;
-	align-self: flex-end;
-}
-
-.wpf-hd .hd-msg__bubble {
-	min-width: 0;
-	padding: 12px 14px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-}
-
-.wpf-hd .hd-msg--store .hd-msg__bubble {
-	border-color: var(--hd-accent-border);
-	background: var(--hd-accent-selected);
-}
-
-.wpf-hd .hd-msg--note .hd-msg__bubble {
-	border: 1px dashed var(--hd-note-border);
-	background: var(--hd-note-bg);
-}
-
-.wpf-hd .hd-msg__head {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px;
-	margin: 0 0 6px;
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-msg__head time {
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-msg__body {
-	overflow-wrap: anywhere;
-}
-
-.wpf-hd .hd-msg__body p {
-	margin: 0 0 8px;
-}
-
-.wpf-hd .hd-msg__body p:last-child {
+.hd-app .stack > .banner,
+.hd-app .card .banner {
 	margin-bottom: 0;
 }
 
-.wpf-hd .hd-msg__delete {
-	margin-left: auto;
-	padding: 0 4px;
-	border: 0;
-	background: none;
-	color: var(--hd-danger);
-	font: inherit;
-	font-size: var(--hd-text-sm);
-	cursor: pointer;
-	opacity: 0;
+.hd-app .banner-info {
+	background: var(--accent-soft);
+	border-color: var(--accent-line);
 }
 
-.wpf-hd .hd-msg:hover .hd-msg__delete,
-.wpf-hd .hd-msg__delete:focus-visible {
-	opacity: 1;
+.hd-app .banner-ok {
+	background: var(--ok-soft);
+	border-color: #b8dfc6;
+	color: var(--ok);
 }
 
-@media (hover: none) {
-	.wpf-hd .hd-msg__delete {
-		opacity: 1;
-	}
+.hd-app .banner-warn {
+	background: var(--warn-soft);
+	border-color: var(--warn-line);
+	color: var(--warn);
 }
 
-.wpf-hd .hd-details-list {
-	display: grid;
-	grid-template-columns: max-content 1fr;
-	gap: 2px 12px;
-	margin: 10px 0 0;
-	font-size: var(--hd-text-md);
+.hd-app .banner-bad {
+	background: var(--bad-soft);
+	border-color: #f3c1bb;
+	color: var(--bad);
 }
 
-.wpf-hd .hd-details-list dt {
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd .hd-details-list dd {
-	margin: 0;
-}
-
-.wpf-hd .hd-files {
-	margin-top: 8px;
-	font-size: var(--hd-text-md);
-}
-
-/* Composer */
-.wpf-hd .hd-composer {
-	border: 1px solid var(--hd-border-strong);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-}
-
-.wpf-hd .hd-composer__tabs {
+/* Summaries */
+.hd-app .stat {
 	display: flex;
+	gap: var(--s6);
+	align-items: center;
+	padding: var(--s5);
+	background: var(--accent-soft);
+	border: 1px solid var(--accent-line);
+	border-radius: var(--r-card);
+	flex-wrap: wrap;
+}
+
+.hd-app .stat-num {
+	font-size: 36px;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+}
+
+.hd-app .tiles {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--s2);
+	padding: 0 var(--s5) var(--s4);
+}
+
+.hd-app .tile {
+	background: var(--surface-2);
+	border: 1px solid var(--line);
+	border-radius: var(--r-ctl);
+	padding: var(--s3);
+	min-width: 0;
+}
+
+.hd-app .tile .eyebrow {
+	font-size: 11px;
+}
+
+.hd-app .tile b {
+	display: block;
+	font-size: 18px;
+	margin-top: 2px;
+	font-variant-numeric: tabular-nums;
+}
+
+.hd-app .stat-tiles {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: var(--s3);
+}
+
+.hd-app .stat-tiles .tile b {
+	font-size: 22px;
+}
+
+/* Charts and meters */
+.hd-app .bars {
+	display: flex;
+	align-items: flex-end;
 	gap: 4px;
-	margin: 0;
-	padding: 6px 8px 0;
-	border: 0;
-	border-bottom: 1px solid var(--hd-divider);
+	height: 120px;
+	padding-top: var(--s2);
 }
 
-.wpf-hd .hd-composer__tab {
-	position: relative;
-	display: inline-flex;
-}
-
-.wpf-hd .hd-composer__tab input {
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-}
-
-.wpf-hd .hd-composer__tab span {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	min-height: 36px;
-	padding: 0 12px;
-	border-bottom: 2px solid transparent;
-	color: var(--hd-text-muted);
-	font-weight: 600;
-	font-size: var(--hd-text-md);
-	cursor: pointer;
-}
-
-.wpf-hd .hd-composer__tab input:checked + span {
-	border-bottom-color: var(--hd-accent);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-composer__tab--note input:checked + span {
-	border-bottom-color: var(--hd-note-border);
-	color: var(--hd-note-fg);
-}
-
-.wpf-hd .hd-composer__tab input:focus-visible + span {
-	outline: 2px solid var(--hd-accent);
-	outline-offset: -2px;
-	border-radius: 4px;
-}
-
-.wpf-hd .hd-composer textarea {
-	display: block;
-	min-height: 120px;
-	border: 0;
-	border-radius: 0;
-	box-shadow: none;
-	padding: 12px 14px;
-	resize: vertical;
-}
-
-.wpf-hd .hd-composer textarea:focus {
-	box-shadow: inset 0 0 0 2px var(--hd-accent);
-}
-
-.wpf-hd .hd-composer.is-note {
-	border-color: var(--hd-note-border);
-	background: var(--hd-note-bg-2);
-}
-
-.wpf-hd .hd-composer.is-note textarea {
-	background: var(--hd-note-bg-2);
-}
-
-.wpf-hd .hd-composer__bar {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-	padding: 8px 10px;
-	border-top: 1px solid var(--hd-divider);
-}
-
-.wpf-hd .hd-composer__tools,
-.wpf-hd .hd-composer__send {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px;
-}
-
-.wpf-hd .hd-composer__send .hd-help {
-	display: inline;
-	margin-right: 6px;
-}
-
-.wpf-hd .hd-composer.is-note .stsw-reply-close {
-	display: none;
-}
-
-.wpf-hd .hd-composer .stsw-replybox__draft {
-	margin: 0;
-	padding: 0 14px 8px;
-}
-
-.wpf-hd .hd-composer .stsw-replybox__draft:empty {
-	display: none;
-}
-
-.wpf-hd .hd-attach {
-	position: relative;
-	overflow: hidden;
-}
-
-.wpf-hd .hd-attach__input {
-	position: absolute;
-	inset: 0;
-	opacity: 0;
-	cursor: pointer;
-}
-
-.wpf-hd .hd-attach:focus-within {
-	outline: 2px solid var(--hd-accent);
-	outline-offset: 2px;
-}
-
-.wpf-hd .hd-attach__names {
-	display: inline;
-}
-
-/* Customer panel */
-.wpf-hd .hd-side {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	padding: 16px;
-	border-left: 1px solid var(--hd-border);
-	background: var(--hd-surface-muted);
-	min-height: 100%;
-}
-
-.wpf-hd .hd-side__card {
-	padding: 14px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-}
-
-.wpf-hd .hd-side__who {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	margin-bottom: 12px;
-}
-
-.wpf-hd .hd-side__who .hd-h2 {
-	font-size: var(--hd-text-base);
-}
-
-.wpf-hd .hd-side__email {
-	display: block;
-	overflow: hidden;
-	max-width: 190px;
-	font-size: var(--hd-text-md);
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-tiles {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 8px;
-	margin-bottom: 8px;
-}
-
-.wpf-hd .hd-tile {
-	padding: 8px 10px;
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface-muted);
-}
-
-.wpf-hd .hd-tile strong {
-	font-size: var(--hd-text-lg);
-}
-
-.wpf-hd .hd-side__title {
-	margin: 0 0 8px;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-xs);
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-}
-
-.wpf-hd .hd-side__list {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-side__list li {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 4px 8px;
-	margin: 0;
-	padding: 6px 0;
-	border-bottom: 1px solid var(--hd-divider);
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-side__list li:last-child {
-	border-bottom: 0;
-}
-
-.wpf-hd .hd-side__list .hd-help {
-	display: inline;
+.hd-app .bars span {
 	flex: 1;
+	background: var(--accent);
+	border-radius: 4px 4px 0 0;
+	min-height: 2px;
 }
 
-.wpf-hd .hd-side .stsw-pro-panel h3 {
-	margin: 12px 0 6px;
-	font-size: var(--hd-text-md);
+.hd-app .bars span.zero {
+	background: var(--line);
 }
 
-/* Setup checklist and health */
-.wpf-hd .stsw-checklist {
-	padding: 14px 18px;
-	border: 1px solid var(--hd-accent-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-accent-selected);
-}
-
-.wpf-hd .stsw-checklist h2 {
-	margin: 0 0 8px;
-	font-size: var(--hd-text-base);
-}
-
-.wpf-hd .stsw-checklist ol {
-	margin: 0 0 8px 1.2em;
-}
-
-.wpf-hd .stsw-checklist li.is-done {
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd .stsw-checklist .dashicons-yes-alt {
-	color: var(--hd-success-fg);
-}
-
-.wpf-hd .stsw-inline-form {
-	display: inline;
-}
-
-.wpf-hd .stsw-health li {
-	margin: 0 0 8px;
-}
-
-.wpf-hd .stsw-health .is-ok .dashicons {
-	color: var(--hd-success-fg);
-}
-
-.wpf-hd .stsw-health .is-warning .dashicons {
-	color: var(--hd-danger);
-}
-
-/* Timeline events in the thread */
-.wpf-hd .hd-event {
+.hd-app .axis {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	align-items: baseline;
-	margin: 4px 0 4px 44px;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-xs, 12px);
-	list-style: none;
+	justify-content: space-between;
+	font-size: 12px;
+	color: var(--muted);
+	margin-top: 6px;
 }
 
-/* Dialog */
-.hd-dialog.wpf-hd {
-	max-width: 440px;
-	padding: 24px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-xl);
-	box-shadow: 0 24px 48px rgba(16, 24, 40, 0.18);
+.hd-app .meter {
+	height: 8px;
+	background: var(--neutral-soft);
+	border-radius: var(--r-pill);
+	overflow: hidden;
+	width: 120px;
 }
 
-.hd-dialog.wpf-hd::backdrop {
-	background: rgba(16, 24, 40, 0.4);
+.hd-app .meter i {
+	display: block;
+	height: 100%;
+	background: var(--ok);
 }
 
-.hd-ask__text {
-	margin: 0 0 20px;
-	font-size: var(--hd-text-md, 15px);
-	line-height: 1.5;
-	white-space: pre-line;
+/* Tables */
+.hd-app .table-wrap {
+	overflow-x: auto;
 }
 
-.hd-ask__actions {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-	gap: 8px;
+.hd-app .table {
+	width: 100%;
+	border-collapse: collapse;
 }
 
-.wpf-hd .hd-keys {
-	display: grid;
-	grid-template-columns: max-content 1fr;
-	gap: 8px 16px;
-	margin: 16px 0;
-}
-
-.wpf-hd .hd-keys dd {
-	margin: 0;
-}
-
-/* Settings */
-.wpf-hd .hd-settings {
-	display: grid;
-	grid-template-columns: 220px minmax(0, 1fr);
-	gap: 24px;
-	align-items: start;
-	padding-bottom: 80px;
-}
-
-.wpf-hd .hd-subnav {
-	position: sticky;
-	top: 48px;
-}
-
-.wpf-hd .hd-subnav__group {
-	margin: 16px 8px 6px;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-xs);
-	font-weight: 700;
+.hd-app .table th {
+	font-size: 12px;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
+	color: var(--muted);
+	text-align: left;
+	padding: 10px var(--s5);
+	background: var(--surface-2);
+	border-bottom: 1px solid var(--line);
+	font-weight: 700;
 }
 
-.wpf-hd .hd-subnav__group:first-child {
-	margin-top: 0;
+.hd-app .table td {
+	padding: 12px var(--s5);
+	border-bottom: 1px solid var(--line);
+	font-variant-numeric: tabular-nums;
+	vertical-align: middle;
 }
 
-.wpf-hd .hd-subnav ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-subnav li {
-	margin: 0 0 2px;
-}
-
-.wpf-hd .hd-subnav a {
-	display: block;
-	padding: 7px 10px;
-	border-radius: var(--hd-radius-sm);
-	color: var(--hd-text-2);
-	font-weight: 500;
-	text-decoration: none;
-}
-
-.wpf-hd .hd-subnav a:hover {
-	background: var(--hd-hover);
-}
-
-.wpf-hd .hd-subnav a[aria-current="true"] {
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-subnav__wizard {
-	display: inline-block !important;
-	margin-top: 16px;
-	color: var(--hd-accent-strong) !important;
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-panel {
-	margin-bottom: 32px;
-}
-
-.wpf-hd .hd-panel > .hd-h1 {
-	margin-bottom: 4px;
-}
-
-.wpf-hd .hd-panel > .hd-muted {
-	margin: 0 0 16px;
-}
-
-.wpf-hd.hd-js .hd-panel {
-	display: none;
-}
-
-.wpf-hd.hd-js .hd-panel.is-active {
-	display: block;
-}
-
-.wpf-hd .hd-panel:focus {
-	outline: none;
-}
-
-.wpf-hd .hd-card__body {
-	padding: 0 20px;
-}
-
-.wpf-hd .hd-row {
-	display: grid;
-	grid-template-columns: minmax(200px, 1fr) minmax(0, 1.4fr);
-	gap: 8px 24px;
-	align-items: center;
-	padding: 16px 0;
-	border-bottom: 1px solid var(--hd-divider);
-}
-
-.wpf-hd .hd-row:last-child {
+.hd-app .table tr:last-child td {
 	border-bottom: 0;
 }
 
-.wpf-hd .hd-row--wide {
-	grid-template-columns: 1fr;
+/* Choices: two cards with a radio. */
+.hd-app .choices {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--s3);
 }
 
-.wpf-hd .hd-row__label {
+.hd-app .choice {
+	border: 1px solid var(--line-strong);
+	border-radius: var(--r-ctl);
+	padding: var(--s3) var(--s4);
+	display: flex;
+	gap: var(--s2);
+	align-items: flex-start;
+	cursor: pointer;
+	margin: 0;
+}
+
+.hd-app .choice:has(input:checked),
+.hd-app .choice.on {
+	border: 2px solid var(--accent-ink);
+	padding: calc(var(--s3) - 1px) calc(var(--s4) - 1px);
+}
+
+.hd-app .choice input {
+	margin-top: 3px;
+}
+
+.hd-app .choice b {
+	display: block;
+}
+
+/* Sticky save bar */
+.hd-app .savebar {
+	position: sticky;
+	bottom: 0;
+	margin-top: var(--s5);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: var(--s3);
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
+	padding: var(--s3) var(--s5);
+	z-index: 20;
+}
+
+.hd-app .savebar.is-dirty .state {
+	color: var(--warn);
+	font-weight: 600;
+}
+
+/* People */
+.hd-app .avatar {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 13px;
+	background: var(--neutral-soft);
+	color: var(--ink);
+	flex: none;
+}
+
+.hd-app .avatar.agent {
+	background: var(--ink);
+	color: var(--on-ink);
+}
+
+.hd-app .avatar.sm {
+	width: 28px;
+	height: 28px;
+	font-size: 11px;
+}
+
+.hd-app .person {
+	display: flex;
+	gap: var(--s3);
+	align-items: center;
+	padding: var(--s4) var(--s5);
+}
+
+.hd-app .person .avatar {
+	width: 40px;
+	height: 40px;
+}
+
+.hd-app .person-name {
+	font-weight: 700;
+}
+
+/* Dialogs (confirmations, shortcuts) */
+.hd-app.dialog,
+.hd-app .dialog,
+dialog.hd-app {
+	border: 1px solid var(--line);
+	border-radius: var(--r-card);
+	padding: var(--s5);
+	max-width: min(480px, calc(100vw - 32px));
+	background: var(--surface);
+	color: var(--ink);
+	box-shadow: 0 20px 50px rgba(23, 21, 9, 0.18);
+}
+
+dialog.hd-app::backdrop {
+	background: rgba(23, 21, 9, 0.35);
+}
+
+.hd-app .dialog-text {
+	margin: 0 0 var(--s4);
+	font-size: 15px;
+}
+
+.hd-app .dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--s2);
+	flex-wrap: wrap;
+}
+
+/* Toasts: results of a save, shown as banners at the top of the page. */
+.hd-app .toast {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+	padding: var(--s3) var(--s4);
+	border-radius: var(--r-ctl);
+	border: 1px solid #b8dfc6;
+	background: var(--ok-soft);
+	color: var(--ok);
+	font-weight: 600;
+	margin: 0 0 var(--s4);
+}
+
+.hd-app .toast.is-error {
+	border-color: #f3c1bb;
+	background: var(--bad-soft);
+	color: var(--bad);
+}
+
+/* Menus built on <details> */
+.hd-app details.menu {
+	position: relative;
+	display: inline-block;
+}
+
+.hd-app details.menu > summary {
+	list-style: none;
+}
+
+.hd-app details.menu > summary::-webkit-details-marker {
+	display: none;
+}
+
+.hd-app .menu-panel {
+	position: absolute;
+	z-index: 30;
+	top: calc(100% + 6px);
+	left: 0;
+	min-width: 240px;
+	max-width: min(360px, calc(100vw - 32px));
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--r-ctl);
+	box-shadow: 0 12px 30px rgba(23, 21, 9, 0.14);
+	padding: 6px;
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 }
 
-.wpf-hd .hd-row__title {
-	color: var(--hd-text);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-row__control input[type="text"],
-.wpf-hd .hd-row__control input[type="email"],
-.wpf-hd .hd-row__control input[type="password"],
-.wpf-hd .hd-row__control input[type="url"],
-.wpf-hd .hd-row__control select {
-	width: 100%;
-	max-width: 420px;
-}
-
-.wpf-hd .hd-row__control input[type="number"] {
-	width: 120px;
-}
-
-.wpf-hd .hd-row__control .wp-editor-wrap {
-	max-width: 100%;
-}
-
-.wpf-hd .hd-checks label {
-	display: block;
-	margin: 0 0 4px;
-}
-
-.wpf-hd .hd-savebar {
-	position: fixed;
+.hd-app .menu-panel.end {
+	left: auto;
 	right: 0;
-	bottom: 0;
-	left: 160px;
-	z-index: 50;
+}
+
+.hd-app .menu-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	text-align: left;
+	background: none;
+	border: 0;
+	border-radius: 8px;
+	padding: 8px 10px;
+	cursor: pointer;
+	color: var(--ink);
+	font: 14px var(--font);
+	width: 100%;
+	text-decoration: none;
+}
+
+.hd-app .menu-item:hover,
+.hd-app .menu-item:focus-visible {
+	background: var(--neutral-soft);
+	text-decoration: none;
+	outline: none;
+}
+
+.hd-app .menu-item span {
+	font-size: 12px;
+	color: var(--muted);
+}
+
+/* Empty states */
+.hd-app .empty {
+	padding: var(--s8) var(--s5);
+	text-align: center;
+	color: var(--muted);
+}
+
+.hd-app .empty .row-title {
+	color: var(--ink);
+	font-size: 16px;
+	margin-bottom: 4px;
+}
+
+/* Lists of checkboxes */
+.hd-app .checks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s2) var(--s4);
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.hd-app .checks label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+}
+
+/* Keyboard keys */
+.hd-app kbd {
+	font: 600 12px var(--mono);
+	background: var(--neutral-soft);
+	border: 1px solid var(--line);
+	border-radius: 5px;
+	padding: 1px 6px;
+}
+
+/* Pagination */
+.hd-app .pager {
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+/* Wide layouts */
+@media (max-width: 980px) {
+	.hd-app .grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.hd-app .stat-tiles {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.hd-app .choices {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.hd-app .setting {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.hd-app .setting .ctl {
+		justify-content: flex-start;
+	}
+
+	.hd-app h1,
+	.hd-app .h1 {
+		font-size: 24px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hd-app * {
+		transition: none !important;
+	}
+}
+
+/**
+ * Inbox: page head with the views, three columns (ticket list, conversation, details), the composer, the order
+ * card and its actions, and the side cards added by Pro modules.
+ *
+ * @author WPFactory
+ */
+
+/* Script only and no script only parts. */
+.hd-app:not(.hd-js) .js-only,
+.hd-app.hd-js .nojs {
+	display: none !important;
+}
+
+/* Columns */
+.hd-app .inbox {
+	display: grid;
+	grid-template-columns: 360px minmax(0, 1fr) 320px;
+	gap: var(--s4);
+	align-items: start;
+}
+
+.hd-app .inbox.no-details {
+	grid-template-columns: 360px minmax(0, 1fr);
+}
+
+.hd-app .inbox-page .page-head h1 {
+	overflow-wrap: anywhere;
+}
+
+/* Every card of the inbox can show a menu that opens past its edge. */
+.hd-app .inbox .card.emphasis,
+.hd-app .inbox .list-card,
+.hd-app .details .card {
+	overflow: visible;
+}
+
+.hd-app .inbox .card > :first-child {
+	border-top-left-radius: calc(var(--r-card) - 1px);
+	border-top-right-radius: calc(var(--r-card) - 1px);
+}
+
+.hd-app .inbox .card > :last-child,
+.hd-app .inbox .card > form:last-child > .card-foot:last-child {
+	border-bottom-left-radius: calc(var(--r-card) - 2px);
+	border-bottom-right-radius: calc(var(--r-card) - 2px);
+}
+
+/* Ticket list */
+.hd-app .list-tools > .btn {
+	flex: none;
+}
+
+.hd-app .list-note {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--s2);
+	padding: var(--s2) var(--s5);
+	background: var(--accent-soft);
+	border-bottom: 1px solid var(--line);
+	min-width: 0;
+}
+
+.hd-app .list-note .small {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .trows {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.hd-app .trow {
+	position: relative;
+	display: grid;
+	grid-template-columns: 20px minmax(0, 1fr) auto;
+	gap: var(--s3);
+	padding: var(--s3) var(--s5);
+	border-bottom: 1px solid var(--line);
+	align-items: start;
+	margin: 0;
+}
+
+.hd-app .trows:last-of-type .trow:last-child {
+	border-bottom: 0;
+}
+
+.hd-app .trow:hover {
+	background: var(--surface-2);
+}
+
+.hd-app .trow.selected {
+	background: var(--accent-soft);
+	box-shadow: inset 3px 0 0 var(--accent-ink);
+}
+
+.hd-app .trow input[type="checkbox"] {
+	margin-top: 3px;
+	position: relative;
+	z-index: 1;
+}
+
+.hd-app .t-main {
+	min-width: 0;
+}
+
+.hd-app .t-top {
+	display: flex;
+	gap: 6px;
+	align-items: baseline;
+	min-width: 0;
+}
+
+.hd-app .t-name {
+	font-weight: 700;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.hd-app .t-unread {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--accent-ink);
+	flex-shrink: 0;
+	align-self: center;
+}
+
+.hd-app .t-subject {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--ink);
+	margin-top: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	outline: none;
+}
+
+.hd-app .t-subject:hover {
+	text-decoration: none;
+}
+
+/* The whole row opens the ticket; the checkbox stays on top. */
+.hd-app .t-subject::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+.hd-app .trow:has(.t-subject:focus-visible) {
+	outline: 3px solid var(--accent);
+	outline-offset: -3px;
+}
+
+.hd-app .t-meta {
+	font-size: 13px;
+	color: var(--muted);
+	margin-top: 2px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.hd-app .t-chips {
+	display: flex;
+	gap: 6px;
+	margin-top: 6px;
+	flex-wrap: wrap;
+}
+
+.hd-app .t-chips:empty {
+	display: none;
+}
+
+.hd-app .t-age {
+	font-size: 12px;
+	color: var(--muted);
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.hd-app .bulk-count {
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+}
+
+.hd-app .send {
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.hd-app .select.select-sm {
+	height: 32px;
+	width: auto;
+	max-width: 120px;
+	font-size: 13px;
+	field-sizing: content;
+	padding-left: 8px;
+	padding-right: 28px;
+}
+
+.hd-app .card-foot + .card-foot {
+	border-top: 1px solid var(--line);
+}
+
+.hd-app .pager {
+	justify-content: space-between;
+}
+
+.hd-app .list-foot .tools {
+	margin-left: auto;
+}
+
+.hd-app .chat-available {
 	display: flex;
 	align-items: center;
+	gap: var(--s2);
+}
+
+.hd-app .menu-form,
+.hd-app .order-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	padding: var(--s3) var(--s3) var(--s3);
+	align-items: stretch;
+}
+
+.hd-app .menu-form .field {
+	margin: 0;
+}
+
+.hd-app .order-form > .btn,
+.hd-app .menu-form > .btn {
+	align-self: flex-start;
+}
+
+.hd-app .menu-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--s2);
+	padding: 4px var(--s3);
+	border-top: 1px solid var(--line);
+}
+
+.hd-app .menu-panel .section-label {
+	margin: 0 -6px;
+	background: var(--surface-2);
+}
+
+.hd-app .menu-panel .section-label:first-child {
+	margin-top: -6px;
+	border-radius: var(--r-ctl) var(--r-ctl) 0 0;
+}
+
+/* Conversation */
+.hd-app .convo-head {
+	padding: var(--s4) var(--s5);
+	border-bottom: 1px solid var(--line);
+	display: flex;
+	justify-content: space-between;
+	gap: var(--s3);
+	align-items: flex-start;
+}
+
+.hd-app .convo-titles {
+	min-width: 0;
+}
+
+.hd-app .convo-title {
+	font-size: 22px;
+	font-weight: 700;
+	margin: 4px 0 0;
+	line-height: 1.2;
+	text-wrap: balance;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .convo-actions {
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+	flex: none;
+}
+
+.hd-app .back-link {
+	display: none;
+	margin: 0 0 4px -6px;
+}
+
+.hd-app .convo-notes {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	padding: var(--s3) var(--s5) 0;
+}
+
+.hd-app .convo-notes:not(:has(> :not([hidden]))) {
+	display: none;
+}
+
+.hd-app .convo-notes .banner {
+	margin: 0;
+}
+
+.hd-app .banner-actions {
+	display: flex;
+	gap: var(--s2);
+	align-items: center;
+}
+
+.hd-app .inline-form {
+	display: inline;
+	margin: 0;
+}
+
+.hd-app .thread {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s4);
+	padding: var(--s5);
+	margin: 0;
+	list-style: none;
+}
+
+.hd-app .msg {
+	display: grid;
+	grid-template-columns: 36px minmax(0, 1fr);
+	gap: var(--s3);
+	margin: 0;
+}
+
+.hd-app .bubble {
+	border: 1px solid var(--line);
+	border-radius: var(--r-ctl);
+	padding: var(--s3) var(--s4);
+	background: var(--surface);
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .bubble.agent {
+	background: var(--surface-2);
+}
+
+.hd-app .bubble.note {
+	background: var(--note);
+	border: 1px dashed var(--note-line);
+}
+
+.hd-app .who {
+	display: flex;
+	gap: var(--s2);
+	align-items: baseline;
+	flex-wrap: wrap;
+	margin-bottom: 6px;
+}
+
+.hd-app .who b {
+	font-size: 14px;
+}
+
+.hd-app .who > span {
+	font-size: 12px;
+	color: var(--muted);
+}
+
+.hd-app .msg-actions {
+	margin-left: auto;
+	display: inline-flex;
+	gap: 2px;
+}
+
+.hd-app .msg-actions .btn-sm {
+	height: 24px;
+	font-size: 12px;
+}
+
+.hd-app .msg-body p {
+	margin: 0 0 6px;
+}
+
+.hd-app .msg-body p:last-child {
+	margin-bottom: 0;
+}
+
+.hd-app .msg-body img {
+	max-width: 100%;
+	height: auto;
+}
+
+.hd-app .msg-details {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: 2px var(--s3);
+	margin: var(--s2) 0 0;
+	font-size: 13px;
+}
+
+.hd-app .msg-details dt {
+	color: var(--muted);
+}
+
+.hd-app .msg-details dd {
+	margin: 0;
+}
+
+.hd-app .files {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+}
+
+.hd-app .files p {
+	margin: 0;
+}
+
+.hd-app .file {
+	display: inline-flex;
+	gap: 6px;
+	align-items: center;
+	font-size: 13px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 4px 10px;
+	background: var(--surface-2);
+	max-width: 100%;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .msg-history {
+	margin-top: 6px;
+}
+
+.hd-app .msg-history summary {
+	cursor: pointer;
+}
+
+.hd-app .history-list {
+	margin: 6px 0 0;
+	padding-left: 18px;
+}
+
+.hd-app .history-text {
+	color: var(--muted);
+	font-size: 13px;
+}
+
+.hd-app .msg-editor {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+}
+
+.hd-app .msg-editor .send {
 	justify-content: flex-end;
-	gap: 16px;
-	padding: 12px 24px;
-	border-top: 1px solid var(--hd-border);
-	background: var(--hd-surface);
-	box-shadow: 0 -4px 12px rgba(16, 24, 40, 0.06);
 }
 
-body.folded .wpf-hd .hd-savebar {
-	left: 36px;
+.hd-app .event {
+	font-size: 12px;
+	color: var(--muted);
+	text-align: center;
+	margin: 0;
 }
 
-.wpf-hd .hd-savebar__state {
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-md);
+.hd-app .pending-replies {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
 }
 
-.wpf-hd .hd-savebar.is-dirty .hd-savebar__state {
-	color: var(--hd-note-fg);
+.hd-app .pending-replies h3 {
+	margin: 0;
+}
+
+.hd-app .pending-item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+}
+
+.hd-app .pending-item form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+}
+
+.hd-app .pending-item .send {
+	justify-content: flex-end;
+}
+
+/* Composer */
+.hd-app .composer {
+	border-top: 1px solid var(--line);
+	margin: 0;
+}
+
+.hd-app .composer-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--s3);
+	padding: var(--s3) var(--s5) 0;
+	flex-wrap: wrap;
+}
+
+.hd-app fieldset.seg {
+	border: 0;
+	margin: 0;
+	min-width: 0;
+}
+
+.hd-app .composer textarea {
+	width: calc(100% - 2 * var(--s5));
+	margin: var(--s3) var(--s5);
+	min-height: 120px;
+}
+
+.hd-app .composer.is-note textarea {
+	background: var(--note);
+	border-color: var(--note-line);
+}
+
+.hd-app .ai-out,
+.hd-app .draft-note {
+	margin: 0 var(--s5) var(--s3);
+	white-space: pre-wrap;
+}
+
+.hd-app .ai-out:empty,
+.hd-app .draft-note:empty {
+	display: none;
+}
+
+.hd-app .ai-out.is-error {
+	color: var(--bad);
+}
+
+.hd-app .composer .card-foot {
+	flex-wrap: nowrap;
+	align-items: flex-end;
+}
+
+.hd-app .composer .card-foot .send {
+	flex: none;
+}
+
+.hd-app .composer .tools,
+.hd-app .list-foot .tools {
+	display: flex;
+	gap: var(--s1);
+	align-items: center;
+	flex-wrap: wrap;
+	min-width: 0;
+}
+
+.hd-app .composer .tools .tool-saved {
+	order: 1;
+}
+
+.hd-app .composer .tools [data-hd-insert-select] {
+	order: 2;
+}
+
+.hd-app .composer .tools .tool-attach {
+	order: 3;
+}
+
+.hd-app .composer .tools .ai-menu {
+	order: 4;
+}
+
+/* Saved replies and Insert article stay real selects, drawn as text buttons. */
+.hd-app .composer .tools select {
+	height: 32px;
+	width: auto;
+	max-width: 180px;
+	border: 0;
+	background-color: transparent;
+	color: var(--accent-ink);
+	font: 600 13px var(--font);
+	padding: 0 22px 0 6px;
+	cursor: pointer;
+	field-sizing: content;
+	background-position: right 2px center;
+}
+
+.hd-app .composer .tools select:hover {
+	text-decoration: underline;
+}
+
+.hd-app .composer .tools select:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.hd-app .composer .tools .tool-saved > a {
+	font-size: 13px;
+	padding: 0 6px;
+}
+
+.hd-app .tool-attach {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+}
+
+.hd-app .attach {
+	position: relative;
+}
+
+.hd-app .attach-input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+}
+
+.hd-app .attach:has(.attach-input:focus-visible) {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.hd-app .attach-names {
+	overflow-wrap: anywhere;
+}
+
+/* Menus at the bottom of the conversation open upwards. */
+.hd-app .composer .menu-panel {
+	top: auto;
+	bottom: calc(100% + 6px);
+}
+
+.hd-app .menu-note {
+	padding: 6px 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: center;
+}
+
+.hd-app .menu-note p {
+	margin: 0 0 4px;
+	flex-basis: 100%;
+}
+
+.hd-app .menu-item b {
 	font-weight: 600;
 }
 
-/* Wizard (no wp-admin styles on this page) */
-.wpf-hd-wizard .screen-reader-text {
+.hd-app .menu-item[aria-busy="true"] {
+	opacity: 0.6;
+}
+
+.hd-app details.menu > summary.btn {
+	list-style: none;
+}
+
+.hd-app .ticket-tools .menu-panel {
+	width: min(340px, calc(100vw - 48px));
+}
+
+/* Details column */
+.hd-app .details .kv select,
+.hd-app .details .kv .input {
+	width: 100%;
+}
+
+.hd-app .details .card-head .hint {
+	text-align: right;
+}
+
+.hd-app .details .person {
+	align-items: flex-start;
+}
+
+.hd-app .person-text {
+	min-width: 0;
+	flex: 1;
+}
+
+.hd-app h3.person-name {
+	font-size: 14px;
+	margin: 0;
+}
+
+.hd-app .person-email {
+	font-weight: 400;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .details .row-title {
+	overflow-wrap: anywhere;
+}
+
+.hd-app .line-item {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--s3);
+	font-size: 13px;
+	padding: 4px 0;
+}
+
+.hd-app .line-item > :last-child {
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.hd-app .line-item.muted {
+	color: var(--muted);
+}
+
+.hd-app .line-item.total {
+	border-top: 1px solid var(--line);
+	margin-top: 4px;
+	padding-top: 6px;
+}
+
+.hd-app .order-meta {
+	margin: 6px 0 0;
+}
+
+.hd-app .order-notes {
+	margin-top: var(--s2);
+}
+
+.hd-app .order-notes summary {
+	margin-left: -6px;
+}
+
+.hd-app .note-list {
+	margin: 4px 0 0;
+	padding-left: 18px;
+	font-size: 13px;
+}
+
+.hd-app .return-request {
+	margin-top: var(--s3);
+}
+
+.hd-app .return-request summary {
+	cursor: pointer;
+	list-style: none;
+	margin: 0;
+}
+
+.hd-app .return-request .order-form {
+	padding: var(--s3) 0 0;
+}
+
+/* Order actions: text buttons in the card foot, each opens its form below the card. */
+.hd-app .order-card .card-foot {
+	position: relative;
+}
+
+.hd-app .order-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s1) var(--s2);
+	min-width: 0;
+}
+
+.hd-app details.menu.order-action {
+	position: static;
+}
+
+.hd-app .order-action[open] > summary {
+	text-decoration: underline;
+}
+
+.hd-app .order-panel {
+	left: 0;
+	right: 0;
+	min-width: 0;
+	max-width: none;
+	top: calc(100% + 6px);
+	max-height: 70vh;
+	overflow-y: auto;
+}
+
+.hd-app .qty-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.hd-app .qty-table td {
+	padding: 4px 0;
+	vertical-align: middle;
+}
+
+.hd-app .qty-table td.qty {
+	white-space: nowrap;
+	text-align: right;
+	padding-left: var(--s2);
+}
+
+.hd-app .qty-table .input {
+	width: 64px;
+	height: 32px;
+	padding: 0 6px;
+	text-align: center;
+}
+
+.hd-app .check {
+	display: flex;
+	gap: 6px;
+	align-items: flex-start;
+	font-size: 13px;
+}
+
+.hd-app .check input {
+	margin-top: 2px;
+}
+
+.hd-app .order-form .checks {
+	flex-direction: column;
+	gap: 6px;
+}
+
+.hd-app .order-form .checks legend {
+	margin-bottom: 6px;
+	padding: 0;
+}
+
+.hd-app .order-form p {
+	margin: 0;
+}
+
+.hd-app .card-body.order-form {
+	padding: var(--s4) var(--s5);
+}
+
+.hd-app .rating-comment {
+	margin: var(--s2) 0 0;
+	padding-left: var(--s3);
+	border-left: 3px solid var(--line);
+}
+
+/* New ticket form */
+.hd-app .new-intro {
+	margin: 0 0 var(--s4);
+}
+
+.hd-app .stsw-pro-new textarea {
+	min-height: 140px;
+}
+
+/* Toasts of in-place updates */
+.hd-app .toast-region {
+	position: fixed;
+	right: var(--s4);
+	bottom: var(--s4);
+	z-index: 100;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	max-width: min(420px, calc(100vw - 32px));
+	pointer-events: none;
+}
+
+.hd-app .toast-region .toast {
+	margin: 0;
+	box-shadow: 0 8px 24px rgba(23, 21, 9, 0.14);
+}
+
+/* Keyboard shortcuts */
+.hd-app .stsw-shortcuts .card-title {
+	margin-bottom: var(--s3);
+}
+
+.hd-app .keys {
+	display: grid;
+	grid-template-columns: max-content minmax(0, 1fr);
+	gap: var(--s2) var(--s4);
+	margin: 0 0 var(--s3);
+}
+
+.hd-app .keys dd {
+	margin: 0;
+}
+
+/* Two columns, then one. */
+@media (max-width: 1180px) {
+	.hd-app .inbox,
+	.hd-app .inbox.no-details {
+		grid-template-columns: 320px minmax(0, 1fr);
+	}
+
+	.hd-app .details {
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: var(--s4);
+		align-items: start;
+	}
+}
+
+@media (max-width: 780px) {
+	.hd-app .inbox,
+	.hd-app .inbox.no-details {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.hd-app .details {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* A ticket is open: it comes first, the list follows. */
+	.hd-app .inbox:not(.no-details) .convo {
+		order: -1;
+	}
+
+	.hd-app .inbox.no-details .convo:not(.new-ticket) {
+		display: none;
+	}
+
+	.hd-app .inbox.no-details .new-ticket {
+		order: -1;
+	}
+
+	.hd-app .back-link {
+		display: inline-flex;
+	}
+
+	.hd-app .composer textarea {
+		min-height: 100px;
+	}
+
+	.hd-app .convo-head {
+		flex-wrap: wrap;
+	}
+
+	.hd-app .composer .card-foot {
+		flex-wrap: wrap;
+	}
+
+	.hd-app .composer .card-foot .send {
+		width: 100%;
+		justify-content: flex-end;
+	}
+}
+
+/* ==========================================================================
+   Settings, Automation, ticket field lists and Tools (free and Pro).
+   Shared components are in 00-base.css; this part only adds what these screens need.
+   ========================================================================== */
+
+/* Tabs sit above the panes; the form itself has no frame. */
+.hd-app .hd-settings {
+	margin: 0;
+	min-width: 0;
+}
+
+.hd-app .hd-settings .tabs {
+	scrollbar-width: thin;
+}
+
+/* A short note under a card title. */
+.hd-app .card-intro {
+	margin: 0;
+	padding: var(--s3) var(--s5);
+	font-size: 13px;
+	color: var(--muted);
+	border-bottom: 1px solid var(--line);
+}
+
+.hd-app .card .section-label {
+	display: block;
+	line-height: 1.4;
+}
+
+.hd-app .card-head .row-meta {
+	font-weight: 400;
+}
+
+/* Setting rows: wide controls (editors, lists, tables) take the full width under the title. */
+.hd-app .setting.full .ctl {
+	display: block;
+}
+
+.hd-app .setting.full .ctl textarea,
+.hd-app .setting.full .ctl .input:not(.input-num) {
+	max-width: none;
+	width: 100%;
+}
+
+.hd-app .setting.full .ctl > * + * {
+	margin-top: var(--s2);
+}
+
+.hd-app .setting .ctl .toggle {
+	flex: none;
+}
+
+.hd-app .setting .ctl > .input-num,
+.hd-app .setting .ctl > input[type="number"],
+.hd-app .setting .ctl > input[type="time"] {
+	width: 96px;
+	flex: none;
+}
+
+.hd-app .setting .ctl select:not(.select) {
+	max-width: 320px;
+}
+
+.hd-app .setting .row-title {
+	display: block;
+}
+
+.hd-app .setting .banner {
+	margin-top: var(--s2);
+}
+
+.hd-app .setting .wp-editor-wrap {
+	width: 100%;
+}
+
+.hd-app .setting .wp-editor-container {
+	border-color: var(--line-strong);
+	border-radius: var(--r-ctl);
+	overflow: hidden;
+}
+
+.hd-app .setting .wp-editor-area {
+	border: 0;
+	border-radius: 0;
+}
+
+.hd-app .checks legend {
+	padding: 0;
+	margin-bottom: 6px;
+}
+
+/* Regions opened by "Edit" (an email, a rule, a mailbox, custom fields): in place, inside the card. */
+.hd-app .expand {
+	background: var(--surface-2);
+	border: 0;
+	border-bottom: 1px solid var(--line);
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+}
+
+.hd-app .expand:last-child {
+	border-bottom: 0;
+}
+
+.hd-app .expand > legend {
+	float: left;
+	width: 100%;
+	padding: var(--s3) var(--s5) 0;
+	font-size: 14px;
+}
+
+.hd-app .expand > legend + * {
+	clear: both;
+}
+
+.hd-app .expand .setting {
+	background: transparent;
+}
+
+.hd-app .expand-hint {
+	padding: var(--s3) var(--s5);
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .expand > .table-wrap {
+	margin: 0 var(--s5) var(--s4);
+	border: 1px solid var(--line);
+	border-radius: var(--r-ctl);
+	background: var(--surface);
+}
+
+.hd-app fieldset.expand > .form-grid,
+.hd-app fieldset.expand > .rule-line,
+.hd-app fieldset.expand > .label,
+.hd-app fieldset.expand > .checks,
+.hd-app fieldset.expand > .hint,
+.hd-app fieldset.expand > .form-actions {
+	margin-left: var(--s5);
+	margin-right: var(--s5);
+}
+
+.hd-app fieldset.expand > .label {
+	display: block;
+	margin-top: var(--s3);
+	margin-bottom: var(--s2);
+}
+
+.hd-app fieldset.expand > .checks {
+	margin-top: var(--s3);
+}
+
+.hd-app fieldset.expand > .hint,
+.hd-app fieldset.expand > .form-actions {
+	margin-top: var(--s3);
+	margin-bottom: var(--s4);
+}
+
+/* Small form grids (a rule, a mailbox). */
+.hd-app .form-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: var(--s3);
+	margin-top: var(--s3);
+}
+
+.hd-app .form-grid .field {
+	margin: 0;
+}
+
+.hd-app .rule-line {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: var(--s2);
+	margin-bottom: var(--s2);
+}
+
+.hd-app .form-actions {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: var(--s3);
+	flex-wrap: wrap;
+}
+
+/* Test results next to their button (email piping, AI key). */
+.hd-app .pipe-result,
+.hd-app [data-stsw-ai-result] {
+	overflow-wrap: anywhere;
+}
+
+.hd-app .card-foot .pipe-result {
+	flex: 1 1 260px;
+}
+
+.hd-app [data-stsw-pipe-result].is-error,
+.hd-app [data-stsw-ai-result].is-error,
+.hd-app .hint.is-error {
+	color: var(--bad);
+}
+
+/* Settings > AI */
+.hd-app .choice > span {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.hd-app .choice b .chip {
+	margin-left: 4px;
+}
+
+.hd-app .choice.is-locked {
+	cursor: not-allowed;
+	background: var(--surface-2);
+}
+
+.hd-app .choice-detail {
+	border-top: 1px solid var(--line);
+	padding-top: var(--s4);
+}
+
+.hd-app .choice-rows {
+	border-top: 1px solid var(--line);
+}
+
+.hd-app .credits-box p {
+	margin: 0 0 var(--s2);
+}
+
+.hd-app .credits-box p:last-child,
+.hd-app .ai-provider p:last-child {
+	margin-bottom: 0;
+}
+
+.hd-app .credits-actions {
+	display: flex;
+	gap: var(--s2);
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.hd-app .ai-guide .ai-provider {
+	display: flex;
+	gap: var(--s2) var(--s3);
+	align-items: center;
+	flex-wrap: wrap;
+	margin-top: var(--s2);
+}
+
+.hd-app .ai-guide .ai-provider .hint {
+	flex: 1 1 260px;
+}
+
+.hd-app .ai-guide > .hint {
+	margin: 0;
+}
+
+.hd-app .ai-features {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.hd-app .ai-features .row {
+	grid-template-columns: minmax(0, 1fr);
+	margin: 0;
+}
+
+.hd-app .card-body.stack > .banner {
+	margin: 0;
+}
+
+/* Emails: each email is a row with its switch and Edit. */
+.hd-app .row .row-actions .toggle {
+	margin-right: var(--s1);
+}
+
+/* Email health */
+.hd-app .health-list {
+	list-style: none;
+	margin: 0;
+	padding: 0 var(--s5) var(--s3);
+	border-bottom: 1px solid var(--line);
+}
+
+.hd-app .health-list:last-child {
+	border-bottom: 0;
+}
+
+.hd-app .health-list li {
+	display: flex;
+	gap: var(--s2);
+	align-items: flex-start;
+	padding: 6px 0;
+	margin: 0;
+	font-size: 13px;
+	min-width: 0;
+}
+
+.hd-app .health-list li > span:last-child {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .health-list .chip {
+	flex: none;
+	width: 52px;
+	justify-content: center;
+}
+
+/* Team permissions */
+.hd-app .stsw-pro-scopes + .stsw-pro-scopes {
+	border-top: 1px solid var(--line);
+}
+
+.hd-app .stsw-pro-scopes > .setting {
+	border-bottom: 0;
+}
+
+.hd-app .scopes-table th[scope="row"] {
+	font-size: 14px;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--ink);
+	background: transparent;
+	font-weight: 600;
+	border-bottom: 1px solid var(--line);
+	padding: 10px var(--s5);
+}
+
+.hd-app .scopes-table td {
+	text-align: center;
+	padding: 10px var(--s3);
+}
+
+.hd-app .scopes-table thead th:not(:first-child) {
+	text-align: center;
+}
+
+/* Working hours */
+.hd-app .hours-day .ctl {
+	flex-wrap: nowrap;
+}
+
+.hd-app .hours-day .ctl .input-num {
+	width: 112px !important;
+}
+
+/* Custom fields builder (Basics > Ticket form > Manage fields). */
+.hd-app .wpfactory-wc-sts-fields td {
+	vertical-align: top;
+	padding: 10px var(--s3);
+}
+
+.hd-app .wpfactory-wc-sts-fields th {
+	padding: 10px var(--s3);
+}
+
+.hd-app .wpfactory-wc-sts-fields .input,
+.hd-app .wpfactory-wc-sts-fields .select {
+	min-width: 140px;
+}
+
+.hd-app .wpfactory-wc-sts-fields details {
+	min-width: 220px;
+}
+
+.hd-app .wpfactory-wc-sts-fields summary {
+	cursor: pointer;
+	color: var(--accent-ink);
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 40px;
+}
+
+.hd-app .wpfactory-wc-sts-fields details .field,
+.hd-app .wpfactory-wc-sts-fields details .checks {
+	margin-top: var(--s2);
+}
+
+/* Ticket field lists (statuses, priorities, subjects): ordered list and the add or edit form. */
+.hd-app .hd-fieldtabs {
+	margin-bottom: var(--s5);
+}
+
+.hd-app .term-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.hd-app .term-row {
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	margin: 0;
+	background: var(--surface);
+}
+
+.hd-app .term-row.is-editing {
+	background: var(--accent-soft);
+}
+
+.hd-app .term-row.is-dragging {
+	opacity: 0.5;
+}
+
+.hd-app .term-row.is-over {
+	box-shadow: inset 0 2px 0 var(--accent-ink);
+}
+
+.hd-app .drag-handle {
+	width: 32px;
+	height: 32px;
+	border: 0;
+	background: transparent;
+	color: var(--muted);
+	border-radius: 8px;
+	cursor: grab;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+}
+
+.hd-app .drag-handle:hover {
+	background: var(--neutral-soft);
+	color: var(--ink);
+}
+
+.hd-app .drag-handle:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.hd-app .term-name {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.hd-app .term-count {
+	color: var(--muted);
+	white-space: nowrap;
+}
+
+.hd-app .inline-form {
+	display: inline;
+	margin: 0;
+}
+
+.hd-app .term-form .form-actions {
+	margin-top: var(--s4);
+}
+
+.hd-app .term-advanced summary {
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--accent-ink);
+}
+
+.hd-app .term-advanced .field {
+	margin-top: var(--s2);
+}
+
+.hd-app .swatches {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s2);
+}
+
+.hd-app .swatch {
+	position: relative;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--swatch);
+	cursor: pointer;
+	display: inline-block;
+}
+
+.hd-app .swatch input {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	margin: 0;
+	cursor: pointer;
+}
+
+.hd-app .swatch:has(input:checked) {
+	box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink);
+}
+
+.hd-app .swatch:has(input:focus-visible) {
+	outline: 3px solid var(--accent);
+	outline-offset: 4px;
+}
+
+/* Small screens */
+@media (max-width: 640px) {
+	.hd-app .term-row {
+		grid-template-columns: auto minmax(0, 1fr) auto;
+	}
+
+	.hd-app .term-row .row-actions {
+		grid-column: 2 / -1;
+		justify-content: flex-start;
+	}
+
+	.hd-app .rule-line {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.hd-app .hours-day .ctl {
+		flex-wrap: wrap;
+	}
+
+	.hd-app .row .row-actions {
+		justify-content: flex-start;
+	}
+
+	.hd-app .card-head {
+		flex-wrap: wrap;
+	}
+
+	.hd-app .setting .ctl .input,
+	.hd-app .setting .ctl .select,
+	.hd-app .setting .ctl > input:not([type="checkbox"]):not([type="radio"]):not(.input-num),
+	.hd-app .setting .ctl > select {
+		max-width: 100%;
+	}
+}
+
+/* Send a test email: the address and Send on one line. */
+.hd-app .stsw-test-email .ctl {
+	flex-wrap: nowrap;
+}
+
+.hd-app .stsw-test-email .ctl .input {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* The real checkbox of a switch sits on top (transparent), so a click or tap always reaches it. */
+.hd-app .toggle input {
+	z-index: 1;
+}
+
+/**
+ * Helpdesk admin design, part 3: Dashboard, Reports (Pro), Saved replies, Knowledge base, Companies (Pro, and the
+ * locked screen of the free edition), Pro features (free edition) and the setup wizard.
+ *
+ * Built into admin-ui.css by qa/build-css.py. Uses the shared components of 00-base.css; only what these screens
+ * add is here.
+ *
+ * @author WPFactory
+ */
+
+/* Lists in cards */
+
+.hd-app .row[aria-current="true"] {
+	background: var(--surface-2);
+}
+
+.hd-app .row-actions form,
+.hd-app .row-actions .chip {
+	margin: 0;
+}
+
+.hd-app .row-actions form {
+	display: inline-flex;
+}
+
+.hd-app .row-title .chip {
+	margin-left: 4px;
+	vertical-align: 1px;
+}
+
+.hd-app .empty p {
+	margin: 0 0 var(--s3);
+}
+
+.hd-app .list-tools .kb-status {
+	flex: 0 0 150px;
+}
+
+/* Dashboard */
+.hd-app [data-stsw-dashboard] .stat-num {
+	font-size: 28px;
+}
+
+/* Charts */
+.hd-app .bars.tall {
+	height: 160px;
+}
+
+.hd-app .bars.dense {
+	gap: 1px;
+}
+
+.hd-app .bars.dense span {
+	border-radius: 2px 2px 0 0;
+}
+
+.hd-app .meter i.warn {
+	background: var(--warn);
+}
+
+.hd-app .meter i.bad {
+	background: var(--bad);
+}
+
+.hd-app [data-stsw-report][aria-busy="true"] {
+	opacity: 0.6;
+}
+
+.hd-app .stat-tiles .tile .small {
+	display: block;
+	margin-top: 2px;
+}
+
+.hd-app .rating-quote p {
+	margin: 0;
+}
+
+.hd-app .rating-quote p + p {
+	margin-top: 4px;
+}
+
+/* Saved replies */
+.hd-app .saved-starters,
+.hd-app .insert-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s2);
+}
+
+.hd-app .saved-starters {
+	justify-content: center;
+}
+
+.hd-app .insert-tags .code {
+	background: none;
+	padding: 0;
+}
+
+.hd-app [data-stsw-saved-editor] textarea {
+	width: 100%;
+	min-height: 180px;
+}
+
+/* Companies */
+.hd-app .company-form {
+	border: 0;
+	margin: 0;
+	min-width: 0;
+}
+
+.hd-app .company-share {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--s3);
+}
+
+.hd-app .company-share .hint {
+	display: block;
+	margin-top: 2px;
+}
+
+.hd-app [data-stsw-co-form] textarea {
+	width: 100%;
+	min-height: 80px;
+}
+
+.hd-app [data-stsw-co-backfill] ul {
+	margin: 4px 0 0;
+	padding-left: 18px;
+}
+
+/* Pro features (free edition) */
+.hd-app .pro-features {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--s4);
+	align-items: start;
+}
+
+.hd-app .pro-points {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.hd-app .pro-points .row {
+	display: block;
+	margin: 0;
+	font-size: 14px;
+}
+
+/* Setup wizard: a page of its own (no wp-admin around it). */
+.hd-app.wpf-hd-wizard {
+	--bar-top: 0px;
+	margin: 0;
+	min-height: 100vh;
+}
+
+.hd-app .page.narrow.wizard {
+	max-width: 880px;
+}
+
+/* No wp-admin styles on this page: hide screen reader text, show the skip link on focus. */
+.hd-app.wpf-hd-wizard .screen-reader-text {
 	position: absolute;
 	width: 1px;
 	height: 1px;
@@ -1983,1202 +3121,180 @@ body.folded .wpf-hd .hd-savebar {
 	padding: 0;
 	overflow: hidden;
 	clip: rect(0, 0, 0, 0);
-	border: 0;
 	white-space: nowrap;
+	border: 0;
 }
 
-body.wpf-hd-wizard {
-	margin: 0;
-	min-height: 100vh;
-	background: var(--hd-bg);
-}
-
-.wpf-hd-wizard .hd-skip:focus {
-	position: static;
+.hd-app.wpf-hd-wizard .hd-skip:focus {
 	width: auto;
 	height: auto;
-	margin: 8px;
 	clip: auto;
-	white-space: normal;
+	margin: 0;
+	padding: var(--s2) var(--s3);
+	z-index: 100;
+	background: var(--surface);
 }
 
-.wpf-hd-wizard .hd-wizard__top {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 16px 24px;
-	background: var(--hd-surface);
-	border-bottom: 1px solid var(--hd-border);
-}
-
-.wpf-hd-wizard .hd-wizard__top a {
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd-wizard .hd-stepper {
+.hd-app .wizard-steps {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
-	gap: 8px 24px;
-	margin: 32px auto 24px;
-	padding: 0 16px;
+	gap: var(--s2) var(--s5);
 	list-style: none;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd-wizard .hd-stepper li {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.wpf-hd-wizard .hd-stepper__dot {
-	width: 10px;
-	height: 10px;
-	border: 2px solid var(--hd-border-strong);
-	border-radius: 50%;
-	background: var(--hd-surface);
-}
-
-.wpf-hd-wizard .hd-stepper .is-done .hd-stepper__dot {
-	border-color: var(--hd-accent);
-	background: var(--hd-accent);
-}
-
-.wpf-hd-wizard .hd-stepper .is-current {
-	color: var(--hd-text);
+	margin: 0 0 var(--s4);
+	padding: 0;
+	color: var(--muted);
+	font-size: 13px;
 	font-weight: 600;
 }
 
-.wpf-hd-wizard .hd-stepper .is-current .hd-stepper__dot {
-	border-color: var(--hd-accent);
-}
-
-.wpf-hd-wizard .hd-wizard__card {
-	max-width: 760px;
-	margin: 0 auto 48px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-xl);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow);
-}
-
-.wpf-hd-wizard .hd-wizard__body {
-	padding: 32px;
-}
-
-.wpf-hd-wizard .hd-wizard__body > .hd-h1 {
-	font-size: var(--hd-text-2xl);
-}
-
-.wpf-hd-wizard .hd-wizard__body > .hd-muted {
-	margin: 6px 0 24px;
-}
-
-.wpf-hd-wizard .hd-wizard__foot {
+.hd-app .wizard-steps li {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 16px 32px;
-	border-top: 1px solid var(--hd-divider);
+	gap: var(--s2);
+	margin: 0;
 }
 
-.wpf-hd-wizard .hd-features {
+.hd-app .wizard-dot {
+	width: 24px;
+	height: 24px;
+	border-radius: var(--r-pill);
+	border: 1px solid var(--line-strong);
+	background: var(--surface);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+}
+
+.hd-app .wizard-steps .is-done .wizard-dot {
+	background: var(--ok-soft);
+	border-color: var(--ok);
+	color: var(--ok);
+}
+
+.hd-app .wizard-steps .is-current {
+	color: var(--ink);
+}
+
+.hd-app .wizard-steps .is-current .wizard-dot {
+	background: var(--accent-ink);
+	border-color: var(--accent-ink);
+	color: var(--on-ink);
+}
+
+.hd-app .wizard .card-body h1 {
+	margin-top: 0;
+}
+
+.hd-app .wizard .card-body > .eyebrow + h1 {
+	margin-top: 6px;
+}
+
+.hd-app .wizard .card-body > .lead {
+	margin-bottom: var(--s5);
+}
+
+.hd-app .wizard .card-body > .lead:last-child {
+	margin-bottom: 0;
+}
+
+.hd-app .wizard-next {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--s3);
+}
+
+.hd-app .wizard-features {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 16px;
+	gap: var(--s3);
+	padding: 0 var(--s5) var(--s5);
 }
 
-.wpf-hd-wizard .hd-feature {
+.hd-app .wizard-features .tile {
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	padding: 16px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
+	padding: var(--s4);
 }
 
-.wpf-hd-wizard .hd-feature__icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: var(--hd-radius);
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent);
+.hd-app .wizard-features .tile svg {
+	color: var(--accent-ink);
 }
 
-.wpf-hd-wizard .hd-wizard__two {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: 24px;
-}
-
-.wpf-hd-wizard .hd-wizard__two .hd-h1 {
-	font-size: var(--hd-text-2xl);
-}
-
-.wpf-hd-wizard .hd-wizard__two .hd-muted {
-	margin: 6px 0 20px;
-}
-
-.wpf-hd-wizard .hd-preview {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	padding: 16px;
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface-muted);
-}
-
-.wpf-hd-wizard .hd-preview__store {
-	padding: 12px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface);
-}
-
-.wpf-hd-wizard .hd-preview__nav {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	margin-bottom: 12px;
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd-wizard .hd-preview__nav .is-on {
-	padding: 4px 8px;
-	border-radius: var(--hd-radius-sm);
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-	font-weight: 600;
-}
-
-.wpf-hd-wizard .hd-preview__order {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px 10px;
-	padding-top: 10px;
-	border-top: 1px solid var(--hd-divider);
-}
-
-.wpf-hd-wizard .hd-togglechips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	margin: 0 0 20px;
-	padding: 0;
-	border: 0;
-}
-
-.wpf-hd-wizard .hd-togglechip {
-	position: relative;
-	display: inline-flex;
-}
-
-.wpf-hd-wizard .hd-togglechip input {
-	position: absolute;
-	opacity: 0;
-}
-
-.wpf-hd-wizard .hd-togglechip span {
-	display: inline-flex;
-	align-items: center;
-	min-height: 34px;
-	padding: 0 14px;
-	border: 1px solid var(--hd-border-strong);
-	border-radius: var(--hd-radius-pill);
-	background: var(--hd-surface);
-	cursor: pointer;
-}
-
-.wpf-hd-wizard .hd-togglechip input:checked + span {
-	border-color: var(--hd-accent);
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-	font-weight: 600;
-}
-
-.wpf-hd-wizard .hd-togglechip input:checked + span::before {
-	content: "\2713";
-	margin-right: 6px;
-}
-
-.wpf-hd-wizard .hd-togglechip input:focus-visible + span {
-	outline: 2px solid var(--hd-accent);
-	outline-offset: 2px;
-}
-
-.wpf-hd-wizard .hd-done {
-	text-align: center;
-}
-
-.wpf-hd-wizard .hd-done > .hd-muted {
-	margin: 6px 0 24px;
-}
-
-.wpf-hd-wizard .hd-nextsteps {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	text-align: left;
-}
-
-.wpf-hd-wizard .hd-nextsteps li {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 14px 16px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	margin-bottom: 8px;
-}
-
-.wpf-hd-wizard .hd-nextsteps li > span {
-	display: flex;
-	flex-direction: column;
-}
-
-/* Reports (Pro) */
-.wpf-hd .hd-reports table {
-	background: var(--hd-surface);
-}
-
-/* Small screens */
-@media (max-width: 1400px) {
-	.wpf-hd .hd-ticket__body {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.wpf-hd .hd-side {
-		border-top: 1px solid var(--hd-border);
-		border-left: 0;
-	}
-}
-
-@media (max-width: 1100px) {
-	.wpf-hd .hd-inbox {
-		grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
-	}
-
-	.wpf-hd .hd-rail {
-		grid-column: 1 / -1;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 4px 12px;
-		border-right: 0;
-		border-bottom: 1px solid var(--hd-border);
-	}
-
-	.wpf-hd .hd-rail__label {
-		display: none;
-	}
-
-	.wpf-hd .hd-rail__list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 4px;
-	}
-
-	.wpf-hd .hd-rail__foot {
-		margin: 0;
-	}
-
-	.wpf-hd .hd-rail .hd-btn {
-		width: auto;
-	}
-}
-
-@media (max-width: 960px) {
-	.wpf-hd .hd-split,
-	.wpf-hd .hd-split--wide,
-	.wpf-hd .hd-settings,
-	.wpf-hd .hd-row,
-	.wpf-hd-wizard .hd-wizard__two,
-	.wpf-hd-wizard .hd-features {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.wpf-hd .hd-subnav {
-		position: static;
-	}
-
-	.wpf-hd .hd-savebar {
-		left: 0;
-	}
-
-	.wpf-hd .hd-inbox {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.wpf-hd .hd-inbox.has-detail .hd-list {
-		display: none;
-	}
-
-	.wpf-hd .hd-inbox.has-detail .hd-back {
-		display: inline-flex;
-	}
-
-	.wpf-hd .hd-list {
-		border-right: 0;
-	}
-
-	.wpf-hd .hd-msg {
-		max-width: 100%;
-	}
-
-	.wpf-hd .hd-search input[type="search"] {
-		width: 200px;
-	}
-}
-
-@media (max-width: 782px) {
-	.wpf-hd.wrap {
-		margin-left: -10px;
-	}
-
-	.wpf-hd .hd-header {
-		padding: 0 12px;
-	}
-
-	.wpf-hd .hd-page,
-	.wpf-hd .hd-ticket__main {
-		padding: 16px 12px;
-	}
-
-	.wpf-hd .hd-ticket__head,
-	.wpf-hd .hd-controls {
-		padding-left: 12px;
-		padding-right: 12px;
-	}
-
-	.wpf-hd .hd-banner {
-		margin: 0 12px 12px;
-	}
-
-	.wpf-hd .hd-header__actions,
-	.wpf-hd .hd-search,
-	.wpf-hd .hd-search input[type="search"] {
-		width: 100%;
-	}
-
-	.wpf-hd .hd-list-head,
-	.wpf-hd .hd-sortable__row {
-		grid-template-columns: 32px minmax(0, 1fr) 40px 72px;
-	}
-
-	.wpf-hd-wizard .hd-wizard__body,
-	.wpf-hd-wizard .hd-wizard__foot {
-		padding-left: 16px;
-		padding-right: 16px;
-	}
-}
-
-/* Phase 6 additions */
-.wpf-hd .hd-list__title {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-}
-
-.wpf-hd .hd-listtools {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-}
-
-.wpf-hd .hd-listtools .hd-menu__panel {
-	width: 260px;
-}
-
-.wpf-hd .hd-saveview summary {
-	list-style: none;
-}
-
-.wpf-hd .hd-saveview summary::-webkit-details-marker {
-	display: none;
-}
-
-.wpf-hd .hd-rail__saved {
-	display: flex;
-	align-items: center;
-}
-
-.wpf-hd .hd-rail__saved .hd-rail__item {
-	flex: 1;
-	min-width: 0;
-}
-
-.wpf-hd .hd-rail__remove {
-	width: 28px;
-	height: 28px;
-	opacity: 0;
-}
-
-.wpf-hd .hd-rail__saved:hover .hd-rail__remove,
-.wpf-hd .hd-rail__remove:focus-visible {
-	opacity: 1;
-}
-
-.wpf-hd .hd-available {
-	margin: 0 0 12px;
-	padding: 10px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface);
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-banner--info {
-	border-color: var(--hd-accent-border);
-	background: var(--hd-accent-selected);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-banner--info a {
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-table {
-	width: 100%;
-	border-collapse: collapse;
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-table th {
-	padding: 8px 10px;
-	border-bottom: 1px solid var(--hd-border);
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-	text-align: left;
-}
-
-.wpf-hd .hd-table td {
-	padding: 10px;
-	border-bottom: 1px solid var(--hd-divider);
-	vertical-align: top;
-}
-
-.wpf-hd .hd-inline-link {
-	display: inline;
-	margin-left: 6px;
-}
-
-@media (max-width: 782px) {
-	.wpf-hd .hd-table thead {
-		display: none;
-	}
-
-	.wpf-hd .hd-table td {
-		display: block;
-		padding: 4px 0;
-		border: 0;
-	}
-
-	.wpf-hd .hd-table tr {
-		display: block;
-		padding: 10px 0;
-		border-bottom: 1px solid var(--hd-divider);
-	}
-
-	.wpf-hd .hd-rail__remove {
-		opacity: 1;
-	}
-}
-
-/* Pro lists inside settings: mailboxes and workflow rules */
-.wpf-hd .hd-mailbox,
-.wpf-hd .hd-rule {
-	margin: 0 0 12px;
-	padding: 12px 14px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface-muted);
-}
-
-.wpf-hd .hd-mailbox legend,
-.wpf-hd .hd-rule legend {
-	padding: 0 6px;
-}
-
-.wpf-hd .hd-rule--builtin {
-	background: var(--hd-accent-selected);
-	border-color: var(--hd-accent-border);
-}
-
-.wpf-hd .hd-rule--builtin p {
+.hd-app .wizard-features .tile b {
+	font-size: 15px;
 	margin: 0;
 }
 
-.wpf-hd .hd-mailbox__grid {
+.hd-app .wizard-two {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-	gap: 10px 12px;
-}
-
-.wpf-hd .hd-mailbox__grid label {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-	color: var(--hd-text-2);
-}
-
-.wpf-hd .hd-mailbox__grid input,
-.wpf-hd .hd-mailbox__grid select {
-	width: 100%;
-}
-
-.wpf-hd .hd-rule__lines {
-	margin-top: 10px;
-}
-
-.wpf-hd .hd-rule__line {
-	display: grid;
-	grid-template-columns: minmax(180px, 1fr) minmax(140px, 1fr);
-	gap: 8px;
-	margin: 0 0 6px;
-}
-
-.wpf-hd .hd-checks {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px 16px;
-	margin: 10px 0 0;
-}
-
-/* Edit history (3.0.0). */
-.wpf-hd .hd-msg__edit {
-	margin-left: auto;
-	padding: 0 4px;
-	border: 0;
-	background: none;
-	color: var(--hd-accent, #2271b1);
-	font: inherit;
-	font-size: var(--hd-text-sm);
-	cursor: pointer;
-	opacity: 0;
-}
-
-.wpf-hd .hd-msg__edit + .hd-msg__delete {
-	margin-left: 0;
-}
-
-.wpf-hd .hd-msg:hover .hd-msg__edit,
-.wpf-hd .hd-msg__edit:focus-visible,
-.wpf-hd .hd-msg:focus-within .hd-msg__edit,
-.wpf-hd .hd-msg:focus-within .hd-msg__delete {
-	opacity: 1;
-}
-
-@media (hover: none) {
-	.wpf-hd .hd-msg__edit {
-		opacity: 1;
-	}
-}
-
-.wpf-hd .hd-msg__editor textarea {
-	width: 100%;
-	margin: 8px 0;
-}
-
-.wpf-hd .hd-msg__editor .hd-btn + .hd-btn {
-	margin-left: 6px;
-}
-
-.wpf-hd .hd-history {
-	margin-top: 8px;
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-history__list {
-	margin: 6px 0 0;
-	padding-left: 18px;
-}
-
-.wpf-hd .hd-history__text {
-	padding: 6px 8px;
-	border-left: 3px solid var(--hd-border, #dcdcde);
-	white-space: normal;
-}
-
-/* Elements with the hidden attribute stay hidden even when a class sets display (3.0.0). */
-.wpf-hd [hidden] {
-	display: none !important;
-}
-
-/* Screens inside Settings: Ticket fields and Tools */
-.wpf-hd .hd-settings__screen > .hd-page {
-	max-width: none;
-	padding: 0;
-}
-
-.wpf-hd .hd-fieldtabs {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px;
-	margin: 0 0 16px;
-	border-bottom: 1px solid var(--hd-border);
-}
-
-.wpf-hd .hd-fieldtab {
-	margin-bottom: -1px;
-	padding: 8px 12px;
-	border-bottom: 2px solid transparent;
-	color: var(--hd-text-2);
-	font-weight: 500;
-	text-decoration: none;
-}
-
-.wpf-hd .hd-fieldtab:hover {
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-fieldtab[aria-current="page"] {
-	border-bottom-color: var(--hd-accent);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-ai-promo {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px 10px;
-	align-items: baseline;
-	margin: 8px 0 0;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-ai-promo__hide {
-	color: var(--hd-text-muted);
-}
-
-/* AI tools in the reply box and the AI settings (3.1.0). */
-.wpf-hd .hd-ai-tools {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	align-items: center;
-	margin: 8px 0 0;
-}
-
-.wpf-hd .hd-ai-tools__label {
-	display: inline-flex;
-	gap: 4px;
-	align-items: center;
-	color: var(--hd-accent-strong);
-	font-size: var(--hd-text-sm);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-notice {
-	margin: 0 0 12px;
-	padding: 8px 12px;
-	border: 1px solid var(--hd-accent-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-accent-soft);
-	color: var(--hd-text);
-}
-
-.wpf-hd .hd-notice--warning {
-	border-color: var(--hd-warn-border);
-	background: var(--hd-note-bg);
-	color: var(--hd-warn-fg);
-}
-
-.wpf-hd .hd-notice[hidden] {
-	display: none;
-}
-
-.wpf-hd .hd-ai-features {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 8px;
-	margin: 0 0 8px;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-ai-features li {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	margin: 0;
-	padding: 10px 12px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius);
-	background: var(--hd-surface-muted);
-	font-size: var(--hd-text-sm);
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd .hd-ai-features strong {
-	color: var(--hd-text);
-	font-size: var(--hd-text-md);
-}
-
-/* Pro features page (free edition only, 3.1.0). */
-.wpf-hd .hd-pro {
-	max-width: 1100px;
-}
-
-.wpf-hd .hd-pro__intro {
-	margin: 0 0 16px;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-base);
-}
-
-.wpf-hd .hd-pro__grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 12px;
-	margin: 0 0 20px;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-pro__card {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	margin: 0;
-	padding: 16px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-}
-
-.wpf-hd .hd-pro__card h3 {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	margin: 0;
-	font-size: var(--hd-text-base);
-}
-
-.wpf-hd .hd-pro__card h3 .hd-icon {
-	color: var(--hd-accent);
-}
-
-.wpf-hd .hd-pro__card ul {
-	margin: 0;
-	padding-left: 18px;
-	list-style: disc;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-pro__cta {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
-	align-items: center;
-}
-
-.wpf-hd .hd-pro-hint {
-	display: flex;
-	gap: 8px;
-	align-items: baseline;
-	margin: 12px 8px 0;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-}
-
-/* Inbox, 3.1.0: ticket details in the side column, full-width messages, one AI menu. */
-.wpf-hd .hd-props {
-	display: grid;
-	gap: 10px;
-	padding: 0;
-	border: 0;
-}
-
-.wpf-hd .hd-props .hd-pillfield {
-	display: grid;
-	grid-template-columns: 72px minmax(0, 1fr);
-	align-items: center;
-	gap: 8px;
-}
-
-.wpf-hd .hd-props select.hd-pill,
-.wpf-hd .hd-props .hd-pillfield select,
-.wpf-hd .hd-props input.hd-pill {
-	width: 100%;
-	min-height: 32px;
-	border-radius: var(--hd-radius);
-}
-
-.wpf-hd .hd-props .hd-help {
-	font-weight: 400;
-}
-
-.wpf-hd .hd-side__props .hd-side__title {
-	margin-bottom: 10px;
-}
-
-.wpf-hd .hd-ticket__head {
-	border-bottom: 1px solid var(--hd-border);
-	padding-bottom: 16px;
-}
-
-.wpf-hd .hd-msg {
-	max-width: 100%;
-}
-
-.wpf-hd .hd-msg--store,
-.wpf-hd .hd-msg--note {
-	flex-direction: row;
-	align-self: stretch;
-}
-
-.wpf-hd .hd-msg__bubble {
-	flex: 1;
-}
-
-.wpf-hd .hd-msg--store .hd-msg__bubble {
-	border-left: 3px solid var(--hd-accent);
-}
-
-.wpf-hd .hd-ai-tools summary {
-	list-style: none;
-	cursor: pointer;
-}
-
-.wpf-hd .hd-ai-tools__toggle {
-	border-color: var(--hd-accent-border);
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-	font-weight: 600;
-}
-
-.wpf-hd .hd-ai-tools summary::-webkit-details-marker {
-	display: none;
-}
-
-.wpf-hd .hd-ai-tools[open] summary {
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent-strong);
-}
-
-.wpf-hd .hd-ai-tools .hd-menu__panel {
-	top: auto;
-	right: auto;
-	bottom: calc(100% + 6px);
-	left: 0;
-	width: 320px;
-	margin: 0;
-	padding: 6px;
-}
-
-.wpf-hd .hd-menu__item {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 2px;
-	width: 100%;
-	padding: 8px 10px;
-	border: 0;
-	border-radius: var(--hd-radius);
-	background: none;
-	color: var(--hd-text);
-	font: inherit;
-	text-align: left;
-	cursor: pointer;
-}
-
-.wpf-hd .hd-menu__item span {
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-menu__item:hover,
-.wpf-hd .hd-menu__item:focus-visible {
-	background: var(--hd-hover);
-}
-
-.wpf-hd .hd-menu__item[disabled] {
-	opacity: 0.6;
-	cursor: progress;
-}
-
-.wpf-hd .hd-composer__tools .hd-ai-out,
-.wpf-hd .hd-composer__tools .hd-ai-promo {
-	flex-basis: 100%;
-	order: 10;
-	margin: 0;
-}
-
-.wpf-hd .hd-composer__tools .hd-ai-out:empty {
-	display: none;
-}
-
-/* Below 1400px the side column moves under the conversation; the ticket details stay on top as one row. */
-@media (max-width: 1400px) {
-	.wpf-hd .hd-side {
-		display: contents;
-	}
-
-	.wpf-hd .hd-side > * {
-		margin: 0 24px 12px;
-	}
-
-	.wpf-hd .hd-side__props {
-		order: -1;
-		margin: 0 24px;
-		padding: 12px 0;
-		border: 0;
-		border-bottom: 1px solid var(--hd-border);
-		border-radius: 0;
-		background: none;
-	}
-
-	.wpf-hd .hd-side__props .hd-side__title {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-	}
-
-	.wpf-hd .hd-props {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 8px 12px;
-	}
-
-	.wpf-hd .hd-props .hd-pillfield {
-		display: inline-flex;
-	}
-
-	.wpf-hd .hd-props select.hd-pill,
-	.wpf-hd .hd-props .hd-pillfield select,
-	.wpf-hd .hd-props input.hd-pill {
-		width: auto;
-		border-radius: var(--hd-radius-pill);
-	}
-}
-
-/* Dashboard (3.1.0). */
-.wpf-hd .hd-dash {
-	max-width: 1280px;
-}
-
-.wpf-hd .hd-dash .stsw-checklist {
-	margin: 0 0 16px;
-}
-
-.wpf-hd .hd-dash__stats {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-	gap: 12px;
-	margin: 0 0 16px;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-dash__stats li {
-	margin: 0;
-}
-
-.wpf-hd .hd-dash__stat {
-	display: grid;
-	grid-template-columns: auto 1fr;
-	grid-template-areas: "icon label" "num num" "help help";
-	align-items: center;
-	gap: 6px 10px;
-	height: 100%;
-	box-sizing: border-box;
-	padding: 14px 16px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-	color: var(--hd-text);
-	text-decoration: none;
-}
-
-.wpf-hd .hd-dash__stat:hover,
-.wpf-hd .hd-dash__stat:focus-visible {
-	border-color: var(--hd-accent-border);
-	box-shadow: var(--hd-shadow);
-}
-
-.wpf-hd .hd-dash__stat.is-hot {
-	border-color: var(--hd-accent-border);
-	background: var(--hd-accent-selected);
-}
-
-.wpf-hd .hd-dash__icon {
-	grid-area: icon;
-	display: inline-flex;
-	padding: 6px;
-	border-radius: var(--hd-radius);
-	background: var(--hd-accent-soft);
-	color: var(--hd-accent);
-}
-
-.wpf-hd .hd-dash__label {
-	grid-area: label;
-	font-weight: 600;
-	color: var(--hd-text-2);
-	font-size: var(--hd-text-md);
-}
-
-.wpf-hd .hd-dash__num {
-	grid-area: num;
-	font-size: var(--hd-text-2xl);
-	font-weight: 700;
-	line-height: 1.1;
-}
-
-.wpf-hd .hd-dash__help {
-	grid-area: help;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-}
-
-.wpf-hd .hd-dash__grid {
-	display: grid;
-	grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-	gap: 16px;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+	gap: var(--s6);
 	align-items: start;
 }
 
-.wpf-hd .hd-dash__col {
-	display: grid;
-	gap: 16px;
-}
-
-.wpf-hd .hd-dash__card {
-	padding: 16px;
-	border: 1px solid var(--hd-border);
-	border-radius: var(--hd-radius-lg);
-	background: var(--hd-surface);
-	box-shadow: var(--hd-shadow-sm);
-}
-
-.wpf-hd .hd-dash__card .hd-h2 {
+.hd-app .wizard-preview {
 	display: flex;
-	gap: 6px;
-	align-items: center;
-	margin: 0 0 8px;
+	flex-direction: column;
+	gap: var(--s2);
 }
 
-.wpf-hd .hd-dash__cardhead {
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	gap: 12px;
-}
-
-.wpf-hd .hd-dash__list {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.wpf-hd .hd-dash__list li {
-	margin: 0;
-	border-top: 1px solid var(--hd-divider);
-}
-
-.wpf-hd .hd-dash__row {
-	display: grid;
-	grid-template-columns: minmax(0, 140px) minmax(0, 1fr) auto;
-	gap: 12px;
-	align-items: center;
-	padding: 10px 4px;
-	color: var(--hd-text);
-	text-decoration: none;
-}
-
-.wpf-hd .hd-dash__row:hover,
-.wpf-hd .hd-dash__row:focus-visible {
-	background: var(--hd-hover);
-}
-
-.wpf-hd .hd-dash__who {
+.hd-app .wizard-store {
+	border: 1px solid var(--line);
+	border-radius: var(--r-ctl);
+	background: var(--surface-2);
 	overflow: hidden;
-	font-weight: 600;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
-.wpf-hd .hd-dash__title {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-dash__meta {
-	display: inline-flex;
-	gap: 8px;
-	align-items: center;
-	font-size: var(--hd-text-sm);
-	white-space: nowrap;
-}
-
-.wpf-hd .hd-dash__empty {
-	margin: 8px 0 0;
-	color: var(--hd-text-muted);
-}
-
-.wpf-hd .hd-dash__bars {
+.hd-app .wizard-store-nav {
 	display: flex;
-	align-items: flex-end;
-	gap: 4px;
-	height: 120px;
-	margin: 8px 0 4px;
+	flex-wrap: wrap;
+	gap: 4px var(--s3);
+	padding: var(--s3) var(--s4);
+	border-bottom: 1px solid var(--line);
+	font-size: 13px;
+	color: var(--muted);
+}
+
+.hd-app .wizard-store-nav .on {
+	color: var(--ink);
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.hd-app .wizard-store .row {
+	padding: var(--s3) var(--s4);
+}
+
+.hd-app .wizard-subjects {
+	border: 0;
+	margin: 0 0 var(--s4);
 	padding: 0;
-	list-style: none;
 }
 
-.wpf-hd .hd-dash__bars li {
-	display: flex;
-	flex: 1;
-	align-items: flex-end;
-	height: 100%;
-	margin: 0;
+.hd-app .wizard-custom,
+.hd-app .wizard-first {
+	max-width: 520px;
 }
 
-.wpf-hd .hd-dash__bar {
+.hd-app .wizard textarea {
 	width: 100%;
-	border-radius: 4px 4px 0 0;
-	background: var(--hd-accent);
-	opacity: 0.85;
 }
 
-.wpf-hd .hd-dash__bars li:hover .hd-dash__bar {
-	opacity: 1;
-}
-
-.wpf-hd .hd-dash__axis {
-	display: flex;
-	justify-content: space-between;
-	color: var(--hd-text-muted);
-	font-size: var(--hd-text-sm);
-}
-
-@media (max-width: 960px) {
-	.wpf-hd .hd-dash__grid {
+@media (max-width: 980px) {
+	.hd-app .pro-features {
 		grid-template-columns: minmax(0, 1fr);
 	}
+}
 
-	.wpf-hd .hd-dash__row {
-		grid-template-columns: minmax(0, 1fr) auto;
+@media (max-width: 700px) {
+	.hd-app .wizard-two,
+	.hd-app .wizard-features {
+		grid-template-columns: minmax(0, 1fr);
 	}
+}
 
-	.wpf-hd .hd-dash__who {
-		display: none;
-	}
+.hd-app .card-foot > .small {
+	flex: 1 1 280px;
 }

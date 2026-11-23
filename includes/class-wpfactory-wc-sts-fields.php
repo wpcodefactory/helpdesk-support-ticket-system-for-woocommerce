@@ -484,11 +484,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				'multiselect' => __( 'Several choices', 'support-ticket-system-for-woocommerce' ),
 				'file'        => __( 'File', 'support-ticket-system-for-woocommerce' ),
 			);
-			echo '<p>' . esc_html__( 'Extra questions on the new ticket form. Leave the label empty to remove a field; answers already given stay on their tickets.', 'support-ticket-system-for-woocommerce' ) . '</p>';
-			echo '<table class="widefat striped wpfactory-wc-sts-fields"><thead><tr>' .
+			echo '<p class="hint expand-hint">' . esc_html__( 'Extra questions on the new ticket form. Leave the label empty to remove a field; answers already given stay on their tickets. Save to get another empty row.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+			echo '<div class="table-wrap"><table class="table wpfactory-wc-sts-fields"><thead><tr>' .
 				'<th scope="col">' . esc_html__( 'Label', 'support-ticket-system-for-woocommerce' ) . '</th>' .
 				'<th scope="col">' . esc_html__( 'Type', 'support-ticket-system-for-woocommerce' ) . '</th>' .
-				'<th scope="col">' . esc_html__( 'Choices (dropdown and several choices, comma separated)', 'support-ticket-system-for-woocommerce' ) . '</th>' .
+				'<th scope="col">' . esc_html__( 'Choices (comma separated)', 'support-ticket-system-for-woocommerce' ) . '</th>' .
 				'<th scope="col">' . esc_html__( 'Required', 'support-ticket-system-for-woocommerce' ) . '</th>' .
 				'<th scope="col">' . esc_html__( 'Ask only for', 'support-ticket-system-for-woocommerce' ) . '</th></tr></thead><tbody>';
 			foreach ( $fields as $i => $field ) {
@@ -497,32 +497,31 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				echo '<td><input type="hidden" name="' . esc_attr( $name . '[key]' ) . '" value="' . esc_attr( $field['key'] ) . '" />';
 				/* translators: %d: row number. */
 				echo '<label class="screen-reader-text" for="stsw-cf-label-' . (int) $i . '">' . esc_html( sprintf( __( 'Label of field %d', 'support-ticket-system-for-woocommerce' ), $i + 1 ) ) . '</label>';
-				echo '<input type="text" id="stsw-cf-label-' . (int) $i . '" name="' . esc_attr( $name . '[label]' ) . '" value="' . esc_attr( $field['label'] ) . '" placeholder="' . esc_attr__( 'New field', 'support-ticket-system-for-woocommerce' ) . '" /></td>';
-				echo '<td><label class="screen-reader-text" for="stsw-cf-type-' . (int) $i . '">' . esc_html__( 'Type', 'support-ticket-system-for-woocommerce' ) . '</label><select id="stsw-cf-type-' . (int) $i . '" name="' . esc_attr( $name . '[type]' ) . '">';
+				echo '<input type="text" class="input" id="stsw-cf-label-' . (int) $i . '" name="' . esc_attr( $name . '[label]' ) . '" value="' . esc_attr( $field['label'] ) . '" placeholder="' . esc_attr__( 'New field', 'support-ticket-system-for-woocommerce' ) . '" /></td>';
+				echo '<td><label class="screen-reader-text" for="stsw-cf-type-' . (int) $i . '">' . esc_html__( 'Type', 'support-ticket-system-for-woocommerce' ) . '</label><select class="select" id="stsw-cf-type-' . (int) $i . '" name="' . esc_attr( $name . '[type]' ) . '">';
 				foreach ( $types as $value => $label ) {
 					echo '<option value="' . esc_attr( $value ) . '"' . selected( $field['type'], $value, false ) . '>' . esc_html( $label ) . '</option>';
 				}
 				echo '</select></td>';
-				echo '<td><label class="screen-reader-text" for="stsw-cf-options-' . (int) $i . '">' . esc_html__( 'Choices', 'support-ticket-system-for-woocommerce' ) . '</label><input type="text" id="stsw-cf-options-' . (int) $i . '" name="' . esc_attr( $name . '[options]' ) . '" value="' . esc_attr( implode( ', ', (array) $field['options'] ) ) . '" /></td>';
+				echo '<td><label class="screen-reader-text" for="stsw-cf-options-' . (int) $i . '">' . esc_html__( 'Choices', 'support-ticket-system-for-woocommerce' ) . '</label><input type="text" class="input" id="stsw-cf-options-' . (int) $i . '" name="' . esc_attr( $name . '[options]' ) . '" value="' . esc_attr( implode( ', ', (array) $field['options'] ) ) . '" /></td>';
 				echo '<td><label><input type="checkbox" name="' . esc_attr( $name . '[required]' ) . '" value="1"' . checked( ! empty( $field['required'] ), true, false ) . ' /> <span class="screen-reader-text">' . esc_html__( 'Required', 'support-ticket-system-for-woocommerce' ) . '</span></label></td>';
 				$show  = (array) ( $field['show'] ?? array() );
 				$count = count( (array) ( $show['products'] ?? array() ) ) + count( (array) ( $show['categories'] ?? array() ) ) + count( (array) ( $show['subjects'] ?? array() ) ) + count( (array) ( $show['reasons'] ?? array() ) );
 				echo '<td><details class="stsw-cf-show"><summary>' . esc_html( $count ? __( 'Some tickets', 'support-ticket-system-for-woocommerce' ) : __( 'Every ticket', 'support-ticket-system-for-woocommerce' ) ) . '</summary>';
-				echo '<p class="description">' . esc_html__( 'Leave all empty to ask on every ticket. When you fill more than one, all must match.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+				echo '<p class="hint">' . esc_html__( 'Leave all empty to ask on every ticket. When you fill more than one, all must match.', 'support-ticket-system-for-woocommerce' ) . '</p>';
 				$skus = array();
 				foreach ( (array) ( $show['products'] ?? array() ) as $pid ) {
 					$product = wc_get_product( $pid );
 					$skus[]  = $product && $product->get_sku() ? $product->get_sku() : (string) (int) $pid;
 				}
-				echo '<p><label for="stsw-cf-products-' . (int) $i . '">' . esc_html__( 'Products in the order (IDs or SKUs, comma separated)', 'support-ticket-system-for-woocommerce' ) . '</label><br/><input type="text" class="regular-text" id="stsw-cf-products-' . (int) $i . '" name="' . esc_attr( $name . '[show][products]' ) . '" value="' . esc_attr( implode( ', ', $skus ) ) . '" /></p>';
+				echo '<div class="field"><label class="label" for="stsw-cf-products-' . (int) $i . '">' . esc_html__( 'Products in the order (IDs or SKUs, comma separated)', 'support-ticket-system-for-woocommerce' ) . '</label><input type="text" class="input" id="stsw-cf-products-' . (int) $i . '" name="' . esc_attr( $name . '[show][products]' ) . '" value="' . esc_attr( implode( ', ', $skus ) ) . '" /></div>';
 				$this->render_multi( $name . '[show][categories][]', 'stsw-cf-cats-' . (int) $i, __( 'Product categories', 'support-ticket-system-for-woocommerce' ), wp_list_pluck( $cats, 'name', 'term_id' ), (array) ( $show['categories'] ?? array() ) );
 				$this->render_multi( $name . '[show][subjects][]', 'stsw-cf-topics-' . (int) $i, __( 'Topics', 'support-ticket-system-for-woocommerce' ), wp_list_pluck( $topics, 'name', 'term_id' ), (array) ( $show['subjects'] ?? array() ) );
 				$this->render_multi( $name . '[show][reasons][]', 'stsw-cf-reasons-' . (int) $i, __( 'Reasons', 'support-ticket-system-for-woocommerce' ), $reasons, (array) ( $show['reasons'] ?? array() ) );
 				echo '</details></td>';
 				echo '</tr>';
 			}
-			echo '</tbody></table>';
-			echo '<p class="description">' . esc_html__( 'Save to get another empty row.', 'support-ticket-system-for-woocommerce' ) . '</p>';
+			echo '</tbody></table></div>';
 		}
 
 		/**
@@ -539,7 +538,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Fields' ) ) :
 				return;
 			}
 			$chosen = array_map( 'strval', $chosen );
-			echo '<fieldset id="' . esc_attr( $id ) . '" class="hd-checks"><legend>' . esc_html( $label ) . '</legend>';
+			echo '<fieldset id="' . esc_attr( $id ) . '" class="checks"><legend class="label">' . esc_html( $label ) . '</legend>';
 			foreach ( $choices as $value => $text ) {
 				echo '<label><input type="checkbox" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . checked( in_array( (string) $value, $chosen, true ), true, false ) . ' /> ' . esc_html( $text ) . '</label> ';
 			}

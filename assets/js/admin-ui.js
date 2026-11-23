@@ -28,32 +28,32 @@
 				return;
 			}
 			var id = "hd-dialog-" + String(Date.now());
-			box.className = "hd-dialog hd-ask wpf-hd";
+			box.className = "hd-app dialog";
 			box.setAttribute("role", "alertdialog");
 			box.setAttribute("aria-modal", "true");
 			box.setAttribute("aria-labelledby", id);
 			var msg = document.createElement("p");
 			msg.id = id;
-			msg.className = "hd-ask__text";
+			msg.className = "dialog-text";
 			msg.textContent = text;
 			var row = document.createElement("div");
-			row.className = "hd-ask__actions";
+			row.className = "dialog-actions";
 			var ok = document.createElement("button");
 			ok.type = "button";
-			ok.className = "hd-btn hd-btn--primary";
+			ok.className = "btn btn-primary";
 			ok.textContent = yes;
 			var cancel = null;
 			if (no) {
 				cancel = document.createElement("button");
 				cancel.type = "button";
-				cancel.className = "hd-btn";
+				cancel.className = "btn btn-secondary";
 				cancel.textContent = no;
 				row.appendChild(cancel);
 			}
 			row.appendChild(ok);
 			box.appendChild(msg);
 			box.appendChild(row);
-			(document.querySelector(".wpf-hd") || document.body).appendChild(box);
+			(document.querySelector(".hd-app") || document.body).appendChild(box);
 			var done = function (value) {
 				box.close();
 				box.remove();
@@ -143,10 +143,23 @@
 		if ("Escape" !== event.key) {
 			return;
 		}
-		var open = event.target.closest ? event.target.closest("details.hd-menu[open]") : null;
+		var open = event.target.closest ? event.target.closest("details.menu[open]") : null;
 		if (open) {
 			open.open = false;
 			open.querySelector("summary").focus();
+		}
+	});
+
+	// Toggles show one state label: On or Off.
+	document.addEventListener("change", function (event) {
+		var input = event.target;
+		if (!input.closest || "checkbox" !== input.type) {
+			return;
+		}
+		var toggle = input.closest(".toggle");
+		var state = toggle ? toggle.querySelector(".state") : null;
+		if (state) {
+			state.textContent = input.checked ? state.getAttribute("data-on") : state.getAttribute("data-off");
 		}
 	});
 
@@ -182,117 +195,205 @@
 	});
 
 	// Settings: one panel at a time, unsaved changes state.
+	// (Settings and Automation pages: tabs switch panes in place and keep `&section=` in the address; old links such
+	// as #emails, #pro_piping or #ratings open their tab; Edit buttons open regions in place; one save bar.)
 	var settings = document.querySelector("[data-hd-settings]");
 	if (settings) {
-		var links = settings.querySelectorAll("[data-hd-panel]");
-		var show = function (id, focus) {
-			var panel = document.getElementById(id);
-			if (!panel || !panel.classList.contains("hd-panel")) {
-				id = links.length ? links[0].getAttribute("data-hd-panel") : "";
-				panel = document.getElementById(id);
-			}
-			each(".hd-panel", function (p) {
-				p.classList.toggle("is-active", p === panel);
-			}, settings);
-			var section = settings.querySelector("[data-hd-section]");
-			if (section) {
-				section.value = id;
-			}
-			Array.prototype.forEach.call(links, function (link) {
-				if (link.getAttribute("data-hd-panel") === id) {
-					link.setAttribute("aria-current", "true");
-				} else {
-					link.removeAttribute("aria-current");
-				}
-			});
-			if (focus && panel) {
-				panel.focus({ preventScroll: true }); // Keep the plugin header and tabs in view.
+		var parse = function (attr) {
+			try {
+				return JSON.parse(settings.getAttribute(attr) || "{}");
+			} catch (e) {
+				return {};
 			}
 		};
-		// Anchors that are not a panel id: a short name (#ratings, #emails), or an element inside a panel.
-		var resolve = function (id) {
-			id = decodeURIComponent(String(id || "")).toLowerCase();
-			if (!id) {
-				return { panel: "" };
-			}
-			var el = document.getElementById(id);
-			if (el && el.classList.contains("hd-panel")) {
-				return { panel: id };
-			}
-			if (el && el.closest(".hd-panel")) {
-				return { panel: el.closest(".hd-panel").id, target: el };
-			}
-			var found = "";
-			Array.prototype.forEach.call(links, function (link) {
-				var pid = link.getAttribute("data-hd-panel");
-				var name = link.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
-				if (!found && (pid.replace(/^pro_/, "") === id || name === id || 0 === name.indexOf(id + "-"))) {
-					found = pid;
-				}
-			});
-			return { panel: found || id };
+		var aliases = parse("data-hd-aliases");
+		var moved = parse("data-hd-moved");
+		var tabs = settings.querySelectorAll("[data-hd-pane-tab]");
+		var paneOf = function (key) {
+			return settings.querySelector('[data-hd-pane="' + key + '"]');
 		};
-		var moved = {};
-		try {
-			moved = JSON.parse(settings.getAttribute("data-hd-moved") || "{}");
-		} catch (e) {
-			moved = {};
-		}
-		var open = function (hash, focus) {
-			var key = decodeURIComponent(String(hash || "")).toLowerCase();
-			if (moved[key] || moved["pro_" + key]) {
-				window.location.replace(moved[key] || moved["pro_" + key]);
+		var setAddress = function (key) {
+			if (!window.history || !window.history.replaceState || !window.URL) {
 				return;
 			}
-			var where = resolve(hash);
-			show(where.panel, focus && !where.target);
-			if (where.target) {
-				where.target.scrollIntoView();
-				if (where.target.focus) {
-					where.target.setAttribute("tabindex", where.target.getAttribute("tabindex") || "-1");
-					where.target.focus({ preventScroll: true });
-				}
-			}
+			var url = new window.URL(window.location.href);
+			url.searchParams.set("section", key);
+			url.hash = "";
+			window.history.replaceState(null, "", url.toString());
 		};
-		open(window.location.hash.replace("#", ""), false);
-		if (window.location.hash && !resolve(window.location.hash.replace("#", "")).target) {
-			// The browser jumps to the panel on load; start at the top so the header and tabs show.
-			window.requestAnimationFrame(function () {
-				window.scrollTo(0, 0);
+		var show = function (key, focusTab) {
+			var pane = paneOf(key);
+			if (!pane) {
+				return;
+			}
+			Array.prototype.forEach.call(tabs, function (tab) {
+				var on = tab.getAttribute("data-hd-pane-tab") === key;
+				tab.classList.toggle("on", on);
+				tab.setAttribute("aria-selected", on ? "true" : "false");
+				if (on) {
+					tab.removeAttribute("tabindex");
+					if (focusTab) {
+						tab.focus();
+					}
+				} else {
+					tab.setAttribute("tabindex", "-1");
+				}
 			});
+			each("[data-hd-pane]", function (p) {
+				p.hidden = p !== pane;
+			}, settings);
+		};
+		var current = function () {
+			var on = settings.querySelector("[data-hd-pane-tab].on");
+			return on ? on.getAttribute("data-hd-pane-tab") : "";
+		};
+		// Opens a region (an email's text, a rule) and its Edit button state.
+		var openRegion = function (region, open) {
+			region.hidden = !open;
+			each('[data-hd-expand][aria-controls="' + region.id + '"]', function (button) {
+				button.setAttribute("aria-expanded", open ? "true" : "false");
+			});
+		};
+		// An old link (#emails, #pro_piping, #stsw-email-health): the tab that holds it, or the Automation page.
+		var openHash = function (hash) {
+			var key = decodeURIComponent(String(hash || "")).replace(/^#/, "");
+			if (!key) {
+				return false;
+			}
+			var lower = key.toLowerCase();
+			var target = document.getElementById(key);
+			var pane = target && target.closest ? target.closest("[data-hd-pane]") : null;
+			if (!pane && (aliases[lower] || aliases[lower.replace(/^pro_/, "")])) {
+				pane = paneOf(aliases[lower] || aliases[lower.replace(/^pro_/, "")]);
+				target = null;
+			}
+			if (!pane) {
+				var away = moved[lower] || moved[lower.replace(/^pro_/, "")];
+				if (away) {
+					window.location.replace(away);
+					return true;
+				}
+				return false;
+			}
+			var name = pane.getAttribute("data-hd-pane");
+			show(name, false);
+			setAddress(name);
+			var region = target && target.closest ? target.closest("[data-hd-region]") : null;
+			if (region) {
+				openRegion(region, true);
+			}
+			if (target && !target.classList.contains("card")) {
+				target.scrollIntoView();
+				if (!target.hasAttribute("tabindex")) {
+					target.setAttribute("tabindex", "-1");
+				}
+				target.focus({ preventScroll: true });
+			} else {
+				// The browser jumps to the anchor on load; start at the top so the header and tabs show.
+				window.requestAnimationFrame(function () {
+					window.scrollTo(0, 0);
+				});
+			}
+			return true;
+		};
+		// A section of the other page in the address (&section=rules on Settings): open that page.
+		var asked = window.URL ? new window.URL(window.location.href).searchParams.get("section") : "";
+		if (asked && !aliases[asked] && moved[asked]) {
+			window.location.replace(moved[asked]);
 		}
+		openHash(window.location.hash);
 		window.addEventListener("hashchange", function () {
-			open(window.location.hash.replace("#", ""), true);
+			openHash(window.location.hash);
 		});
 		settings.addEventListener("click", function (event) {
-			var link = event.target.closest("[data-hd-panel]");
-			if (!link) {
+			var tab = event.target.closest("[data-hd-pane-tab]");
+			if (!tab) {
 				return;
 			}
 			event.preventDefault();
-			var id = link.getAttribute("data-hd-panel");
-			if (window.history && window.history.replaceState) {
-				window.history.replaceState(null, "", "#" + id);
+			var key = tab.getAttribute("data-hd-pane-tab");
+			var y = window.scrollY;
+			show(key, false);
+			setAddress(key);
+			window.scrollTo(0, y);
+		});
+		settings.addEventListener("keydown", function (event) {
+			var tab = event.target.closest ? event.target.closest("[data-hd-pane-tab]") : null;
+			if (!tab || -1 === ["ArrowLeft", "ArrowRight", "Home", "End"].indexOf(event.key)) {
+				return;
 			}
-			show(id, true);
-			if (settings.getBoundingClientRect().top < 0) {
-				window.scrollTo(0, 0); // Show the new section from its top, with the plugin header and tabs.
+			event.preventDefault();
+			var list = Array.prototype.slice.call(tabs);
+			var at = list.indexOf(tab);
+			var next = "Home" === event.key ? 0 : "End" === event.key ? list.length - 1 : (at + ("ArrowRight" === event.key ? 1 : -1) + list.length) % list.length;
+			var key = list[next].getAttribute("data-hd-pane-tab");
+			show(key, true);
+			setAddress(key);
+		});
+
+		// Edit buttons open their region in place; without scripts every region is simply shown.
+		each("[data-hd-region]", function (region) {
+			openRegion(region, !!region.querySelector(".is-error, [aria-invalid=true]"));
+		}, settings);
+		each("[data-hd-expand]", function (button) {
+			button.hidden = false;
+		}, settings);
+		settings.addEventListener("click", function (event) {
+			var button = event.target.closest("[data-hd-expand]");
+			if (!button) {
+				return;
+			}
+			var region = document.getElementById(button.getAttribute("aria-controls"));
+			if (!region) {
+				return;
+			}
+			var open = region.hidden;
+			openRegion(region, open);
+			if (open) {
+				var first = region.querySelector("input:not([type=hidden]), select, textarea");
+				if (first && region.hasAttribute("data-hd-new")) {
+					first.focus();
+				}
 			}
 		});
-		// AI on but not connected: say so as soon as the box is ticked.
+
+		// Rows shown only for one choice (data-hd-when="name=value"), for example the own-key fields in Settings > AI.
+		var applyWhen = function () {
+			each("[data-hd-when]", function (el) {
+				var rule = el.getAttribute("data-hd-when").split("=");
+				var inputs = settings.querySelectorAll('[name="' + rule[0] + '"]');
+				var value = "";
+				Array.prototype.forEach.call(inputs, function (input) {
+					if ("submit" === input.type || "button" === input.type) {
+						return;
+					}
+					if ("radio" === input.type || "checkbox" === input.type) {
+						value = input.checked ? input.value : value;
+					} else if ("hidden" !== input.type || !value) {
+						value = input.value;
+					}
+				});
+				el.hidden = value !== rule[1];
+			}, settings);
+		};
+		applyWhen();
+		settings.addEventListener("change", applyWhen);
+
+		// AI with WPFactory AI credits chosen but not connected: say so as soon as it is chosen.
 		var aiNotice = settings.querySelector("[data-stsw-ai-notconnected]");
-		var aiBox = settings.querySelector('input[type="checkbox"][name="wpfactory_wc_sts_ai_enabled"], input[type="checkbox"][name="wpfactory_wc_sts_pro_ai_enabled"]');
-		var aiService = settings.querySelector('select[name="wpfactory_wc_sts_pro_ai_provider"]');
-		if (aiNotice && aiBox) {
-			var aiToggle = function () {
-				aiNotice.hidden = !aiBox.checked || (aiService && "wpfactory" !== aiService.value);
-			};
-			aiBox.addEventListener("change", aiToggle);
-			if (aiService) {
-				aiService.addEventListener("change", aiToggle);
-			}
+		if (aiNotice) {
+			settings.addEventListener("change", function () {
+				var credits = settings.querySelector('input[name="stsw_ai_mode"][value="credits"]');
+				var box = settings.querySelector('input[type="checkbox"][name="wpfactory_wc_sts_ai_enabled"], input[type="checkbox"][name="wpfactory_wc_sts_pro_ai_enabled"]');
+				if (credits) {
+					aiNotice.hidden = !credits.checked;
+				} else if (box) {
+					aiNotice.hidden = !box.checked;
+				}
+			});
 		}
-		var bar = settings.querySelector(".hd-savebar");
+
+		var bar = settings.querySelector(".savebar");
 		var state = settings.querySelector("[data-hd-state]");
 		var dirty = false;
 		var markDirty = function (event) {
@@ -308,6 +409,10 @@
 		settings.addEventListener("change", markDirty);
 		settings.addEventListener("submit", function () {
 			dirty = false;
+			if (current()) {
+				setAddress(current()); // The page comes back on the same tab after saving.
+				settings.setAttribute("action", window.location.href);
+			}
 		});
 		window.addEventListener("beforeunload", function (event) {
 			if (dirty) {
@@ -485,6 +590,45 @@
 		}
 		input.addEventListener("input", function () {
 			out.textContent = input.value;
+		});
+	});
+
+	// Lists (saved replies, knowledge base): the search and status filter narrow the rows in place. Without
+	// JavaScript the form is a normal search (GET) and the server filters.
+	each("[data-hd-filter]", function (form) {
+		var list = document.getElementById(form.getAttribute("data-hd-filter"));
+		if (!list) {
+			return;
+		}
+		var search = form.querySelector('input[type="search"]');
+		var status = form.querySelector("select");
+		var none = list.querySelector("[data-hd-filter-none]");
+		var apply = function () {
+			var words = search ? search.value.trim().toLowerCase() : "";
+			var want = status ? status.value : "";
+			var shown = 0;
+			Array.prototype.forEach.call(list.querySelectorAll("[data-hd-filter-text]"), function (row) {
+				var ok = (!words || row.getAttribute("data-hd-filter-text").indexOf(words) !== -1) && (!want || row.getAttribute("data-hd-filter-status") === want);
+				row.hidden = !ok;
+				shown += ok ? 1 : 0;
+			});
+			if (none) {
+				none.hidden = shown > 0;
+			}
+		};
+		form.addEventListener("input", apply);
+		form.addEventListener("change", apply);
+		form.addEventListener("submit", function (event) {
+			event.preventDefault();
+			apply();
+			var url = new URL(window.location.href);
+			if (search) {
+				url.searchParams.set(search.name, search.value);
+			}
+			if (status) {
+				url.searchParams.set(status.name, status.value);
+			}
+			window.history.replaceState(null, "", url.toString());
 		});
 	});
 })();

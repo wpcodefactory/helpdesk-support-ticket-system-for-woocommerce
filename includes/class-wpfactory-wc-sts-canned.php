@@ -162,12 +162,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Canned' ) ) :
 			$replies = $this->get_replies();
 			$add_url = admin_url( 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=saved' );
 			if ( empty( $replies ) ) {
-				echo '<a class="hd-btn hd-btn--sm hd-btn--ghost" href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add saved replies', 'support-ticket-system-for-woocommerce' ) . '</a>';
+				echo '<a class="btn btn-text btn-sm" href="' . esc_url( $add_url ) . '">' . esc_html__( 'Add saved replies', 'support-ticket-system-for-woocommerce' ) . '</a>';
 				return;
 			}
 			$values = $this->get_placeholders( $ticket_id );
 			echo '<label class="screen-reader-text" for="stsw-canned">' . esc_html__( 'Insert a saved reply', 'support-ticket-system-for-woocommerce' ) . '</label>';
-			echo '<select id="stsw-canned" class="wpfactory-wc-sts-canned hd-pill hd-pill--ghost" data-target="' . esc_attr( $target ) . '"><option value="">' . esc_html__( 'Saved reply', 'support-ticket-system-for-woocommerce' ) . '</option>';
+			echo '<select id="stsw-canned" class="wpfactory-wc-sts-canned" data-target="' . esc_attr( $target ) . '"><option value="">' . esc_html__( 'Saved reply', 'support-ticket-system-for-woocommerce' ) . '</option>';
 			foreach ( $replies as $reply ) {
 				$text = trim( wp_strip_all_tags( str_replace( array( '</p>', '<br>', '<br />', '<br/>' ), "\n", (string) $reply->post_content ) ) );
 				$text = strtr( WPFactory_WC_STS_Emails::fallbacks( html_entity_decode( $text, ENT_QUOTES, 'UTF-8' ), $values, false ), $values );
