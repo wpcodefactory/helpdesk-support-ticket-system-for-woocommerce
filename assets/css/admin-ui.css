@@ -1992,8 +1992,8 @@ dialog.hd-app::backdrop {
 }
 
 .hd-app .composer .card-foot {
-	flex-wrap: nowrap;
-	align-items: flex-end;
+	flex-wrap: wrap;
+	align-items: center;
 }
 
 .hd-app .composer .card-foot .send {
@@ -2059,6 +2059,49 @@ dialog.hd-app::backdrop {
 	align-items: center;
 	gap: 4px;
 	min-width: 0;
+}
+
+/* Every composer tool sits on one line: each wrapper centres its button or select. */
+.hd-app .composer .tools > * {
+	display: inline-flex;
+	align-items: center;
+	height: 32px;
+	margin: 0;
+}
+
+/* AI next to the message type: a secondary button with the AI mark, its menu opens to the left. */
+.hd-app .composer-ai {
+	display: flex;
+	align-items: center;
+	gap: var(--s3);
+	margin-left: auto;
+}
+
+.hd-app .composer-ai .ai-button .icon {
+	color: var(--accent-ink);
+}
+
+.hd-app .composer-ai .ai-button {
+	border-color: var(--accent-line);
+	background: var(--accent-soft);
+}
+
+.hd-app .composer-ai .ai-button:hover {
+	background: var(--surface);
+}
+
+.hd-app .composer-ai .menu-panel {
+	left: auto;
+	right: 0;
+	width: 300px;
+}
+
+@media (max-width: 640px) {
+	.hd-app .composer-ai {
+		margin-left: 0;
+		width: 100%;
+		justify-content: space-between;
+	}
 }
 
 .hd-app .attach {
@@ -3297,4 +3340,63 @@ dialog.hd-app::backdrop {
 
 .hd-app .card-foot > .small {
 	flex: 1 1 280px;
+}
+
+/* Knowledge base: write articles with AI */
+.hd-app .kb-ai {
+	border-color: var(--accent-line);
+}
+
+.hd-app .kb-ai .card-head {
+	background: var(--accent-soft);
+}
+
+.hd-app .kb-ai .card-title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.hd-app .kb-ai .card-title .icon {
+	color: var(--accent-ink);
+}
+
+.hd-app .kb-ai-lead {
+	margin: 0 0 var(--s3);
+}
+
+.hd-app .kb-ai-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+	align-items: flex-start;
+}
+
+.hd-app .kb-ai-form .field {
+	width: 100%;
+	margin: 0;
+}
+
+.hd-app .kb-ai-topics {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	margin-left: -6px;
+}
+
+.hd-app .kb-ai-out {
+	width: 100%;
+}
+
+.hd-app .kb-ai-out .banner {
+	margin: 0;
+}
+
+/* Composer foot: the tools on one line, the send buttons under them on the right. */
+.hd-app .composer > .card-foot .tools {
+	flex: 1 1 100%;
+}
+
+.hd-app .composer > .card-foot .send {
+	margin-left: auto;
 }

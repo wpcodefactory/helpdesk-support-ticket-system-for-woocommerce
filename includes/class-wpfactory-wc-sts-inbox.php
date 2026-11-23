@@ -1268,7 +1268,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 						<label><input type="radio" name="stsw_mode" value="reply" checked /> <?php esc_html_e( 'Reply to customer', 'support-ticket-system-for-woocommerce' ); ?></label>
 						<label><input type="radio" name="stsw_mode" value="note" /> <?php esc_html_e( 'Private note', 'support-ticket-system-for-woocommerce' ); ?></label>
 					</fieldset>
-					<span class="hint" id="hd-composer-hint"><?php esc_html_e( 'Ctrl+Enter to send', 'support-ticket-system-for-woocommerce' ); ?></span>
+					<div class="composer-ai">
+						<span class="hint" id="hd-composer-hint"><?php esc_html_e( 'Ctrl+Enter to send', 'support-ticket-system-for-woocommerce' ); ?></span>
+						<?php
+						/**
+						 * AI button next to the message type (the AI menu: draft, improve, summarize, translate).
+						 *
+						 * @param int $ticket_id Ticket ID.
+						 */
+						do_action( 'wpfactory_wc_sts_inbox_ai', $ticket_id );
+						?>
+					</div>
 				</div>
 				<label for="stsw-inbox-reply" class="stsw-replybox__label screen-reader-text"><?php esc_html_e( 'Reply: the customer will see it', 'support-ticket-system-for-woocommerce' ); ?></label>
 				<textarea id="stsw-inbox-reply" name="stsw_content" rows="5" placeholder="<?php esc_attr_e( 'Write your reply...', 'support-ticket-system-for-woocommerce' ); ?>" aria-describedby="hd-composer-hint"></textarea>
@@ -1286,7 +1296,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inbox' ) ) :
 							echo '<span class="tool tool-attach"><label class="btn btn-text btn-sm attach">' . esc_html__( 'Attach', 'support-ticket-system-for-woocommerce' ) . '<input type="file" id="stsw-inbox-files" name="my_file_upload[]" multiple class="attach-input" /></label><span class="hint attach-names" aria-live="polite"></span></span>';
 						}
 						/**
-						 * Composer tools (Insert article, Draft with AI).
+						 * Composer tools (Insert article).
 						 *
 						 * @param int $ticket_id Ticket ID.
 						 */

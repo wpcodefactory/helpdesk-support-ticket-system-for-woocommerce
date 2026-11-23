@@ -241,6 +241,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_UI' ) ) :
 					/* translators: %d: tickets imported. */
 					'imported'     => __( 'Done: %d tickets imported. They are in the inbox.', 'support-ticket-system-for-woocommerce' ),
 					'importError'  => __( 'The import stopped. Run it again to continue where it stopped.', 'support-ticket-system-for-woocommerce' ),
+					'aiError'      => __( 'The AI did not answer. Try again in a moment.', 'support-ticket-system-for-woocommerce' ),
 				)
 			);
 		}

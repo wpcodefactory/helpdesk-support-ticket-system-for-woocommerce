@@ -631,4 +631,57 @@
 			window.history.replaceState(null, "", url.toString());
 		});
 	});
+
+	// Knowledge base: AI drafts an article from the store's information. The answer patches the card only.
+	each("[data-stsw-kb-ai-form]", function (form) {
+		var input = form.querySelector('input[name="topic"]');
+		var out = form.querySelector("[data-stsw-kb-ai-out]");
+		var submit = form.querySelector('button[type="submit"]');
+		var show = function (kind, text, link, label) {
+			out.textContent = "";
+			var box = document.createElement("div");
+			box.className = "banner banner-" + kind;
+			var span = document.createElement("span");
+			span.textContent = text;
+			box.appendChild(span);
+			if (link) {
+				var a = document.createElement("a");
+				a.className = "btn btn-text btn-sm";
+				a.href = link;
+				a.textContent = label || link;
+				box.appendChild(a);
+			}
+			out.appendChild(box);
+		};
+		form.addEventListener("click", function (event) {
+			var pick = event.target.closest("[data-stsw-kb-ai-topic]");
+			if (pick) {
+				input.value = pick.getAttribute("data-stsw-kb-ai-topic");
+				input.focus();
+			}
+		});
+		form.addEventListener("submit", function (event) {
+			event.preventDefault();
+			if (!input.value.trim() || submit.disabled) {
+				input.focus();
+				return;
+			}
+			var data = new window.FormData();
+			data.append("action", "wpfactory_wc_sts_kb_ai_draft");
+			data.append("nonce", form.getAttribute("data-nonce"));
+			data.append("topic", input.value.trim());
+			submit.disabled = true;
+			show("info", form.getAttribute("data-working"));
+			window.fetch(form.getAttribute("data-url"), { method: "POST", credentials: "same-origin", body: data }).then(function (r) {
+				return r.json();
+			}).then(function (json) {
+				var d = (json && json.data) || {};
+				show(json && json.success ? "ok" : "warn", d.message || "", d.link, d.label);
+			}).catch(function () {
+				show("warn", t.aiError || "");
+			}).then(function () {
+				submit.disabled = false;
+			});
+		});
+	});
 })();

@@ -78,7 +78,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 			add_action( 'init', array( $this, 'register_product' ), 5 );
 			add_filter( 'wpfactory_wc_sts_settings_sections', array( $this, 'settings' ) );
 			add_action( 'wpfactory_wc_sts_settings_before_save', array( $this, 'map_choice' ) );
-			add_action( 'wpfactory_wc_sts_inbox_reply_tools', array( $this, 'render_buttons' ), 20 );
+			add_action( 'wpfactory_wc_sts_inbox_ai', array( $this, 'render_buttons' ), 20 );
 			add_action( 'wp_ajax_wpfactory_wc_sts_credits_ai', array( $this, 'ajax' ) );
 			add_action( 'wpfactory_wc_sts_header_actions', array( $this, 'header_pill' ), 5 );
 			add_action( 'admin_post_wpfactory_wc_sts_ai_promo_hide', array( $this, 'hide_promo' ) );
@@ -662,7 +662,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Credits' ) ) :
 		public function render_tools( $ticket_id, $notice = '', $tasks = true ) {
 			$url   = admin_url( 'admin-ajax.php' );
 			$nonce = wp_create_nonce( 'wpfactory_wc_sts_credits_ai' );
-			echo '<details class="menu ai-menu stsw-credits-ai" data-stsw-ai-menu><summary class="btn btn-text btn-sm">' . esc_html__( 'Draft with AI', 'support-ticket-system-for-woocommerce' ) . '</summary><div class="menu-panel" role="group" aria-label="' . esc_attr__( 'AI tools', 'support-ticket-system-for-woocommerce' ) . '">';
+			echo '<details class="menu ai-menu stsw-credits-ai" data-stsw-ai-menu><summary class="btn btn-secondary btn-sm ai-button">' . wp_kses( WPFactory_WC_STS_UI::icon( 'sparkle', 16 ), WPFactory_WC_STS_UI::svg_kses() ) . esc_html__( 'Draft with AI', 'support-ticket-system-for-woocommerce' ) . '</summary><div class="menu-panel end" role="group" aria-label="' . esc_attr__( 'AI tools', 'support-ticket-system-for-woocommerce' ) . '">';
 			echo wp_kses_post( $notice );
 			if ( $tasks ) {
 				foreach ( $this->tools() as $task => $tool ) {
