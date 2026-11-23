@@ -302,11 +302,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Lifecycle' ) ) :
 			if ( ! get_attached_media( '', $ticket_id ) || ! current_user_can( 'edit_post', $ticket_id ) ) {
 				return;
 			}
-			echo '<section class="hd-side__card" aria-labelledby="hd-side-files"><h3 class="hd-side__title" id="hd-side-files">' . esc_html__( 'Files', 'support-ticket-system-for-woocommerce' ) . '</h3>';
+			echo '<section class="card" aria-labelledby="hd-side-files"><div class="card-head"><h3 class="card-title" id="hd-side-files">' . esc_html__( 'Files', 'support-ticket-system-for-woocommerce' ) . '</h3>';
 			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-hd-confirm="' . esc_attr__( 'Delete every file of this ticket? This cannot be undone.', 'support-ticket-system-for-woocommerce' ) . '">';
 			echo '<input type="hidden" name="action" value="wpfactory_wc_sts_delete_files" /><input type="hidden" name="ticket" value="' . (int) $ticket_id . '" />';
 			wp_nonce_field( 'wpfactory_wc_sts_delete_files_' . (int) $ticket_id );
-			echo '<button type="submit" class="hd-btn hd-btn--sm hd-btn--danger">' . esc_html__( 'Delete files', 'support-ticket-system-for-woocommerce' ) . '</button></form></section>';
+			echo '<button type="submit" class="btn btn-danger btn-sm">' . esc_html__( 'Delete files', 'support-ticket-system-for-woocommerce' ) . '</button></form></div></section>';
 		}
 
 		/**

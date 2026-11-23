@@ -399,7 +399,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 				return;
 			}
 			$url = get_post_meta( $attachment_id, '_stsw_protected', true ) ? $this->get_protected_download_url( $attachment_id, $extra ) : wp_get_attachment_url( $attachment_id );
-			echo '<p><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener"><i class="fa fa-file-o" aria-hidden="true"></i> ' . esc_html( $this->get_display_name( $attachment_id ) ) . '</a></p>';
+			echo '<p><a class="file" href="' . esc_url( $url ) . '" target="_blank" rel="noopener"><i class="fa fa-file-o" aria-hidden="true"></i> ' . esc_html( $this->get_display_name( $attachment_id ) ) . '</a></p>';
 		}
 
 		/**
@@ -419,7 +419,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Files' ) ) :
 			if ( $id && $extra && get_post_meta( $id, '_stsw_protected', true ) ) {
 				$url = $this->get_protected_download_url( $id, $extra );
 			}
-			echo '<p><a href="' . esc_url( $url ) . '" target="_blank" rel="noopener"><i class="fa fa-file-o" aria-hidden="true"></i> ' . esc_html( $name ) . '</a></p>';
+			echo '<p><a class="file" href="' . esc_url( $url ) . '" target="_blank" rel="noopener"><i class="fa fa-file-o" aria-hidden="true"></i> ' . esc_html( $name ) . '</a></p>';
 		}
 
 		/**

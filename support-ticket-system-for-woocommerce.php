@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Customer Support Helpdesk & Tickets for WooCommerce
+ * Plugin Name: AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center
  * Description: Customer support for WooCommerce: tickets from My Account and orders, a team inbox with order details, help center and self-hosted live chat.
  * Plugin URI: https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce
- * Version: 3.0.0
+ * Version: 3.1.0
  * Author: WPFactory
  * Author URI: https://wpfactory.com
  * Text Domain: support-ticket-system-for-woocommerce
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 2.0.0
  * @since   2.0.0
  */
-defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '3.0.0' );
+defined( 'WPFACTORY_WC_STS_VERSION' ) || define( 'WPFACTORY_WC_STS_VERSION', '3.1.0' );
 
 /**
  * Plugin file.
@@ -44,7 +44,7 @@ defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ 
  */
 defined( 'WPFACTORY_WC_STS_PAGE' ) || define( 'WPFACTORY_WC_STS_PAGE', 'support-ticket-system-woocommerce' );
 defined( 'WPFACTORY_WC_STS_VERSION_OPTION' ) || define( 'WPFACTORY_WC_STS_VERSION_OPTION', 'wpfactory_wc_sts_version' );
-defined( 'WPFACTORY_WC_STS_NAME' ) || define( 'WPFACTORY_WC_STS_NAME', 'Customer Support Helpdesk & Tickets for WooCommerce' );
+defined( 'WPFACTORY_WC_STS_NAME' ) || define( 'WPFACTORY_WC_STS_NAME', 'AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center' );
 
 if ( ! function_exists( 'wpfactory_wc_sts_is_pro_active' ) ) {
 	/**
@@ -80,7 +80,7 @@ if ( wpfactory_wc_sts_is_pro_active() ) {
 				return;
 			}
 			echo '<div class="notice notice-info"><p>' .
-				esc_html__( 'Customer Support Helpdesk & Tickets for WooCommerce Pro is active, so the free version is paused. You can deactivate the free version; your tickets stay in place.', 'support-ticket-system-for-woocommerce' ) .
+				esc_html__( 'AI Helpdesk for WooCommerce Pro: Support Tickets, Live Chat & Help Center is active, so the free version is paused. You can deactivate the free version; your tickets stay in place.', 'support-ticket-system-for-woocommerce' ) .
 			'</p></div>';
 		}
 	);
@@ -122,9 +122,14 @@ add_action( 'plugins_loaded', 'wpfactory_wc_sts' );
  *
  * @todo (v2.2.0) Move everything to the `plugins_loaded` action.
  */
-foreach ( array( 'init', 'inc', 'customer', 'inbox', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy', 'ui', 'kb', 'chat', 'teamwork', 'import', 'tracking', 'templates', 'numbers', 'otp', 'guard', 'lifecycle', 'history', 'rest', 'credits' ) as $wpfactory_wc_sts_part ) {
+foreach ( array( 'init', 'inc', 'customer', 'inbox', 'admin', 'emails', 'files', 'guest', 'canned', 'fields', 'privacy', 'ui', 'kb', 'chat', 'teamwork', 'import', 'tracking', 'templates', 'numbers', 'otp', 'guard', 'lifecycle', 'history', 'rest', 'credits', 'chatbot', 'dashboard' ) as $wpfactory_wc_sts_part ) {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-' . $wpfactory_wc_sts_part . '.php';
 }
+
+/**
+ * "Pro features" page (free edition only; not part of the shared core).
+ */
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-wpfactory-wc-sts-upgrade.php';
 
 /**
  * WPFactory AI library (AI with WPFactory AI credits). Each WPFactory plugin bundles a copy; the newest one loads.

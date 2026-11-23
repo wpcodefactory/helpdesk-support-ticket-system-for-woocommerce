@@ -197,8 +197,22 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 			if ( ! $this->is_enabled() ) {
 				return;
 			}
-			$on = '1' === (string) get_user_meta( get_current_user_id(), self::META_AVAILABLE, true );
-			echo '<label class="hd-switchrow hd-available"><input type="checkbox" role="switch" class="hd-switch" data-hd-available' . checked( $on, true, false ) . ' /> <span><strong>' . esc_html__( 'Available for chat', 'support-ticket-system-for-woocommerce' ) . '</strong><span class="hd-help">' . esc_html__( 'Visitors can chat while this is on and you are active.', 'support-ticket-system-for-woocommerce' ) . '</span></span></label>';
+			$on   = '1' === (string) get_user_meta( get_current_user_id(), self::META_AVAILABLE, true );
+			$help = __( 'Visitors can chat while this is on and you are active.', 'support-ticket-system-for-woocommerce' );
+			echo '<div class="chat-available" title="' . esc_attr( $help ) . '"><span class="small" id="hd-available-label">' . esc_html__( 'Available for chat', 'support-ticket-system-for-woocommerce' ) . '</span>';
+			echo wp_kses(
+				WPFactory_WC_STS_UI::toggle(
+					'',
+					$on,
+					array(
+						'data-hd-available' => true,
+						'aria-labelledby'   => 'hd-available-label',
+						'aria-describedby'  => 'hd-available-help',
+					)
+				),
+				WPFactory_WC_STS_UI::toggle_kses()
+			);
+			echo '<span class="screen-reader-text" id="hd-available-help">' . esc_html( $help ) . '</span></div>';
 		}
 
 		/**
@@ -267,7 +281,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Chat' ) ) :
 		 */
 		public function row_badge( $ticket_id ) {
 			if ( 'chat' === get_post_meta( $ticket_id, self::META_CHANNEL, true ) ) {
-				echo '<span class="hd-tag">' . esc_html__( 'Chat', 'support-ticket-system-for-woocommerce' ) . '</span>';
+				echo WPFactory_WC_STS_UI::chip( __( 'Chat', 'support-ticket-system-for-woocommerce' ), 'info' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in chip().
 			}
 		}
 

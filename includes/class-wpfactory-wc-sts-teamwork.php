@@ -155,7 +155,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 		public function render_presence( $ticket_id ) {
 			$this->mark_present( $ticket_id, get_current_user_id(), false );
 			$activity = $this->core()->get_activity( $ticket_id );
-			echo '<div class="hd-banner hd-banner--info" data-hd-presence data-ticket="' . (int) $ticket_id . '" data-since="' . esc_attr( (string) $activity['at'] ) . '" role="status" hidden></div>';
+			echo '<div class="banner banner-info" data-hd-presence data-ticket="' . (int) $ticket_id . '" data-since="' . esc_attr( (string) $activity['at'] ) . '" role="status" hidden></div>';
 		}
 
 		/**
@@ -202,7 +202,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 		 * @return string[]
 		 */
 		protected function keys() {
-			return array( 'view', 's', 'order_id', 'prio', 'subject', 'status', 'tag' );
+			return array( 'view', 's', 'order_id', 'prio', 'subject', 'status', 'tag', 'sort' );
 		}
 
 		/**
@@ -241,46 +241,47 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 		}
 
 		/**
-		 * Saved views in the left column.
+		 * Saved views as more links in the views control of the inbox head.
 		 */
 		public function render_saved_views() {
 			$views = $this->get_views();
-			if ( ! $views ) {
-				return;
-			}
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- navigation only.
 			$current = sanitize_key( wp_unslash( $_GET['saved'] ?? '' ) );
-			echo '<p class="hd-rail__label" id="hd-rail-saved">' . esc_html__( 'Saved views', 'support-ticket-system-for-woocommerce' ) . '</p><ul class="hd-rail__list" aria-labelledby="hd-rail-saved">';
 			foreach ( $views as $id => $view ) {
 				$url = add_query_arg( array_merge( $view['args'], array( 'saved' => $id ) ), WPFactory_WC_STS_UI::url() );
-				echo '<li class="hd-rail__saved"><a class="hd-rail__item" href="' . esc_url( $url ) . '"' . ( $current === $id ? ' aria-current="page"' : '' ) . '>' . wp_kses( WPFactory_WC_STS_UI::icon( 'search', 16 ), WPFactory_WC_STS_UI::svg_kses() ) . '<span class="hd-rail__text">' . esc_html( $view['name'] ) . '</span><span class="hd-count">' . (int) $this->count( $view['args'] ) . '</span></a>';
-				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="hd-inline"><input type="hidden" name="action" value="wpfactory_wc_sts_view" /><input type="hidden" name="delete" value="' . esc_attr( $id ) . '" />';
-				wp_nonce_field( WPFactory_WC_STS_Inbox::NONCE );
-				/* translators: %s: view name. */
-				echo '<button type="submit" class="hd-icon-btn hd-rail__remove" aria-label="' . esc_attr( sprintf( __( 'Remove the saved view %s', 'support-ticket-system-for-woocommerce' ), $view['name'] ) ) . '">' . wp_kses( WPFactory_WC_STS_UI::icon( 'trash', 14 ), WPFactory_WC_STS_UI::svg_kses() ) . '</button></form></li>';
+				echo '<a id="hd-saved-' . esc_attr( $id ) . '" data-hd-saved="' . esc_attr( $id ) . '" href="' . esc_url( $url ) . '"' . ( $current === $id ? ' class="on" aria-current="page"' : '' ) . '>' . esc_html( $view['name'] ) . ' <span class="n">' . esc_html( number_format_i18n( $this->count( $view['args'] ) ) ) . '</span></a>';
 			}
-			echo '</ul>';
 		}
 
 		/**
-		 * Above the list: save these filters as a view, and export them as CSV.
+		 * List card tools: export the list as CSV, save these filters as a view, remove saved views.
 		 *
 		 * @param array  $keep Current filters.
 		 * @param string $view View key.
 		 */
 		public function render_list_tools( $keep, $view ) {
-			$args = array_intersect_key( $keep, array_flip( $this->keys() ) );
-			echo '<div class="hd-listtools">';
-			echo '<a class="hd-btn hd-btn--sm hd-btn--ghost" href="' . esc_url( wp_nonce_url( add_query_arg( array_merge( $args, array( 'action' => 'wpfactory_wc_sts_export' ) ), admin_url( 'admin-post.php' ) ), WPFactory_WC_STS_Inbox::NONCE ) ) . '">' . esc_html__( 'Export CSV', 'support-ticket-system-for-woocommerce' ) . '</a>';
-			if ( count( $args ) > 1 || 'all' !== $view ) {
-				echo '<details class="hd-menu hd-saveview"><summary class="hd-btn hd-btn--sm hd-btn--ghost">' . esc_html__( 'Save view', 'support-ticket-system-for-woocommerce' ) . '</summary><div class="hd-menu__panel"><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="hd-form">';
+			$args  = array_intersect_key( $keep, array_flip( $this->keys() ) );
+			$views = $this->get_views();
+			echo '<a class="btn btn-text btn-sm" href="' . esc_url( wp_nonce_url( add_query_arg( array_merge( $args, array( 'action' => 'wpfactory_wc_sts_export' ) ), admin_url( 'admin-post.php' ) ), WPFactory_WC_STS_Inbox::NONCE ) ) . '">' . esc_html__( 'Export CSV', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			$can_save = count( $args ) > 1 || 'all' !== $view;
+			if ( ! $can_save && ! $views ) {
+				return;
+			}
+			echo '<details class="menu saved-views"><summary class="btn btn-text btn-sm">' . esc_html( $can_save ? __( 'Save view', 'support-ticket-system-for-woocommerce' ) : __( 'Saved views', 'support-ticket-system-for-woocommerce' ) ) . '</summary><div class="menu-panel">';
+			if ( $can_save ) {
+				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="menu-form">';
 				echo '<input type="hidden" name="action" value="wpfactory_wc_sts_view" /><input type="hidden" name="args" value="' . esc_attr( wp_json_encode( $args ) ) . '" />';
 				wp_nonce_field( WPFactory_WC_STS_Inbox::NONCE );
-				echo '<div class="hd-field"><label for="hd-view-name">' . esc_html__( 'Name of the view', 'support-ticket-system-for-woocommerce' ) . '</label><input type="text" id="hd-view-name" name="name" required maxlength="60" /></div>';
-				echo '<p class="hd-help">' . esc_html__( 'Keeps the current view, filters and search. Only you see your saved views.', 'support-ticket-system-for-woocommerce' ) . '</p>';
-				echo '<button type="submit" class="hd-btn hd-btn--primary hd-btn--sm">' . esc_html__( 'Save', 'support-ticket-system-for-woocommerce' ) . '</button></form></div></details>';
+				echo '<div class="field"><label class="label" for="hd-view-name">' . esc_html__( 'Name of the view', 'support-ticket-system-for-woocommerce' ) . '</label><input type="text" class="input" id="hd-view-name" name="name" required maxlength="60" /><p class="hint">' . esc_html__( 'Keeps the current view, filters and search. Only you see your saved views.', 'support-ticket-system-for-woocommerce' ) . '</p></div>';
+				echo '<button type="submit" class="btn btn-primary btn-sm">' . esc_html__( 'Save', 'support-ticket-system-for-woocommerce' ) . '</button></form>';
 			}
-			echo '</div>';
+			foreach ( $views as $id => $saved ) {
+				echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="menu-row" data-hd-reload><input type="hidden" name="action" value="wpfactory_wc_sts_view" /><input type="hidden" name="delete" value="' . esc_attr( $id ) . '" />';
+				wp_nonce_field( WPFactory_WC_STS_Inbox::NONCE, '_wpnonce', true, true );
+				/* translators: %s: view name. */
+				echo '<span class="small">' . esc_html( $saved['name'] ) . '</span><button type="submit" class="btn btn-danger btn-sm" aria-label="' . esc_attr( sprintf( __( 'Remove the saved view %s', 'support-ticket-system-for-woocommerce' ), $saved['name'] ) ) . '">' . esc_html__( 'Remove', 'support-ticket-system-for-woocommerce' ) . '</button></form>';
+			}
+			echo '</div></details>';
 		}
 
 		/**
@@ -297,7 +298,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Teamwork' ) ) :
 			if ( '' !== $del ) {
 				unset( $views[ $del ] );
 				update_user_meta( $user, self::META_VIEWS, $views );
-				wp_safe_redirect( WPFactory_WC_STS_UI::url() );
+				wp_safe_redirect( WPFactory_WC_STS_UI::url( '', array( 'view' => 'needs_reply' ) ) );
 				exit;
 			}
 			$name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );

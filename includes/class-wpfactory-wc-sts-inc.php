@@ -1402,16 +1402,27 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 
 		/**
 		 * Submenu: the same sections and order as the plugin header (Inbox, Reports, Saved replies, Knowledge base,
-		 * Companies, Settings). "Helpdesk" itself opens the Inbox and shows the number of open tickets.
+		 * Companies, Settings). "Helpdesk" itself opens the Inbox and shows the number of open tickets. In the WPFactory
+		 * menu (the default) Helpdesk is one item with the count; the plugin header has the sections.
 		 *
-		 * @version 3.0.0
+		 * @version 3.1.0
 		 */
 		public function menu_page() {
+			global $menu;
+			$top = false;
+			foreach ( (array) $menu as $item ) {
+				$top = $top || ( isset( $item[2] ) && WPFACTORY_WC_STS_PAGE === $item[2] );
+			}
+			if ( ! $top ) {
+				$this->menu_badge(); // In the WPFactory menu: one item, the header has the sections.
+				return;
+			}
 			foreach ( WPFactory_WC_STS_UI::nav_tabs() as $key => $title ) {
-				if ( '' === $key ) {
-					continue; // The Inbox item is the main page itself.
+				if ( 'dashboard' === $key ) {
+					continue; // The Dashboard item is the main page itself.
 				}
-				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'settings' === $key ? 'manage_woocommerce' : 'stsw_tickets', 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $key, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				$slug = '' === $key ? 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&view=needs_reply' : 'admin.php?page=' . WPFACTORY_WC_STS_PAGE . '&tab=' . $key;
+				add_submenu_page( WPFACTORY_WC_STS_PAGE, $title, $title, 'settings' === $key ? 'manage_woocommerce' : 'stsw_tickets', $slug, null ); // phpcs:ignore WordPress.WP.Capabilities.Unknown
 			}
 			$this->menu_badge();
 		}
@@ -1420,7 +1431,7 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 		 * Open-ticket count on the "Helpdesk" menu item.
 		 */
 		protected function menu_badge() {
-			global $menu;
+			global $menu, $submenu;
 			if ( ! is_array( $menu ) || ! current_user_can( 'stsw_tickets' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
 				return;
 			}
@@ -1428,11 +1439,17 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			if ( $open < 1 ) {
 				return;
 			}
+			/* translators: %s: number of open tickets. */
+			$label = sprintf( _n( '%s open ticket', '%s open tickets', $open, 'support-ticket-system-for-woocommerce' ), number_format_i18n( $open ) );
+			$badge = ' <span class="awaiting-mod count-' . (int) $open . '"><span class="pending-count" aria-hidden="true">' . esc_html( number_format_i18n( $open ) ) . '</span><span class="screen-reader-text">' . esc_html( $label ) . '</span></span>';
 			foreach ( $menu as $i => $item ) {
 				if ( isset( $item[2] ) && WPFACTORY_WC_STS_PAGE === $item[2] ) {
-					/* translators: %s: number of open tickets. */
-					$label         = sprintf( _n( '%s open ticket', '%s open tickets', $open, 'support-ticket-system-for-woocommerce' ), number_format_i18n( $open ) );
-					$menu[ $i ][0] .= ' <span class="awaiting-mod count-' . (int) $open . '"><span class="pending-count" aria-hidden="true">' . esc_html( number_format_i18n( $open ) ) . '</span><span class="screen-reader-text">' . esc_html( $label ) . '</span></span>'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- adds the count badge to our own item.
+					$menu[ $i ][0] .= $badge; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- adds the count badge to our own item.
+				}
+			}
+			foreach ( (array) ( $submenu['wpfactory'] ?? array() ) as $i => $item ) {
+				if ( isset( $item[2] ) && WPFACTORY_WC_STS_PAGE === $item[2] ) {
+					$submenu['wpfactory'][ $i ][0] .= $badge; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- adds the count badge to our own item.
 				}
 			}
 		}
@@ -1448,6 +1465,10 @@ if ( ! class_exists( 'WPFactory_WC_STS_Inc' ) ) :
 			$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( WPFACTORY_WC_STS_PAGE !== $page ) {
 				return $submenu_file;
+			}
+			global $menu;
+			if ( ! in_array( WPFACTORY_WC_STS_PAGE, array_column( (array) $menu, 2 ), true ) ) {
+				return WPFACTORY_WC_STS_PAGE; // In the WPFactory menu every Helpdesk screen highlights the one Helpdesk item.
 			}
 			$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$tab = in_array( $tab, WPFactory_WC_STS_UI::settings_pages(), true ) ? 'settings' : $tab;

@@ -1,10 +1,11 @@
 /**
  * Helpdesk Support Ticket System for WooCommerce - staff inbox.
  *
- * Keyboard shortcuts (j, k, r, n, c, /, ?), reply or private note tabs, Ctrl+Enter to send, drafts kept on this
- * computer, auto-save of status, priority, assignee and tags, the bulk bar and confirmations. Every inbox form is sent
- * in the background: the list, the ticket and the counts update in place, with no page reload and no jump. New
- * messages and changes made by teammates show up on their own. Everything also works without this script.
+ * Keyboard shortcuts (j, k, r, n, c, /, ?), reply or private note, Ctrl+Enter to send, drafts kept on this computer,
+ * auto-save of status, priority, assignee and tags, the bulk bar and confirmations. Views, filters, pages and tickets
+ * open in place: the page is never rendered again, only the parts that change (head, list, conversation, details),
+ * and the address follows. Every inbox form is sent in the background. New messages and changes made by teammates
+ * show up on their own. Everything also works without this script.
  *
  * @author WPFactory
  */
@@ -13,11 +14,24 @@
 	"use strict";
 
 	var t = window.WPFactory_WC_STS_Inbox || window.WPFactory_WC_STS_Pro_Inbox || {};
-	var region = document.querySelector(".hd-toast-region");
 	var busy = false;
+	var asked = 0; // Pages asked for, in order.
+	var shown = 0; // The newest one shown.
+	var LIST_KEYS = ["view", "s", "order_id", "prio", "subject", "status", "tag", "sort", "saved", "paged"];
+	var PARTS = {
+		head: '[data-hd-part="head"]',
+		list: '[data-hd-part="list"]',
+		convo: '[data-hd-part="convo"]',
+		thread: "[data-hd-thread]",
+		side: '[data-hd-part="details"]',
+	};
 
 	function $(selector, root) {
 		return (root || document).querySelector(selector);
+	}
+
+	function each(selector, fn, root) {
+		Array.prototype.forEach.call((root || document).querySelectorAll(selector), fn);
 	}
 
 	function box() {
@@ -59,11 +73,12 @@
 	}
 
 	function toast(text, error) {
+		var region = $(".toast-region");
 		if (!region || !text) {
 			return;
 		}
 		var item = document.createElement("div");
-		item.className = "hd-toast " + (error ? "is-error" : "is-success");
+		item.className = "toast" + (error ? " is-error" : " is-success");
 		item.setAttribute("role", error ? "alert" : "status");
 		item.textContent = text;
 		region.appendChild(item);
@@ -77,7 +92,7 @@
 		return form ? "stsw-draft-" + form.getAttribute("data-ticket") : "";
 	}
 
-	// Reply or private note.
+	// Reply or private note: note mode turns the composer yellow, "Add note" replaces "Send reply".
 	function setMode(mode) {
 		var form = box();
 		if (!form) {
@@ -96,7 +111,7 @@
 		if (area()) {
 			area().placeholder = note ? t.noteHolder : t.replyHolder;
 		}
-		var submit = form.querySelector(".hd-composer__submit");
+		var submit = form.querySelector(".stsw-reply-submit");
 		if (submit) {
 			submit.textContent = submit.getAttribute(note ? "data-note" : "data-reply");
 		}
@@ -121,12 +136,16 @@
 		}
 		var form = controls();
 		if (form) {
-			Array.prototype.forEach.call(form.querySelectorAll("select, input[name=stsw_tags]"), function (el) {
-				// Only fields shown for the first time: a refresh must not mark a pending change as saved.
-				if (!el.hasAttribute("data-saved")) {
-					el.setAttribute("data-saved", el.value);
-				}
-			});
+			each(
+				"select, input[name=stsw_tags]",
+				function (el) {
+					// Only fields shown for the first time: a refresh must not mark a pending change as saved.
+					if (!el.hasAttribute("data-saved")) {
+						el.setAttribute("data-saved", el.value);
+					}
+				},
+				form
+			);
 		}
 		refreshBulk();
 	}
@@ -139,11 +158,13 @@
 				setMode(el.value);
 			}
 			if ("stsw-inbox-files" === el.id) {
-				var names = form.querySelector(".hd-attach__names");
+				var names = form.querySelector(".attach-names");
 				if (names) {
-					names.textContent = Array.prototype.map.call(el.files, function (f) {
-						return f.name;
-					}).join(", ");
+					names.textContent = Array.prototype.map
+						.call(el.files, function (f) {
+							return f.name;
+						})
+						.join(", ");
 				}
 			}
 		}
@@ -155,13 +176,13 @@
 		if (!button || !window.fetch) {
 			return;
 		}
-		var msg = button.closest(".hd-msg");
-		var body = msg ? msg.querySelector(".hd-msg__body") : null;
-		if (!body || msg.querySelector(".hd-msg__editor")) {
+		var msg = button.closest(".msg");
+		var body = msg ? msg.querySelector(".msg-body") : null;
+		if (!body || msg.querySelector(".msg-editor")) {
 			return;
 		}
 		var editor = document.createElement("div");
-		editor.className = "hd-msg__editor";
+		editor.className = "msg-editor";
 		var label = document.createElement("label");
 		label.className = "screen-reader-text";
 		label.setAttribute("for", "hd-edit-" + button.getAttribute("data-id"));
@@ -170,18 +191,21 @@
 		text.id = "hd-edit-" + button.getAttribute("data-id");
 		text.rows = 4;
 		text.value = body.innerText;
-		var save = document.createElement("button");
-		save.type = "button";
-		save.className = "hd-btn hd-btn--primary hd-btn--sm";
-		save.textContent = t.save;
+		var row = document.createElement("div");
+		row.className = "send";
 		var cancel = document.createElement("button");
 		cancel.type = "button";
-		cancel.className = "hd-btn hd-btn--sm";
+		cancel.className = "btn btn-secondary btn-sm";
 		cancel.textContent = t.cancel;
+		var save = document.createElement("button");
+		save.type = "button";
+		save.className = "btn btn-primary btn-sm";
+		save.textContent = t.save;
+		row.appendChild(cancel);
+		row.appendChild(save);
 		editor.appendChild(label);
 		editor.appendChild(text);
-		editor.appendChild(save);
-		editor.appendChild(cancel);
+		editor.appendChild(row);
 		body.hidden = true;
 		body.parentNode.insertBefore(editor, body.nextSibling);
 		text.focus();
@@ -198,7 +222,8 @@
 			data.append("id", button.getAttribute("data-id"));
 			data.append("content", text.value);
 			save.disabled = true;
-			window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
+			window
+				.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
 				.then(function (r) {
 					return r.json();
 				})
@@ -209,7 +234,7 @@
 						return;
 					}
 					body.innerHTML = json.data.html;
-					var old = msg.querySelector(".hd-history");
+					var old = msg.querySelector(".msg-history");
 					if (old) {
 						old.remove();
 					}
@@ -254,7 +279,7 @@
 			return;
 		}
 		event.preventDefault();
-		var submit = box().querySelector(".hd-composer__submit");
+		var submit = box().querySelector(".stsw-reply-submit");
 		if (box().requestSubmit && submit) {
 			box().requestSubmit(submit);
 		} else if (submit) {
@@ -303,24 +328,25 @@
 		data.append("ticket", form.getAttribute("data-ticket"));
 		data.append("field", select.name);
 		data.append("value", select.value);
-		form.classList.add("is-saving");
-		window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
+		form.setAttribute("aria-busy", "true");
+		window
+			.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
 			.then(function (response) {
 				return response.json();
 			})
 			.then(function (json) {
-				form.classList.remove("is-saving");
+				form.removeAttribute("aria-busy");
 				var ok = json && json.success;
 				toast(ok ? json.data.message : (json && json.data && json.data.message) || t.saveError, !ok);
 				if (ok) {
 					select.setAttribute("data-saved", select.value);
-					refresh(["list", "rail", "thread", "side"]);
+					refresh(["head", "list", "thread", "side"]);
 				} else if (select.hasAttribute("data-saved")) {
 					select.value = select.getAttribute("data-saved");
 				}
 			})
 			.catch(function () {
-				form.classList.remove("is-saving");
+				form.removeAttribute("aria-busy");
 				toast(t.saveError, true);
 			});
 		return true;
@@ -334,22 +360,25 @@
 		}
 		// Arrow keys on a closed select change it at every step: wait until the choice settles.
 		window.clearTimeout(wait);
-		wait = window.setTimeout(function () {
-			if ("stsw_status" === el.name && "closed" === el.value && el.getAttribute("data-saved") !== "closed") {
-				ask(t.confirmClose, t.closeYes).then(function (sure) {
-					if (sure) {
-						autosave(el);
-					} else {
-						el.value = el.getAttribute("data-saved");
-					}
-				});
-				return;
-			}
-			autosave(el);
-		}, "SELECT" === el.tagName ? 700 : 0);
+		wait = window.setTimeout(
+			function () {
+				if ("stsw_status" === el.name && "closed" === el.value && el.getAttribute("data-saved") !== "closed") {
+					ask(t.confirmClose, t.closeYes).then(function (sure) {
+						if (sure) {
+							autosave(el);
+						} else {
+							el.value = el.getAttribute("data-saved");
+						}
+					});
+					return;
+				}
+				autosave(el);
+			},
+			"SELECT" === el.tagName ? 700 : 0
+		);
 	});
 
-	// Bulk bar.
+	// Bulk bar: "N selected"; Assign, Close and Delete wait for a selection.
 	function refreshBulk() {
 		var bulk = $(".stsw-bulk");
 		var all = $(".stsw-check-all");
@@ -358,14 +387,17 @@
 		}
 		var boxes = bulk.querySelectorAll('input[name="stsw_ids[]"]');
 		var checked = bulk.querySelectorAll('input[name="stsw_ids[]"]:checked').length;
-		var bar = bulk.querySelector(".hd-bulkbar");
 		var count = bulk.querySelector("[data-hd-selected]");
-		if (bar) {
-			bar.classList.toggle("is-active", checked > 0);
-		}
 		if (count) {
-			count.textContent = checked ? String(t.selected).replace("%d", checked) : t.selectNone;
+			count.textContent = String(t.selected).replace("%d", checked);
 		}
+		each(
+			"[data-hd-bulk]",
+			function (el) {
+				el.disabled = 0 === checked;
+			},
+			bulk
+		);
 		if (all) {
 			all.checked = checked > 0 && checked === boxes.length;
 			all.indeterminate = checked > 0 && checked < boxes.length;
@@ -373,7 +405,7 @@
 	}
 	document.addEventListener("change", function (event) {
 		if (event.target.classList && event.target.classList.contains("stsw-check-all")) {
-			Array.prototype.forEach.call(document.querySelectorAll('input[name="stsw_ids[]"]'), function (item) {
+			each('input[name="stsw_ids[]"]', function (item) {
 				item.checked = event.target.checked;
 			});
 			refreshBulk();
@@ -383,70 +415,49 @@
 	});
 
 	/*
-	 * Updates in place. `parts` lists what to replace from a fresh copy of the page: rail (view counts), list,
-	 * thread (messages and timeline), side (customer and order cards), detail (the whole ticket).
+	 * Updates in place. `parts` lists what to replace from a fresh copy of the page: head (title and view counts),
+	 * list, convo (the conversation card), thread (messages and timeline only), side (the details column).
 	 */
-	var PARTS = {
-		rail: ".hd-rail",
-		list: ".hd-list",
-		thread: ".hd-thread",
-		side: ".hd-side",
-		detail: ".hd-detail",
-	};
-
-	function keepScroll() {
-		var saved = [[document.scrollingElement || document.documentElement, 0]];
-		Array.prototype.forEach.call(document.querySelectorAll(".hd-list, .hd-detail, .hd-list__items, .hd-ticket__main, .hd-thread, .hd-side"), function (el) {
-			saved.push([el, 0]);
-		});
-		saved.forEach(function (pair) {
-			pair[1] = pair[0].scrollTop;
-		});
-		return function () {
-			saved.forEach(function (pair) {
-				var el = pair[0].isConnected ? pair[0] : null;
-				if (!el && pair[0].className) {
-					el = document.querySelector("." + String(pair[0].className).split(" ").join("."));
-				}
-				if (el) {
-					el.scrollTop = pair[1];
-				}
-			});
-		};
-	}
-
 	function apply(doc, parts) {
-		var restore = keepScroll();
+		var page = document.scrollingElement || document.documentElement;
+		var top = page.scrollTop;
 		var focusId = document.activeElement && document.activeElement.id;
-		var editing = $(".hd-msg__editor");
+		var editing = $(".msg-editor");
 		parts.forEach(function (name) {
-			if (("thread" === name || "detail" === name) && editing) {
+			if (("thread" === name || "convo" === name) && editing) {
 				return; // Never throw away a message being edited.
 			}
 			var now = $(PARTS[name]);
 			var fresh = $(PARTS[name], doc);
-			if (now && fresh) {
-				if ("detail" === name) {
-					// Keep what is being typed in the reply box if it is the same ticket.
-					var oldText = area();
-					var sameTicket = box() && fresh.querySelector(".stsw-replybox") && box().getAttribute("data-ticket") === fresh.querySelector(".stsw-replybox").getAttribute("data-ticket");
-					var keepText = oldText && sameTicket ? oldText.value : null;
-					now.innerHTML = fresh.innerHTML;
-					if (null !== keepText && area()) {
-						area().value = keepText;
-					}
-				} else {
-					now.innerHTML = fresh.innerHTML;
+			if (!now || !fresh) {
+				return;
+			}
+			var keepText = null;
+			if ("convo" === name) {
+				// Keep what is being typed in the reply box if it is the same ticket.
+				var next = fresh.querySelector(".stsw-replybox");
+				if (area() && box() && next && box().getAttribute("data-ticket") === next.getAttribute("data-ticket")) {
+					keepText = area().value;
 				}
 			}
+			now.replaceWith(document.importNode(fresh, true));
+			if (null !== keepText && area()) {
+				area().value = keepText;
+			}
 		});
+		// The presence slot stays in place; it takes the time of the newest message.
 		var presence = $("[data-hd-presence]");
 		var freshPresence = $("[data-hd-presence]", doc);
-		if (presence && freshPresence) {
+		if (presence && freshPresence && presence.getAttribute("data-ticket") === freshPresence.getAttribute("data-ticket")) {
 			presence.setAttribute("data-since", freshPresence.getAttribute("data-since"));
 		}
+		var grid = $(".inbox");
+		var freshGrid = $(".inbox", doc);
+		if (grid && freshGrid && (parts.indexOf("convo") !== -1 || parts.indexOf("side") !== -1)) {
+			grid.className = freshGrid.className;
+		}
 		setup();
-		restore();
+		page.scrollTop = top;
 		if (focusId && document.getElementById(focusId) && document.activeElement !== document.getElementById(focusId)) {
 			document.getElementById(focusId).focus({ preventScroll: true });
 		}
@@ -464,14 +475,160 @@
 		if (!window.fetch || !window.DOMParser || busy) {
 			return Promise.resolve();
 		}
+		var mine = ++asked;
 		return load(window.location.href.replace(/([?&])stsw_msg=[^&]*&?/, "$1"))
 			.then(function (res) {
-				if ($(".hd-inbox", res.doc)) {
-					apply(res.doc, parts);
+				// An older answer that arrives late must not undo a newer one.
+				if (mine < shown || !$(".inbox", res.doc)) {
+					return;
 				}
+				shown = mine;
+				apply(res.doc, parts);
 			})
 			.catch(function () {});
 	}
+
+	/*
+	 * Views, filters, pages and tickets open in place: fetch the same address, swap only what changed, keep the
+	 * address in the history so reload, back and links still work.
+	 */
+	function param(url, key) {
+		var value = url.searchParams.get(key) || "";
+		return "view" === key && "" === value ? "needs_reply" : value;
+	}
+
+	function inScreen(url) {
+		var here = new window.URL(window.location.href);
+		return url.origin === here.origin && url.pathname === here.pathname && url.searchParams.get("page") === here.searchParams.get("page") && !url.searchParams.get("tab") && !url.searchParams.get("action");
+	}
+
+	function select(ticket) {
+		each(".trow", function (row) {
+			var on = row.getAttribute("data-ticket") === ticket;
+			row.classList.toggle("selected", on);
+			var link = row.querySelector(".stsw-row__link");
+			if (link) {
+				if (on) {
+					link.setAttribute("aria-current", "true");
+				} else {
+					link.removeAttribute("aria-current");
+				}
+			}
+		});
+	}
+
+	function navigate(href, push) {
+		var before = new window.URL(window.location.href);
+		var after = new window.URL(href, window.location.href);
+		after.searchParams.delete("stsw_msg");
+		var listChanged = LIST_KEYS.some(function (key) {
+			return param(before, key) !== param(after, key);
+		});
+		var ticketChanged = ["ticket", "stsw_new"].some(function (key) {
+			return param(before, key) !== param(after, key);
+		});
+		var parts = [];
+		if (listChanged) {
+			parts.push("head", "list");
+		}
+		if (ticketChanged) {
+			parts.push("convo", "side");
+			select(after.searchParams.get("ticket") || "");
+		}
+		if (!parts.length) {
+			parts = ["head", "list", "convo", "side"];
+		}
+		var grid = $(".inbox");
+		if (grid) {
+			grid.setAttribute("aria-busy", "true");
+		}
+		if (push) {
+			window.history.pushState(null, "", after.toString());
+		}
+		var mine = ++asked;
+		return load(after.toString())
+			.then(function (res) {
+				if (mine < shown) {
+					return;
+				}
+				shown = mine;
+				if (grid) {
+					grid.removeAttribute("aria-busy");
+				}
+				if (!$(".inbox", res.doc)) {
+					window.location.href = after.toString();
+					return;
+				}
+				apply(res.doc, parts);
+				var note = $(".hd-inbox-wrap > .toast", res.doc);
+				if (note) {
+					toast(note.textContent.trim(), note.classList.contains("is-error"));
+				}
+				if (ticketChanged && window.matchMedia && window.matchMedia("(max-width: 780px)").matches) {
+					var convo = $(PARTS.convo);
+					if (convo) {
+						convo.scrollIntoView();
+					}
+				}
+			})
+			.catch(function () {
+				window.location.href = after.toString();
+			});
+	}
+
+	function canNavigate() {
+		return window.fetch && window.DOMParser && window.history && window.history.pushState && window.URL;
+	}
+
+	document.addEventListener("click", function (event) {
+		if (event.defaultPrevented || 0 !== event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !canNavigate()) {
+			return;
+		}
+		var link = event.target.closest ? event.target.closest("a[href]") : null;
+		if (!link || !link.closest(".hd-inbox-wrap") || link.target || link.hasAttribute("download")) {
+			return;
+		}
+		var url = new window.URL(link.href, window.location.href);
+		if (!inScreen(url)) {
+			return;
+		}
+		event.preventDefault();
+		navigate(url.toString(), true);
+	});
+
+	// Priority and sort: applied as soon as they change; the open ticket stays open.
+	function filtersUrl(form) {
+		var url = new window.URL(form.getAttribute("action"), window.location.href);
+		new window.FormData(form).forEach(function (value, key) {
+			if ("" !== value) {
+				url.searchParams.set(key, value);
+			}
+		});
+		var ticket = new window.URL(window.location.href).searchParams.get("ticket");
+		if (ticket) {
+			url.searchParams.set("ticket", ticket);
+		}
+		return url.toString();
+	}
+	document.addEventListener("change", function (event) {
+		var form = event.target.closest ? event.target.closest("[data-hd-filters]") : null;
+		if (form && canNavigate()) {
+			navigate(filtersUrl(form), true);
+		}
+	});
+	document.addEventListener("submit", function (event) {
+		var form = event.target;
+		if (form.hasAttribute && form.hasAttribute("data-hd-filters") && canNavigate()) {
+			event.preventDefault();
+			navigate(filtersUrl(form), true);
+		}
+	});
+
+	window.addEventListener("popstate", function () {
+		if ($(".inbox") && canNavigate()) {
+			navigate(window.location.href, false);
+		}
+	});
 
 	// Every inbox form (reply, note, close, bulk, refund, credit, payment link, merge...) is sent in the background.
 	window.addEventListener("submit", function (event) {
@@ -512,8 +669,8 @@
 			})
 			.then(function (res) {
 				done();
-				if (!$(".hd-inbox", res.doc)) {
-					var page = res.doc.querySelector(".wp-die-message, #error-page p, .hd-toast");
+				if (!$(".inbox", res.doc)) {
+					var page = res.doc.querySelector(".wp-die-message, #error-page p, .toast");
 					var why = page ? page.textContent.trim().slice(0, 300) : "";
 					toast(why || t.saveError, true);
 					return;
@@ -531,7 +688,7 @@
 						url.searchParams.delete(key);
 					}
 				});
-				var lost = ["view", "s", "prio", "subject", "status", "tag", "order_id", "paged"].some(function (key) {
+				var lost = LIST_KEYS.some(function (key) {
 					return before.searchParams.get(key) && before.searchParams.get(key) !== back.searchParams.get(key);
 				});
 				var moved = before.searchParams.get("ticket") !== url.searchParams.get("ticket") || before.searchParams.get("stsw_new") !== url.searchParams.get("stsw_new");
@@ -546,11 +703,14 @@
 						area().value = "";
 					}
 				}
-				apply(res.doc, lost ? ["rail", "detail"] : ["rail", "list", "detail"]);
+				shown = ++asked; // Newer than any refresh still on its way.
+				apply(res.doc, lost ? ["head", "convo", "side"] : ["head", "list", "convo", "side"]);
 				if (lost) {
-					refresh(["list"]);
+					refresh(["head", "list"]);
+				} else if (moved) {
+					select(url.searchParams.get("ticket") || "");
 				}
-				var note = $(".hd-inbox-wrap > .hd-toast", res.doc);
+				var note = $(".hd-inbox-wrap > .toast", res.doc);
 				if (note) {
 					toast(note.textContent.trim(), note.classList.contains("is-error"));
 				}
@@ -574,7 +734,7 @@
 	function beat() {
 		var presence = $("[data-hd-presence]");
 		if (!presence) {
-			refresh(["rail", "list"]);
+			refresh(["head", "list"]);
 			return;
 		}
 		var data = new window.FormData();
@@ -583,7 +743,8 @@
 		data.append("ticket", presence.getAttribute("data-ticket"));
 		data.append("since", presence.getAttribute("data-since"));
 		data.append("typing", Date.now() - typingSince < 20000 ? "1" : "");
-		window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
+		window
+			.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data })
 			.then(function (r) {
 				return r.json();
 			})
@@ -599,28 +760,42 @@
 					return !o.typing;
 				});
 				if (writers.length) {
-					lines.push(String(t.replying).replace("%s", writers.map(function (o) {
-						return o.name;
-					}).join(", ")));
+					lines.push(
+						String(t.replying).replace(
+							"%s",
+							writers
+								.map(function (o) {
+									return o.name;
+								})
+								.join(", ")
+						)
+					);
 				}
 				if (viewers.length) {
-					lines.push(String(t.viewing).replace("%s", viewers.map(function (o) {
-						return o.name;
-					}).join(", ")));
+					lines.push(
+						String(t.viewing).replace(
+							"%s",
+							viewers
+								.map(function (o) {
+									return o.name;
+								})
+								.join(", ")
+						)
+					);
 				}
 				presence.textContent = lines.join(" ");
 				presence.hidden = !presence.textContent;
 				if (json.data.changed) {
-					refresh(["rail", "list", "thread", "side"]).then(function () {
+					refresh(["head", "list", "thread", "side"]).then(function () {
 						toast(t.newMessage);
 					});
 				} else {
-					refresh(["rail", "list"]);
+					refresh(["head", "list"]);
 				}
 			})
 			.catch(function () {});
 	}
-	if ($(".hd-inbox") && window.fetch) {
+	if ($(".inbox") && window.fetch) {
 		window.setInterval(function () {
 			if (!document.hidden) {
 				beat();
@@ -632,8 +807,10 @@
 	}
 
 	// Live chat availability switch, and a heartbeat so visitors see the team as online.
-	var available = $("[data-hd-available]");
-	if (available && window.fetch) {
+	function availability() {
+		return $("[data-hd-available]");
+	}
+	if (window.fetch) {
 		var ping = function (value) {
 			var data = new window.FormData();
 			data.append("action", "wpfactory_wc_sts_available");
@@ -643,11 +820,14 @@
 			}
 			return window.fetch(t.ajaxurl, { method: "POST", credentials: "same-origin", body: data });
 		};
-		available.addEventListener("change", function () {
-			ping(available.checked);
+		document.addEventListener("change", function (event) {
+			if (event.target.hasAttribute && event.target.hasAttribute("data-hd-available")) {
+				ping(event.target.checked);
+			}
 		});
 		window.setInterval(function () {
-			if (!document.hidden && available.checked) {
+			var available = availability();
+			if (!document.hidden && available && available.checked) {
 				ping();
 			}
 		}, 60000);
@@ -681,7 +861,8 @@
 		});
 		var next = current < 0 ? 0 : Math.min(rows.length - 1, Math.max(0, current + step));
 		if (next !== current) {
-			window.location.href = rows[next].href;
+			rows[next].focus({ preventScroll: false });
+			rows[next].click();
 		}
 	}
 
@@ -724,18 +905,45 @@
 		}
 	});
 
-	// AI with WPFactory AI credits: the draft goes into the reply box (never sent on its own), the summary below.
+	// Menus close when something else is clicked.
+	document.addEventListener("click", function (event) {
+		var target = event.target;
+		if (!target.isConnected || (target.closest && target.closest("dialog")) || $("dialog[open]")) {
+			return; // A confirmation was answered: the form it belongs to stays open.
+		}
+		each(".hd-inbox-wrap details.menu[open]", function (menu) {
+			if (!menu.contains(target)) {
+				menu.open = false;
+			}
+		});
+	});
+
+	// AI with WPFactory AI credits: the draft goes into the reply box (never sent on its own), the answers below it.
 	document.addEventListener("click", function (event) {
 		var button = event.target.closest ? event.target.closest("[data-stsw-cai]") : null;
 		if (!button) {
 			return;
 		}
 		event.preventDefault();
+		var menu = button.closest("[data-stsw-ai-menu]");
+		if (menu) {
+			menu.open = false;
+		}
 		var task = button.getAttribute("data-stsw-cai");
 		var out = document.getElementById("stsw-credits-ai-out");
-		var area = document.getElementById("stsw-inbox-reply");
+		var text = area();
+		if ("improve" === task && (!text || !text.value.trim())) {
+			if (out) {
+				out.classList.add("is-error");
+				out.textContent = button.getAttribute("data-empty");
+			}
+			return;
+		}
 		var body = new window.FormData();
 		body.append("action", "wpfactory_wc_sts_credits_ai");
+		if ("improve" === task) {
+			body.append("text", text.value);
+		}
 		body.append("nonce", button.getAttribute("data-nonce"));
 		body.append("task", task);
 		body.append("ticket", button.getAttribute("data-ticket"));
@@ -745,6 +953,11 @@
 			out.classList.remove("is-error");
 			out.textContent = button.getAttribute("data-working");
 		}
+		var put = function (value) {
+			text.value = value;
+			text.dispatchEvent(new Event("input", { bubbles: true }));
+			text.focus();
+		};
 		window
 			.fetch(button.getAttribute("data-url"), { method: "POST", body: body, credentials: "same-origin" })
 			.then(function (response) {
@@ -752,18 +965,32 @@
 			})
 			.then(function (json) {
 				if (!json || !json.success) {
-					throw new Error((json && json.data && json.data.message) || "");
+					var failure = new Error((json && json.data && json.data.message) || "");
+					failure.link = json && json.data && json.data.link;
+					failure.label = json && json.data && json.data.label;
+					throw failure;
 				}
 				if (json.data.pill) {
-					document.querySelectorAll(".wpfactory-ai-pill").forEach(function (pill) {
-						pill.textContent = json.data.pill;
+					// The credits button in the top bar follows the balance.
+					var inbox = window.WPFactory_WC_STS_Inbox || window.WPFactory_WC_STS_Pro_Inbox || {};
+					document.querySelectorAll(".wpfactory-ai-pill, [data-stsw-credits-pill]").forEach(function (pill) {
+						pill.textContent = pill.hasAttribute("data-stsw-credits-pill") && inbox.creditsPill ? String(inbox.creditsPill).replace("%s", json.data.pill) : json.data.pill;
 					});
 				}
-				if ("draft" === task && area) {
-					if (!area.value.trim() || window.confirm(button.getAttribute("data-replace"))) {
-						area.value = json.data.text;
-						area.dispatchEvent(new Event("input", { bubbles: true }));
-						area.focus();
+				if ("improve" === task && text) {
+					put(json.data.text);
+					if (out) {
+						out.textContent = "";
+					}
+				} else if ("draft" === task && text) {
+					if (!text.value.trim()) {
+						put(json.data.text);
+					} else {
+						ask(button.getAttribute("data-replace"), t.replaceYes || t.applyYes).then(function (sure) {
+							if (sure) {
+								put(json.data.text);
+							}
+						});
 					}
 					if (out) {
 						out.textContent = "";
@@ -776,6 +1003,13 @@
 				if (out) {
 					out.classList.add("is-error");
 					out.textContent = error.message || "";
+					if (error.link) {
+						var link = document.createElement("a");
+						link.href = error.link;
+						link.textContent = error.label || error.link;
+						out.appendChild(document.createTextNode(" "));
+						out.appendChild(link);
+					}
 				}
 			})
 			.then(function () {

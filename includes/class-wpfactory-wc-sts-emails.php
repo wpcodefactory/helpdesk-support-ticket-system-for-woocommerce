@@ -908,17 +908,24 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 		}
 
 		/**
-		 * Email health box (Settings > Notifications).
+		 * Email health (Settings > Advanced > Tools): how many checks pass, "Run again" (the checks run on every page
+		 * load), and each check with its fix when it needs attention.
 		 */
 		public function render_email_health() {
-			echo '<h2 id="stsw-email-health">' . esc_html__( 'Email health', 'support-ticket-system-for-woocommerce' ) . '</h2><ul class="stsw-health">';
-			foreach ( $this->get_email_health() as $check ) {
-				echo '<li class="' . ( $check['ok'] ? 'is-ok' : 'is-warning' ) . '"><span class="dashicons ' . ( $check['ok'] ? 'dashicons-yes-alt' : 'dashicons-warning' ) . '" aria-hidden="true"></span> ';
-				echo '<strong>' . esc_html( $check['ok'] ? __( 'OK', 'support-ticket-system-for-woocommerce' ) : __( 'Check', 'support-ticket-system-for-woocommerce' ) ) . ':</strong> ' . esc_html( $check['label'] );
+			$checks = $this->get_email_health();
+			$ok     = count( array_filter( wp_list_pluck( $checks, 'ok' ) ) );
+			$again  = WPFactory_WC_STS_UI::url( 'settings', array( 'section' => 'advanced' ) ) . '#stsw-email-health';
+			/* translators: 1: checks passed, 2: checks in total. */
+			$meta = sprintf( __( '%1$d of %2$d checks passed, checked just now', 'support-ticket-system-for-woocommerce' ), $ok, count( $checks ) );
+			echo '<div class="row" id="stsw-email-health" tabindex="-1"><div><p class="row-title">' . esc_html__( 'Email health', 'support-ticket-system-for-woocommerce' ) . '</p><div class="row-meta">' . esc_html( $meta ) . '</div></div>';
+			echo '<div class="row-actions"><a class="btn btn-text btn-sm" href="' . esc_url( $again ) . '">' . esc_html__( 'Run again', 'support-ticket-system-for-woocommerce' ) . '</a></div></div>';
+			echo '<ul class="stsw-health health-list">';
+			foreach ( $checks as $check ) {
+				echo '<li class="' . ( $check['ok'] ? 'is-ok' : 'is-warning' ) . '">' . WPFactory_WC_STS_UI::chip( $check['ok'] ? __( 'OK', 'support-ticket-system-for-woocommerce' ) : __( 'Check', 'support-ticket-system-for-woocommerce' ), $check['ok'] ? 'ok' : 'warn' ) . ' <span><span class="health-label">' . esc_html( $check['label'] ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in chip().
 				if ( ! $check['ok'] ) {
-					echo '<br/><span class="description">' . esc_html( $check['fix'] ) . '</span>';
+					echo '<span class="hint">' . esc_html( $check['fix'] ) . '</span>';
 				}
-				echo '</li>';
+				echo '</span></li>';
 			}
 			echo '</ul>';
 		}
@@ -962,10 +969,11 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 					array(
 						'page'                        => WPFACTORY_WC_STS_PAGE,
 						'tab'                         => 'settings',
+						'section'                     => 'emails',
 						'wpfactory_wc_sts_test_email' => $sent ? 'sent' : 'failed',
 					),
 					admin_url( 'admin.php' )
-				) . '#notifications'
+				)
 			);
 			exit;
 		}
@@ -978,27 +986,20 @@ if ( ! class_exists( 'WPFactory_WC_STS_Emails' ) ) :
 			$result = isset( $_GET['wpfactory_wc_sts_test_email'] ) ? sanitize_key( wp_unslash( $_GET['wpfactory_wc_sts_test_email'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 			$test   = (array) get_option( 'wpfactory_wc_sts_email_test', array() );
 			$to     = ! empty( $test['to'] ) ? $test['to'] : sanitize_email( get_bloginfo( 'admin_email' ) );
+			$note   = '';
 			if ( 'sent' === $result ) {
-				echo '<div class="notice notice-success inline stsw-test-result" role="status"><p>' . esc_html(
-					sprintf(
-						/* translators: %s: email address. */
-						__( 'Test email sent to %s. If it does not arrive in a few minutes, check the spam folder and your SMTP plugin.', 'support-ticket-system-for-woocommerce' ),
-						$to
-					)
-				) . '</p></div>';
+				/* translators: %s: email address. */
+				$note = '<div class="banner banner-ok stsw-test-result" role="status">' . esc_html( sprintf( __( 'Test email sent to %s. If it does not arrive in a few minutes, check the spam folder and your SMTP plugin.', 'support-ticket-system-for-woocommerce' ), $to ) ) . '</div>';
 			} elseif ( 'failed' === $result ) {
-				echo '<div class="notice notice-error inline stsw-test-result" role="alert"><p>' . esc_html(
-					sprintf(
-						/* translators: 1: email address, 2: error message. */
-						__( 'The test email to %1$s was not sent. %2$s', 'support-ticket-system-for-woocommerce' ),
-						$to,
-						! empty( $test['error'] ) ? $test['error'] : __( 'Your site probably needs an SMTP plugin to send email.', 'support-ticket-system-for-woocommerce' )
-					)
-				) . '</p></div>';
+				/* translators: 1: email address, 2: error message. */
+				$note = '<div class="banner banner-bad stsw-test-result" role="alert">' . esc_html( sprintf( __( 'The test email to %1$s was not sent. %2$s', 'support-ticket-system-for-woocommerce' ), $to, ! empty( $test['error'] ) ? $test['error'] : __( 'Your site probably needs an SMTP plugin to send email.', 'support-ticket-system-for-woocommerce' ) ) ) . '</div>';
 			}
-			echo '<div class="stsw-test-email"><label for="stsw-test-to">' . esc_html__( 'Send a test email to', 'support-ticket-system-for-woocommerce' ) . '</label> ';
-			echo '<input type="email" id="stsw-test-to" name="stsw_test_to" form="stsw-test-email-form" value="' . esc_attr( $to ) . '" /> ';
-			echo '<button type="submit" class="button" form="stsw-test-email-form">' . esc_html__( 'Send test email', 'support-ticket-system-for-woocommerce' ) . '</button></div>';
+			$sender = $this->get_sender();
+			/* translators: %s: email address. */
+			$meta = sprintf( __( 'Sent from %s.', 'support-ticket-system-for-woocommerce' ), $sender['email'] ) . ( '' !== $sender['by'] ? ' ' . sprintf( /* translators: %s: plugin name. */ __( 'Set by %s.', 'support-ticket-system-for-woocommerce' ), $sender['by'] ) : '' );
+			echo '<div class="setting stsw-test-email" id="stsw-test-email"><div><label class="row-title" for="stsw-test-to">' . esc_html__( 'Send a test email', 'support-ticket-system-for-woocommerce' ) . '</label><div class="row-meta">' . esc_html( $meta ) . '</div>' . $note . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $note escaped above.
+			echo '<div class="ctl"><input type="email" class="input" id="stsw-test-to" name="stsw_test_to" form="stsw-test-email-form" value="' . esc_attr( $to ) . '" />';
+			echo '<button type="submit" class="btn btn-secondary btn-sm" form="stsw-test-email-form">' . esc_html__( 'Send', 'support-ticket-system-for-woocommerce' ) . '</button></div></div>';
 			add_action( 'admin_footer', array( $this, 'render_test_email_form' ) );
 		}
 

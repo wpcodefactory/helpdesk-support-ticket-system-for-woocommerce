@@ -1,10 +1,10 @@
-=== Customer Support Helpdesk & Tickets for WooCommerce ===
+=== AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center ===
 Contributors: wpcodefactory
 Tags: helpdesk, support ticket, customer support, live chat, knowledge base
 Requires at least: 6.2
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 3.0.0
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Customer support for WooCommerce: tickets from My Account and orders, a team inb
 
 == Description ==
 
-Customer Support Helpdesk & Tickets for WooCommerce gives your store a support desk that knows your orders. Customers ask for help from My Account or straight from an order. Your team answers from one inbox in wp-admin, with the order and the customer's history next to every conversation. Everything runs on your own site: no outside service, no per-agent fees.
+AI Helpdesk for WooCommerce gives your store a support desk that knows your orders. Customers ask for help from My Account or straight from an order. Your team answers from one inbox in wp-admin, with the order and the customer's history next to every conversation. Everything runs on your own site: no outside service, no per-agent fees.
 
 = For your customers =
 
@@ -27,6 +27,7 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 
 = For your team =
 
+* **Dashboard.** What waits for your team, your own tickets and new tickets per day, on the first screen.
 * **One inbox.** Views with counts (Needs reply, Mine, Unassigned, Waiting on customer, Live chats, Closed), priority filters, search by name, email or ticket number, and your own saved views.
 * **Everything on one screen.** The conversation, private notes, the customer's lifetime value, orders and other tickets.
 * **Fast answers.** Saved replies with placeholders (customer name, order number), links to help articles, drafts kept on your computer, keyboard shortcuts and Ctrl+Enter to send.
@@ -37,17 +38,23 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 * **Move in without losing history.** Import tickets, replies and notes from SupportCandy, Fluent Support, Awesome Support and JS Help Desk. A check shows the counts first, and the other plugin's data is never changed.
 * **CSV export** of any view.
 * **Emails** to the store, the assignee and the customer, with your own texts, a test button and an email health check.
-* **AI replies** (off until you turn it on): "Draft a reply with AI" and "Summarize" in the inbox, paid with WPFactory AI credits. Create a free WPFactory AI account (email and a 6-digit code) and get 100 free credits a month on a live site, about one credit per draft. Drafts are never sent without a person.
+* **AI for your support team** (off until you turn it on), paid with WPFactory AI credits. Create a free WPFactory AI account (email and a 6-digit code) and get 100 free credits a month on a live site, about one credit per draft.
+  * Draft a reply from the conversation and the order, in the customer's language.
+  * Improve my reply: spelling, grammar and a friendly tone, in the same language.
+  * Summarize a long ticket in a few lines.
+  * Translate the customer's message into your language.
+  * Chat assistant: answers live chats from your help articles, day and night, and hands the chat to your team when they do not cover the question.
+  * Drafts are never sent without a person.
 * **Setup wizard** on first activation, and privacy tools (personal data export and erase).
 
 = Pro =
 
-[Customer Support Helpdesk & Tickets for WooCommerce Pro](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce) adds tools that act on orders and automate the desk:
+[AI Helpdesk for WooCommerce Pro: Support Tickets, Live Chat & Help Center](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce) adds tools that act on orders and automate the desk:
 
 * Order panel in the ticket with refunds, store credit, coupons, free replacement orders, returns and exchanges, payment links, status changes and resent emails. Every money action is off until you turn it on, limited to the roles you choose, confirmed with the exact amount and recorded on the ticket.
 * Workflow rules, automatic closing, reply targets with an Overdue view, proactive tickets (failed payment, stuck orders, refund requests).
 * Email piping with several mailboxes (brands), satisfaction ratings and reports.
-* More AI: a chat assistant that answers from your help articles and suggested resolutions on orders, with WPFactory AI credits, your own key (Anthropic, OpenAI, Gemini) or an AI plugin you already use. Nothing is sent to customers without a person.
+* More AI: suggested resolutions on orders, and your own key (Anthropic, OpenAI, Gemini) or an AI plugin you already use instead of WPFactory AI credits.
 * Companies with shared tickets, paid or priority support sold as products, tickets opened by your team, merging.
 * REST API, signed webhooks and an MCP server for AI assistants.
 
@@ -56,7 +63,7 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 The plugin works without outside services. These optional features connect to one when you turn them on:
 
 * Human check (Settings > Ticket form > Spam protection, off by default). With Cloudflare Turnstile, the visitor's browser loads the check from challenges.cloudflare.com and the site sends the answer and the visitor's IP address to Cloudflare to verify it. Terms: https://www.cloudflare.com/website-terms/ Privacy: https://www.cloudflare.com/privacypolicy/ . With Google reCAPTCHA, the same happens with www.google.com/recaptcha. Terms: https://policies.google.com/terms Privacy: https://policies.google.com/privacy .
-* AI with WPFactory AI credits (off by default). This plugin can use WPFactory AI (https://ai.wpfactory.com), a service by WPFactory, for its AI features, paid with WPFactory credits. Nothing is sent until a site administrator connects the site on the AI Credits screen with an email address and a 6-digit code sent to it. When connecting, the site address and that email address are sent. After that, the text of each AI request the plugin makes is sent when a user starts it (for example the ticket conversation when a team member clicks "Draft a reply with AI"); WPFactory AI passes it to Anthropic, its AI provider, to produce the answer. WPFactory AI keeps only numbers about each request (tokens, credits, time), never its content. Terms: https://wpfactory.com/terms-conditions/#wpfactory-ai Privacy: https://wpfactory.com/privacy-policy/#wpfactory-ai
+* AI with WPFactory AI credits (off by default). This plugin can use WPFactory AI (https://ai.wpfactory.com), a service by WPFactory, for its AI features, paid with WPFactory credits. Nothing is sent until a site administrator connects the site on the AI Credits screen with an email address and a 6-digit code sent to it. When connecting, the site address and that email address are sent. After that, the text of each AI request the plugin makes is sent when a user starts it (for example the ticket conversation when a team member clicks "Draft a reply with AI"); WPFactory AI passes it to Anthropic, its AI provider, to produce the answer. WPFactory AI keeps only numbers about each request (tokens, credits, time), never its content. When the chat assistant is turned on (Settings > AI, off by default), each live chat message from a visitor and the matching help articles are sent the same way, without a team member clicking. Terms: https://wpfactory.com/terms-conditions/#wpfactory-ai Privacy: https://wpfactory.com/privacy-policy/#wpfactory-ai
 
 == Installation ==
 
@@ -106,6 +113,22 @@ Please report security bugs found in the source code of the plugin through the [
 5. The setup wizard.
 
 == Changelog ==
+
+= 3.1.0 - 23/11/2026 =
+* New - Display name: AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center. The plugin folder and slug stay the same, so updates and links keep working.
+* New - Knowledge base: "Write articles with AI" drafts help articles from your store (products, refund and terms pages, shipping zones, the topics customers ask about most). Drafts are never published on their own.
+* Improved - Inbox: the AI button now sits next to Reply / Private note, and the reply box tools line up on one row.
+* Improved - New look for every admin screen: one clean layout of cards, a top bar with the Needs reply count, a three-column inbox that switches views and tickets without reloading, and Settings in seven tabs (Basics, Emails, Team, Ticket fields, Orders and channels, AI, Advanced). Every setting keeps its value.
+* New - Dashboard: Helpdesk opens on counters that lead to each inbox view, the tickets waiting longest, your own tickets, new tickets per day, the setup checklist and the AI status.
+* New - Support page: the setup wizard and Settings > General can put the support form on one of your pages, or create a Support page, so the page is never empty.
+* Improved - Inbox: status, priority, assignee and tags moved to a Ticket details card next to the conversation; messages use the full width; the AI tools are one AI menu; Ctrl+Enter is shown as a tip on Send reply.
+* New - AI tools in the reply box: Improve my reply and Translate, next to Draft a reply and Summarize.
+* New - AI chat assistant in the free version: answers live chats from your help articles and hands over to your team (off by default).
+* New - Settings > AI shows what AI does, and says right away when AI is on but the site is not connected to WPFactory AI yet, with Connect.
+* New - With AI on, the AI tools show in the reply box before the site is connected; a click explains how to connect.
+* New - Pro features page: what Helpdesk Pro adds, with a link (information only, everything in this plugin works without Pro).
+* Improved - Helpdesk is now in the WPFactory menu instead of a menu of its own.
+* Fix - Clicking a section in Settings no longer scrolls the plugin header and tabs out of view.
 
 = 3.0.0 - 22/11/2026 =
 * New - AI with WPFactory AI credits, free and Pro: create a free WPFactory AI account (email and a 6-digit code) and the site is connected, then "Draft a reply with AI" and "Summarize" are paid with credits (about 1 credit per draft with the fast model; 100 free credits a month on a live site, buy more when needed). The reply box and the setup wizard point to it. The credits link shows in the Helpdesk header. Uses the shared WPFactory AI library 1.5.0.

@@ -184,12 +184,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Tracking' ) ) :
 			if ( ! $tracking ) {
 				return;
 			}
-			echo '<section class="hd-side__card" aria-labelledby="hd-side-tracking"><h3 class="hd-side__title" id="hd-side-tracking">' . esc_html__( 'Tracking', 'support-ticket-system-for-woocommerce' ) . '</h3><ul class="hd-side__list">';
+			echo '<section class="card" aria-labelledby="hd-side-tracking"><div class="card-head"><h3 class="card-title" id="hd-side-tracking">' . esc_html__( 'Tracking', 'support-ticket-system-for-woocommerce' ) . '</h3></div>';
 			foreach ( $tracking as $item ) {
 				$label = trim( $item['provider'] . ' ' . $item['number'] );
-				echo '<li>' . ( '' !== $item['url'] ? '<a href="' . esc_url( $item['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $label ) . '</a>' : esc_html( $label ) ) . ( '' !== $item['date'] ? ' <span class="hd-help">' . esc_html( $item['date'] ) . '</span>' : '' ) . '</li>';
+				echo '<div class="row"><div><p class="row-title small">' . ( '' !== $item['url'] ? '<a href="' . esc_url( $item['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $label ) . '</a>' : esc_html( $label ) ) . '</p>' . ( '' !== $item['date'] ? '<div class="row-meta">' . esc_html( $item['date'] ) . '</div>' : '' ) . '</div></div>';
 			}
-			echo '</ul></section>';
+			echo '</section>';
 		}
 	}
 

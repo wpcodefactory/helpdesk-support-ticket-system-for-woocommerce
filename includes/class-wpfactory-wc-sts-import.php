@@ -741,25 +741,12 @@ if ( ! class_exists( 'WPFactory_WC_STS_Import' ) ) :
 		}
 
 		/**
-		 * Import and export tab.
+		 * Address of the CSV export of every ticket.
+		 *
+		 * @return string
 		 */
-		public function render() {
-			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
-				return;
-			}
-			echo '<div class="hd-page" data-hd-import data-nonce="' . esc_attr( wp_create_nonce( self::NONCE ) ) . '">';
-			WPFactory_WC_STS_UI::page_head( __( 'Import and export', 'support-ticket-system-for-woocommerce' ), __( 'Bring tickets over from another helpdesk plugin, or download your tickets as a spreadsheet.', 'support-ticket-system-for-woocommerce' ) );
-			echo '<section class="hd-card"><div class="hd-card__head"><h2 class="hd-h2">' . esc_html__( 'Import tickets', 'support-ticket-system-for-woocommerce' ) . '</h2><p class="hd-help">' . esc_html__( 'Start with a check: it only counts. The other plugin\'s data is never changed, and tickets already imported are skipped. No emails are sent.', 'support-ticket-system-for-woocommerce' ) . '</p></div><div class="hd-card__body">';
-			foreach ( $this->sources() as $key => $label ) {
-				$found = $this->detect( $key );
-				echo '<div class="hd-row" data-hd-source="' . esc_attr( $key ) . '"><div class="hd-row__label"><span class="hd-row__title">' . esc_html( $label ) . '</span><span class="hd-help">' . ( $found ? esc_html__( 'Tickets found on this site.', 'support-ticket-system-for-woocommerce' ) : esc_html__( 'No tickets found. The plugin\'s tables are not on this site.', 'support-ticket-system-for-woocommerce' ) ) . '</span><span class="hd-help" data-hd-result aria-live="polite"></span></div><div class="hd-row__control">';
-				if ( $found ) {
-					echo '<button type="button" class="hd-btn hd-btn--sm" data-hd-dry>' . esc_html__( 'Check what will be imported', 'support-ticket-system-for-woocommerce' ) . '</button> <button type="button" class="hd-btn hd-btn--sm hd-btn--primary" data-hd-run hidden>' . esc_html__( 'Import now', 'support-ticket-system-for-woocommerce' ) . '</button>';
-				}
-				echo '</div></div>';
-			}
-			echo '</div></section>';
-			$url = wp_nonce_url(
+		public function export_url() {
+			return wp_nonce_url(
 				add_query_arg(
 					array(
 						'action' => 'wpfactory_wc_sts_export',
@@ -769,8 +756,33 @@ if ( ! class_exists( 'WPFactory_WC_STS_Import' ) ) :
 				),
 				WPFactory_WC_STS_Inbox::NONCE
 			);
-			echo '<section class="hd-card"><div class="hd-card__head"><h2 class="hd-h2">' . esc_html__( 'Export tickets', 'support-ticket-system-for-woocommerce' ) . '</h2></div><div class="hd-card__body hd-card__pad"><p>' . esc_html__( 'A CSV file with every ticket: number, subject, status, priority, topic, customer, order, assignee and dates. To export only some tickets, filter the inbox and use Export CSV there.', 'support-ticket-system-for-woocommerce' ) . '</p><p><a class="hd-btn" href="' . esc_url( $url ) . '">' . esc_html__( 'Download all tickets (CSV)', 'support-ticket-system-for-woocommerce' ) . '</a></p></div></section>';
-			echo '</div>';
+		}
+
+		/**
+		 * Tools screen (Settings > Advanced > Tools): import from another helpdesk plugin, export every ticket.
+		 */
+		public function render() {
+			if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+				return;
+			}
+			$back = '<a class="btn btn-text" href="' . esc_url( WPFactory_WC_STS_UI::url( 'settings', array( 'section' => 'advanced' ) ) ) . '">' . esc_html__( 'Back to Advanced settings', 'support-ticket-system-for-woocommerce' ) . '</a>';
+			echo '<div class="page narrow" data-hd-import data-nonce="' . esc_attr( wp_create_nonce( self::NONCE ) ) . '">';
+			WPFactory_WC_STS_UI::page_head( __( 'Import and export', 'support-ticket-system-for-woocommerce' ), __( 'Bring tickets over from another helpdesk plugin, or download your tickets as a spreadsheet.', 'support-ticket-system-for-woocommerce' ), $back, __( 'Settings', 'support-ticket-system-for-woocommerce' ) );
+			echo '<div class="stack">';
+			echo '<section class="card" aria-labelledby="hd-import-h"><div class="card-head"><div><h2 class="card-title" id="hd-import-h">' . esc_html__( 'Import tickets', 'support-ticket-system-for-woocommerce' ) . '</h2><div class="row-meta">' . esc_html__( 'Start with a check: it only counts. The other plugin\'s data is never changed, and tickets already imported are skipped. No emails are sent.', 'support-ticket-system-for-woocommerce' ) . '</div></div></div>';
+			foreach ( $this->sources() as $key => $label ) {
+				$found = $this->detect( $key );
+				echo '<div class="row" data-hd-source="' . esc_attr( $key ) . '"><div><p class="row-title">' . esc_html( $label ) . '</p><div class="row-meta">' . ( $found ? esc_html__( 'Tickets found on this site.', 'support-ticket-system-for-woocommerce' ) : esc_html__( 'No tickets found. The plugin\'s tables are not on this site.', 'support-ticket-system-for-woocommerce' ) ) . '</div><div class="row-meta" data-hd-result aria-live="polite"></div></div><div class="row-actions">';
+				if ( $found ) {
+					echo '<button type="button" class="btn btn-secondary btn-sm" data-hd-dry>' . esc_html__( 'Check what will be imported', 'support-ticket-system-for-woocommerce' ) . '</button><button type="button" class="btn btn-primary btn-sm" data-hd-run hidden>' . esc_html__( 'Import now', 'support-ticket-system-for-woocommerce' ) . '</button>';
+				} else {
+					echo WPFactory_WC_STS_UI::chip( __( 'Not found', 'support-ticket-system-for-woocommerce' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in chip().
+				}
+				echo '</div></div>';
+			}
+			echo '</section>';
+			echo '<section class="card" aria-labelledby="hd-export-h"><div class="card-head"><div><h2 class="card-title" id="hd-export-h">' . esc_html__( 'Export tickets', 'support-ticket-system-for-woocommerce' ) . '</h2><div class="row-meta">' . esc_html__( 'A CSV file with every ticket: number, subject, status, priority, topic, customer, order, assignee and dates. To export only some tickets, filter the inbox and use Export CSV there.', 'support-ticket-system-for-woocommerce' ) . '</div></div><a class="btn btn-secondary btn-sm" href="' . esc_url( $this->export_url() ) . '">' . esc_html__( 'Download all tickets (CSV)', 'support-ticket-system-for-woocommerce' ) . '</a></div></section>';
+			echo '</div></div>';
 		}
 	}
 
