@@ -115,9 +115,9 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 3.1.0 - 23/11/2026 =
-$L
+* New - Knowledge base: "Write articles with AI" drafts help articles from your store (products, refund and terms pages, shipping zones, the topics customers ask about most). Drafts are never published on their own.
 * Improved - Inbox: the AI button now sits next to Reply / Private note, and the reply box tools line up on one row.
-$L
+* Improved - New look for every admin screen: one clean layout of cards, a top bar with the Needs reply count, a three-column inbox that switches views and tickets without reloading, and Settings in seven tabs (Basics, Emails, Team, Ticket fields, Orders and channels, AI, Advanced). Every setting keeps its value.
 * New - Dashboard: Helpdesk opens on counters that lead to each inbox view, the tickets waiting longest, your own tickets, new tickets per day, the setup checklist and the AI status.
 * New - Support page: the setup wizard and Settings > General can put the support form on one of your pages, or create a Support page, so the page is never empty.
 * Improved - Inbox: status, priority, assignee and tags moved to a Ticket details card next to the conversation; messages use the full width; the AI tools are one AI menu; Ctrl+Enter is shown as a tip on Send reply.
