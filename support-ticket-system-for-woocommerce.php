@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Customer Support Helpdesk & Tickets for WooCommerce
+ * Plugin Name: AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center
  * Description: Customer support for WooCommerce: tickets from My Account and orders, a team inbox with order details, help center and self-hosted live chat.
  * Plugin URI: https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce
  * Version: 3.1.0
@@ -44,7 +44,7 @@ defined( 'WPFACTORY_WC_STS_FILE' ) || define( 'WPFACTORY_WC_STS_FILE', __FILE__ 
  */
 defined( 'WPFACTORY_WC_STS_PAGE' ) || define( 'WPFACTORY_WC_STS_PAGE', 'support-ticket-system-woocommerce' );
 defined( 'WPFACTORY_WC_STS_VERSION_OPTION' ) || define( 'WPFACTORY_WC_STS_VERSION_OPTION', 'wpfactory_wc_sts_version' );
-defined( 'WPFACTORY_WC_STS_NAME' ) || define( 'WPFACTORY_WC_STS_NAME', 'Customer Support Helpdesk & Tickets for WooCommerce' );
+defined( 'WPFACTORY_WC_STS_NAME' ) || define( 'WPFACTORY_WC_STS_NAME', 'AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center' );
 
 if ( ! function_exists( 'wpfactory_wc_sts_is_pro_active' ) ) {
 	/**
@@ -80,7 +80,7 @@ if ( wpfactory_wc_sts_is_pro_active() ) {
 				return;
 			}
 			echo '<div class="notice notice-info"><p>' .
-				esc_html__( 'Customer Support Helpdesk & Tickets for WooCommerce Pro is active, so the free version is paused. You can deactivate the free version; your tickets stay in place.', 'support-ticket-system-for-woocommerce' ) .
+				esc_html__( 'AI Helpdesk for WooCommerce Pro: Support Tickets, Live Chat & Help Center is active, so the free version is paused. You can deactivate the free version; your tickets stay in place.', 'support-ticket-system-for-woocommerce' ) .
 			'</p></div>';
 		}
 	);

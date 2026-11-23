@@ -1,4 +1,4 @@
-=== Customer Support Helpdesk & Tickets for WooCommerce ===
+=== AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center ===
 Contributors: wpcodefactory
 Tags: helpdesk, support ticket, customer support, live chat, knowledge base
 Requires at least: 6.2
@@ -12,7 +12,7 @@ Customer support for WooCommerce: tickets from My Account and orders, a team inb
 
 == Description ==
 
-Customer Support Helpdesk & Tickets for WooCommerce gives your store a support desk that knows your orders. Customers ask for help from My Account or straight from an order. Your team answers from one inbox in wp-admin, with the order and the customer's history next to every conversation. Everything runs on your own site: no outside service, no per-agent fees.
+AI Helpdesk for WooCommerce gives your store a support desk that knows your orders. Customers ask for help from My Account or straight from an order. Your team answers from one inbox in wp-admin, with the order and the customer's history next to every conversation. Everything runs on your own site: no outside service, no per-agent fees.
 
 = For your customers =
 
@@ -49,7 +49,7 @@ Customer Support Helpdesk & Tickets for WooCommerce gives your store a support d
 
 = Pro =
 
-[Customer Support Helpdesk & Tickets for WooCommerce Pro](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce) adds tools that act on orders and automate the desk:
+[AI Helpdesk for WooCommerce Pro: Support Tickets, Live Chat & Help Center](https://wpfactory.com/item/helpdesk-support-ticketing-system-for-woocommerce) adds tools that act on orders and automate the desk:
 
 * Order panel in the ticket with refunds, store credit, coupons, free replacement orders, returns and exchanges, payment links, status changes and resent emails. Every money action is off until you turn it on, limited to the roles you choose, confirmed with the exact amount and recorded on the ticket.
 * Workflow rules, automatic closing, reply targets with an Overdue view, proactive tickets (failed payment, stuck orders, refund requests).
@@ -115,6 +115,7 @@ Please report security bugs found in the source code of the plugin through the [
 == Changelog ==
 
 = 3.1.0 - 23/11/2026 =
+* New - Display name: AI Helpdesk for WooCommerce: Support Tickets, Live Chat & Help Center. The plugin folder and slug stay the same, so updates and links keep working.
 * New - Knowledge base: "Write articles with AI" drafts help articles from your store (products, refund and terms pages, shipping zones, the topics customers ask about most). Drafts are never published on their own.
 * Improved - Inbox: the AI button now sits next to Reply / Private note, and the reply box tools line up on one row.
 * Improved - New look for every admin screen: one clean layout of cards, a top bar with the Needs reply count, a three-column inbox that switches views and tickets without reloading, and Settings in seven tabs (Basics, Emails, Team, Ticket fields, Orders and channels, AI, Advanced). Every setting keeps its value.
